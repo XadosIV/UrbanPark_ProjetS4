@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur` (
     CONSTRAINT PK_Utilisateur PRIMARY KEY (id),
     CONSTRAINT FK_Utilisateur_Role FOREIGN KEY (id) REFERENCES `UrbanPark`.`Role` (id),
     CONSTRAINT FK_Utilisateur_Place FOREIGN KEY (id) REFERENCES `UrbanPark`.`Place` (id)
+    CONSTRAINT UC_Utilisateur UNIQUE (nom, prenom),
+    CONSTRAINT UC_Utilisateur UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Travaille` (
