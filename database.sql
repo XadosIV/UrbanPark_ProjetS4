@@ -16,15 +16,23 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Place` (
     CONSTRAINT FK_Place_Parking FOREIGN KEY (cid) REFERENCES `UrbanPark`.`Parking` (cid)
 );
 
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Role` (
+    id INT NOT NULL,
+    nom VARCHAR NOT NULL,
+    CONSTRAINT PK_Role PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur` (
     id INT NOT NULL,
     nom VARCHAR(50) NOT NULL,
     prenom VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    role ENUM('ABONNE', 'GARDIEN', 'NETTOYAGE', 'ADMIN') NOT NULL DEFAULT 'Abonne',
+    role INT NOT NULL,
+    -- role ENUM('ABONNE', 'GARDIEN', 'NETTOYAGE', 'ADMIN') NOT NULL DEFAULT 'Abonne',
     valide BOOLEAN NOT NULL DEFAULT FALSE,
     idPlace INT NOT NULL,
     CONSTRAINT PK_Utilisateur PRIMARY KEY (id),
+    CONSTRAINT FK_Utilisateur_Role FOREIGN KEY (id) REFERENCES `UrbanPark`.`Role` (id),
     CONSTRAINT FK_Utilisateur_Place FOREIGN KEY (id) REFERENCES `UrbanPark`.`Place` (id)
 );
 
