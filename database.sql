@@ -67,5 +67,6 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Possede` (
     idType INT NOT NULL,
     CONSTRAINT PK_Possede PRIMARY KEY (id),
     CONSTRAINT FK_Possede_Place FOREIGN KEY (idPlace) REFERENCES `UrbanPark`.`Place` (id),
-    CONSTRAINT FK_Possede_Type FOREIGN KEY (idType) REFERENCES `UrbanPark`.`Type` (id)
+    CONSTRAINT FK_Possede_Type FOREIGN KEY (idType) REFERENCES `UrbanPark`.`Type` (id),
+    CONSTRAINT UC_Possede UNIQUE (idPlace, idType)
 );
