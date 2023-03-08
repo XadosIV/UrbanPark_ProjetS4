@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Parking` (
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Place` (
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     nPlace INT,
     etage INT,
     id_parking CHAR,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Role` (
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur` (
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     nom VARCHAR(50) NOT NULL,
     prenom VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
@@ -36,18 +36,19 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur` (
     CONSTRAINT UC_Utilisateur UNIQUE (email)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Personnel_Parking` (
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Horaires_Personnel` (
+    id INT NOT NULL AUTO_INCREMENT,
     id_utilisateur INT NOT NULL,
     id_parking CHAR NOT NULL,
     dstart DATETIME NOT NULL,
     dend DATETIME NOT NULL,
-    CONSTRAINT PK_Travaille PRIMARY KEY (id_utilisateur, id_parking),
+    CONSTRAINT PK_Travaille PRIMARY KEY (id),
     CONSTRAINT FK_Travaille_Utilisateur FOREIGN KEY (id_utilisateur) REFERENCES `UrbanPark`.`Utilisateur` (id),
     CONSTRAINT FK_Travaille_Parking FOREIGN KEY (id_parking) REFERENCES `UrbanPark`.`Parking` (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur_Parking` (
-    id INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Reservation` (
+    id INT NOT NULL AUTO_INCREMENT,
     id_utilisateur INT NOT NULL,
     dstart DATETIME NOT NULL,
     dend DATETIME NOT NULL,
