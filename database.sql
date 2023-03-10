@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`User` (
 	id_spot INT,
 	CONSTRAINT pk_user PRIMARY KEY (id),
 	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `UrbanPark`.`Role` (name),
-	CONSTRAINT fk_user_parking_space FOREIGN KEY (id_spot) REFERENCES `UrbanPark`.`Spot` (id),
-	CONSTRAINT uc_user UNIQUE (email)
+	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `UrbanPark`.`Spot` (id),
+	CONSTRAINT uc_user_email UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Schedule` (
