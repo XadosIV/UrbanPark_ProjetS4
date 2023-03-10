@@ -1,71 +1,70 @@
 CREATE DATABASE IF NOT EXISTS `UrbanPark`;
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Parking` (
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Park_Lot` (
 	id CHAR NOT NULL,
-	nom VARCHAR(45) NOT NULL,
-	nb_etage INT NOT NULL DEFAULT 1,
-	CONSTRAINT PK_Parking PRIMARY KEY (id)
+	name VARCHAR(45) NOT NULL,
+	floors INT NOT NULL DEFAULT 1,
+	address VARCHAR(100) NOT NULL,
+	CONSTRAINT pk_park_lot PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Place` (
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Parking_Spot` (
 	id INT NOT NULL AUTO_INCREMENT,
-	nPlace INT,
-	etage INT,
-	id_parking CHAR,
-	CONSTRAINT PK_Place PRIMARY KEY (id),
-	CONSTRAINT FK_Place_Parking FOREIGN KEY (id_parking) REFERENCES `UrbanPark`.`Parking` (id)
+	number INT NOT NULL,
+	floor INT NOT NULL,
+	id_park CHAR NOT NULL,
+	CONSTRAINT pk_parking_spot PRIMARY KEY (id),
+	CONSTRAINT fk_parking_spot_park_lot FOREIGN KEY (id_park) REFERENCES `UrbanPark`.`Park_Lot` (id)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Role` (
-	nom VARCHAR(45) NOT NULL,
-	CONSTRAINT PK_Role PRIMARY KEY (nom)
+	name VARCHAR(45) NOT NULL,
+	CONSTRAINT pk_role PRIMARY KEY (name)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Utilisateur` (
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`User` (
 	id INT NOT NULL AUTO_INCREMENT,
-	nom VARCHAR(50) NOT NULL,
-	prenom VARCHAR(50) NOT NULL,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
 	role VARCHAR(45) NOT NULL,
 	-- role ENUM('ABONNE', 'GARDIEN', 'NETTOYAGE', 'ADMIN') NOT NULL DEFAULT 'Abonne',
-	valide BOOLEAN NOT NULL DEFAULT FALSE,
-	id_place INT NOT NULL,
-	CONSTRAINT PK_Utilisateur PRIMARY KEY (id),
-	CONSTRAINT FK_Utilisateur_Role FOREIGN KEY (role) REFERENCES `UrbanPark`.`Role` (nom),
-	CONSTRAINT FK_Utilisateur_Place FOREIGN KEY (id_place) REFERENCES `UrbanPark`.`Place` (id),
-	CONSTRAINT UC_Utilisateur UNIQUE (email)
+	id_parking_spot INT,
+	CONSTRAINT pk_user PRIMARY KEY (id),
+	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `UrbanPark`.`Role` (name),
+	CONSTRAINT fk_user_parking_space FOREIGN KEY (id_parking_spot) REFERENCES `UrbanPark`.`Parking_Spot` (id),
+	CONSTRAINT uc_user UNIQUE (email)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Horaires_Personnel` (
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Schedule` (
 	id INT NOT NULL AUTO_INCREMENT,
-	id_utilisateur INT NOT NULL,
-	id_parking CHAR NOT NULL,
-	dstart DATETIME NOT NULL,
-	dend DATETIME NOT NULL,
-	CONSTRAINT PK_Travaille PRIMARY KEY (id),
-	CONSTRAINT FK_Travaille_Utilisateur FOREIGN KEY (id_utilisateur) REFERENCES `UrbanPark`.`Utilisateur` (id),
-	CONSTRAINT FK_Travaille_Parking FOREIGN KEY (id_parking) REFERENCES `UrbanPark`.`Parking` (id)
+	id_user INT NOT NULL,
+	id_park_lot CHAR NOT NULL,
+	time_start DATETIME NOT NULL,
+	time_end DATETIME NOT NULL,
+	CONSTRAINT pk_schedule PRIMARY KEY (id),
+	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `UrbanPark`.`User` (id),
+	CONSTRAINT fk_schedule_park_lot FOREIGN KEY (id_park_lot) REFERENCES `UrbanPark`.`Park_Lot` (id)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Reservation` (
 	id INT NOT NULL AUTO_INCREMENT,
-	id_utilisateur INT NOT NULL,
-	dstart DATETIME NOT NULL,
-	dend DATETIME NOT NULL,
-	CONSTRAINT PK_Reservation PRIMARY KEY (id),
-	CONSTRAINT FK_Reservation_Utilisateur FOREIGN KEY (id_utilisateur) REFERENCES `UrbanPark`.`Utilisateur` (id)
+	id_user INT NOT NULL,
+	date_start DATETIME NOT NULL,
+	date_end DATETIME NOT NULL,
+	CONSTRAINT pk_reservation PRIMARY KEY (id),
+	CONSTRAINT fk_reservation_user FOREIGN KEY (id_user) REFERENCES `UrbanPark`.`User` (id)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Type` (
-	nom VARCHAR(45) NOT NULL,
-	CONSTRAINT PK_Type PRIMARY KEY (nom)
+	name VARCHAR(45) NOT NULL,
+	CONSTRAINT pk_type PRIMARY KEY (name)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Place_Type` (
-	id_place INT NOT NULL,
-	id_type VARCHAR(45) NOT NULL,
-	CONSTRAINT PK_Possede PRIMARY KEY (id_place, id_type),
-	CONSTRAINT FK_Possede_Place FOREIGN KEY (id_place) REFERENCES `UrbanPark`.`Place` (id),
-	CONSTRAINT FK_Possede_Type FOREIGN KEY (id_type) REFERENCES `UrbanPark`.`Type` (nom),
-	CONSTRAINT UC_Possede UNIQUE (id_place, id_type)
+CREATE TABLE IF NOT EXISTS `UrbanPark`.`Typed` (
+	id_parking_spot INT NOT NULL,
+	name_type VARCHAR(45) NOT NULL,
+	CONSTRAINT pk_typed PRIMARY KEY (id_parking_spot, name_type),
+	CONSTRAINT fk_typed_parking_spot FOREIGN KEY (id_parking_spot) REFERENCES `UrbanPark`.`Parking_Spot` (id),
+	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES `UrbanPark`.`Type` (name)
 );
