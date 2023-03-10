@@ -1,21 +1,38 @@
 const http = require('http');
 const app = require('./app');
 
-const normalizePort = val => {
-	const port = parseInt(val, 10);
+/**
+ * NormalizePort  
+ * Convert inputPort in usable number type port
+ * @param {number | String} inputPort
+ * @returns {number}
+ */
+function NormalizePort(inputPort){
+	let port = parseInt(inputPort, 10);
 	
 	if (isNaN(port)) {
-		return val;
+		return inputPort;
 	}
 	if (port >= 0) {
 		return port;
 	}
 	return false;
-};
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+}
 
-const errorHandler = error => {
+/**
+ * ErrorHandler  
+ * Handle some errors for an Event Emitter  
+ * 
+ * @param {Error} error  
+ * 
+ * To add to your event emitter :  
+ * ```
+ * let ee = new EventEmitter();
+ * ee.on('error', ErrorHandler);
+ * ee.emit('error'); 
+ * ```
+ */
+function ErrorHandler(error) {
 	if (error.syscall !== 'listen') {
 		throw error;
 	}
@@ -23,24 +40,27 @@ const errorHandler = error => {
 	const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
 	switch (error.code) {
 		case 'EACCES':
-		console.error(bind + ' requires elevated privileges.');
-		process.exit(1);
-		break;
+			console.error(bind + ' requires elevated privileges.');
+			process.exit(1);
+			break;
 		case 'EADDRINUSE':
-		console.error(bind + ' is already in use.');
-		process.exit(1);
-		break;
+			console.error(bind + ' is already in use.');
+			process.exit(1);
+			break;
 		default:
-		throw error;
+			throw error;
 	}
-};
+}
 
-const server = http.createServer(app);
+let port = NormalizePort(process.env.PORT || '3001');
+app.set('port', port);
 
-server.on('error', errorHandler);
+let server = http.createServer(app);
+
+server.on('error', ErrorHandler);
 server.on('listening', () => {
-	const address = server.address();
-	const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+	let address = server.address();
+	let bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
 	console.log('Listening on ' + bind);
 });
 
