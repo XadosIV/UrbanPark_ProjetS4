@@ -2,6 +2,7 @@ const express = require('express');
 
 const app = express();
 
+// Default headers
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -9,6 +10,7 @@ app.use((req, res, next) => {
 	next();
 });
 
+// Test endpoint
 app.use('/api/stuff', (req, res, next) => {
 	const stuff = [
 		{
