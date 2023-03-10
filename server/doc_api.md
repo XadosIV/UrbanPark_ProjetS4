@@ -1,5 +1,7 @@
 # Ressources
 
+> All formats used by the API.
+
 ## User
 
 ```json
@@ -11,7 +13,10 @@
 	"id_place":1, // Can be null
 	"role":"Abonné",
 	"permissions":{
-		// NY... Fully modelized.
+		"see_other_users":false,
+		"modify_spot_users":false,
+		"modify_role_users":false,
+		"delete_other_users":false
 	}
 }
 ```
@@ -24,8 +29,10 @@
 	"name":"Halles",
 	"floors":1,
 	"address":"5 rue Cpavré, 73000 Chambéry",
-	"spots":[
-		// See : Ressources - Spot
+	"spots":[ // See : Ressources - Spot
+		1,
+		2,
+		4
 	]
 }
 ```
@@ -39,8 +46,9 @@
 	"floor":0,
 	"id_parking":2,
 	"id_user":1,
-	"types":[
-		// See : Ressources - Type
+	"types":[ // See : Ressources - Type
+		1,
+		3
 	]
 }
 ```
@@ -71,6 +79,8 @@
 
 # Endpoints
 
+> You can access the API by these URIs. Or not.
+
 ## User
 
 | Method | Endpoint      | Ressource | Description                      | Permission              |
@@ -86,6 +96,8 @@
 | ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 
 # Permissions
+
+> Permissions are determined by your role.
 
 | Permission         | Description                                                                                                 |
 | ------------------ | ----------------------------------------------------------------------------------------------------------- |
