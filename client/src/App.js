@@ -1,6 +1,6 @@
-import { AccessibilityNew } from "@mui/icons-material"
 import { Box, Stack, Typography, Button } from "@mui/material"
 import { AppRoutes } from "./AppRoutes"
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import React from "react";
 
@@ -10,8 +10,8 @@ export function App() {
 			sx={{ padding: 2 }}
 		>
 			<Stack
-				direction="row"
-				justifyContent="center"
+				direction="flex"
+				justifyContent="space-between"
 				alignItems="center"
 				spacing={2}
 
@@ -20,17 +20,11 @@ export function App() {
 				}}
 			>
 
-
-				<AccessibilityNew fontSize="large" />
 				<Link to="/">
-					<Typography variant="h3">home</Typography>
+					<Typography variant="h3">Logo</Typography>
 				</Link>
-				<AccessibilityNew fontSize="large" />
-				<Link to="/test">
-					<Button variant="contained">go test</Button>
-				</Link>
-				<Link to="/essai">
-					<Button variant="contained">go essai</Button>
+				<Link to="/connexion">
+					<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }}/>
 				</Link>
 			</Stack>
 			<AppRoutes />
