@@ -1,5 +1,5 @@
 import { AccessibilityNew } from "@mui/icons-material"
-import { Box, Stack, Typography,Button } from "@mui/material"
+import { Box, Stack, Typography, Button } from "@mui/material"
 import { AppRoutes } from "./AppRoutes"
 import { Link } from "react-router-dom";
 import React from "react";
@@ -19,7 +19,7 @@ export function App() {
 					marginBottom: 2,
 				}}
 			>
-			
+
 
 				<AccessibilityNew fontSize="large" />
 				<Link to="/">
@@ -28,7 +28,10 @@ export function App() {
 				<AccessibilityNew fontSize="large" />
 				<Link to="/test">
 					<Button variant="contained">go test</Button>
-			</Link>
+				</Link>
+				<Link to="/essai">
+					<Button variant="contained">go essai</Button>
+				</Link>
 			</Stack>
 			<AppRoutes />
 		</Box>
