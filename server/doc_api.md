@@ -30,9 +30,9 @@
 	"floors":1,
 	"address":"5 rue Cpavré, 73000 Chambéry",
 	"spots":[ // See : Ressources - Spot
-		1,
-		2,
-		4
+		{"id":1},
+		{"id":2},
+		{"id":4}
 	]
 }
 ```
@@ -47,8 +47,8 @@
 	"id_parking":2,
 	"id_user":1,
 	"types":[ // See : Ressources - Type
-		1,
-		3
+		{"id":1},
+		{"id":3}
 	]
 }
 ```
@@ -77,6 +77,18 @@
 }
 ```
 
+## Role
+
+```json
+"id":"Abonné"
+"permissions":{
+	"see_other_users":false,
+	"modify_spot_users":false,
+	"modify_role_users":false,
+	"delete_other_users":false
+}
+```
+
 # Endpoints
 
 > You can access the API by these URIs. Or not.
@@ -85,9 +97,9 @@
 
 | Method | Endpoint      | Ressource | Description                      | Permission              |
 | ------ | ------------- | --------- | -------------------------------- | ----------------------- |
+| GET    | /user         | User      | Get user for auth key            | AUTH                    |
 | POST   | /users        | User      | Create a new user                |                         |
 | GET    | /users        | User      | Get an array of all users        | see_other_users         |
-|        |               |           | Get user for auth key            | AUTH                    |
 | GET    | /users/:user  | User      | Get a user                       | see_other_users AUTH    | 
 | PUT    | /users/:user  | User      | Modify informations about a user | AUTH                    |
 |        |               |           | Modify the spot of a user        | modify_spot_users       |
