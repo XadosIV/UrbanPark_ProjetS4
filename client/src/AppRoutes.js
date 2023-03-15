@@ -1,6 +1,6 @@
 import React from "react"
 import { Route, Routes } from "react-router-dom"
-import { Test, NotFoundPage } from "./page"
+import { Test, NotFoundPage, Connexion } from "./page"
 import { HomePage } from "./home"
 
 export function AppRoutes() {
@@ -9,6 +9,7 @@ export function AppRoutes() {
 		<Routes>
 			<Route path="/" element={<HomePage />} />
 			<Route path="/test" element={<Test />} />
+			<Route path="/connexion" element={<Connexion />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	)
