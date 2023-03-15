@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from "@mui/material"
 import { AppRoutes } from "./AppRoutes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
-import { EndPage } from "./page"
+import { EndPage } from "./components"
 
 export function App() {
 	return (
