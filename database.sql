@@ -28,12 +28,14 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`User` (
 	last_name VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
 	role VARCHAR(45) NOT NULL,
+	token VARCHAR(20) NOT NULL,
 	-- role ENUM('ABONNE', 'GARDIEN', 'NETTOYAGE', 'ADMIN') NOT NULL DEFAULT 'Abonne',
 	id_spot INT,
 	CONSTRAINT pk_user PRIMARY KEY (id),
 	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `UrbanPark`.`Role` (name),
 	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `UrbanPark`.`Spot` (id),
-	CONSTRAINT uc_user_email UNIQUE (email)
+	CONSTRAINT uc_user_email UNIQUE (email),
+	CONSTRAINT uc_user_token UNIQUE (token)
 );
 
 CREATE TABLE IF NOT EXISTS `UrbanPark`.`Schedule` (
