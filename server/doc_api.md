@@ -2,6 +2,14 @@
 
 > All formats used by the API.
 
+##Auth
+
+```json
+{
+	"token":"string_max_20_charac"
+}
+```
+
 ## User
 
 ```json
@@ -92,6 +100,14 @@
 # Endpoints
 
 > You can access the API by these URIs. Or not.
+
+## Auth
+
+| Method | Endpoint      | Ressource | Description                      | Permission              |
+| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
+| GET    | /auth         | AUTH      | Get token of the user for auth   |                         |
+|		 |				 |			 | mail=$mail&mdp=$mdp_md5			|						  |
+| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 
 ## User
 
