@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { ExampleName } from "../components";
 import authAPI from "../services/authAPI";
 
-import TextField from '@mui/material/TextField';
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 export function Connexion() {
 	const [infos, setInfos] = useState({

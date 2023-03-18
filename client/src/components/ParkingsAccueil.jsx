@@ -17,7 +17,6 @@ export function ParkingsAccueil() {
 	];
 
 	return (<div className="caroussel">
-		{/* <h1>Parkings</h1> */}
 		<div className="slides">
 			{
 				listParkings.map((parking, index) => (
