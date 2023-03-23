@@ -1,8 +1,10 @@
 import React from "react";
 import { Parking } from "./Parking";
 
+//Carousel of every parkings
 export function ParkingsAccueil() {
 
+	// Infos of eevry parkings, need to get it from database later
 	const listParkings = [
 		{
 			"nom": "parking1",
