@@ -18,14 +18,15 @@ export function ParkingsAccueil() {
 		}
 	];
 
-	return (<div className="parkings">
-		<h1>Parkings</h1>
-		<ul>
+
+	return (<div className="caroussel">
+		{/* <h1>Parkings</h1> */}
+		<div className="slides">
 			{
 				listParkings.map((parking, index) => (
-						<Parking key={index} parking={parking}/>
+					<Parking key={index} parking={parking} />
 				))
 			}
-		</ul>
+		</div>
 	</div>)
 }

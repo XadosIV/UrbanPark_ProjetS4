@@ -9,7 +9,7 @@ export function AppRoutes() {
 		<Routes>
 			<Route path="/" element={<HomePage />} />
 			<Route path="/test" element={<Test />} />
-			<Route path="/connexion" element={<Test />} />
+			<Route path="/connexion" element={<Connexion />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	)

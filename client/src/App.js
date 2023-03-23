@@ -1,39 +1,44 @@
-import { Box, Stack, Typography, Button } from "@mui/material"
+
+import React from "react";
+import { Box, Stack, Typography } from "@mui/material"
 import { AppRoutes } from "./AppRoutes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
-import React from "react";
+import { EndPage } from "./components"
+
 
 export function App() {
 	return (
 		<Box
-			sx={{ padding: 2 }}
+			sx={{ padding: 2, minHeight: "100%",
+				display: "grid",
+				gridTemplateRows: "auto 1fr auto",
+				 }}
 		>
-			<Stack
-				direction="flex"
-				justifyContent="space-between"
-				alignItems="center"
-				spacing={2}
+			<header>
+				<Stack
+					direction="flex"
+					justifyContent="space-around"
+					alignItems="center"
+					spacing={2}
 
-				sx={{
-					marginBottom: 2,
-				}}
-			>
-
-				<Link to="/">
-					<Typography variant="h3">Logo</Typography>
-				</Link>
-				<Link to="/connexion">
-					<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }}/>
-				</Link>
-			</Stack>
+					sx={{
+						marginBottom: 2,
+					}}
+				>
+					<Link to="/">
+						<Typography variant="h3">Logo</Typography>
+					</Link>
+					<Link to="/connexion">
+						<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
+					</Link>
+				</Stack>
+			</header>
 			<AppRoutes />
+			<EndPage/>
 		</Box>
 	)
 }
-
-
-
 
 // import logo from './logo.svg';
 // import './App.css';

@@ -1,9 +1,11 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { ExampleName } from "../components";
+import authAPI from "../services/authAPI";
 
+import TextField from '@mui/material/TextField';
+import { Button } from "@mui/material";
 
-//Connexion page
+//Connexion
 export function Connexion() {
 	const [infos, setInfos] = useState({
 		identifier: "",
@@ -29,8 +31,24 @@ export function Connexion() {
 
 	//Form seen by users
 	return(<div>
-		<h1>Test Page</h1>
-		<p>Test page body </p>
-		<ExampleName name="John" age={20} />
+		<form onSubmit={handleSubmit}>
+			<div>
+				<TextField
+				id="identifier"
+				label="Username"
+				type="text"
+				name="identifier"
+				onChange={handleChange}
+				/>
+				<TextField
+				id="password"
+				label="Password"
+				type="text"
+				name="password"
+				onChange={handleChange}
+				/>
+			</div>
+			<Button variant="contained" color="primary" type="submit">Login</Button>
+		</form>
 	</div>)
 }
