@@ -1,7 +1,6 @@
 import React from "react"
 import { Route, Routes } from "react-router-dom"
-import { Test, NotFoundPage, Connexion } from "./page"
-import { HomePage } from "./home"
+import { Test, NotFoundPage, Connexion, HomePage } from "./page"
 
 export function AppRoutes() {
 
