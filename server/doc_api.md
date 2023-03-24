@@ -108,7 +108,6 @@
 | ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 | GET    | /auth         | AUTH      | Get token of the user for auth   |                         |
 |		 |				 |			 | mail=$mail&mdp=$mdp_md5			|						  |
-| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 
 ## User
 
@@ -122,7 +121,6 @@
 |        |               |           | Modify the spot of a user        | modify_spot_users       |
 |        |               |           | Modify the role of a user        | modify_role_users       |
 | DELETE | /users/:user  | User      | Delete a user                    | delete_other_users AUTH |
-| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 
 # Permissions
 
