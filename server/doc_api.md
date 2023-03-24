@@ -59,7 +59,11 @@
 
 ```json
 {
-	// NYI
+	"id":1,
+	"user":5,
+	"parking":"h",
+	"time_start":"2023-04-23T18:25:43.511Z",
+	"time_end":"2023-04-23T19:25:43.511Z"
 }
 ```
 
@@ -83,7 +87,7 @@
 
 ```json
 {
-"id":"Abonné",
+	"id":"Abonné",
 	"see_other_users":false,
 	"modify_spot_users":false,
 	"modify_role_users":false,
