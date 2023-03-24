@@ -67,7 +67,10 @@
 
 ```json
 {
-	// NYI
+	"id":7,
+	"user":1,
+	"date_start":"2022-3-20 12:03:13",
+	"date_end":"2022-5-04 04:12:59"
 }
 ```
 
@@ -75,7 +78,7 @@
 
 ```json
 {
-	// NYI
+	"name":"électrique"
 }
 ```
 
@@ -83,7 +86,7 @@
 
 ```json
 {
-"id":"Abonné",
+	"id":"Abonné",
 	"see_other_users":false,
 	"modify_spot_users":false,
 	"modify_role_users":false,
