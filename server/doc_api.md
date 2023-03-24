@@ -19,13 +19,7 @@
 	"name":"Dupond",
 	"email":"my.email@itsamail.com",
 	"id_place":1, // Can be null
-	"role":"Abonné",
-	"permissions":{
-		"see_other_users":false,
-		"modify_spot_users":false,
-		"modify_role_users":false,
-		"delete_other_users":false
-	}
+	"role":"Abonné"
 }
 ```
 
@@ -38,9 +32,9 @@
 	"floors":1,
 	"address":"5 rue Cpavré, 73000 Chambéry",
 	"spots":[ // See : Ressources - Spot
-		{"id":1},
-		{"id":2},
-		{"id":4}
+		1,
+		2,
+		4
 	]
 }
 ```
@@ -55,8 +49,8 @@
 	"id_parking":2,
 	"id_user":1,
 	"types":[ // See : Ressources - Type
-		{"id":1},
-		{"id":3}
+		1,
+		3
 	]
 }
 ```
@@ -88,8 +82,8 @@
 ## Role
 
 ```json
-"id":"Abonné"
-"permissions":{
+{
+"id":"Abonné",
 	"see_other_users":false,
 	"modify_spot_users":false,
 	"modify_role_users":false,
