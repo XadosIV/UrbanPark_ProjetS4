@@ -2,7 +2,7 @@
 
 > All formats used by the API.
 
-##Auth
+## Auth
 
 ```json
 {
