@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Schedule` (
 	id INT NOT NULL AUTO_INCREMENT,
 	id_user INT NOT NULL,
 	id_parking CHAR NOT NULL,
-	time_start DATETIME NOT NULL,
-	time_end DATETIME NOT NULL,
+	date_start DATETIME NOT NULL,
+	date_end DATETIME NOT NULL,
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
 	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `UrbanPark`.`User` (id),
 	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `UrbanPark`.`Parking` (id)
