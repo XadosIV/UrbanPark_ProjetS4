@@ -2,6 +2,14 @@
 
 > All formats used by the API.
 
+## Auth
+
+```json
+{
+	"token":"string_max_20_charac"
+}
+```
+
 ## User
 
 ```json
@@ -11,13 +19,7 @@
 	"name":"Dupond",
 	"email":"my.email@itsamail.com",
 	"id_place":1, // Can be null
-	"role":"Abonné",
-	"permissions":{
-		"see_other_users":false,
-		"modify_spot_users":false,
-		"modify_role_users":false,
-		"delete_other_users":false
-	}
+	"role":"Abonné"
 }
 ```
 
@@ -57,7 +59,11 @@
 
 ```json
 {
-	// NYI
+	"id":1,
+	"user":5,
+	"parking":"h",
+	"date_start":"2023-04-23T18:25:43.511Z",
+	"date_end":"2023-04-23T19:25:43.511Z"
 }
 ```
 
@@ -65,7 +71,10 @@
 
 ```json
 {
-	// NYI
+	"id":7,
+	"user":1,
+	"date_start":"2022-3-20T12:03:13Z",
+	"date_end":"2022-5-04T04:12:59Z"
 }
 ```
 
@@ -73,7 +82,19 @@
 
 ```json
 {
-	// NYI
+	"name":"électrique"
+}
+```
+
+## Role
+
+```json
+{
+	"id":"Abonné",
+	"see_other_users":false,
+	"modify_spot_users":false,
+	"modify_role_users":false,
+	"delete_other_users":false
 }
 ```
 
@@ -81,19 +102,25 @@
 
 > You can access the API by these URIs. Or not.
 
+## Auth
+
+| Method | Endpoint      | Ressource | Description                      | Permission              |
+| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
+| GET    | /auth         | AUTH      | Get token of the user for auth   |                         |
+|		 |				 |			 | mail=$mail&mdp=$mdp_md5			|						  |
+
 ## User
 
 | Method | Endpoint      | Ressource | Description                      | Permission              |
 | ------ | ------------- | --------- | -------------------------------- | ----------------------- |
+| GET    | /user         | User      | Get user for auth key            | AUTH                    |
 | POST   | /users        | User      | Create a new user                |                         |
 | GET    | /users        | User      | Get an array of all users        | see_other_users         |
-|        |               |           | Get user for auth key            | AUTH                    |
 | GET    | /users/:user  | User      | Get a user                       | see_other_users AUTH    | 
 | PUT    | /users/:user  | User      | Modify informations about a user | AUTH                    |
 |        |               |           | Modify the spot of a user        | modify_spot_users       |
 |        |               |           | Modify the role of a user        | modify_role_users       |
 | DELETE | /users/:user  | User      | Delete a user                    | delete_other_users AUTH |
-| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 
 # Permissions
 
