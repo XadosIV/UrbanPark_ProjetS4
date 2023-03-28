@@ -1,4 +1,14 @@
 const express = require('express');
+require('dotenv').config();
+const mysql = require('mysql');
+const database = mysql.createConnection({
+	host     : process.env.HOST,
+	user     : process.env.USER,
+	password : process.env.PASSWORD,
+	database : process.env.DATABASE
+});
+
+database.connect();
 
 const app = express();
 
@@ -16,4 +26,4 @@ app.use('/', (req, res, next) => {
 	res.status(200).json(data);
 });
 
-module.exports = app;
+module.exports = {app, mysql, database};
