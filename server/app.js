@@ -1,8 +1,7 @@
 const express = require('express');
-require('dotenv').config();
-const mysql = require('mysql');
-
 const app = express();
+const {GetUsers} = require('./db_access/user');
+const {GetParkings} = require('./db_access/parking');
 
 // Default headers
 app.use((req, res, next) => {
@@ -13,9 +12,17 @@ app.use((req, res, next) => {
 });
 
 // Test endpoint
-app.use('/', (req, res, next) => {
-	let data = [];
+app.get('/api/test', (req, res) => {
+	let data = ["test1","test2","test3"];
 	res.status(200).json(data);
+});
+
+app.get('/api/users', (req, res) => {
+	GetUsers((err, data) => {res.status(200).json(data)});
+});
+
+app.get('/api/parkings', (req, res) => {
+	GetParkings((err, data) => {res.status(200).json(data)});
 });
 
 module.exports = app;

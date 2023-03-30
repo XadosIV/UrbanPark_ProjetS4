@@ -1,6 +1,6 @@
 const http = require('http');
 const app = require('./app');
-const mysql = require('mysql');
+const {dbConnection, StartDatabase} = require('./database')
 
 /**
  * NormalizePort  
@@ -52,44 +52,6 @@ function ErrorHandler(error) {
 			throw error;
 	}
 }
-
-/**
- * StartDatabase  
- * Start the database and verify the config
- * 
- * @param {mysql.Connection} dbConnection
- * @param {string | mysql.Query} query
- */
-function StartDatabase(dbConnection, query="CREATE DATABASE IF NOT EXISTS `"+process.env.DATABASE+"`; CREATE TABLE IF NOT EXISTS `"+process.env.DATABASE+"`.`Parking` (\
-	id CHAR NOT NULL,\
-	name VARCHAR(45) NOT NULL,\
-	floors INT NOT NULL DEFAULT 1,\
-	address VARCHAR(100) NOT NULL,\
-	CONSTRAINT pk_parking PRIMARY KEY (id)\
-);") {
-	dbConnection.connect((err, results) => {if (err) throw err});
-	dbConnection.query(query, (err, results) => {
-		if (err) throw err;
-		else console.log(results);
-	});
-	dbConnection.query("INSERT INTO `"+process.env.DATABASE+"`.`Parking` (id,name,floors,address) VALUES ('t', 'test', 4, '123 rue des bugs')", (err, results) => {
-		if (err) throw err;
-		else console.log(results);
-	});
-	dbConnection.query("SELECT * FROM `"+process.env.DATABASE+"`.`Parking`", (err, results) => {
-		if (err) throw err;
-		else console.log(results);
-	});
-}
-
-// ==============================
-// Initiate connection to database
-let dbConnection = mysql.createConnection({
-	multipleStatements: true,
-	host     : process.env.HOST,
-	user     : process.env.USER,
-	password : process.env.PASSWORD
-});
 
 StartDatabase(dbConnection);
 
