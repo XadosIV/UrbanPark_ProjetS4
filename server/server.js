@@ -1,5 +1,6 @@
 const http = require('http');
 const app = require('./app');
+const {dbConnection, StartDatabase} = require('./database')
 
 /**
  * NormalizePort  
@@ -52,6 +53,10 @@ function ErrorHandler(error) {
 	}
 }
 
+StartDatabase(dbConnection);
+
+// ==============================
+// Start server
 let port = NormalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
