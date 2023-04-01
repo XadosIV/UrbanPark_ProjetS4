@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `UrbanPark`;
+CREATE DATABASE IF NOT EXISTS UrbanPark;
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Parking` (
+CREATE TABLE IF NOT EXISTS $DATABASE$.Parking (
 	id CHAR NOT NULL,
 	name VARCHAR(45) NOT NULL,
 	floors INT NOT NULL DEFAULT 1,
@@ -8,21 +8,21 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`Parking` (
 	CONSTRAINT pk_parking PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Spot` (
+CREATE TABLE IF NOT EXISTS $DATABASE$.Spot (
 	id INT NOT NULL AUTO_INCREMENT,
 	number INT NOT NULL,
 	floor INT NOT NULL,
 	id_park CHAR NOT NULL,
 	CONSTRAINT pk_spot PRIMARY KEY (id),
-	CONSTRAINT fk_spot_parking FOREIGN KEY (id_park) REFERENCES `UrbanPark`.`Parking` (id)
+	CONSTRAINT fk_spot_parking FOREIGN KEY (id_park) REFERENCES `DATABASE`.Parking (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Role` (
+CREATE TABLE IF NOT EXISTS `DATABASE`.Role (
 	name VARCHAR(45) NOT NULL,
 	CONSTRAINT pk_role PRIMARY KEY (name)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`User` (
+CREATE TABLE IF NOT EXISTS `DATABASE`.User (
 	id INT NOT NULL AUTO_INCREMENT,
 	first_name VARCHAR(50) NOT NULL,
 	last_name VARCHAR(50) NOT NULL,
@@ -32,41 +32,47 @@ CREATE TABLE IF NOT EXISTS `UrbanPark`.`User` (
 	token VARCHAR(20) NOT NULL,
 	id_spot INT,
 	CONSTRAINT pk_user PRIMARY KEY (id),
-	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `UrbanPark`.`Role` (name),
-	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `UrbanPark`.`Spot` (id),
+	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `DATABASE`.Role (name),
+	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `DATABASE`.Spot (id),
 	CONSTRAINT uc_user_email UNIQUE (email),
 	CONSTRAINT uc_user_token UNIQUE (token)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Schedule` (
+CREATE TABLE IF NOT EXISTS `DATABASE`.Schedule (
 	id INT NOT NULL AUTO_INCREMENT,
 	id_user INT NOT NULL,
 	id_parking CHAR NOT NULL,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
-	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `UrbanPark`.`User` (id),
-	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `UrbanPark`.`Parking` (id)
+	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id),
+	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `DATABASE`.Parking (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Reservation` (
+CREATE TABLE IF NOT EXISTS `DATABASE`.Reservation (
 	id INT NOT NULL AUTO_INCREMENT,
 	id_user INT NOT NULL,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
 	CONSTRAINT pk_reservation PRIMARY KEY (id),
-	CONSTRAINT fk_reservation_user FOREIGN KEY (id_user) REFERENCES `UrbanPark`.`User` (id)
+	CONSTRAINT fk_reservation_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Type` (
+CREATE TABLE IF NOT EXISTS .Type (
 	name VARCHAR(45) NOT NULL,
 	CONSTRAINT pk_type PRIMARY KEY (name)
 );
 
-CREATE TABLE IF NOT EXISTS `UrbanPark`.`Typed` (
+CREATE TABLE IF NOT EXISTS .Typed (
 	id_spot INT NOT NULL,
 	name_type VARCHAR(45) NOT NULL,
 	CONSTRAINT pk_typed PRIMARY KEY (id_spot, name_type),
-	CONSTRAINT fk_typed_spot FOREIGN KEY (id_spot) REFERENCES `UrbanPark`.`Spot` (id),
-	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES `UrbanPark`.`Type` (name)
+	CONSTRAINT fk_typed_spot FOREIGN KEY (id_spot) REFERENCES `DATABASE`.Spot (id),
+	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES `DATABASE`.Type (name)
 );
+
+-- Default rows
+INSERT INTO `DATABASE`.Role (name) VALUES ("Gérant");
+INSERT INTO `DATABASE`.Role (name) VALUES ("Gardien");
+INSERT INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
+INSERT INTO `DATABASE`.Role (name) VALUES ("Abonné");
