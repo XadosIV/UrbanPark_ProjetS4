@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from 'react-dom';
-import { Liste, Personne } from "./";
+import { Liste, Personne } from ".";
 import { creaListPerson } from "../interface"
 
 export function ListePersonnes(nom) {
