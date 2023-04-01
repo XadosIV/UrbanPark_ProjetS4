@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {GetUsers} = require('./db_access/user');
+const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
 
 // Default headers
@@ -18,11 +18,33 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/api/users', (req, res) => {
-	GetUsers((err, data) => {res.status(200).json(data)});
+	GetUsers((err, data) => {
+		if (err){
+			console.log(err); res.status(403);
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.post('/api/user', (req, res) => {
+	PostUser((err, data) => {
+		if (err){
+			res.status(403);
+		}else{
+			res.status(201);
+		}
+	});
 });
 
 app.get('/api/parkings', (req, res) => {
-	GetParkings((err, data) => {res.status(200).json(data)});
+	GetParkings((err, data) => {
+		if (err){
+			res.status(403);
+		}else{
+			res.status(200).json(data);
+		}
+	});
 });
 
 module.exports = app;
