@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 
-export function Personne(person){
+export function Personne(info){
 
-	const pers = person.person
+	const pers = info
 
 	const test = pers.statut
 
 	return (
-		<li style={{color: test? 'red': 'black'}}>
+		<div style={{color: test? 'red': 'black'}}>
 			<p>nom: {pers.nom}</p>
 			<p>prenom: {pers.prenom}</p>
-		</li>
+		</div>
 	)
 }

@@ -1,18 +1,11 @@
 import React, { useEffect } from "react";
-import { Personne } from "./";
-import listPerson from "../services/listPerson"
+import ReactDOM from 'react-dom';
+import { Liste, Personne } from "./";
+import { creaListPerson } from "../interface"
 
 export function ListePersonnes(nom) {
-	useEffect(() => {
-		const fetchData = async () => {
-		  const data = await listPerson.takeAll(nom);
-		}
-	  
-		// call the function
-		fetchData()
-		  // make sure to catch any error
-		  .catch(console.error);
-	  }, [])
+	const data = creaListPerson(nom)
+		.catch(console.error);
 
 	const list = [
 		{
@@ -27,13 +20,17 @@ export function ListePersonnes(nom) {
 		}
 	];
 
-	return (<div>
-		<ul>
-			{
-				list.map((person, index) => (
-					<Personne key={index} person={person} />
-				))
-			}
-		</ul>
-	</div>)
+	function affichePlanning () {
+		const element = (
+			<div>
+			  <h1>Bonjour, monde !</h1>
+			  <h2>Il est {new Date().toLocaleTimeString()}.</h2>
+			</div>
+		  );
+		  ReactDOM.render(element, document.getElementById('container'));
+	}
+
+	return (
+		Liste(Personne, affichePlanning, list)
+	)
 }
