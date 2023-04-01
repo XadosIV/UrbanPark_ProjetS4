@@ -49,3 +49,32 @@ code {
 	right: 0px;
 	bottom: 0px;
 }
+
+.list-item {
+	background-color: white;
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+	align-items:center;
+	border:solid;
+	border-radius: 20px;
+	width: 80%;
+	height: 100%;
+	margin: 1rem 1rem;
+	padding: 0 1rem 1rem;
+}
+
+.list-item p {
+	color:black;
+}
+
+.button-parking {
+	display:flex;
+	flex-direction:column;
+	text-align:center;
+}
+
+.title-parkings {
+	color:red;
+	text-decoration: underline;
+}

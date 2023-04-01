@@ -1,4 +1,6 @@
 export * from "./ExampleName"
 export * from "./ParkingsAccueil"
+export * from "./ParkingsPersonnel"
 export * from "./Parking"
+export * from "./ParkingList"
 export * from "./EndPage"
