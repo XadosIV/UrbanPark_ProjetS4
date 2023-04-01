@@ -1,11 +1,11 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { ConnexionForm } from "../components";
+import { InscriptionForm } from "../components";
 
-export function Connexion() {
+export function Inscription() {
 	const { state } = useLocation();
 
 	return(<div>
-        <ConnexionForm mail={state.mail}/>
+        <InscriptionForm mail={state.mail}/>
 	</div>)
 }

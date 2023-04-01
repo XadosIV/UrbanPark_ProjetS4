@@ -1,4 +1,6 @@
 export * from "./NotFoundPage"
 export * from "./Test"
-export * from "./Connexion"
+export * from "./Authentification"
 export * from "./HomePage"
+export * from "./Connexion"
+export * from "./Inscription"
