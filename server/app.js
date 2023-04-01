@@ -11,6 +11,8 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 	next();
 });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
@@ -29,18 +31,26 @@ app.get('/api/users', (req, res) => {
 });
 
 app.post('/api/user', (req, res) => {
-	PostUser((err, data) => {
-		if (err){
-			if (err.code == Errors.E_EMAIL_ALREADY_USED){
-				res.json({"code":"E_MAIL_ALREADY_USED","message":"Email déjà utilisé"});
-			} else {
-				throw err;
+	console.log("REQUEST : " + req);
+	if (req.body && req.body.first_name && req.body.last_name && req.body.email && req.body.password){
+		PostUser(req.body.first_name, req.body.last_name, req.body.email, req.body.password, (err, data) => {
+			if (err){
+				if (err.code == Errors.E_EMAIL_ALREADY_USED){
+					res.status(400).json({"code":err.code,"message":"Email déjà utilisé"});
+				}else if (err.code == Errors.E_EMAIL_FORMAT_INVALID){
+					res.status(400).json({"code":err.code,"message":"Le format de l'email n'est pas conforme"});
+				}else if (err.code == Errors.E_PASSWORD_FORMAT_INVALID){
+					res.status(400).json({"code":err.code,"message":"Le mot de passe doit contenir au moins 8 caractères dont une minuscule, une majuscule, un chiffre et un charactère spécial"})
+				}else{
+					throw err;
+				}
+			}else{
+				res.status(201).json();
 			}
-			res.status(403);
-		}else{
-			res.status(201);
-		}
-	});
+		});
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : first_name, last_name, email, password"});
+	}
 });
 
 app.get('/api/parkings', (req, res) => {

@@ -10,13 +10,13 @@ var crypto = require("crypto");
  */
 function GenerateNewToken(callback){
 	let token = crypto.randomBytes(10).toString('hex');
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.Users WHERE token="${token}";`, (err, data) => {
+	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE token="${token}";`, (err, data) => {
 		if (err){ // SQL Error
 			throw err;
-		}else if (data.json().length() == 0){ // Already used, retry
+		}else if (data.length != 0){ // Already used, retry
 			GenerateNewToken(callback);
 		}else{
-			callback(token);
+			callback(err, token);
 		}
 	});
 }

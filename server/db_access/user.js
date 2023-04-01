@@ -8,10 +8,10 @@ require('dotenv').config();
  * Get all users matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {string} mail
+ * @param {string} email
  */
-function GetUsers(callback, mail="*"){
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE email LIKE "${mail}";`, callback);
+function GetUsers(callback, email="*"){
+	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE email LIKE "${email}";`, callback);
 }
 
 /**
@@ -50,22 +50,37 @@ function IsValidPassword(password){
  * @param {function(*,*)} callback (err, data)
  */
 function PostUser(firstName, lastName, email, password, callback){
-	if (IsValidEmail(mail) && IsValidPassword(password)){
-		GetUsers(mail, (err, data) => {
+	if (!IsValidEmail(email)){
+		console.log("TRACE 1");
+		let errorCode = Errors.E_EMAIL_FORMAT_INVALID;
+		let error = new Error(errorCode);
+		error.code = errorCode;
+		callback(error,[]);
+	}else if (!IsValidPassword(password)){
+		console.log("TRACE 2");
+		let errorCode = Errors.E_PASSWORD_FORMAT_INVALID;
+		let error = new Error(errorCode);
+		error.code = errorCode;
+		callback(error,);
+	}else{
+		GetUsers((err, data) => {
 			if (err) { // SQL Error
 				throw err;
-			}else if (data.json().length() != 0){ // Email already used
-					let errorCode = Errors.E_EMAIL_ALREADY_USED;
-					let error = new Error(errorCode);
-					error.code = errorCode;
-					callback(error,data);
+			}else if (data.length != 0){ // Email already used
+				let errorCode = Errors.E_EMAIL_ALREADY_USED;
+				let error = new Error(errorCode);
+				error.code = errorCode;
+				callback(error,data);
 			}else{
-				GenerateNewToken((token) => {
-					dbConnection.query(`INSERT INTO ${process.env.DATABASE}.Users first_name, last_name, email, password, role, token, id_spot
-					VALUES ("${firstName}","${lastName}","${email}","${password}","Abonné","${token}, NULL);`, callback);
+				GenerateNewToken((err, token) => {
+					if (err){
+						throw err;
+					}else{
+						dbConnection.query(`INSERT INTO ${process.env.DATABASE}.User (first_name, last_name, email, password, role, token, id_spot) VALUES ("${firstName}","${lastName}","${email}","${password}","Abonné","${token}", NULL);`, callback);
+					}
 				});
 			}
-		});
+		}, email);
 	}
 }
 
