@@ -50,24 +50,6 @@ code {
 	bottom: 0px;
 }
 
-.list-item {
-	background-color: white;
-	display:flex;
-	flex-direction:row;
-	justify-content:space-between;
-	align-items:center;
-	border:solid;
-	border-radius: 20px;
-	width: 80%;
-	height: 100%;
-	margin: 1rem 1rem;
-	padding: 0 1rem 1rem;
-}
-
-.list-item p {
-	color:black;
-}
-
 .button-parking {
 	display:flex;
 	flex-direction:column;
@@ -77,4 +59,44 @@ code {
 .title-parkings {
 	color:red;
 	text-decoration: underline;
+	text-align:center;
 }
+
+.parking-list {
+	min-height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content:center;
+}
+
+.list-item {
+	display: flex;
+	flex-direction:row;
+	flex-basis: calc(42%);  
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	background-color: white;
+	border:solid;
+	border-radius: 20px;	
+	justify-content:space-between;
+	align-items:center;
+}
+
+.list-item p {
+	color:black;
+}
+
+.staff-list {
+	display: flex;
+	flex-direction:row;
+	flex: auto;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	background-color: white;
+	border:solid;
+	border-radius: 20px;
+	justify-content:space-between;	
+	align-items:center;
+}
+
