@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS .Typed (
 );
 
 -- Default rows
-INSERT INTO `DATABASE`.Role (name) VALUES ("Gérant");
-INSERT INTO `DATABASE`.Role (name) VALUES ("Gardien");
-INSERT INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
-INSERT INTO `DATABASE`.Role (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gérant");
+INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gardien");
+INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
+INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
