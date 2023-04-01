@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
+const Errors = require('./errors');
 
 // Default headers
 app.use((req, res, next) => {
@@ -20,7 +21,7 @@ app.get('/api/test', (req, res) => {
 app.get('/api/users', (req, res) => {
 	GetUsers((err, data) => {
 		if (err){
-			console.log(err); res.status(403);
+			throw err;
 		}else{
 			res.status(200).json(data);
 		}
@@ -30,6 +31,11 @@ app.get('/api/users', (req, res) => {
 app.post('/api/user', (req, res) => {
 	PostUser((err, data) => {
 		if (err){
+			if (err.code == Errors.E_EMAIL_ALREADY_USED){
+				res.json({"code":"E_MAIL_ALREADY_USED","message":"Email déjà utilisé"});
+			} else {
+				throw err;
+			}
 			res.status(403);
 		}else{
 			res.status(201);
@@ -40,7 +46,7 @@ app.post('/api/user', (req, res) => {
 app.get('/api/parkings', (req, res) => {
 	GetParkings((err, data) => {
 		if (err){
-			res.status(403);
+			throw err;
 		}else{
 			res.status(200).json(data);
 		}

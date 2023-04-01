@@ -1,16 +1,17 @@
 const {dbConnection} = require('../database');
 const {GenerateNewToken} = require('./auth');
+const Errors = require('../errors');
 require('dotenv').config();
 
 /**
  * GetUsers
  * Get all users matching parameters
  * 
- * @param {string} mail
  * @param {function(*,*)} callback (err, data)
+ * @param {string} mail
  */
-function GetUsers(mail="*", callback){
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.Users WHERE mail LIKE ${mail};`, callback);
+function GetUsers(callback, mail="*"){
+	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE email LIKE "${mail}";`, callback);
 }
 
 /**
@@ -51,8 +52,13 @@ function IsValidPassword(password){
 function PostUser(firstName, lastName, email, password, callback){
 	if (IsValidEmail(mail) && IsValidPassword(password)){
 		GetUsers(mail, (err, data) => {
-			if (data.json().length() != 0){
-				callback(err,data);
+			if (err) { // SQL Error
+				throw err;
+			}else if (data.json().length() != 0){ // Email already used
+					let errorCode = Errors.E_EMAIL_ALREADY_USED;
+					let error = new Error(errorCode);
+					error.code = errorCode;
+					callback(error,data);
 			}else{
 				GenerateNewToken((token) => {
 					dbConnection.query(`INSERT INTO ${process.env.DATABASE}.Users first_name, last_name, email, password, role, token, id_spot
