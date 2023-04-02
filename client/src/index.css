@@ -88,16 +88,28 @@ code {
 }
 
 .staff-list {
+	list-style-type:none;
+	list-style-position: inside;
+	margin:0;
+	padding:0;
+}
+
+.staff-list li {
 	display: flex;
 	flex-direction:row;
 	flex: auto;
-	margin: 0 1rem 1rem;
-	padding: 0 1rem 1rem;
 	background-color: white;
 	border:solid;
 	border-radius: 20px;
 	justify-content:space-between;	
 	align-items:center;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+}
+
+.staff-list li:hover {
+	background-color: gray;
 }
 
 .add-parking {
@@ -105,18 +117,20 @@ code {
 	height:120%;
 }
 
-.search-user {
+
+.searchs {
 	display:flex;
 	flex-direction:row;
+	justify-content: space-between;
+	flex: 2 1 auto;
 }
 
-.search-box {
-	padding:1.2% 2%;
+.StaffList {
+	width:50%;
+	margin-right: 50px;
 }
 
-#staff-list {
-	list-style-type:none;
-	list-style-position: inside;
-	margin:0;
-	padding:0;
+.UserList {
+	width:50%;
+	margin-left: 50px;
 }

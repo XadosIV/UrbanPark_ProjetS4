@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import authAPI from "../services/authAPI";
-import { ParkingsStaff, StaffList, SearchUser } from "../components";
+import { ParkingsStaff, StaffList, UserList } from "../components";
 
 export function AdminPage() {
 	const [infos, setInfos] = useState({
@@ -28,8 +28,9 @@ export function AdminPage() {
 	return(<div>
         <ParkingsStaff/>
 		<br/><br/><hr/>
-		<StaffList/>
-		<br/><br/><hr/>
-		<SearchUser/>
+		<div className="searchs">
+			<StaffList/>
+			<UserList/>
+		</div>
 	</div>)
 }

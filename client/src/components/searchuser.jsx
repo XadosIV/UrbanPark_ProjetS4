@@ -1,56 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { StaffPreview } from "./staffpreview";
-import { Button, TextField } from "@mui/material";
+import React from "react";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
-export function SearchUser() {
+export function SearchUser(list) {
 
-	const [infos, setInfos] = useState(
-		""
-	)
+    const filteredData = list.list.filter((el) => {
+        //if no input the return the original
+        if (list.input === '') {
+            return el;
+        }
+        //return the item which contains the user input
+        else {
+            return el.first_name.toLowerCase().includes(list.input) || el.last_name.toLowerCase().includes(list.input) || (el.first_name.toLowerCase()+" "+el.last_name.toLowerCase()).includes(list.input)
+        }
+    })
 
-	var listStaff = [
-		{
-            "id":1,
-			"firstName": "Mathys",
-			"lastName": "Aubert",
-			"email": "mathys.aubert@free.fr",
-            "role": "Gardien",
-		},
-		{
-            "id":2,
-			"firstName": "Joris",
-			"lastName": "Dubois",
-			"email": "joris.dubois@gmail.fr",
-            "role": "Agent d'entretien",
-		},
-	];
-
-	function GetSearch() {
-		var str;
-		var element = document.getElementById("searchbar");
-		if (element != null) {
-			str = element.value;
-		} else {
-			str = "";
-		}
-		
-		console.log(str);
-		useEffect(()=>{setInfos(str)});
-		
-	}
-
-	return (<div>
-            <div className="search-user">
-                <div><h1>Rechercher un utilisateur</h1></div>
-                <div className="search-box"><TextField
-				id="searchbar"
-				label="Rechercher..."
-				type="text"
-				name="searchbar"
-			    /></div>
-            </div>
-			
-            
-			<br/><br/>
-		</div>)
+	return (
+        <ul className="staff-list">
+            {filteredData.map((user) => (
+                <li>
+                    <div className="staff-infos">
+                        <div>
+                            <h3>{user.first_name} {user.last_name} - {user.email}</h3>
+                            <p>{user.role} - <Link to={`/${user.id}/spot`} style={{textDecoration:"none"}}>Place n°{user.spot}</Link> </p>
+                        </div>                       
+                    </div>
+                    <div className="button-schedule">
+                        <Link to={`/${user.id}/profile`} style={{textDecoration:"none"}}>
+                            <Button variant="contained" color="primary">Voir les informations de l'utilisateur</Button>
+                        </Link>
+                    </div>
+                </li>))}
+		</ul>
+    )
 }

@@ -1,8 +1,8 @@
 import React from "react";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export function StaffPreview(list, input) {
+export function StaffPreview(list) {
 
     const filteredData = list.list.filter((el) => {
         //if no input the return the original
@@ -11,7 +11,7 @@ export function StaffPreview(list, input) {
         }
         //return the item which contains the user input
         else {
-            return el.firstName.toLowerCase().includes(list.input) || el.lastName.toLowerCase().includes(list.input)
+            return el.first_name.toLowerCase().includes(list.input) || el.last_name.toLowerCase().includes(list.input) || (el.first_name.toLowerCase()+" "+el.last_name.toLowerCase()).includes(list.input)
         }
     })
 
@@ -33,22 +33,20 @@ export function StaffPreview(list, input) {
     }
 
 	return (
-        <ul id="staff-list">
+        <ul className="staff-list">
             {filteredData.map((staff) => (
                 <li>
-                    <div className="staff-list">	
-                        <div className="staff-infos">
-                            <div>
-                                <h3>{staff.firstName} {staff.lastName} - {staff.email}</h3>
-                                <p>{staff.role} - {Working(staff.id)}</p>
-                            </div>                       
-                        </div>
-                        
-                        <div className="button-schedule">
-                            <Link to={`/${staff.id}/schedule`} style={{textDecoration:"none"}}>
-                                <Button variant="contained" color="primary">Voir l'emploi du temps</Button>
-                            </Link>
-                        </div>
+                    <div className="staff-infos">
+                        <div>
+                            <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>
+                            <p>{staff.role} - {Working(staff.id)}</p>
+                        </div>                       
+                    </div>
+                    
+                    <div className="button-schedule">
+                        <Link to={`/${staff.id}/schedule`} style={{textDecoration:"none"}}>
+                            <Button variant="contained" color="primary">Voir l'emploi du temps</Button>
+                        </Link>
                     </div>
                 </li>))}
 		</ul>

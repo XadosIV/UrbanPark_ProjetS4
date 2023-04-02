@@ -1,47 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { StaffPreview } from "./staffpreview";
-import { Button, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
+import { TextField } from "@mui/material";
 
 export function StaffList() {
 
 	var listStaff = [
 		{
             "id":1,
-			"firstName": "Mathys",
-			"lastName": "Aubert",
+			"first_name": "Mathys",
+			"last_name": "Aubert",
 			"email": "mathys.aubert@free.fr",
             "role": "Gardien",
 		},
 		{
             "id":2,
-			"firstName": "Joris",
-			"lastName": "Dubois",
+			"first_name": "Joris",
+			"last_name": "Dubois",
 			"email": "joris.dubois@gmail.fr",
             "role": "Agent d'entretien",
 		},
 	];
 
-	const [inputText, setInputText] = useState("");
+	const [inputTextStaff, setInputTextStaff] = useState("");
 
 	let inputHandler = (e) => {
 		var lowerCase = e.target.value.toLowerCase();
-		setInputText(lowerCase);
+		setInputTextStaff(lowerCase);
 	};
 
-	return (<div>
-            <div className="">
-                <h1>Le personnel</h1>
-            </div>
+	return (<div className="StaffList">
+            <h1>Le personnel</h1>
 			
             <TextField
-				id="searchbar"
+				id="searchbarStaff"
 				label="Rechercher..."
 				type="text"
-				name="searchbar"
+				name="searchbarStaff"
 				onChange={inputHandler}
 			/>
 			<br/><br/>
-			<StaffPreview list={listStaff} input={inputText}/>
+			<StaffPreview list={listStaff} input={inputTextStaff}/>
 		</div>)
 }
