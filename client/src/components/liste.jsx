@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 /**
  * Components of a list of element wich uses a function on click (for the test period, use a list to be create)
