@@ -1,7 +1,15 @@
 import React, { useEffect } from "react";
 
+/**
+ * Components of a list of element wich uses a function on click (for the test period, use a list to be create)
+ * @param { React.Component } element
+ * @param { function } funct
+ * @param { list: element } list
+ * @return { Promise React.Component } Liste
+ */
 export function Liste(element, funct, list) {
 
+	
 	return (<div style={{display:"flex", flexWrap:"wrap", justifyContent:"center"}}>
 		<ul style={{minWidth:"60%", maxWidth:"100%"}}>
 			{

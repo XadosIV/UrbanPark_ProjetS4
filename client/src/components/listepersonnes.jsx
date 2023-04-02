@@ -1,21 +1,32 @@
 import React, { useEffect } from "react";
 import ReactDOM from 'react-dom';
-import { Liste, Personne } from "./";
+import { Liste, Personne } from ".";
 import { creaListPerson } from "../interface"
 
+/**
+ * Use the component List to create a liste of person according to the name of their role
+ * @param { String } nom
+ * @return { Promise React.Component }
+ */
 export function ListePersonnes(nom) {
 	const data = creaListPerson(nom)
 		.catch(console.error);
 
 	const list = [
 		{
-			"nom": "Muati",
-			"prenom": "paqui",
-			"statut": false,
+			"first_name":"Jean",
+			"name":"Dupond",
+			"email":"my.email@itsamail.com",
+			"id_place":1, // Can be null
+			"role":"Gardien",
+			"status": false,
 		},
 		{
-			"nom": "maquie",
-			"prenom": "poqui",
+			"name": "maquie",
+			"first_name": "poqui",
+			"email":"my.email@itsamail.com",
+			"id_place":null, // Can be null
+			"role":"Gardien",
 			"statut": true,
 		}
 	];
