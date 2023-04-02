@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { StaffPreview } from "./staffpreview";
 import { Button, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
 
-export function StaffList() {
+export function SearchUser() {
+
+	const [infos, setInfos] = useState(
+		""
+	)
 
 	var listStaff = [
 		{
@@ -22,26 +25,32 @@ export function StaffList() {
 		},
 	];
 
-	const [inputText, setInputText] = useState("");
-
-	let inputHandler = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputText(lowerCase);
-	};
+	function GetSearch() {
+		var str;
+		var element = document.getElementById("searchbar");
+		if (element != null) {
+			str = element.value;
+		} else {
+			str = "";
+		}
+		
+		console.log(str);
+		useEffect(()=>{setInfos(str)});
+		
+	}
 
 	return (<div>
-            <div className="">
-                <h1>Le personnel</h1>
-            </div>
-			
-            <TextField
+            <div className="search-user">
+                <div><h1>Rechercher un utilisateur</h1></div>
+                <div className="search-box"><TextField
 				id="searchbar"
 				label="Rechercher..."
 				type="text"
 				name="searchbar"
-				onChange={inputHandler}
-			/>
+			    /></div>
+            </div>
+			
+            
 			<br/><br/>
-			<StaffPreview list={listStaff} input={inputText}/>
 		</div>)
 }

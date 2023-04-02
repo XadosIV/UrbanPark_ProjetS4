@@ -1,5 +1,6 @@
 import React from "react";
 import { ParkingList } from "./parkinglist";
+import { Button } from "@mui/material";
 
 export function ParkingsStaff() {
 
@@ -39,5 +40,13 @@ export function ParkingsStaff() {
 					))
 				}
 			</div>
+			<div className="add-parking">
+				<Button variant="contained" color="primary" style={{
+						backgroundColor: "#FE434C",
+						borderColor: "transparent",
+						borderRadius: 20,
+						width: 250
+						}}>Ajouter un parking</Button>
+			</div>		
 		</div>)
 }

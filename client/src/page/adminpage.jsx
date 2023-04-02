@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import authAPI from "../services/authAPI";
-
-import { Button, TextField } from "@mui/material";
-import { ParkingsStaff, StaffList } from "../components";
+import { ParkingsStaff, StaffList, SearchUser } from "../components";
 
 export function AdminPage() {
 	const [infos, setInfos] = useState({
@@ -29,7 +27,9 @@ export function AdminPage() {
 
 	return(<div>
         <ParkingsStaff/>
-		<hr/>
+		<br/><br/><hr/>
 		<StaffList/>
+		<br/><br/><hr/>
+		<SearchUser/>
 	</div>)
 }
