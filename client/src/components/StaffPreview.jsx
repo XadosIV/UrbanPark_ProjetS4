@@ -4,21 +4,6 @@ import { Link } from "react-router-dom";
 
 export function StaffPreview(staff) {
     /**
-     * PrintRole
-     * Return a string to have a better signification of the role
-     * 
-     * @param role - The role you want to get a string of
-     * @returns String
-     */
-
-    function PrintRole(role){
-        if (role == "Nettoyage") {
-            role = "Service de nettoyage"
-        }
-        return role
-    }
-
-    /**
      * Working
      * Returns if the user who corresponds to the id is currently working or not 
      * If he is working, returns where he is working, else returns "Inactif"
@@ -41,7 +26,7 @@ export function StaffPreview(staff) {
             <div className="staff-infos">
                 <div>
                     <h3>{staff.staff.firstName} {staff.staff.lastName} - {staff.staff.email}</h3>
-                    <p>{PrintRole(staff.staff.role)} - {Working(staff.staff.id)}</p>
+                    <p>{staff.staff.role} - {Working(staff.staff.id)}</p>
                 </div>
                 
             </div>

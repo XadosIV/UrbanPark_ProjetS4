@@ -1,5 +1,5 @@
 import React from "react";
-import { Parking } from "./Parking";
+import { Parking } from "./parking";
 
 export function ParkingsAccueil() {
 

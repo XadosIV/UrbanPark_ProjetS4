@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StaffPreview } from "./StaffPreview";
+import { StaffPreview } from "./staffpreview";
 import { Button, TextField } from "@mui/material";
 
 export function StaffList() {
@@ -21,7 +21,7 @@ export function StaffList() {
 			"firstName": "Joris",
 			"lastName": "Dubois",
 			"email": "joris.dubois@gmail.fr",
-            "role": "Nettoyage",
+            "role": "Agent d'entretien",
 		},
 	];
 
