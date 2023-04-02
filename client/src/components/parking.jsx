@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ * Composent of a Parking
+ * @param { Parking } info
+ * @return { Promise React.Component }
+ */
 export function Parking(parking) {
 
 	return (
