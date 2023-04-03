@@ -1,0 +1,110 @@
+.button-parking {
+	display:flex;
+	flex-direction:column;
+	text-align:center;
+}
+
+.title-parkings {
+	color:red;
+	text-decoration: underline;
+	text-align:center;
+}
+
+.parking-list {
+	min-height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content:center;
+}
+
+.list-item {
+	display: flex;
+	flex-direction:row;
+	flex-basis: calc(42%);  
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	background-color: white;
+	border:solid;
+	border-color:gray;
+	border-radius: 20px;	
+	justify-content:space-between;
+	align-items:center;
+	box-shadow:5px 5px 5px gray;
+}
+
+.list-item p {
+	color:black;
+}
+
+.staff-list {
+	list-style-type:none;
+	list-style-position: inside;
+	margin:0;
+	padding:0;
+	max-height: 500px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.staff-list li {
+	display: flex;
+	flex-direction:row;
+	flex: auto;
+	background-color: white;
+	border:solid;
+	border-radius: 20px;
+	justify-content:space-between;	
+	align-items:center;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+}
+
+.staff-list li:hover {
+	background-color: gray;
+}
+
+.searchs {
+	display:flex;
+	flex-direction:row;
+	justify-content: space-between;
+	flex: 2 1 auto;
+}
+
+.StaffList {
+    display:flex;
+    flex-direction:column;
+	width:50%;
+	margin-right: 30px;
+}
+
+.UserList {
+    display:flex;
+    flex-direction:column;
+	width:50%;
+	margin-left: 30px;
+}
+
+.divider {
+    display:flex;
+    align-items:center;
+    margin:20px 0;
+}
+
+.divider::before, .divider::after {
+    content:'';
+    flex-grow:1;
+    height:2px;
+    background-color:#3f51b5;
+}
+
+.divider::before {
+    margin-right:1rem;
+}
+
+.divider::after {
+    margin-left:1rem;
+}
+
+

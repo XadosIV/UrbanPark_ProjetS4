@@ -40,13 +40,14 @@ export function ParkingsStaff() {
 					))
 				}
 			</div>
-			<div className="add-parking">
-				<Button variant="contained" color="primary" style={{
-						backgroundColor: "#FE434C",
-						borderColor: "transparent",
-						borderRadius: 20,
-						width: 250
-						}}>Ajouter un parking</Button>
-			</div>		
+			<Button variant="contained" color="primary" 
+			style={{
+				backgroundColor: "#FE434C",
+				borderColor: "transparent",
+				borderRadius: 20,
+				width: 250,
+				float:"right",
+				height:"120%"
+			}}>Ajouter un parking</Button>	
 		</div>)
 }
