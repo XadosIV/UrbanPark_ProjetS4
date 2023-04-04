@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -15,20 +16,32 @@ export function SearchUser(list) {
         }
     })
 
+    function toggleInfos () {
+		const element = (
+			<div>
+			  <h1>Bonjour, monde !</h1>
+			  <h2>Il est {new Date().toLocaleTimeString()}.</h2>
+			</div>
+		  );
+		  ReactDOM.render(element, document.getElementById('container'));
+	}
+
 	return (
-        <ul className="staff-list">
+        <ul className="user-list">
             {filteredData.map((user) => (
                 <li>
-                    <div className="staff-infos">
+                    <div className="main-content">
                         <div>
-                            <h3>{user.first_name} {user.last_name} - {user.email}</h3>
-                            <p>{user.role} - <Link to={`/${user.id}/spot`} style={{textDecoration:"none"}}>Place n°{user.spot}</Link> </p>
-                        </div>                       
+                            <div>
+                                <h3>{user.first_name} {user.last_name} - {user.email}</h3>
+                                <p>{user.role} - <Link to={`/${user.id}/spot`} style={{textDecoration:"none"}}>Place n°{user.spot}</Link> </p>
+                            </div>                       
+                        </div>
+                        <div>
+                            <Button variant="contained" color="primary" onClick={toggleInfos}>Voir les informations de l'utilisateur</Button>
+                        </div>
                     </div>
-                    <div className="button-schedule">
-                        <Link to={`/${user.id}/profile`} style={{textDecoration:"none"}}>
-                            <Button variant="contained" color="primary">Voir les informations de l'utilisateur</Button>
-                        </Link>
+                    <div id="container" className="infos-content">             
                     </div>
                 </li>))}
 		</ul>

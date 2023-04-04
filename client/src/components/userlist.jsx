@@ -72,9 +72,9 @@ export function UserList() {
 					borderRadius: 20,
 					fontSize:100,
 					color:"#3F51B5",
-					width: "90%",
+					width: "50%",
 					height:"20%",
-					margin:"75px 0",
+					margin:"75px",
 					alignSelf:"center",
 				}}>+</Button>
 			</div>)

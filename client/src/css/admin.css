@@ -51,17 +51,49 @@
 	display: flex;
 	flex-direction:row;
 	flex: auto;
-	background-color: white;
 	border:solid;
 	border-radius: 20px;
-	justify-content:space-between;	
-	align-items:center;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
+	justify-content:space-between;	
+	align-items:center;
+	background-color: white;
 }
 
 .staff-list li:hover {
+	background-color: gray;
+}
+
+.user-list {
+	list-style-type:none;
+	list-style-position: inside;
+	margin:0;
+	padding:0;
+	max-height: 500px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.main-content, .infos-content {
+	display: flex;
+	flex-direction:row;
+	flex: auto;
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	justify-content:space-between;	
+	align-items:center;
+	background-color: white;
+}
+
+.infos-content {
+	margin: -22px 1rem 1rem;
+}
+
+.main-content:hover, .main-content:hover+.infos-content, .infos-content:hover+.main-content, .infos-content:hover {
 	background-color: gray;
 }
 
