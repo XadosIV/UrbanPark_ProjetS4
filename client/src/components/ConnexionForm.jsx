@@ -17,7 +17,7 @@ export function ConnexionForm(props) {
 		event.preventDefault();
 		console.log(infos);
 		if(infos.password === "password"){
-			navigate("/");
+			navigate("/", {state: {auth: true}});
 		}
 	}
 
@@ -42,7 +42,11 @@ export function ConnexionForm(props) {
 				onChange={handleChange}
 			/>
 			</div>
-			<Button variant="contained" color="primary" type="submit">connexion</Button>
+			<Button 
+				variant="contained" 
+				color="primary" 
+				type="submit"
+			>connexion</Button>
 		</form>
 	</div>)
 }

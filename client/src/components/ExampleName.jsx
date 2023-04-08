@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 // interface personne {
 //     name: string;
 //     age: number;

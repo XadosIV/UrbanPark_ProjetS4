@@ -20,15 +20,19 @@ export function AuthentificationForm() {
 		<form onSubmit={handlleSubmit}>
 			<div>
 				<TextField
-				required
-				id="authentification"
-				label="mail"
-				type="text"
-				name="authentification"
-				onChange={(e) => setMail(e.target.value)}
+					required
+					id="authentification"
+					label="mail"
+					type="text"
+					name="authentification"
+					onChange={(e) => setMail(e.target.value)}
 				/>
 			</div>
-			<Button variant="contained" color="primary" type="submit">Login</Button>
+			<Button 
+				variant="contained" 
+				color="primary" 
+				type="submit"
+			>Login</Button>
 		</form>
 	</div>)
 }
