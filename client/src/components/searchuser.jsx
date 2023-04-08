@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from 'react-dom';
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -16,16 +15,6 @@ export function SearchUser(list) {
         }
     })
 
-    function toggleInfos () {
-		const element = (
-			<div>
-			  <h1>Bonjour, monde !</h1>
-			  <h2>Il est {new Date().toLocaleTimeString()}.</h2>
-			</div>
-		  );
-		  ReactDOM.render(element, document.getElementById('container'));
-	}
-
 	return (
         <ul className="user-list">
             {filteredData.map((user) => (
@@ -38,11 +27,9 @@ export function SearchUser(list) {
                             </div>                       
                         </div>
                         <div>
-                            <Button variant="contained" color="primary" onClick={toggleInfos}>Voir les informations de l'utilisateur</Button>
+                            <Button variant="contained" color="primary">Voir les informations de l'utilisateur</Button>
                         </div>
-                    </div>
-                    <div id="container" className="infos-content">             
-                    </div>
+                    </div>           
                 </li>))}
 		</ul>
     )

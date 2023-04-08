@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SearchUser } from "./searchuser";
-import { TextField, Button } from "@mui/material";
+import { Separation } from "./separation";
+import { TextField } from "@mui/material";
 
 export function UserList() {
 
@@ -51,8 +52,8 @@ export function UserList() {
 			setInputTextUsers(lowerCase);
 		};
 	
-		return (<div className="UserList">
-				<div className="divider">Les utilisateurs</div>
+		return (<div>
+				<Separation value="Les utilisateurs"/>
 				
 				<TextField
 					style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
@@ -63,19 +64,5 @@ export function UserList() {
 					onChange={inputHandlerUsers}
 				/>
 				<SearchUser list={listUsers} input={inputTextUsers}/>
-
-				<div className="divider">Ajouter un role</div>
-				<Button classvariant="contained" color="primary"
-				style={{
-					backgroundColor: "#FE434C",
-					borderColor: "transparent",
-					borderRadius: 20,
-					fontSize:100,
-					color:"#3F51B5",
-					width: "50%",
-					height:"20%",
-					margin:"75px",
-					alignSelf:"center",
-				}}>+</Button>
 			</div>)
 }

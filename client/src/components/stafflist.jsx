@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { StaffPreview } from "./staffpreview";
+import { Separation } from "./separation";
 import { TextField, Button } from "@mui/material";
 
 export function StaffList() {
@@ -92,7 +93,7 @@ export function StaffList() {
 	};
 
 	return (<div className="StaffList">
-			<div className="divider">Les gardiens</div>
+			<Separation value="Les gardiens"/>
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
@@ -103,7 +104,7 @@ export function StaffList() {
 				onChange={inputHandlerGuardians}
 			/>
 			<StaffPreview list={listGuardians} input={inputTextGuadrians}/>
-			<div className="divider">Les agents d'entretien</div>
+			<Separation value="Les agents d'entretien"/>
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}

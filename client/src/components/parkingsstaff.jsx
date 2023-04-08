@@ -26,6 +26,13 @@ export function ParkingsStaff() {
 			"nbPlaceTot": 2,
             "floors":7,
             "address": "7 allée des allobroges 73470 Novalaise",
+		}	,
+		{
+			"name": "parking4",
+			"nbPlaceLibre": 2,
+			"nbPlaceTot": 78,
+            "floors":45,
+            "address": "7 allée des ahahaha 45780 Saint-Jean sur Terre",
 		}		
 	];
 
