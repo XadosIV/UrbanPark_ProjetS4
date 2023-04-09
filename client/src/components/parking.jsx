@@ -5,6 +5,7 @@ import React from "react";
  * @param { Parking } info
  * @return { Promise React.Component }
  */
+
 export function Parking(parking) {
 
 	return (
@@ -13,3 +14,4 @@ export function Parking(parking) {
 			<p>{parking.parking.nbPlaceLibre} / {parking.parking.nbPlaceTot}</p>
 		</div>)
 }
+

@@ -8,3 +8,4 @@ export function EndPage () {
 		</div>
 	)
 }
+

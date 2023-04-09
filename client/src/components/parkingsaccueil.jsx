@@ -5,6 +5,7 @@ import { Parking } from "./parking";
  * Create a carroussel of Parking for the home page
  * @return { Promise React.Component }
  */
+
 export function ParkingsAccueil() {
 
 	const listParkings = [

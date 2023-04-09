@@ -6,6 +6,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: large;
+	background-color:#F0FFFF;
 }
 
 code {
@@ -49,3 +50,4 @@ code {
 	right: 0px;
 	bottom: 0px;
 }
+
