@@ -1,12 +1,10 @@
 import axios from "axios"
 
-function takeAll(){
+function TakeAllUsers(){
 	const url = process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/users";
-	console.log(url)
-	return axios.post(url)
-	.then(res => console.log(res))
+	return axios.get(url).then((res) => res.data)
 }
 
 export default {
-	takeAll
+	TakeAllUsers
 };

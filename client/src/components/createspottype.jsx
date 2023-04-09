@@ -1,28 +1,22 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Button } from "@mui/material";
+import { TakeAllSpotTypes } from "../services/takeallspottypes"
 
 export function CreateSpotType() {
 
-    const categories = ["all", "recette", "video", "article"];  
-  
-    const listType = [  
-    {
-        name:"Handicape"
-    },  
-    {
-        name:"Municipal" 
-    },  
-    {
-        name:"Electrique"  
-    },  
-    {
-        name:"Urgence"
-    },  
-    {
-        name:"Abonne" 
-    },  
-    ];  
+    const [spotTypes, setSpotTypes] = useState([]);
+
+    useEffect(() => {
+        TakeAllSpotTypes().then(res => setSpotTypes(res));
+    }, []);
+
+    /*const [spotTypes, setSpotTypes] = useState([]);
+
+	useEffect(() => {
+		axios.get("http://localhost:3001/api/spottypes").then((res) => 
+        setSpotTypes(res.data)
+		)}, []);*/
 
   return (
     <Dropdown className="dropdown">
@@ -31,7 +25,7 @@ export function CreateSpotType() {
     </Dropdown.Toggle>
 
     <Dropdown.Menu className="dropdown-content">
-        {listType.map((type) => (<Dropdown.Item href="#/action-1" style={{textAlign:"center"}}>{type.name}</Dropdown.Item>))}
+        {spotTypes.map((type) => (<Dropdown.Item href="#/action-1" style={{textAlign:"center"}}>{type.name}</Dropdown.Item>))}
         <Button variant="contained" color="primary" 
 			style={{
 				backgroundColor: "#FE434C",
