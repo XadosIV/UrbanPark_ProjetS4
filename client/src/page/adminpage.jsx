@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import authAPI from "../services/authAPI";
+import React from "react";
 import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType } from "../components";
 import { Button } from "@mui/material";
 import "../css/admin.css"
