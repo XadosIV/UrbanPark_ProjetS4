@@ -14,7 +14,7 @@ export function AdminPage() {
 		<br/><br/><hr/>
 		<div className="searchs">
 			<StaffList/>
-			<div className="UserList">
+			<div>
 				<UserList/>
 				<Separation value="Ajouter un rôle"/>
 				<Button classvariant="contained" color="primary"

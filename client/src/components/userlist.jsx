@@ -52,11 +52,11 @@ export function UserList() {
 			setInputTextUsers(lowerCase);
 		};
 	
-		return (<div>
+		return (<div className="UserList">
 				<Separation value="Les utilisateurs"/>
 				
 				<TextField
-					style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
+					style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
 					id="searchbarUser"
 					label="Rechercher..."
 					type="text"

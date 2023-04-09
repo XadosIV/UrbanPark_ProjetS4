@@ -99,7 +99,7 @@
 	justify-content: space-between;
 }
 
-.StaffList {
+.StaffList, .UserList {
     display:flex;
     flex-direction:column;
 	width:50%;
@@ -107,10 +107,7 @@
 }
 
 .UserList {
-    display:flex;
-    flex-direction:column;
-	width:50%;
-	margin-left: 30px;
+	width:100%;
 }
 
 .divider {
