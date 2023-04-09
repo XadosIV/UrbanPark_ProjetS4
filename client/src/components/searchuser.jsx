@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { PlaceNumber } from "./placenumber";
+import { Link } from "react-router-dom";
 
 export function SearchUser(list) {
 
@@ -15,15 +15,6 @@ export function SearchUser(list) {
         }
     })
 
-    function hasPlace(user) {
-        console.log(user)
-        if (user.id_spot != null) {
-            return (<p style={{display: "inline"}}>- <PlaceNumber user={user}/></p>)
-        } else {
-            return ""
-        }
-    }
-
 	return (
         <ul className="user-list">
             {filteredData.map((user) => (
@@ -32,7 +23,7 @@ export function SearchUser(list) {
                         <div>
                             <div>
                                 <h3>{user.first_name} {user.last_name} - {user.email}</h3>
-                                <p>{user.role} {hasPlace(user)} </p>
+                                <p>{user.role} - <Link to={`/${user.id}/spot`} style={{textDecoration:"none"}}>Place n°{user.spot}</Link> </p>
                             </div>                       
                         </div>
                         <div>

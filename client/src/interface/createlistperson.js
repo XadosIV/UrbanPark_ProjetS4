@@ -1,4 +1,4 @@
-import listPerson from "../services/takeallusers"
+import listPerson from "../services/listPerson"
 
 /**
  * Create a list of person according to the name of their role (gardien, agent de nettoyage, utilisateur)

@@ -1,24 +1,82 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { StaffPreview } from "./staffpreview";
 import { Separation } from "./separation";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 
 export function StaffList() {
 
-	const [guardiansList, setGuardiansList] = useState([]);
+	var listGuardians = [
+		{
+            "id":1,
+			"first_name": "Mathys",
+			"last_name": "Aubert",
+			"email": "mathys.aubert@free.fr",
+            "role": "Gardien",
+		},
+		{
+            "id":2,
+			"first_name": "Joris",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Gardien",
+		},
+		{
+            "id":2,
+			"first_name": "Joris",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Gardien",
+		},
+		{
+            "id":2,
+			"first_name": "Joris",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Gardien",
+		},
+		{
+            "id":2,
+			"first_name": "Joris",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Gardien",
+		},
+	];
 
-	useEffect(() => {
-		axios.get("http://localhost:3001/api/guardians").then((res) => 
-			setGuardiansList(res.data)
-		)}, []);
-
-	const [serviceList, setServiceList] = useState([]);
-
-	useEffect(() => {
-		axios.get("http://localhost:3001/api/service").then((res) => 
-			setServiceList(res.data)
-		)}, []);
+	var listService = [
+		{
+            "id":4,
+			"first_name": "JP",
+			"last_name": "Aubert",
+			"email": "mathys.aubert@free.fr",
+            "role": "Agent d'entretien",
+		},
+		{
+            "id":7,
+			"first_name": "Aha",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Agent d'entretien",
+		},{
+            "id":7,
+			"first_name": "Aha",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Agent d'entretien",
+		},{
+            "id":7,
+			"first_name": "Aha",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Agent d'entretien",
+		},{
+            "id":7,
+			"first_name": "Aha",
+			"last_name": "Dubois",
+			"email": "joris.dubois@gmail.fr",
+            "role": "Agent d'entretien",
+		},
+	];
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
 
@@ -45,7 +103,7 @@ export function StaffList() {
 				name="searchbarStaff"
 				onChange={inputHandlerGuardians}
 			/>
-			<StaffPreview list={guardiansList} input={inputTextGuadrians}/>
+			<StaffPreview list={listGuardians} input={inputTextGuadrians}/>
 			<Separation value="Les agents d'entretien"/>
 			
 			<TextField
@@ -56,6 +114,6 @@ export function StaffList() {
 				name="searchbarStaff"
 				onChange={inputHandlerService}
 			/>
-			<StaffPreview list={serviceList} input={inputTextService}/>
+			<StaffPreview list={listService} input={inputTextService}/>
 		</div>)
 }

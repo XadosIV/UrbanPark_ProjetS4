@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import authAPI from "../services/authAPI";
 import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType } from "../components";
 import { Button } from "@mui/material";
 import "../css/admin.css"
@@ -6,14 +7,14 @@ import "../css/admin.css"
 export function AdminPage() {
 
 	return(<div>
-		<div style={{minWidth:"50%"}}>
+		<div>
 			<ParkingsStaff/>
 			<CreateSpotType/>
 		</div>
 		<br/><br/><hr/>
 		<div className="searchs">
 			<StaffList/>
-			<div style={{minWidth:"50%"}}>
+			<div>
 				<UserList/>
 				<Separation value="Ajouter un rôle"/>
 				<Button classvariant="contained" color="primary"
@@ -30,5 +31,6 @@ export function AdminPage() {
 				}}>+</Button>
 			</div>
 		</div>
+		<br/><br/><hr/>
 	</div>)
 }

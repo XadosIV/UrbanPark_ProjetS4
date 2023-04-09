@@ -10,7 +10,7 @@ require('dotenv').config();
  * @param {function(*,*)} callback (err, data)
  * @param {string} email
  */
-function GetUsers(callback, email="%"){
+function GetUsers(callback, email="*"){
 	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE email LIKE "${email}";`, callback);
 }
 
