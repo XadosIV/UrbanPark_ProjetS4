@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Button } from "@mui/material";
-import { TakeAllSpotTypes } from "../services/takeallspottypes"
+import TAST from "../services/takeallspottypes"
 
 export function CreateSpotType() {
 
-    const [spotTypes, setSpotTypes] = useState([]);
+    /*const [spotTypes, setSpotTypes] = useState([]);
 
     useEffect(() => {
-        TakeAllSpotTypes().then(res => setSpotTypes(res));
-    }, []);
+        TAST.TakeAllSpotTypes().then(res => {setSpotTypes(res);});
+    }, []);*/
 
-    /*const [spotTypes, setSpotTypes] = useState([]);
+    const [spotTypes, setSpotTypes] = useState([]);
 
 	useEffect(() => {
 		axios.get("http://localhost:3001/api/spottypes").then((res) => 
         setSpotTypes(res.data)
-		)}, []);*/
+		)}, []);
 
   return (
     <Dropdown className="dropdown">
