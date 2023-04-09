@@ -1,3 +1,6 @@
+
+export * from "./authentification"
+export * from "./inscription"
 export * from "./notfoundpage"
 export * from "./test"
 export * from "./connexion"

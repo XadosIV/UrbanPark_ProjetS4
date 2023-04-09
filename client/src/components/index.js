@@ -1,3 +1,7 @@
+export * from "./authentificationform"
+export * from "./connexionform"
+export * from "./inscriptionform"
+export * from "./goback"
 export * from "./examplename"
 export * from "./parkingsaccueil"
 export * from "./parkingsstaff"

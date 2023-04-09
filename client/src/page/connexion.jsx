@@ -1,50 +1,13 @@
-import React, { useState } from "react";
-import authAPI from "../services/authAPI";
-
-import { Button, TextField } from "@mui/material";
+import React from "react";
+import { useLocation } from "react-router-dom";
+import { ConnexionForm, Goback } from "../components";
 
 export function Connexion() {
-	const [infos, setInfos] = useState({
-		identifier: "",
-		password:""
-	})
-
-	const handleChange = ({currentTarget}) => {
-		const {value, name} = currentTarget;
-		setInfos({
-			...infos,
-			[name]: value
-		})
-	}
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-		try{
-			await authAPI.authenticate(infos)
-		} catch(error){
-			console.log(error)
-		}
-	}
+	const { state } = useLocation();
 
 	return(<div>
-		<form onSubmit={handleSubmit}>
-			<div>
-				<TextField
-				id="identifier"
-				label="Username"
-				type="text"
-				name="identifier"
-				onChange={handleChange}
-				/>
-				<TextField
-				id="password"
-				label="Password"
-				type="text"
-				name="password"
-				onChange={handleChange}
-				/>
-			</div>
-			<Button variant="contained" color="primary" type="submit">Login</Button>
-		</form>
+		<Goback />
+		<h1>Connexion</h1>
+        <ConnexionForm mail={state.mail}/>
 	</div>)
 }
