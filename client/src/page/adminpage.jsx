@@ -26,7 +26,7 @@ export function AdminPage() {
 					color:"#3F51B5",
 					width: "50%",
 					height:"20%",
-					margin:"75px",
+					margin:"50px 25%",
 					alignSelf:"center",
 				}}>+</Button>
 			</div>
