@@ -3,6 +3,7 @@ const app = express();
 const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
 const {GetGuardians, GetService} = require('./db_access/staff');
+const {GetSpotTypes} = require('./db_access/spottypes');
 const Errors = require('./errors');
 
 // Default headers
@@ -76,6 +77,16 @@ app.get('/api/guardians', (req, res) => {
 
 app.get('/api/service', (req, res) => {
 	GetService((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/spottypes', (req, res) => {
+	GetSpotTypes((err, data) => {
 		if (err){
 			throw err;
 		}else{
