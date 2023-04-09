@@ -7,14 +7,14 @@ import "../css/admin.css"
 export function AdminPage() {
 
 	return(<div>
-		<div>
+		<div style={{minWidth:"50%"}}>
 			<ParkingsStaff/>
 			<CreateSpotType/>
 		</div>
 		<br/><br/><hr/>
 		<div className="searchs">
 			<StaffList/>
-			<div>
+			<div style={{minWidth:"50%"}}>
 				<UserList/>
 				<Separation value="Ajouter un rôle"/>
 				<Button classvariant="contained" color="primary"
@@ -31,6 +31,5 @@ export function AdminPage() {
 				}}>+</Button>
 			</div>
 		</div>
-		<br/><br/><hr/>
 	</div>)
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
+const {GetGuardians, GetService} = require('./db_access/staff');
 const Errors = require('./errors');
 
 // Default headers
@@ -55,6 +56,26 @@ app.post('/api/user', (req, res) => {
 
 app.get('/api/parkings', (req, res) => {
 	GetParkings((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/guardians', (req, res) => {
+	GetGuardians((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/service', (req, res) => {
+	GetService((err, data) => {
 		if (err){
 			throw err;
 		}else{
