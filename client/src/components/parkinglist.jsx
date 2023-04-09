@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
-import { CutAddress } from "../cutaddress.js";
-import { NeedS } from "../needs.js";
+import { CutAddress } from "../interface/cutaddress.js";
+import { NeedS } from "../interface/needs.js";
 
 export function ParkingList(parking) {
     var address = CutAddress(parking.parking.address);
