@@ -16,7 +16,7 @@
 {
 	"id":1,
 	"first_name":"Jean",
-	"name":"Dupond",
+	"last_name":"Dupond",
 	"email":"my.email@itsamail.com",
 	"id_place":1, // Can be null
 	"role":"Abonné"
@@ -97,6 +97,14 @@
 	"delete_other_users":false
 }
 ```
+
+## Errors
+
+```json
+{
+	"code":"E_EXAMPLE",
+	"message":"Le code est une chaine de caractères ayant une correspondance dans errors.js. Le message doit être compréhensible par un humain !"
+}
 
 # Endpoints
 

@@ -8,7 +8,7 @@ require('dotenv').config();
  * @returns Array
  */
 function GetParkings(callback){
-	dbConnection.query("SELECT * FROM `"+process.env.DATABASE+"`.`Parking`", callback);
+	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.Parking;`, callback);
 }
 
 module.exports = {GetParkings};

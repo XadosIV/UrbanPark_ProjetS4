@@ -1,5 +1,10 @@
 import React from "react";
-import { Parking } from "./Parking";
+import { Parking } from "./parking";
+
+/**
+ * Create a carroussel of Parking for the home page
+ * @return { Promise React.Component }
+ */
 
 export function ParkingsAccueil() {
 

@@ -1,6 +1,10 @@
-export * from "./NotFoundPage"
-export * from "./Test"
-export * from "./Authentification"
-export * from "./HomePage"
-export * from "./Connexion"
-export * from "./Inscription"
+
+export * from "./authentification"
+export * from "./inscription"
+export * from "./notfoundpage"
+export * from "./test"
+export * from "./connexion"
+export * from "./homepage"
+export * from "./adminpage"
+export * from "./listeplanningsgardiens"
+

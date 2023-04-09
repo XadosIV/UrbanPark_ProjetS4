@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
-const {GetUsers} = require('./db_access/user');
+const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
+const {GetGuardians, GetService} = require('./db_access/staff');
+const {GetSpotTypes} = require('./db_access/spottypes');
+const Errors = require('./errors');
 
 // Default headers
 app.use((req, res, next) => {
@@ -10,6 +13,8 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 	next();
 });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
@@ -18,11 +23,76 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/api/users', (req, res) => {
-	GetUsers((err, data) => {res.status(200).json(data)});
+	GetUsers((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.post('/api/user', (req, res) => {
+	console.log("REQUEST : " + req);
+	if (req.body && req.body.first_name && req.body.last_name && req.body.email && req.body.password){
+		PostUser(req.body.first_name, req.body.last_name, req.body.email, req.body.password, (err, data) => {
+			if (err){
+				if (err.code == Errors.E_EMAIL_ALREADY_USED){
+					res.status(400).json({"code":err.code,"message":"Email déjà utilisé"});
+				}else if (err.code == Errors.E_EMAIL_FORMAT_INVALID){
+					res.status(400).json({"code":err.code,"message":"Le format de l'email n'est pas conforme"});
+				}else if (err.code == Errors.E_PASSWORD_FORMAT_INVALID){
+					res.status(400).json({"code":err.code,"message":"Le mot de passe doit contenir au moins 8 caractères dont une minuscule, une majuscule, un chiffre et un charactère spécial"})
+				}else{
+					throw err;
+				}
+			}else{
+				res.status(201).json();
+			}
+		});
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : first_name, last_name, email, password"});
+	}
 });
 
 app.get('/api/parkings', (req, res) => {
-	GetParkings((err, data) => {res.status(200).json(data)});
+	GetParkings((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/guardians', (req, res) => {
+	GetGuardians((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/service', (req, res) => {
+	GetService((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
+});
+
+app.get('/api/spottypes', (req, res) => {
+	GetSpotTypes((err, data) => {
+		if (err){
+			throw err;
+		}else{
+			res.status(200).json(data);
+		}
+	});
 });
 
 module.exports = app;
