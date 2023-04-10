@@ -15,7 +15,7 @@ export function StaffList() {
 	}, []);
 
 	useEffect(() => {
-		CreateListPerson("Agent%20d%27entretien").then(res => {setServiceList(res);})
+		CreateListPerson("Agent d'entretien").then(res => {setServiceList(res);})
 	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
