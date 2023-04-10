@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
-import TAU from "../services/take_all_users";
+import { CreateListPerson } from "../interface";
 import { InputHandler } from "../interface"
 
 export function UserList() {
@@ -10,7 +10,7 @@ export function UserList() {
 	const [usersList, setUsersList] = useState([]);
 
 	useEffect(() => {
-		TAU.TakeAllUsers().then(res => {setUsersList(res);})
+		CreateListPerson().then(res => {setUsersList(res);})
 	}, []);
 
 	const [inputTextUsers, setInputTextUsers] = useState("");
