@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { SearchUser } from "./searchuser";
+import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 

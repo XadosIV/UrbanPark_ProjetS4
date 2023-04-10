@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Button } from "@mui/material";
-import TAST from "../services/takeallspottypes"
+import TAST from "../services/take_all_spot_types"
 
 export function CreateSpotType() {
 

@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Goback(){
+export function GoBack(){
     const navigate = useNavigate();
 
     const retour = () => {

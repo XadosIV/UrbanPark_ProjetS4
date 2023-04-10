@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import { Liste, Personne } from ".";
+import { List, User } from ".";
 import { creaListPerson } from "../interface"
 
 /**
@@ -8,7 +8,7 @@ import { creaListPerson } from "../interface"
  * @param { String } nom
  * @return { Promise React.Component }
  */
-export function ListePersonnes(nom) {
+export function ListUsers(nom) {
 	const data = creaListPerson(nom)
 		.catch(console.error);
 
@@ -42,6 +42,6 @@ export function ListePersonnes(nom) {
 	}
 
 	return (
-		Liste(Personne, affichePlanning, list)
+		List(User, affichePlanning, list)
 	)
 }

@@ -3,7 +3,7 @@ const app = express();
 const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
 const {GetGuardians, GetService} = require('./db_access/staff');
-const {GetSpotTypes} = require('./db_access/spottypes');
+const {GetSpotTypes} = require('./db_access/spot_types');
 const Errors = require('./errors');
 
 // Default headers

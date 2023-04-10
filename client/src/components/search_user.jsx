@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { PlaceNumber } from "./placenumber";
+import { PlaceNumber } from "./place_number";
 
 export function SearchUser(list) {
 
@@ -16,7 +16,6 @@ export function SearchUser(list) {
     })
 
     function hasPlace(user) {
-        console.log(user)
         if (user.id_spot != null) {
             return (<p style={{display: "inline"}}>- <PlaceNumber user={user}/></p>)
         } else {

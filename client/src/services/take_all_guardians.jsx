@@ -1,7 +1,7 @@
 import axios from "axios"
 
 function TakeAllGuardians(){
-	const url = process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/guardians";
+	const url = process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/users";
 	return axios.post(url).then(res => console.log(res))
 }
 

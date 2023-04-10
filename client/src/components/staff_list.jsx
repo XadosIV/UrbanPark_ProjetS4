@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { StaffPreview } from "./staffpreview";
+import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 
@@ -9,14 +9,14 @@ export function StaffList() {
 	const [guardiansList, setGuardiansList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/guardians").then((res) => 
+		axios.get("http://localhost:3001/api/users").then((res) => 
 			setGuardiansList(res.data)
 		)}, []);
 
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/service").then((res) => 
+		axios.get("http://localhost:3001/api/users").then((res) => 
 			setServiceList(res.data)
 		)}, []);
 

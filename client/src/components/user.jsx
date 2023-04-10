@@ -5,7 +5,7 @@ import React from "react";
  * @param { User } info
  * @return { Promise React.Component }
  */
-export function Personne(info){
+export function User(info){
 
 	const pers = info
 

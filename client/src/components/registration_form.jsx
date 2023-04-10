@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 
-export function InscriptionForm(props) {
+export function RegistrationForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail});
 
 	const handlleSubmit = (event) => {

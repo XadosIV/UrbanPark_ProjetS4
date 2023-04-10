@@ -7,7 +7,7 @@ import React from "react";
  * @param { list: element } list
  * @return { Promise React.Component } Liste
  */
-export function Liste(element, funct, list) {
+export function List(element, funct, list) {
 
 	
 	return (<div style={{display:"flex", flexWrap:"wrap", justifyContent:"center"}}>

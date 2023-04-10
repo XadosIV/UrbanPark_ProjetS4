@@ -1,4 +1,4 @@
-import reportWebVitals from './reportwebvitals';
+import reportWebVitals from './report_web_vitals';
 import React,{StrictMode} from 'react';
 import './index.css';
 import {App} from "./app";
