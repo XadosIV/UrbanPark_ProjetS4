@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 
-export function ConnexionForm(props) {
+export function ConnectionForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail, password: ""})
 	const navigate = useNavigate();
 
