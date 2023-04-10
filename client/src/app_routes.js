@@ -8,11 +8,11 @@ export function AppRoutes() {
 		<Routes>
 			<Route path="/" element={<HomePage />} />
 			<Route path="/test" element={<Test />} />
-			<Route path="/authentification" element={<Authentication />} />
+			<Route path="/authentication" element={<Authentication />} />
 			<Route path="/admin" element={<AdminPage />} />
-			<Route path="/guardiansListSchedule" element={<GuardiansListSchedule />} />
+			<Route path="/guardians-list-schedule" element={<GuardiansListSchedule />} />
 			<Route path="/connexion" element={<Connexion />} />
-			<Route path="/inscription" element={<Registration />} />
+			<Route path="/registration" element={<Registration />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	)
