@@ -66,7 +66,7 @@ app.get('/api/parkings', (req, res) => {
 	});
 });
 
-app.get('/api/spottypes', (req, res) => {
+app.get('/api/spot-types', (req, res) => {
 	GetSpotTypes((err, data) => {
 		if (err){
 			throw err;

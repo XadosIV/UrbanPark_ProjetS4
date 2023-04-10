@@ -5,11 +5,11 @@ import listPerson from "../services/take_all_users"
  * @param { String } nom
  * @return { Promise list of User }
  */
-const creaListPerson = async (nom) => {
+const CreaListPerson = async (nom) => {
 	const data = await listPerson.takeAll(nom);
 	return data
   }
 
 export {
-	creaListPerson
+	CreaListPerson
 }

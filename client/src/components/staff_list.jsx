@@ -1,38 +1,26 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
+import TAS from "../services/take_all_service";
+import TAG from "../services/take_all_guardians";
+import { InputHandler } from "../interface"
 
 export function StaffList() {
 
 	const [guardiansList, setGuardiansList] = useState([]);
-
-	useEffect(() => {
-		axios.get("http://localhost:3001/api/users?role=gardien").then((res) => 
-			setGuardiansList(res.data)
-		)}, []);
-
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/users?role=Agent%20d%27entretien").then((res) => 
-			setServiceList(res.data)
-		)}, []);
+		TAG.TakeAllGuardians().then(res => {setGuardiansList(res);})
+	}, []);
+
+	useEffect(() => {
+		TAS.TakeAllService().then(res => {setServiceList(res);})
+	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
-
-	let inputHandlerGuardians = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputTextGuardians(lowerCase);
-	};
-
 	const [inputTextService, setInputTextService] = useState("");
-
-	let inputHandlerService = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputTextService(lowerCase);
-	};
 
 	return (<div className="StaffList">
 			<Separation value="Les gardiens"/>
@@ -43,7 +31,7 @@ export function StaffList() {
 				label="Rechercher..."
 				type="text"
 				name="searchbarStaff"
-				onChange={inputHandlerGuardians}
+				onChange={InputHandler(setInputTextGuardians)}
 			/>
 			<StaffPreview list={guardiansList} input={inputTextGuadrians}/>
 			<Separation value="Les agents d'entretien"/>
@@ -54,7 +42,7 @@ export function StaffList() {
 				label="Rechercher..."
 				type="text"
 				name="searchbarStaff"
-				onChange={inputHandlerService}
+				onChange={InputHandler(setInputTextService)}
 			/>
 			<StaffPreview list={serviceList} input={inputTextService}/>
 		</div>)
