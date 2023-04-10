@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Composent of a User
+ * Component of a User
  * @param { User } info
  * @return { Promise React.Component }
  */
