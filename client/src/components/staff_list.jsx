@@ -9,14 +9,14 @@ export function StaffList() {
 	const [guardiansList, setGuardiansList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/users").then((res) => 
+		axios.get("http://localhost:3001/api/users?role=gardien").then((res) => 
 			setGuardiansList(res.data)
 		)}, []);
 
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/users").then((res) => 
+		axios.get("http://localhost:3001/api/users?role=Agent%20d%27entretien").then((res) => 
 			setServiceList(res.data)
 		)}, []);
 

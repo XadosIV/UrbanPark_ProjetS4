@@ -17,7 +17,7 @@ export function CreateSpotType() {
 	useEffect(() => {
 		axios.get("http://localhost:3001/api/spottypes").then((res) => 
         setSpotTypes(res.data)
-		)}, []);
+	)}, []);
 
   return (
     <Dropdown className="dropdown">

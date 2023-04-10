@@ -22,7 +22,7 @@ function SetQuery(infos){
 			ajoutMail = " email LIKE '" + infos.email + "%' "
 		}
 		if (infos.role){
-			ajoutRole = " role = '" + infos.role + "' "
+			ajoutRole = ' role = "' + infos.role + '" '
 		}
 		if (infos.last_name){
 			ajoutLast = " last_name LIKE '" + infos.last_name + "%' "
@@ -71,7 +71,7 @@ function GetUsers(callback, infos){
 	sql = `SELECT * FROM ${process.env.DATABASE}.User `;
 	quest = SetQuery(infos);
 	console.log(sql+quest);
-	dbConnection.query(sql, callback);
+	dbConnection.query(sql+quest, callback);
 }
 
 /**
