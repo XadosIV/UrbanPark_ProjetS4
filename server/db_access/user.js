@@ -4,14 +4,74 @@ const Errors = require('../errors');
 require('dotenv').config();
 
 /**
+ * SetQuery
+ * Set all the parameters for the research of users
+ * 
+ * @param {JSON} infos
+ * 
+ * @returns {string}
+ */
+function SetQuery(infos){
+	if (infos){
+		ajoutMail = null;
+		ajoutFirst = null;
+		ajoutRole = null;
+		ajoutLast = null;
+		if (infos.email)
+		{
+			ajoutMail = " email LIKE '" + infos.email + "%' "
+		}
+		if (infos.role){
+			ajoutRole = " role = '" + infos.role + "' "
+		}
+		if (infos.last_name){
+			ajoutLast = " last_name LIKE '" + infos.last_name + "%' "
+		}
+		if (infos.first_name){
+			ajoutFirst = " first_name LIKE '" + infos.first_name + "%' "
+		}
+	}
+	res = "";
+	if (ajoutMail || ajoutLast || ajoutRole || ajoutFirst){
+		res += "WHERE";
+		if (ajoutMail){
+			res += ajoutMail;
+			if (ajoutLast || ajoutRole || ajoutFirst){
+				res += "AND";
+			}
+		}
+		if (ajoutLast){
+			res += ajoutLast;
+			if (ajoutRole || ajoutFirst){
+				res += "AND";
+			}
+		}
+		if (ajoutRole){
+			res += ajoutRole;
+			if (ajoutFirst){
+				res += "AND";
+			}
+		}
+		if (ajoutFirst){
+			res += ajoutMail;
+		}
+	}
+	res += `;`;
+	return res;
+}
+
+/**
  * GetUsers
  * Get all users matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
  * @param {string} email
  */
-function GetUsers(callback, email="%"){
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE email LIKE "${email}";`, callback);
+function GetUsers(callback, infos){
+	sql = `SELECT * FROM ${process.env.DATABASE}.User `;
+	quest = SetQuery(infos);
+	console.log(sql+quest);
+	dbConnection.query(sql, callback);
 }
 
 /**
@@ -29,7 +89,7 @@ function IsValidEmail(email){
 /**
  * IsValidPassword
  * Check if the string is a valid password
- * Minimum 8 characters long, a lower case, an upper case, a digit and a special character
+ * Minimum 8 characters long, a lower case, an upper case, a digitanda special character
  * 
  * @param {string} password 
  * 

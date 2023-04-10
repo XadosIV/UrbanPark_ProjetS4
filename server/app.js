@@ -23,13 +23,15 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/api/users', (req, res) => {
+	let quer = req.query;
+	console.log(quer);
 	GetUsers((err, data) => {
 		if (err){
 			throw err;
 		}else{
 			res.status(200).json(data);
 		}
-	});
+	}, quer);
 });
 
 app.post('/api/user', (req, res) => {
