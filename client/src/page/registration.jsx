@@ -1,13 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Goback, InscriptionForm } from "../components";
+import { GoBack, RegistrationForm } from "../components";
 
-export function Inscription() {
+export function Registration() {
 	const { state } = useLocation();
 
 	return(<div>
-		<Goback />
+		<GoBack />
 		<h1>Inscription</h1>
-        <InscriptionForm mail={state.mail}/>
+        <RegistrationForm mail={state.mail}/>
 	</div>)
 }

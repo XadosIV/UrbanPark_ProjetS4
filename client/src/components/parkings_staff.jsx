@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { ParkingList } from "./parkinglist";
+import { ParkingList } from "./parking_list";
 import { Button } from "@mui/material";
 
 export function ParkingsStaff() {

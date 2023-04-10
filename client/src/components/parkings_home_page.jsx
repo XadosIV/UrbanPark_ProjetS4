@@ -6,7 +6,7 @@ import { Parking } from "./parking";
  * @return { Promise React.Component }
  */
 
-export function ParkingsAccueil() {
+export function ParkingsHomePage() {
 
 	const listParkings = [
 		{

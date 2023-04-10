@@ -12,7 +12,6 @@ export function ConnexionForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-
 	const handlleSubmit = (event) => {
 		event.preventDefault();
 		console.log(infos);

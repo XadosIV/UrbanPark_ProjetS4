@@ -1,38 +1,24 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { StaffPreview } from "./staffpreview";
+import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
+import { InputHandler, CreateListPerson } from "../interface"
 
 export function StaffList() {
 
 	const [guardiansList, setGuardiansList] = useState([]);
-
-	useEffect(() => {
-		axios.get("http://localhost:3001/api/guardians").then((res) => 
-			setGuardiansList(res.data)
-		)}, []);
-
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/service").then((res) => 
-			setServiceList(res.data)
-		)}, []);
+		CreateListPerson("Gardien").then(res => {setGuardiansList(res);})
+	}, []);
+
+	useEffect(() => {
+		CreateListPerson("Agent d'entretien").then(res => {setServiceList(res);})
+	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
-
-	let inputHandlerGuardians = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputTextGuardians(lowerCase);
-	};
-
 	const [inputTextService, setInputTextService] = useState("");
-
-	let inputHandlerService = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputTextService(lowerCase);
-	};
 
 	return (<div className="StaffList">
 			<Separation value="Les gardiens"/>
@@ -43,7 +29,7 @@ export function StaffList() {
 				label="Rechercher..."
 				type="text"
 				name="searchbarStaff"
-				onChange={inputHandlerGuardians}
+				onChange={InputHandler(setInputTextGuardians)}
 			/>
 			<StaffPreview list={guardiansList} input={inputTextGuadrians}/>
 			<Separation value="Les agents d'entretien"/>
@@ -54,7 +40,7 @@ export function StaffList() {
 				label="Rechercher..."
 				type="text"
 				name="searchbarStaff"
-				onChange={inputHandlerService}
+				onChange={InputHandler(setInputTextService)}
 			/>
 			<StaffPreview list={serviceList} input={inputTextService}/>
 		</div>)

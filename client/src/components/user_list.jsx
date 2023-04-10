@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
-import { SearchUser } from "./searchuser";
+import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
+import { InputHandler,CreateListPerson } from "../interface"
 
 export function UserList() {
 
 	const [usersList, setUsersList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/users").then((res) => 
-			setUsersList(res.data)
-		)}, []);
+		CreateListPerson().then(res => {setUsersList(res);})
+	}, []);
 
 	const [inputTextUsers, setInputTextUsers] = useState("");
-
-	let inputHandlerUsers = (e) => {
-		var lowerCase = e.target.value.toLowerCase();
-		setInputTextUsers(lowerCase);
-	};
 
 	return (<div className="UserList">
 			<Separation value="Les utilisateurs"/>
@@ -29,7 +23,7 @@ export function UserList() {
 				label="Rechercher..."
 				type="text"
 				name="searchbarUser"
-				onChange={inputHandlerUsers}
+				onChange={InputHandler(setInputTextUsers)}
 			/>
 			<SearchUser list={usersList} input={inputTextUsers}/>
 		</div>)

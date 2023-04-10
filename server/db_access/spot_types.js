@@ -4,7 +4,7 @@ require('dotenv').config();
 
 /**
  * GetSpotTypes
- * Get all guardians matching parameters
+ * Get all spot types matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
  */

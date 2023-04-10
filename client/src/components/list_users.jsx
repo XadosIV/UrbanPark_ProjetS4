@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import { Liste, Personne } from ".";
-import { creaListPerson } from "../interface"
+import { List, User } from ".";
+import { CreateListPerson } from "../interface"
 
 /**
  * Use the component List to create a liste of person according to the name of their role
  * @param { String } nom
  * @return { Promise React.Component }
  */
-export function ListePersonnes(nom) {
-	const data = creaListPerson(nom)
+export function ListUsers(nom) {
+	const data = CreateListPerson(nom)
 		.catch(console.error);
 
 	const list = [
@@ -42,6 +42,6 @@ export function ListePersonnes(nom) {
 	}
 
 	return (
-		Liste(Personne, affichePlanning, list)
+		List(User, affichePlanning, list)
 	)
 }

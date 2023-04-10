@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 
-export function AuthentificationForm() {
+export function AuthenticationForm() {
 	const [mail, setMail] = useState("")
 	const navigate = useNavigate();
 

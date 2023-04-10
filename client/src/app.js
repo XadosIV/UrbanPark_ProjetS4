@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material"
-import { AppRoutes } from "./approutes"
+import { AppRoutes } from "./app_routes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import { EndPage } from "./components"

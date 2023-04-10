@@ -1,11 +1,11 @@
 import React from "react";
 
 /**
- * Composent of a User
+ * Component of a User
  * @param { User } info
  * @return { Promise React.Component }
  */
-export function Personne(info){
+export function User(info){
 
 	const pers = info
 
