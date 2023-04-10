@@ -5,7 +5,7 @@ require('dotenv').config();
 let startDefaultQuery = fs.readFileSync("../database.sql", 'utf8', (err, data) => {
 	if (err)
 		throw err;
-}).toString();
+}).toString().replaceAll("`DATABASE`", process.env.DATABASE);
 
 /**
  * StartDatabase  

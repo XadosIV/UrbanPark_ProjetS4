@@ -10,3 +10,4 @@ export function Test() {
 		<ExampleName name="John" age={20} />
 	</div>)
 }
+

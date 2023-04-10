@@ -1,7 +1,7 @@
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './report_web_vitals';
 import React,{StrictMode} from 'react';
 import './index.css';
-import {App} from "./App";
+import {App} from "./app";
 import { BrowserRouter } from "react-router-dom"
 import { createRoot } from 'react-dom/client';
 

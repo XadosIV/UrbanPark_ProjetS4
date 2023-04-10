@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * Composent of a Parking
+ * @param { Parking } info
+ * @return { Promise React.Component }
+ */
+
 export function Parking(parking) {
 
 	return (
@@ -8,3 +14,4 @@ export function Parking(parking) {
 			<p>{parking.parking.nbPlaceLibre} / {parking.parking.nbPlaceTot}</p>
 		</div>)
 }
+

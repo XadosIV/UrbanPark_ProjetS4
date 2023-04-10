@@ -1,8 +1,9 @@
 import React from "react";
-import { ParkingsAccueil } from "../components";
+import { ParkingsHomePage } from "../components";
+
 //home page of the app
 export function HomePage(){
 	return (<div>
-		<ParkingsAccueil/>
+		<ParkingsHomePage/>
 	</div>)
 }

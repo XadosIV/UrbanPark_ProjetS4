@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material"
-import { AppRoutes } from "./AppRoutes"
+import { AppRoutes } from "./app_routes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import { EndPage } from "./components"
@@ -27,7 +27,7 @@ export function App() {
 					<Link to="/">
 						<Typography variant="h3">Logo</Typography>
 					</Link>
-					<Link to="/connexion">
+					<Link to="/authentification">
 						<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
 					</Link>
 				</Stack>
