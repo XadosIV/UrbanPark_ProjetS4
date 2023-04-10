@@ -6,7 +6,7 @@ import TA from "../services/take_by_role"
  * @return { Promise list of User }
  */
 const CreateListPerson = async (nom) => {
-	const data = await TA.TakeAll(nom);
+	const data = await TA.TakeByRole(nom);
 	return data
   }
 
