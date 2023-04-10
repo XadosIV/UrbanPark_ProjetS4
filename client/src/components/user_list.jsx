@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
-import { CreateListPerson } from "../interface";
-import { InputHandler } from "../interface"
+import { InputHandler,CreateListPerson } from "../interface"
 
 export function UserList() {
 

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
-import { InputHandler } from "../interface"
-import { CreateListPerson } from "../interface";
+import { InputHandler, CreateListPerson } from "../interface"
 
 export function StaffList() {
 
