@@ -10,7 +10,7 @@ export function AuthenticationForm() {
 		event.preventDefault();
 		console.log(mail);
 		if(mail === "connexion"){
-			navigate("/connexion", {state: {mail: mail}});
+			navigate("/connection", {state: {mail: mail}});
 		}else{
 			navigate("/inscription", {state: {mail: mail}});
 		}
