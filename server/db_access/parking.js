@@ -1,5 +1,5 @@
 const {dbConnection, dbName} = require('../database');
-require('dotenv').config();
+const Errors = require('../errors');
 
 /**
  * GetParkings
