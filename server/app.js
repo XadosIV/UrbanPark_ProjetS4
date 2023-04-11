@@ -72,7 +72,7 @@ app.post('/api/user', (req, res) => {
 					res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 				}
 			}else{
-				res.status(201).json();
+				res.status(200).json();
 			}
 		}, req.body);
 	}else{
