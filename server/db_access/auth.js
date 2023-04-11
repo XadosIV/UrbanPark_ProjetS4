@@ -41,7 +41,7 @@ function GetToken(callback, infos){
 			console.log("SQL at GetToken : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, infos, (err, res) =>{
 				if (res.length == 1){ // Password is correct
-					callback(error, res[0].token);
+					callback(err, res[0].token);
 				}else{
 					let errorCode = Errors.E_WRONG_PASSWORD;
 					let error = new Error(errorCode);
