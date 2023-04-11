@@ -36,7 +36,7 @@ app.get('/api/auth', (req, res) => {
 					res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 				}
 			}else{
-				res.status(200).json(token);
+				res.status(200).json({"token":token});
 			}
 		}, req.query);
 	}else{
