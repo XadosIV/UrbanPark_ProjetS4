@@ -1,4 +1,5 @@
 const {dbConnection} = require('../database');
+const Errors = require('../errors');
 require('dotenv').config();
 var crypto = require("crypto");
 
@@ -21,4 +22,54 @@ function GenerateNewToken(callback){
 	});
 }
 
-module.exports = {GenerateNewToken};
+/**
+ * GetUsers
+ * Get all users matching parameters
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {string} email
+ */
+function GetToken(callback, infos){
+	sql = `SELECT * FROM ${process.env.DATABASE}.User WHERE email='${infos.email}';`;
+	console.log(sql);
+	dbConnection.query(sql, (err, res) => {
+		if (err) throw err;
+		console.log(res)
+		if (res.length == 1){ // l'utilisateur existe
+			sql = `SELECT token FROM ${process.env.DATABASE}.User `;
+			quest = SetQuery(infos);
+			console.log(sql+quest);
+			dbConnection.query(sql+quest, callback);
+		}else{
+			let errorCode = Errors.E_UNDEFINED_USER;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error,{});
+		}
+	});
+	
+}
+
+/**
+ * SetQuery
+ * Set all the parameters for the research of users
+ * 
+ * @param {JSON} infos
+ * 
+ * @returns {string}
+ */
+function SetQuery(infos){
+
+	// Not needed to check if they exists 'cause the request returns an error if they aren't there
+	addMail = "email = '"+infos.email+"'"
+	addPassword = "password = '"+infos.password+"'"
+
+	res = "WHERE "
+	res += addMail
+	res += " AND "
+	res += addPassword
+	res += ";"
+	return res
+}
+
+module.exports = {GenerateNewToken, GetToken};
