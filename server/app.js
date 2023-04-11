@@ -34,7 +34,7 @@ app.get('/api/users', (req, res) => {
 });
 
 app.post('/api/user', (req, res) => {
-	console.log("REQUEST : " + req);
+	console.log("Request at POST /api/user : " + JSON.stringify(req.body));
 	if (req.body && req.body.first_name && req.body.last_name && req.body.email && req.body.password){
 		PostUser(req.body.first_name, req.body.last_name, req.body.email, req.body.password, (err, data) => {
 			if (err){

@@ -1,7 +1,6 @@
-const {dbConnection} = require('../database');
+const {dbConnection, dbName} = require('../database');
 const {GenerateNewToken} = require('./auth');
 const Errors = require('../errors');
-require('dotenv').config();
 
 /**
  * SetQuery
@@ -70,7 +69,7 @@ function SetQuery(infos){
 function GetUsers(callback, infos){
 	sql = `SELECT * FROM ${process.env.DATABASE}.User `;
 	quest = SetQuery(infos);
-	console.log(sql+quest);
+	console.log("SQL at GetUsers : "+sql+quest);
 	dbConnection.query(sql+quest, callback);
 }
 
@@ -121,7 +120,7 @@ function PostUser(firstName, lastName, email, password, callback){
 		let errorCode = Errors.E_PASSWORD_FORMAT_INVALID;
 		let error = new Error(errorCode);
 		error.code = errorCode;
-		callback(error,);
+		callback(error,[]);
 	}else{
 		GetUsers((err, data) => {
 			if (err) { // SQL Error
@@ -136,11 +135,19 @@ function PostUser(firstName, lastName, email, password, callback){
 					if (err){
 						throw err;
 					}else{
-						dbConnection.query(`INSERT INTO ${process.env.DATABASE}.User (first_name, last_name, email, password, role, token, id_spot) VALUES ("${firstName}","${lastName}","${email}","${password}","Abonné","${token}", NULL);`, callback);
+						dbConnection.query(`INSERT INTO ${dbName}.User (first_name, last_name, email, password, role, token, id_spot) VALUES (:firstName,:lastName,:email,:password,:role,:token,:spot);`,{
+							firstName: firstName,
+							lastName: lastName,
+							email: email,
+							password: password,
+							role: "Abonné",
+							token: token,
+							spot: null
+						}, callback);
 					}
 				});
 			}
-		}, email);
+		}, {email:email});
 	}
 }
 

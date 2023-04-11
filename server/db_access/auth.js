@@ -1,5 +1,4 @@
-const {dbConnection} = require('../database');
-require('dotenv').config();
+const {dbConnection, dbName} = require('../database');
 var crypto = require("crypto");
 
 /**
@@ -10,7 +9,9 @@ var crypto = require("crypto");
  */
 function GenerateNewToken(callback){
 	let token = crypto.randomBytes(10).toString('hex');
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.User WHERE token="${token}";`, (err, data) => {
+	dbConnection.query(`SELECT * FROM ${dbName}.User WHERE token= :token;`,{
+		token: token
+	}, (err, data) => {
 		if (err){ // SQL Error
 			throw err;
 		}else if (data.length != 0){ // Already used, retry
