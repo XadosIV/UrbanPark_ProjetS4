@@ -77,3 +77,8 @@ INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gérant");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gardien");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Handicapée");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Électrique");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Urgence");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Municipale");
