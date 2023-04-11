@@ -43,7 +43,6 @@ export function ConnectionForm(props) {
 				name="mail"
 				defaultValue={props.mail}
 				onChange={handleChange}
-				onPaste={ noPaste }
 			/>
 			<TextField
 				required

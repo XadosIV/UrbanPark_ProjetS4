@@ -34,7 +34,6 @@ export function AuthenticationForm() {
 					type="text"
 					name="authentication"
 					onChange={(e) => setMail(e.target.value)}
-					onPaste={ noPaste }
 				/>
 			</div>
 			<Button 
