@@ -1,13 +1,14 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { ConnectionForm, GoBack } from "../components";
+import "../css/auth.css";
 
 export function Connection() {
 	const { state } = useLocation();
 
-	return(<div>
+	return(<div className="main">
 		<GoBack />
-		<h1>Connexion</h1>
+		<h1 className="form_title">Connexion</h1>
         <ConnectionForm mail={state.mail}/>
 	</div>)
 }
