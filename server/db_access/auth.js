@@ -23,19 +23,17 @@ function GenerateNewToken(callback){
 }
 
 /**
- * GetUsers
- * Get all users matching parameters
+ * GetToken
+ * Get token from mail and password
  * 
  * @param {function(*,*)} callback (err, data)
  * @param {string} email
  */
 function GetToken(callback, infos){
 	sql = `SELECT * FROM ${process.env.DATABASE}.User WHERE email='${infos.email}';`;
-	console.log(sql);
 	dbConnection.query(sql, (err, res) => {
 		if (err) throw err;
-		console.log(res)
-		if (res.length == 1){ // l'utilisateur existe
+		if (res.length == 1){ // User Exist
 			sql = `SELECT token FROM ${process.env.DATABASE}.User `;
 			quest = SetQuery(infos);
 			console.log(sql+quest);
@@ -47,7 +45,6 @@ function GetToken(callback, infos){
 			callback(error,{});
 		}
 	});
-	
 }
 
 /**
