@@ -22,45 +22,42 @@ app.get('/api/test', (req, res) => {
 	res.status(200).json(data);
 });
 
+app.get('/api/auth', (req, res) => {
+	console.log("Request at GET /api/auth : " + JSON.stringify(req.query));
+	if (req.query && req.query.email && req.query.password){
+		GetToken((err, token) => {
+			if (err){
+				if (err.code == Errors.E_UNDEFINED_USER){
+					res.status(400).json({"code":err.code, "message":"Aucun compte n'est inscrit avec cet email."});
+				}else if (err.code == Errors.E_WRONG_PASSWORD){
+					res.status(401).json({"code":err.code, "message":"Le mot de passe et l'email ne correspondent pas"})
+				}else{
+					throw err;
+				}
+			}else{
+				res.status(200).json(token);
+			}
+		}, req.query);
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : email, password"});
+	}
+});
+
 app.get('/api/users', (req, res) => {
-	let quer = req.query;
-	console.log(quer);
+	console.log("Request at GET /api/users : " + JSON.stringify(req.query));
 	GetUsers((err, data) => {
 		if (err){
 			throw err;
 		}else{
 			res.status(200).json(data);
 		}
-	}, quer);
+	}, req.query);
 });
 
-app.get('/api/auth', (req, res) => {
-	if (req.query && req.query.email && req.query.password){
-		GetToken((err, data) => {
-			if (err){
-				if (err.code == Errors.E_UNDEFINED_USER){
-					res.status(400).json({"code":err.code, "message":"Aucun compte n'est inscrit avec cet email."})
-				}else{
-					throw err;
-				}
-			}else{
-				if (data.length == 0){
-					res.status(200).json({});
-				}else{
-					res.status(200).json(data[0]);
-				}
-			}
-		}, req.query)
-	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : email, password"});
-	}
-	
-})
-
 app.post('/api/user', (req, res) => {
-	console.log("REQUEST : " + req);
+	console.log("Request at POST /api/user : " + JSON.stringify(req.body));
 	if (req.body && req.body.first_name && req.body.last_name && req.body.email && req.body.password){
-		PostUser(req.body.first_name, req.body.last_name, req.body.email, req.body.password, (err, data) => {
+		PostUser((err, data) => {
 			if (err){
 				if (err.code == Errors.E_EMAIL_ALREADY_USED){
 					res.status(400).json({"code":err.code,"message":"Email déjà utilisé"});
@@ -74,13 +71,14 @@ app.post('/api/user', (req, res) => {
 			}else{
 				res.status(201).json();
 			}
-		});
+		}, req.body);
 	}else{
 		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : first_name, last_name, email, password"});
 	}
 });
 
 app.get('/api/parkings', (req, res) => {
+	console.log("Request at GET /api/parkings : " + JSON.stringify(req.query));
 	GetParkings((err, data) => {
 		if (err){
 			throw err;
@@ -91,6 +89,7 @@ app.get('/api/parkings', (req, res) => {
 });
 
 app.get('/api/spot-types', (req, res) => {
+	console.log("Request at GET /api/spot-types : " + JSON.stringify(req.query));
 	GetSpotTypes((err, data) => {
 		if (err){
 			throw err;
