@@ -1,22 +1,30 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { creationCompte } from "../services/creation_compte";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function RegistrationForm(props) {
+	const navigate = useNavigate();
 	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
-	const [wrongPassword, setWrongPassword] = useState(false);
+	const [wrongInput, setWrongInput] = useState(false);
+	const [errMessage, setErrMessage] = useState("");
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
 		if(infos.password !== infos.password_conf){
-			setWrongPassword(true);
+			setWrongInput(true);
+			setErrMessage("la confirmation du mot de passe est invalide");
 		}else{
-			setWrongPassword(false);
+			setWrongInput(false);
 			const res = await creationCompte(infos);
 			console.log(res);
-			Navigate("/");
+			if(res.status === 201){
+				navigate("/");
+			}else{
+				setWrongInput(true);
+				setErrMessage(res.data.message);
+			}
 		}
 	}
 
@@ -77,6 +85,6 @@ export function RegistrationForm(props) {
 				type="submit"
 			>inscription</Button>
 		</form>
-		{ wrongPassword && <p style={{color: "red"}}> la confirmation du mot de passe est incorrect </p>}
+		{ wrongInput && <p style={{color: "red"}}> { errMessage } </p>}
 	</div>)
 }
