@@ -115,7 +115,7 @@
 | Method | Endpoint      | Ressource | Description                      | Permission              |
 | ------ | ------------- | --------- | -------------------------------- | ----------------------- |
 | GET    | /auth         | AUTH      | Get token of the user for auth   |                         |
-|		 |				 |			 | mail=$mail&mdp=$mdp_md5			|						  |
+|		 |				 |			 | mail=$mail&password=$password	|						  |
 
 ## User
 
