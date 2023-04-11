@@ -26,6 +26,12 @@ export function ConnectionForm(props) {
 		}
 	}
 
+	const noPaste = (e) => {
+		e.preventDefault();
+		return false;
+	}
+
+
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs_divs">
@@ -37,6 +43,7 @@ export function ConnectionForm(props) {
 				name="mail"
 				defaultValue={props.mail}
 				onChange={handleChange}
+				onPaste={ noPaste }
 			/>
 			<TextField
 				required
@@ -45,6 +52,7 @@ export function ConnectionForm(props) {
 				type="password"
 				name="password"
 				onChange={handleChange}
+				onPaste={ noPaste }
 			/>
 			</div>
 			<Button

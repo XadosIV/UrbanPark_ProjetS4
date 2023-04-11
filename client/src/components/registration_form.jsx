@@ -34,6 +34,11 @@ export function RegistrationForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+	const noPaste = (e) => {
+		e.preventDefault();
+		return false;
+	}
+
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs_divs">
@@ -69,6 +74,7 @@ export function RegistrationForm(props) {
 					type="password"
 					name="password"
 					onChange={handleChange}
+					onPaste={ noPaste }
 				/>
                 <TextField
 					required
@@ -77,6 +83,7 @@ export function RegistrationForm(props) {
 					type="password"
 					name="password_conf"
 					onChange={handleChange}
+					onPaste={ noPaste }
 				/>
 			</div>
 			<Button 
