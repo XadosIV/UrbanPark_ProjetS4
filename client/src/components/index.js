@@ -1,5 +1,5 @@
 export * from "./authentication_form"
-export * from "./connexion_form"
+export * from "./connection_form"
 export * from "./registration_form"
 export * from "./go_back"
 export * from "./example_name"

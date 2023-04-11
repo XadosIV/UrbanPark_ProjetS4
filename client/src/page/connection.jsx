@@ -1,13 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { ConnexionForm, GoBack } from "../components";
+import { ConnectionForm, GoBack } from "../components";
 
-export function Connexion() {
+export function Connection() {
 	const { state } = useLocation();
 
 	return(<div>
 		<GoBack />
 		<h1>Connexion</h1>
-        <ConnexionForm mail={state.mail}/>
+        <ConnectionForm mail={state.mail}/>
 	</div>)
 }

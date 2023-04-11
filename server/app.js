@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
 const {GetSpotTypes} = require('./db_access/spot_types');
@@ -32,6 +33,29 @@ app.get('/api/users', (req, res) => {
 		}
 	}, quer);
 });
+
+app.get('/api/auth', (req, res) => {
+	if (req.query && req.query.email && req.query.password){
+		GetToken((err, data) => {
+			if (err){
+				if (err.code == Errors.E_UNDEFINED_USER){
+					res.status(400).json({"code":err.code, "message":"Aucun compte n'est inscrit avec cet email."})
+				}else{
+					throw err;
+				}
+			}else{
+				if (data.length == 0){
+					res.status(200).json({});
+				}else{
+					res.status(200).json(data[0]);
+				}
+			}
+		}, req.query)
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : email, password"});
+	}
+	
+})
 
 app.post('/api/user', (req, res) => {
 	console.log("Request at POST /api/user : " + JSON.stringify(req.body));
