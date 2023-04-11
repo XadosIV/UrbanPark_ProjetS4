@@ -1,4 +1,4 @@
-const {dbConnection} = require('../database');
+const {dbConnection, dbName} = require('../database');
 require('dotenv').config();
 
 /**
@@ -8,7 +8,9 @@ require('dotenv').config();
  * @returns Array
  */
 function GetParkings(callback){
-	dbConnection.query(`SELECT * FROM ${process.env.DATABASE}.Parking;`, callback);
+	let sql = `SELECT * FROM ${dbName}.Parking;`
+	console.log("SQL at GetParkings : " + sql);
+	dbConnection.query(sql, {}, callback);
 }
 
 module.exports = {GetParkings};

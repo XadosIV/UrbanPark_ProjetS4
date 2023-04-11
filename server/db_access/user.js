@@ -1,63 +1,5 @@
 const {dbConnection, dbName} = require('../database');
-const {GenerateNewToken} = require('./auth');
 const Errors = require('../errors');
-
-/**
- * SetQuery
- * Set all the parameters for the research of users
- * 
- * @param {JSON} infos
- * 
- * @returns {string}
- */
-function SetQuery(infos){
-	if (infos){
-		ajoutMail = null;
-		ajoutFirst = null;
-		ajoutRole = null;
-		ajoutLast = null;
-		if (infos.email)
-		{
-			ajoutMail = " email LIKE '" + infos.email + "%' "
-		}
-		if (infos.role){
-			ajoutRole = ' role = "' + infos.role + '" '
-		}
-		if (infos.last_name){
-			ajoutLast = " last_name LIKE '" + infos.last_name + "%' "
-		}
-		if (infos.first_name){
-			ajoutFirst = " first_name LIKE '" + infos.first_name + "%' "
-		}
-	}
-	res = "";
-	if (ajoutMail || ajoutLast || ajoutRole || ajoutFirst){
-		res += "WHERE";
-		if (ajoutMail){
-			res += ajoutMail;
-			if (ajoutLast || ajoutRole || ajoutFirst){
-				res += "AND";
-			}
-		}
-		if (ajoutLast){
-			res += ajoutLast;
-			if (ajoutRole || ajoutFirst){
-				res += "AND";
-			}
-		}
-		if (ajoutRole){
-			res += ajoutRole;
-			if (ajoutFirst){
-				res += "AND";
-			}
-		}
-		if (ajoutFirst){
-			res += ajoutMail;
-		}
-	}
-	res += `;`;
-	return res;
-}
 
 /**
  * GetUsers
@@ -67,10 +9,14 @@ function SetQuery(infos){
  * @param {string} email
  */
 function GetUsers(callback, infos){
-	sql = `SELECT * FROM ${process.env.DATABASE}.User `;
-	quest = SetQuery(infos);
-	console.log("SQL at GetUsers : "+sql+quest);
-	dbConnection.query(sql+quest, callback);
+	sql = `SELECT * FROM ${dbName}.User WHERE email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name;`;
+	console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
+	dbConnection.query(sql, {
+		email:infos.email||'%',
+		role:infos.role||'%',
+		last_name:infos.last_name||'%',
+		first_name:infos.first_name||'%'
+	}, callback);
 }
 
 /**
@@ -102,21 +48,18 @@ function IsValidPassword(password){
  * PostUser
  * Create a new user with "Abonné" role
  * 
- * @param {string} firstName 
- * @param {string} lastName 
- * @param {string} email 
- * @param {string} password 
  * @param {function(*,*)} callback (err, data)
+ * @param {object} infos {first_name, last_name, email, password}
  */
-function PostUser(firstName, lastName, email, password, callback){
-	if (!IsValidEmail(email)){
-		console.log("TRACE 1");
+function PostUser(callback, infos){
+	const {GenerateNewToken} = require('./auth');
+
+	if (!IsValidEmail(infos.email)){
 		let errorCode = Errors.E_EMAIL_FORMAT_INVALID;
 		let error = new Error(errorCode);
 		error.code = errorCode;
 		callback(error,[]);
-	}else if (!IsValidPassword(password)){
-		console.log("TRACE 2");
+	}else if (!IsValidPassword(infos.password)){
 		let errorCode = Errors.E_PASSWORD_FORMAT_INVALID;
 		let error = new Error(errorCode);
 		error.code = errorCode;
@@ -135,19 +78,16 @@ function PostUser(firstName, lastName, email, password, callback){
 					if (err){
 						throw err;
 					}else{
-						dbConnection.query(`INSERT INTO ${dbName}.User (first_name, last_name, email, password, role, token, id_spot) VALUES (:firstName,:lastName,:email,:password,:role,:token,:spot);`,{
-							firstName: firstName,
-							lastName: lastName,
-							email: email,
-							password: password,
-							role: "Abonné",
-							token: token,
-							spot: null
-						}, callback);
+						let sql=`INSERT INTO ${dbName}.User (first_name, last_name, email, password, role, token, id_spot) VALUES (:first_name,:last_name,:email,:password,:role,:token,:spot);`;
+						infos.token = token;
+						infos.role="Abonné";
+						infos.spot=null;
+						console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
+						dbConnection.query(sql, infos, callback);
 					}
 				});
 			}
-		}, {email:email});
+		}, {email:infos.email});
 	}
 }
 
