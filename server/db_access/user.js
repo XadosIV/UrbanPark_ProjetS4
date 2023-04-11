@@ -6,7 +6,7 @@ const Errors = require('../errors');
  * Get all users matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {string} email
+ * @param {object} infos {first_name, last_name, email, password}
  */
 function GetUsers(callback, infos){
 	sql = `SELECT * FROM ${dbName}.User WHERE email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name;`;
