@@ -20,6 +20,10 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Spot (
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Role (
 	name VARCHAR(45) NOT NULL,
+	see_other_users BIT(1) DEFAULT 0,
+	modify_spot_users BIT(1) DEFAULT 0,
+	modify_role_users BIT(1) DEFAULT 0,
+	delete_other_user BIT(1) DEFAULT 0,
 	CONSTRAINT pk_role PRIMARY KEY (name)
 );
 
@@ -73,8 +77,8 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Typed (
 );
 
 -- Default rows
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gérant");
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gardien");
+INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gérant", 1, 1, 1, 1);
+INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gardien", 1, 1, 1, 1);
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
 INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Abonné");

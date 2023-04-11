@@ -1,6 +1,5 @@
-const {dbConnection} = require('../database');
+const {dbConnection, dbName} = require('../database');
 const Errors = require('../errors');
-require('dotenv').config();
 
 /**
  * GetSpotTypes
@@ -9,7 +8,9 @@ require('dotenv').config();
  * @param {function(*,*)} callback (err, data)
  */
 function GetSpotTypes(callback){
-	dbConnection.query(`SELECT name FROM ${process.env.DATABASE}.Type;`, callback);
+	let sql = `SELECT name FROM ${dbName}.Type;`;
+	console.log("SQL at GetSpotTypes : " + sql);
+	dbConnection.query(sql, callback);
 }
 
 module.exports = {GetSpotTypes};
