@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const fs = require('fs');
 require('dotenv').config();
 
@@ -8,7 +8,7 @@ let startDefaultQuery = fs.readFileSync("../database.sql", 'utf8', (err, data) =
 }).toString().replaceAll("`DATABASE`", process.env.DATABASE);
 
 /**
- * StartDatabase  
+ * StartDatabase
  * Start the database and verify the config
  * 
  * @param {mysql.Connection} dbConnection
@@ -19,13 +19,16 @@ function StartDatabase(dbConnection, query=startDefaultQuery) {
 	dbConnection.query(query);
 }
 
+let dbName = process.env.DATABASE;
+
 // ==============================
 // Initiate connection to database
 let dbConnection = mysql.createConnection({
 	multipleStatements: true,
+	namedPlaceholders : true,
 	host     : process.env.HOST,
 	user     : process.env.USER,
 	password : process.env.PASSWORD
 });
 
-module.exports = {dbConnection, StartDatabase};
+module.exports = {dbConnection, StartDatabase, dbName};
