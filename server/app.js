@@ -89,7 +89,7 @@ app.get('/api/parkings', (req, res) => {
 		}else{
 			res.status(200).json(data);
 		}
-	});
+	}, req.query);
 });
 
 app.get('/api/spot-types', (req, res) => {
