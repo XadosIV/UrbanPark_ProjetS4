@@ -10,9 +10,9 @@ export function AuthenticationForm() {
 		event.preventDefault();
 		console.log(mail);
 		if(mail === "connexion"){
-			navigate("/connexion", {state: {mail: mail}});
+			navigate("/connection", {state: {mail: mail}});
 		}else{
-			navigate("/inscription", {state: {mail: mail}});
+			navigate("/registration", {state: {mail: mail}});
 		}
 	}
 
@@ -21,10 +21,10 @@ export function AuthenticationForm() {
 			<div>
 				<TextField
 					required
-					id="authentification"
+					id="authentication"
 					label="mail"
 					type="text"
-					name="authentification"
+					name="authentication"
 					onChange={(e) => setMail(e.target.value)}
 				/>
 			</div>

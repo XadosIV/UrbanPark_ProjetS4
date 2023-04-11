@@ -1,6 +1,6 @@
 import React from "react"
 import { Route, Routes } from "react-router-dom"
-import { Test, NotFoundPage, Authentication, Connexion, HomePage, GuardiansListSchedule, AdminPage, Registration } from "./page"
+import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration } from "./page"
 
 export function AppRoutes() {
 
@@ -11,7 +11,7 @@ export function AppRoutes() {
 			<Route path="/authentication" element={<Authentication />} />
 			<Route path="/admin" element={<AdminPage />} />
 			<Route path="/guardians-list-schedule" element={<GuardiansListSchedule />} />
-			<Route path="/connexion" element={<Connexion />} />
+			<Route path="/connection" element={<Connection />} />
 			<Route path="/registration" element={<Registration />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
