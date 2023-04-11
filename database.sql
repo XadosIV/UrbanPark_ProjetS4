@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Parking (
 	name VARCHAR(45) NOT NULL,
 	floors INT NOT NULL DEFAULT 1,
 	address VARCHAR(100) NOT NULL,
-	CONSTRAINT pk_parking PRIMARY KEY (id)
+	CONSTRAINT pk_parking PRIMARY KEY (id),
+	CONSTRAINT uc_parking_name UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Spot (
@@ -80,3 +81,8 @@ INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, mo
 INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gardien", 1, 1, 1, 1);
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Handicapée");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Électrique");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Urgence");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Municipale");
