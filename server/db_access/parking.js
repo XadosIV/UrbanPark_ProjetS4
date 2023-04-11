@@ -9,7 +9,7 @@ const Errors = require('../errors');
  * @returns Array
  */
 function GetParkings(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Parking WHERE name LIKE :name;`;
+	sql = `SELECT * FROM ${process.env.DATABASE}.Parking WHERE name LIKE :name;`;
     console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         name:infos.name||'%'
