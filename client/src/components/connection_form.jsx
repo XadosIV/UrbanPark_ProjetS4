@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
+import { authenticate } from "../services/auth_api";
 
 export function ConnectionForm(props) {
-	const [infos, setInfos] = useState({mail: props.mail, password: ""})
+	const [infos, setInfos] = useState({mail: props.mail, password: ""});
+	const [wrongInput, setWrongInput] = useState(false);
 	const navigate = useNavigate();
 
 	const handleChange = (event) => {
@@ -12,11 +14,15 @@ export function ConnectionForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-	const handlleSubmit = (event) => {
+	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
-		if(infos.password === "password"){
-			navigate("/", {state: {auth: true}});
+		const data = {identifier: infos.mail, password: infos.password};
+		const res = await authenticate(data);
+		if(res.status === 200){
+			navigate("/");
+		}else{
+			setWrongInput(true);
 		}
 	}
 
@@ -47,5 +53,6 @@ export function ConnectionForm(props) {
 				type="submit"
 			>connexion</Button>
 		</form>
+		{ wrongInput && <p style={{color: "red"}}> votre mot de passe ou mail n'est pas valide </p> }
 	</div>)
 }
