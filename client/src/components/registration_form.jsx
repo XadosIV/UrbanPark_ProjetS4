@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
+import { creationCompte } from "../services/creation_compte";
+import { Navigate } from "react-router-dom";
 
 export function RegistrationForm(props) {
-	const [infos, setInfos] = useState({mail: props.mail});
+	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
+	const [wrongPassword, setWrongPassword] = useState(false);
 
-	const handlleSubmit = (event) => {
+	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
+		if(infos.password !== infos.password_conf){
+			setWrongPassword(true);
+		}else{
+			setWrongPassword(false);
+			const res = await creationCompte(infos);
+			console.log(res);
+			Navigate("/");
+		}
 	}
 
     const handleChange = (event) => {
@@ -20,27 +31,27 @@ export function RegistrationForm(props) {
 			<div>
                 <TextField
 					required
-					id="mail"
-					label="mail"
+					id="email"
+					label="email"
 					type="text"
-					name="mail"
+					name="email"
 					defaultValue={props.mail}
 					onChange={handleChange}
 				/>
 				<TextField
 					required
-					id="name"
-					label="nom"
+					id="first_name"
+					label="first_name"
 					type="text"
-					name="name"
+					name="first_name"
 					onChange={handleChange}
 				/>
                 <TextField
 					required
-					id="surname"
-					label="prenom"
+					id="last_name"
+					label="last_name"
 					type="text"
-					name="surname"
+					name="last_name"
 					onChange={handleChange}
 				/>
                 <TextField
@@ -66,5 +77,6 @@ export function RegistrationForm(props) {
 				type="submit"
 			>inscription</Button>
 		</form>
+		{ wrongPassword && <p style={{color: "red"}}> la confirmation du mot de passe est incorrect </p>}
 	</div>)
 }
