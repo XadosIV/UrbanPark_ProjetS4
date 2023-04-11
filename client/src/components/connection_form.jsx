@@ -26,9 +26,9 @@ export function ConnectionForm(props) {
 		}
 	}
 
-	return(<div>
-		<form onSubmit={handlleSubmit}>
-			<div>
+	return(<div className="form_div">
+		<form onSubmit={handlleSubmit} className="form">
+			<div className="inputs_divs">
 			<TextField
 				required
 				id="mail"
@@ -47,12 +47,13 @@ export function ConnectionForm(props) {
 				onChange={handleChange}
 			/>
 			</div>
-			<Button 
+			<Button
+				className="submit_button" 
 				variant="contained" 
 				color="primary" 
 				type="submit"
 			>connexion</Button>
 		</form>
-		{ wrongInput && <p style={{color: "red"}}> votre mot de passe ou mail n'est pas valide </p> }
+		{ wrongInput && <p className="err_message"> votre mot de passe ou mail n'est pas valide </p> }
 	</div>)
 }

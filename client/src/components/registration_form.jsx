@@ -34,9 +34,9 @@ export function RegistrationForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-	return(<div>
-		<form onSubmit={handlleSubmit}>
-			<div>
+	return(<div className="form_div">
+		<form onSubmit={handlleSubmit} className="form">
+			<div className="inputs_divs">
                 <TextField
 					required
 					id="email"
@@ -80,11 +80,12 @@ export function RegistrationForm(props) {
 				/>
 			</div>
 			<Button 
+				className="submit_button"
 				variant="contained" 
 				color="primary" 
 				type="submit"
 			>inscription</Button>
 		</form>
-		{ wrongInput && <p style={{color: "red"}}> { errMessage } </p>}
+		{ wrongInput && <p className="err_message"> { errMessage } </p>}
 	</div>)
 }

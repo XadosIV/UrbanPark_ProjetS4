@@ -19,9 +19,9 @@ export function AuthenticationForm() {
 		}
 	}
 
-	return(<div>
-		<form onSubmit={handlleSubmit}>
-			<div>
+	return(<div className="form_div">
+		<form onSubmit={handlleSubmit} className="form">
+			<div className="inputs_divs">
 				<TextField
 					required
 					id="authentication"
@@ -32,6 +32,7 @@ export function AuthenticationForm() {
 				/>
 			</div>
 			<Button 
+				className="submit_button"
 				variant="contained" 
 				color="primary" 
 				type="submit"
