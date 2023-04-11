@@ -1,12 +1,31 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
+import { creationCompte } from "../services/creation_compte";
+import { useNavigate } from "react-router-dom";
 
 export function RegistrationForm(props) {
-	const [infos, setInfos] = useState({mail: props.mail});
+	const navigate = useNavigate();
+	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
+	const [wrongInput, setWrongInput] = useState(false);
+	const [errMessage, setErrMessage] = useState("");
 
-	const handlleSubmit = (event) => {
+	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
+		if(infos.password !== infos.password_conf){
+			setWrongInput(true);
+			setErrMessage("la confirmation du mot de passe est invalide");
+		}else{
+			setWrongInput(false);
+			const res = await creationCompte(infos);
+			console.log(res);
+			if(res.status === 201){
+				navigate("/");
+			}else{
+				setWrongInput(true);
+				setErrMessage(res.data.message);
+			}
+		}
 	}
 
     const handleChange = (event) => {
@@ -15,32 +34,37 @@ export function RegistrationForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-	return(<div>
-		<form onSubmit={handlleSubmit}>
-			<div>
+	const noPaste = (e) => {
+		e.preventDefault();
+		return false;
+	}
+
+	return(<div className="form_div">
+		<form onSubmit={handlleSubmit} className="form">
+			<div className="inputs_divs">
                 <TextField
 					required
-					id="mail"
-					label="mail"
+					id="email"
+					label="email"
 					type="text"
-					name="mail"
+					name="email"
 					defaultValue={props.mail}
 					onChange={handleChange}
 				/>
 				<TextField
 					required
-					id="name"
-					label="nom"
+					id="first_name"
+					label="first_name"
 					type="text"
-					name="name"
+					name="first_name"
 					onChange={handleChange}
 				/>
                 <TextField
 					required
-					id="surname"
-					label="prenom"
+					id="last_name"
+					label="last_name"
 					type="text"
-					name="surname"
+					name="last_name"
 					onChange={handleChange}
 				/>
                 <TextField
@@ -50,6 +74,7 @@ export function RegistrationForm(props) {
 					type="password"
 					name="password"
 					onChange={handleChange}
+					onPaste={ noPaste }
 				/>
                 <TextField
 					required
@@ -58,13 +83,16 @@ export function RegistrationForm(props) {
 					type="password"
 					name="password_conf"
 					onChange={handleChange}
+					onPaste={ noPaste }
 				/>
 			</div>
 			<Button 
+				className="submit_button"
 				variant="contained" 
 				color="primary" 
 				type="submit"
 			>inscription</Button>
 		</form>
+		{ wrongInput && <p className="err_message"> { errMessage } </p>}
 	</div>)
 }
