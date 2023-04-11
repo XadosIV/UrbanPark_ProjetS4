@@ -19,11 +19,6 @@ export function AuthenticationForm() {
 		}
 	}
 
-	const noPaste = (e) => {
-		e.preventDefault();
-		return false;
-	}
-
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs_divs">

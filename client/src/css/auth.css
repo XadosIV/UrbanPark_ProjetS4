@@ -34,3 +34,8 @@
 .err_message {
     color: red;
 }
+
+.form_div {
+    display: flex;
+    flex-direction: column;
+}
