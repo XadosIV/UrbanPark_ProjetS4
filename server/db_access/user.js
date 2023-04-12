@@ -24,7 +24,7 @@ function GetUsers(callback, infos){
  * Get all users matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {first_name, last_name, email, password}
+ * @param {object} infos {token}
  */
 function GetUserFromToken(callback, infos){
 	sql = `SELECT id, first_name, last_name, email, role, id_spot FROM ${dbName}.User WHERE  token=:token;`;
