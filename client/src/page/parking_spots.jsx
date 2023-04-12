@@ -29,7 +29,7 @@ export function ParkingSpots() {
                             <p>{CutAddress(parking.address)[1]}</p>
                         </div>
                         <div className="button-parking">               
-                            <p>{parking.nbPlaceLibre} places libres / {parking.nbPlaceTot}</p> 
+                            <p>{parking.nbPlaceLibre} places restantes / {parking.nbPlaceTot}</p> 
                         </div>
                     </div>
                     

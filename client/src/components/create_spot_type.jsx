@@ -10,7 +10,7 @@ export function CreateSpotType() {
     }, []);
 
   return (<div class="dropdown">
-            <button class="dropbtn">Types de places</button>
+            <button class="dropbtn" style={{width: 200, height:"120%"}}>Types de places</button>
                 <div class="dropdown-content">
                 {spotTypes.map((type) => (<p style={{textAlign:"center"}}>{type.name}</p>))}
                       <Button variant="contained" color="primary" 
@@ -18,7 +18,7 @@ export function CreateSpotType() {
                       backgroundColor: "#FE434C",
                       borderColor: "transparent",
                       borderRadius: 20,
-                      width: 250,
+                      width: 200,
                       float:"right",
                       height:"120%"
                     }}>Nouveau type de place</Button>	
