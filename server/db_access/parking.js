@@ -5,8 +5,8 @@ const Errors = require('../errors');
  * GetParkings
  * Return a JSON with every parking corresponding to paramaters
  * 
- * @param { Array } infos - All parameters needed
- * @returns Array
+ * @param {function(*,*)} callback (err, data)
+ * @param {object} infos {name}
  */
 
 function GetParkings(callback, infos){

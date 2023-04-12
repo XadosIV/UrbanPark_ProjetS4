@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { CutAddress, NeedS } from "../interface";
 import { Button } from "@mui/material";
 import TP from "../services/take_parking";
+import { SpotsList } from "../components"
 import "../css/parking.css"
 
 export function ParkingSpots() {
@@ -12,16 +13,15 @@ export function ParkingSpots() {
     const [parkingsList, setParkingsList] = useState([]);
 
     useEffect(() => {
-		TP.TakeParking(name.parking).then(res => {setParkingsList(res);})
+		TP.TakeParking(name.parking).then(res => setParkingsList(res))
 	}, []);
-
 
 	return(<div>
         <div className="title-parking">
             <h1>Parking {name.parking}</h1>
         </div>
             {
-                parkingsList.map((parking, index) => (
+                parkingsList.map((parking) => (
                     <div className="parking-item">	
                         <div>
                             <h2>{parking.floors} étage{NeedS(parking.floors)}</h2>    
@@ -32,6 +32,12 @@ export function ParkingSpots() {
                             <p>{parking.nbPlaceLibre} places libres / {parking.nbPlaceTot}</p> 
                         </div>
                     </div>
+                    
+                ))
+            }
+            {
+                parkingsList.map((parking) => (
+                    <SpotsList id={parking.id}/>
                 ))
             }
         <Button variant="contained" color="primary" 
@@ -41,7 +47,8 @@ export function ParkingSpots() {
             borderRadius: 20,
             width: 250,
             float:"right",
-            height:"10%"
+            height:"10%",
+            marginBottom:"50px"
         }}>Ajouter des places</Button>	
     </div>)
 }

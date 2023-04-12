@@ -2,13 +2,18 @@ import axios from "axios"
 
 /**
  * TakeAllSpotTypes
- * Returns a list of all spot types
+ * Returns a list of spot types corresponding to the id of the spot given in parameter (If no id, get all spots types)
  *
- * @return { Promise list of String }
+ * @param { integer } id_spot
+ * @return { Promise list of User }
  */
-function TakeAllSpotTypes() {
-	const url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spot-types";
-	return axios.get(url).then((res) => res.data);
+function TakeAllSpotTypes(id_spot=0){
+    const obj = {id_spot: id_spot}
+    var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spot-types"
+    if (id_spot !== 0) {
+        url = url + "?" + new URLSearchParams(obj).toString();
+    }
+	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeAllSpotTypes }
+export default { TakeAllSpotTypes };

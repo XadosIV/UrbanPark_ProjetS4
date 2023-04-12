@@ -6,10 +6,13 @@ const Errors = require('../errors');
  * Get all users matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {first_name, last_name, email, password}
+ * @param {object} infos {first_name, last_name, email, password, id_spot}
  */
 function GetUsers(callback, infos){
-	sql = `SELECT id, first_name, last_name, email, id_spot, role FROM ${dbName}.User WHERE email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name;`;
+	sql = `SELECT id, first_name, last_name, email, id_spot, role FROM ${dbName}.User WHERE email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name `;
+	if (infos.id_spot) {
+		sql = sql + `AND id_spot =` + infos.id_spot + `;`;
+	}
 	console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		email:infos.email||'%',

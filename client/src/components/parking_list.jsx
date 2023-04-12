@@ -14,7 +14,7 @@ export function ParkingList(parking) {
                 <p>{address[1]}</p>
             </div>
             <div className="button-parking">               
-                <p>{parking.parking.nbPlaceLibre} places libres / {parking.parking.nbPlaceTot}</p> 
+                <p>{parking.parking.nbPlaceLibre} places restantes / {parking.parking.nbPlaceTot}</p> 
                 <Link to={`/parkings/${parking.parking.name}`} style={{textDecoration:"none"}}>
                     <Button variant="contained" color="primary">Voir les places</Button>
                 </Link>
