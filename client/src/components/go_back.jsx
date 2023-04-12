@@ -9,7 +9,7 @@ export function GoBack(){
         navigate(-1);
     }
 
-    return(<div>
+    return(<div className="go_back_button">
         <Button
         variant="contained"
         color="primary"

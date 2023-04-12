@@ -1,11 +1,12 @@
 import React from "react";
 import { AuthenticationForm, GoBack } from "../components";
+import "../css/auth.css";
 
 export function Authentication() {
 
-	return(<div>
+	return(<div className="main">
 		<GoBack />
-		<h1>Authentification</h1>
+		<h1 className="form_title">Authentification</h1>
 		<AuthenticationForm />
 	</div>)
 }
