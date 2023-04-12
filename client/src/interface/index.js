@@ -1,5 +1,4 @@
 export * from "./call"
 export * from "./cut_address"
 export * from "./need_s"
-export * from "./create_list_person"
 export * from "./input_handler_search"

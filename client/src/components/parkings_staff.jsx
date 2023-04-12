@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import { ParkingList } from "./parking_list";
 import { Button } from "@mui/material";
+import TP from "../services/take_parking"
 
 export function ParkingsStaff() {
 
 	const [parkingsList, setParkingsList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/parkings").then((res) => 
-			setParkingsList(res.data)
-		)}, []);
+		TP.TakeParking().then(res => {setParkingsList(res);})
+	}, []);
 
 	return (<div>
             <div className="title-parkings">

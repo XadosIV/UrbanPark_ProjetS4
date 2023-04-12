@@ -1,0 +1,27 @@
+.button-places {
+	display:flex;
+	flex-direction:column;
+	text-align:center;
+}
+
+.title-parking {
+	color:red;
+	text-decoration: underline;
+	text-align:center;
+}
+
+.parking-item {
+	display: flex;
+	flex-direction:row;
+	flex-basis: calc(42%);  
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	background-color: white;
+
+	justify-content:space-between;
+	align-items:center;
+}
+
+.parking-item p {
+	color:black;
+}
