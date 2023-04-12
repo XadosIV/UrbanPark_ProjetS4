@@ -105,30 +105,7 @@
 	"code":"E_EXAMPLE",
 	"message":"Le code est une chaine de caractères ayant une correspondance dans errors.js. Le message doit être compréhensible par un humain !"
 }
-
-# Endpoints
-
-> You can access the API by these URIs. Or not.
-
-## Auth
-
-| Method | Endpoint      | Ressource | Description                      | Permission              |
-| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
-| GET    | /auth         | AUTH      | Get token of the user for auth   |                         |
-|		 |				 |			 | mail=$mail&password=$password	|						  |
-
-## User
-
-| Method | Endpoint      | Ressource | Description                      | Permission              |
-| ------ | ------------- | --------- | -------------------------------- | ----------------------- |
-| GET    | /user         | User      | Get user for auth key            | AUTH                    |
-| POST   | /users        | User      | Create a new user                |                         |
-| GET    | /users        | User      | Get an array of all users        | see_other_users         |
-| GET    | /users/:user  | User      | Get a user                       | see_other_users AUTH    | 
-| PUT    | /users/:user  | User      | Modify informations about a user | AUTH                    |
-|        |               |           | Modify the spot of a user        | modify_spot_users       |
-|        |               |           | Modify the role of a user        | modify_role_users       |
-| DELETE | /users/:user  | User      | Delete a user                    | delete_other_users AUTH |
+```
 
 # Permissions
 
@@ -141,3 +118,169 @@
 | modify_spot_users  | You can modify spot attribution of any user                                                                 |
 | modify_role_users  | You can modify role - and permissions - of any user                                                         |
 | delete_other_users | You can delete any user                                                                                     |
+
+* * *
+* * *
+
+# Endpoints
+
+
+
+## /api/auth
+
+> Ressource : AUTH
+>
+> Permission requise : X
+
+### Requête : GET
+
+> Description : Renvoie le token d'un utilisateur  via son mail et son mot de passe
+
+#### **Parametres**
+
+| Nom | Description | Requis? |
+| ---- | ----------- | --------- |
+| email | Son adresse mail | true |
+| password | Son mot de passe | true |
+
+#### **Erreurs**
+
+| Nom | Cause |
+| --- | ----- |
+| E_MISSING_PARAMETER | Tout les paramètres requis ne sont pas donnés. |
+| E_UNDEFINED_USER | Le mail demandé n'appartient à aucun compte enregistré. |
+| E_WRONG_PASSWORD | Le mot de passe mis en paramètre ne correspond pas au mot de passe du compte. |
+
+
+* * *
+* * *
+
+## /api/users
+
+> Ressource : [User]
+>
+> Permission requise : see_other_users
+
+### Requête : GET
+
+> Description : Renvoie un, plusieurs, ou tout les utilisateurs, selon certains filtres.
+
+#### **Parametres** 
+
+| Nom | Description | Requis? |
+| ---- | ----------- | --------- |
+| email | Son adresse mail | false |
+| role | Son rôle | false |
+| first_name | Son prénom | false |
+| last_name | Son nom de famille | false |
+| token | Son token d'authentification | false |
+
+#### **Erreurs**
+Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
+* * *
+* * *
+
+## /api/users/:user
+
+> Ressource : User
+>
+> Permission requise : see_others_users & AUTH
+
+### Requête : GET
+
+> Description : Renvoie un utilisateur.
+
+#### **Parametres** : X
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
+
+
+### Requête : DELETE
+
+> Description : Supprime un utilisateur.
+
+> Renvoie : Booleen (Opération réussie ?)
+#### **Parametres** : X
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
+
+
+### Requête : PUT
+
+> Description : Modifie certaines informations d'un utilisateur.
+
+#### **Parametres**
+
+| Name | Description | Required? | Permission |
+| ---- | ----------- | --------- | ---------- |
+| email | Son adresse mail | false | AUTH |
+| password | Son mot de passe | false | AUTH |
+| first_name | Son prénom | false | AUTH |
+| last_name | Son nom de famille | false | AUTH |
+| role | Son rôle | false | modify_role_users |
+| token | Son token d'authentification | false | AUTH |
+| id_spot | Son numéro de place | false | modify_spot_users |
+| id_spot_temp | Son numéro de place temporaire | false | modify_spot_users |
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
+| E_MISSING_PARAMETER | La requête nécessite au minimum un paramètre à modifier |
+
+* * *
+* * *
+
+## /api/user
+
+> Ressource : User
+>
+> Permission requise : X
+
+### Requête GET
+
+> Description : Récupère l'utilisateur via son token.
+
+#### **Parametres**
+
+| Name | Description | Required? |
+| ---- | ----------- | --------- |
+| token | Son token d'authentification | true |
+
+#### **Erreurs**
+
+| Nom | Cause |
+| --- | ----- |
+| E_MISSING_PARAMETER | Tout les paramètres requis ne sont pas donnés. |
+
+### Requête POST
+
+> Description : Crée/Ajoute un utilisateur à la base de données.
+
+#### **Parametres**
+
+| Name | Description | Required? |
+| ---- | ----------- | --------- |
+| email | Son adresse mail | true |
+| password | Son mot de passe | true |
+| first_name | Son prénom | true |
+| last_name | Son nom de famille | true |
+
+#### **Erreurs**
+
+| Nom | Cause |
+| --- | ----- |
+| E_MISSING_PARAMETER | Tout les paramètres requis ne sont pas donnés. |
+| E_EMAIL_FORMAT_INVALID | Le mail n'a pas le bon format. |
+| E_PASSWORD_FORMAT_INVALID | Le mot de passe ne respecte pas les restrictions imposées. |
+| E_EMAIL_ALREADY_USED | Un utilisateur possède déjà cette adresse mail. |
