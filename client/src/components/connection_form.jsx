@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import { authenticate } from "../services/auth_api";
+import { ContexteUser } from "../contexts/contexte_user";
+import { userFromToken } from "../services/user_from_token";
 
 export function ConnectionForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail, password: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const navigate = useNavigate();
+	const { setUserId, setUserToken, setUserRole } = useContext(ContexteUser);
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -14,13 +17,25 @@ export function ConnectionForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+	async function updateContexte(token){
+		const userData = await userFromToken(token);
+		console.log(userData.data);
+		if(userData.data.length !== 1){
+			setUserId(userData.data[0].id);
+			setUserToken(token);
+			setUserRole(userData.data[0].role);
+		}
+	}
+
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
 		const data = {identifier: infos.mail, password: infos.password};
 		const res = await authenticate(data);
 		if(res.status === 200){
-			navigate("/");
+			console.log(res);
+			updateContexte(res.data.token);
+			//navigate("/");
 		}else{
 			setWrongInput(true);
 		}

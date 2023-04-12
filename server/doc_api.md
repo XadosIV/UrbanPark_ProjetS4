@@ -105,6 +105,7 @@
 	"code":"E_EXAMPLE",
 	"message":"Le code est une chaine de caractères ayant une correspondance dans errors.js. Le message doit être compréhensible par un humain !"
 }
+```
 
 # Endpoints
 
