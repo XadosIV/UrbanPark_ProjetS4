@@ -120,6 +120,7 @@
 | delete_other_users | You can delete any user                                                                                     |
 
 * * *
+* * *
 
 # Endpoints
 
@@ -152,6 +153,7 @@
 
 
 * * *
+* * *
 
 ## /api/users
 
@@ -176,8 +178,67 @@
 #### **Erreurs**
 Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 
+* * *
+* * *
+
+## /api/users/:user
+
+> Ressource : User
+>
+> Permission requise : see_others_users & AUTH
+
+### Requête : GET
+
+> Description : Renvoie un utilisateur.
+
+#### **Parametres** : X
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
 
 
+### Requête : DELETE
+
+> Description : Supprime un utilisateur.
+
+> Renvoie : Booleen (Opération réussie ?)
+#### **Parametres** : X
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
+
+
+### Requête : PUT
+
+> Description : Modifie certaines informations d'un utilisateur.
+
+#### **Parametres**
+
+| Name | Description | Required? | Permission |
+| ---- | ----------- | --------- | ---------- |
+| email | Son adresse mail | false | AUTH |
+| password | Son mot de passe | false | AUTH |
+| first_name | Son prénom | false | AUTH |
+| last_name | Son nom de famille | false | AUTH |
+| role | Son rôle | false | modify_role_users |
+| token | Son token d'authentification | false | AUTH |
+| id_spot | Son numéro de place | false | modify_spot_users |
+| id_spot_temp | Son numéro de place temporaire | false | modify_spot_users |
+
+#### **Erreurs** :
+
+| Nom | Cause |
+| --- | ----- |
+| E_USER_NOT_FOUND | L'utilisateur n'existe pas dans la base de donnée. |
+| E_MISSING_PARAMETER | La requête nécessite au minimum un paramètre à modifier |
+
+* * *
 * * *
 
 ## /api/user
