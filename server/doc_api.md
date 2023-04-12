@@ -18,7 +18,7 @@
 	"first_name":"Jean",
 	"last_name":"Dupond",
 	"email":"my.email@itsamail.com",
-	"id_place":1, // Can be null
+	"id_spot":1, // Can be null
 	"role":"Abonné"
 }
 ```
