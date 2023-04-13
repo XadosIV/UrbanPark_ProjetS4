@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material"
 import { AppRoutes } from "./app_routes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -11,6 +11,59 @@ export function App() {
 	const [ userToken, setUserToken ] = useState(initialState.userToken);
 	const [ userRole, setUserRole ] = useState(initialState.userRole);
 	const [ userPermissions, setUserPermissions ] = useState(initialState.userPermissions);
+
+	// default state for the session
+	useEffect(() => {
+		window.sessionStorage.setItem("userId", undefined);
+		window.sessionStorage.setItem("userToken", undefined);
+		window.sessionStorage.setItem("userRole", undefined);
+		window.sessionStorage.setItem("userPermissions", undefined);
+	}, [])
+
+	// update the session with the data from the context if the context isn't undefined otherwise update the contexte with the data from the session
+	useEffect(() => {
+		async function fetchId(){		
+			if(userId !== undefined){
+				window.sessionStorage.setItem("userId", userId);
+			}else{
+				setUserId(window.sessionStorage.getItem("userId"));
+			}
+		}
+		fetchId();
+	}, [userId]);
+
+	useEffect(() => {
+		console.group("token");
+		console.log(userToken);
+		async function fetchToken(){
+			if(userToken !== undefined){
+				window.sessionStorage.setItem("userToken", userToken);
+			}else{
+				setUserToken(window.sessionStorage.getItem("userToken"));
+			}
+		}
+		fetchToken();
+		console.log(userToken);
+		console.groupEnd();
+	}, [userToken, setUserToken]);
+
+	useEffect(() => {
+		if(userRole !== undefined){
+			window.sessionStorage.setItem("userRole", userRole);
+		}else{
+			setUserRole(window.sessionStorage.getItem("userRole"));
+		}
+	}, [userRole]);
+	
+	useEffect(() => {
+		if(userPermissions !== undefined){
+			window.sessionStorage.setItem("userPermissions", JSON.stringify(userPermissions));
+		}else{
+			if(userPermissions !== undefined){
+				setUserPermissions(JSON.parse(window.sessionStorage.getItem("userPermissions")));
+			}
+		}
+	}, [userPermissions]);
 
 	return (
 		<ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken, userRole, setUserRole, userPermissions, setUserPermissions }}>

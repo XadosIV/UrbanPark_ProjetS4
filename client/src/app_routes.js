@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, ParkingSpots } from "./page";
 import { ProtectedRoutes } from "./components";
-import { useIsConnected } from "./interface/";
+import { useIsConnected } from "./interface";
 
 export function AppRoutes() {
 	const isConnected = useIsConnected();
