@@ -25,7 +25,7 @@ export function StaffPreview(list) {
      */
     function Working(id) {
         //FUNCTION TO DO LATER WHEN WE CAN GET INFORMATIONS FROM DATABASE
-        if (id == 1) {
+        if (id === 1) {
             return "Travaille";
         } else {
             return "Inactif";

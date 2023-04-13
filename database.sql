@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Parking (
 	name VARCHAR(45) NOT NULL,
 	floors INT NOT NULL DEFAULT 1,
 	address VARCHAR(100) NOT NULL,
-	CONSTRAINT pk_parking PRIMARY KEY (id)
+	CONSTRAINT pk_parking PRIMARY KEY (id),
+	CONSTRAINT uc_parking_name UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Spot (
@@ -19,6 +20,10 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Spot (
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Role (
 	name VARCHAR(45) NOT NULL,
+	see_other_users BIT(1) DEFAULT 0,
+	modify_spot_users BIT(1) DEFAULT 0,
+	modify_role_users BIT(1) DEFAULT 0,
+	delete_other_user BIT(1) DEFAULT 0,
 	CONSTRAINT pk_role PRIMARY KEY (name)
 );
 
@@ -30,10 +35,12 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.User (
 	password VARCHAR(50) NOT NULL,
 	role VARCHAR(45) NOT NULL,
 	token VARCHAR(20) NOT NULL,
-	id_spot INT,
+	id_spot INT DEFAULT NULL,
+	id_spot_temp INT DEFAULT NULL,
 	CONSTRAINT pk_user PRIMARY KEY (id),
 	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `DATABASE`.Role (name),
 	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `DATABASE`.Spot (id),
+	CONSTRAINT fk_user_spot_temp FOREIGN KEY (id_spot_temp) REFERENCES `DATABASE`.Spot (id),
 	CONSTRAINT uc_user_email UNIQUE (email),
 	CONSTRAINT uc_user_token UNIQUE (token)
 );
@@ -47,15 +54,6 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Schedule (
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
 	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id),
 	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `DATABASE`.Parking (id)
-);
-
-CREATE TABLE IF NOT EXISTS `DATABASE`.Reservation (
-	id INT NOT NULL AUTO_INCREMENT,
-	id_user INT NOT NULL,
-	date_start DATETIME NOT NULL,
-	date_end DATETIME NOT NULL,
-	CONSTRAINT pk_reservation PRIMARY KEY (id),
-	CONSTRAINT fk_reservation_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id)
 );
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Type (
@@ -72,7 +70,12 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Typed (
 );
 
 -- Default rows
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gérant");
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Gardien");
+INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gérant", 1, 1, 1, 1);
+INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gardien", 1, 1, 1, 1);
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
 INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Abonné");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Handicapée");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Électrique");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Urgence");
+INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Municipale");

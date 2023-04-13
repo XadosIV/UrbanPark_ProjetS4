@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
+import { authenticate } from "../services/auth_api";
 
 export function ConnectionForm(props) {
-	const [infos, setInfos] = useState({mail: props.mail, password: ""})
+	const [infos, setInfos] = useState({mail: props.mail, password: ""});
+	const [wrongInput, setWrongInput] = useState(false);
 	const navigate = useNavigate();
 
 	const handleChange = (event) => {
@@ -12,17 +14,27 @@ export function ConnectionForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-	const handlleSubmit = (event) => {
+	const handlleSubmit = async (event) => {
 		event.preventDefault();
 		console.log(infos);
-		if(infos.password === "password"){
-			navigate("/", {state: {auth: true}});
+		const data = {identifier: infos.mail, password: infos.password};
+		const res = await authenticate(data);
+		if(res.status === 200){
+			navigate("/");
+		}else{
+			setWrongInput(true);
 		}
 	}
 
-	return(<div>
-		<form onSubmit={handlleSubmit}>
-			<div>
+	const noPaste = (e) => {
+		e.preventDefault();
+		return false;
+	}
+
+
+	return(<div className="form_div">
+		<form onSubmit={handlleSubmit} className="form">
+			<div className="inputs_divs">
 			<TextField
 				required
 				id="mail"
@@ -39,13 +51,16 @@ export function ConnectionForm(props) {
 				type="password"
 				name="password"
 				onChange={handleChange}
+				onPaste={ noPaste }
 			/>
 			</div>
-			<Button 
+			<Button
+				className="submit_button" 
 				variant="contained" 
 				color="primary" 
 				type="submit"
 			>connexion</Button>
 		</form>
+		{ wrongInput && <p className="err_message"> votre mot de passe ou mail n'est pas valide </p> }
 	</div>)
 }

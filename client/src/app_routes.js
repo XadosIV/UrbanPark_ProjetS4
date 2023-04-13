@@ -1,6 +1,7 @@
 import React from "react"
 import { Route, Routes } from "react-router-dom"
-import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, Agenda } from "./page"
+import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, ParkingSpots, Agenda } from "./page"
+
 
 export function AppRoutes() {
 
@@ -10,6 +11,7 @@ export function AppRoutes() {
 			<Route path="/test" element={<Test />} />
 			<Route path="/authentication" element={<Authentication />} />
 			<Route path="/admin" element={<AdminPage />} />
+			<Route path="/parkings/:parking" element={<ParkingSpots />} />
 			<Route path="/guardians-list-schedule" element={<GuardiansListSchedule />} />
 			<Route path="/connection" element={<Connection />} />
 			<Route path="/registration" element={<Registration />} />

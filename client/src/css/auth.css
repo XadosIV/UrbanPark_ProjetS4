@@ -1,0 +1,41 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-evenly;
+}
+
+.go_back_button {
+    align-self: flex-start;
+}
+
+.form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-evenly;
+}
+
+.inputs_divs {
+    display: flex;
+    flex-direction: column;
+}
+
+.form>* {
+    margin: 5%;
+}
+
+.inputs_divs>* {
+    margin: 5%;
+}
+
+.err_message {
+    color: red;
+}
+
+.form_div {
+    display: flex;
+    flex-direction: column;
+}
