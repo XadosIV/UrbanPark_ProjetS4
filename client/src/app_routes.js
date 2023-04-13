@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoutes } from "./components";
 import { useIsConnected } from "./interface";
@@ -6,10 +5,6 @@ import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansList
 
 export function AppRoutes() {
 	const isConnected = useIsConnected();
-
-	useEffect(() => {
-		console.log("hop");
-	})
 
 	return (
 		<Routes>
