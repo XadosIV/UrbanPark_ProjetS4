@@ -14,41 +14,39 @@ export function App() {
 
 	// default state for the session
 	useEffect(() => {
-		window.sessionStorage.setItem("userId", undefined);
-		window.sessionStorage.setItem("userToken", undefined);
-		window.sessionStorage.setItem("userRole", undefined);
-		window.sessionStorage.setItem("userPermissions", undefined);
+		if(window.sessionStorage.getItem("userId") === null){
+			window.sessionStorage.setItem("userId", initialState.userId);
+		}
+		if(window.sessionStorage.getItem("userToken") === null){
+			window.sessionStorage.setItem("userToken", initialState.userToken);
+		}
+		if(window.sessionStorage.getItem("userRole") === null){
+			window.sessionStorage.setItem("userRole", initialState.userRole);
+		}
+		if(window.sessionStorage.getItem("userPermissions") === null){
+			window.sessionStorage.setItem("userPermissions", initialState.userPermissions);
+		}
 	}, [])
 
 	// update the session with the data from the context if the context isn't undefined otherwise update the contexte with the data from the session
 	useEffect(() => {
-		async function fetchId(){		
-			if(userId !== undefined){
-				window.sessionStorage.setItem("userId", userId);
-			}else{
-				setUserId(window.sessionStorage.getItem("userId"));
-			}
+		if(userId !== initialState.userId){
+			window.sessionStorage.setItem("userId", userId);
+		}else{
+			setUserId(window.sessionStorage.getItem("userId"));
 		}
-		fetchId();
 	}, [userId]);
 
 	useEffect(() => {
-		console.group("token");
-		console.log(userToken);
-		async function fetchToken(){
-			if(userToken !== undefined){
-				window.sessionStorage.setItem("userToken", userToken);
-			}else{
-				setUserToken(window.sessionStorage.getItem("userToken"));
-			}
+		if(userToken !== initialState.userToken){
+			window.sessionStorage.setItem("userToken", userToken);
+		}else{
+			setUserToken(window.sessionStorage.getItem("userToken"));
 		}
-		fetchToken();
-		console.log(userToken);
-		console.groupEnd();
 	}, [userToken, setUserToken]);
 
 	useEffect(() => {
-		if(userRole !== undefined){
+		if(userRole !== initialState.userRole){
 			window.sessionStorage.setItem("userRole", userRole);
 		}else{
 			setUserRole(window.sessionStorage.getItem("userRole"));
@@ -56,7 +54,7 @@ export function App() {
 	}, [userRole]);
 	
 	useEffect(() => {
-		if(userPermissions !== undefined){
+		if(userPermissions !== initialState.userPermissions){
 			window.sessionStorage.setItem("userPermissions", JSON.stringify(userPermissions));
 		}else{
 			if(userPermissions !== undefined){

@@ -3,7 +3,7 @@ import React from "react";
 const initialState = {
     userId: undefined,
     setUserId: valueId => {},
-    userToken: undefined,
+    userToken: "",
     setUserToken: valueToken => {},
     userRole: undefined,
     setUserRole: valueRole => {},

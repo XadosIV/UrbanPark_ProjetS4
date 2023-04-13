@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, ParkingSpots } from "./page";
 import { ProtectedRoutes } from "./components";
@@ -7,6 +7,10 @@ import { useIsConnected } from "./interface";
 export function AppRoutes() {
 	const isConnected = useIsConnected();
 
+	useEffect(() => {
+		console.log("hop");
+	})
+
 	return (
 		<Routes>
 			<Route path="/" element={<HomePage />} />
@@ -14,7 +18,7 @@ export function AppRoutes() {
 			<Route path="/admin" element={<AdminPage />} />
 			<Route path="/parkings/:parking" element={<ParkingSpots />} />
 			<Route path="/guardians-list-schedule" element={<GuardiansListSchedule />} />
-			<Route element={ <ProtectedRoutes isAllowed={ isConnected } to="/" /> }>
+			<Route element={ <ProtectedRoutes isAllowed={ isConnected() } to="/" /> }>
 				<Route path="/authentication" element={<Authentication />} />
 				<Route path="/connection" element={<Connection />} />
 				<Route path="/registration" element={<Registration />} />

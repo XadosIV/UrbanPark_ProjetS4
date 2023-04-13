@@ -1,9 +1,14 @@
 import { useContext } from "react";
-import { ContextUser } from "../contexts/context_user"
+import { ContextUser, initialState } from "../contexts/context_user"
 
 const useIsConnected = () => {
+    console.log("pop");
     const { userToken } = useContext(ContextUser);
-    return userToken !== undefined;
+    function isConn(){
+        console.log("pop2");
+        return userToken !== initialState.userToken;
+    }
+    return isConn;
 }
 
 export { useIsConnected }
