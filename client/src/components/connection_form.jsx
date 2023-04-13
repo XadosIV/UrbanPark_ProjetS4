@@ -1,20 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { authenticate, userFromToken, permsFromRole } from "../services/";
-import { ContexteUser } from "../contexts/contexte_user";
+import { authenticate, userFromToken } from "../services/";
+import { useUpdateContext } from "../interface";
 
 export function ConnectionForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail, password: ""});
 	const [wrongInput, setWrongInput] = useState(false);
-	const navigate = useNavigate();
-	const { setUserId, userToken, setUserToken, setUserRole, setUserPermissions } = useContext(ContexteUser);
-
- 	useEffect( () => {
-		if(userToken !== undefined){
-			navigate("/");
-		}
-	});
+	const updateContext = useUpdateContext();
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -32,19 +24,12 @@ export function ConnectionForm(props) {
 			const userData = await userFromToken(res.data.token);
 			console.log(userData.data);
 			if(userData.data.length === 1){
-				setUserId(userData.data[0].id);
-				setUserToken(res.data.token);
-				setUserRole(userData.data[0].role);
-				const perms = await permsFromRole(userData.data[0].role);
-				console.log(perms);
-				const permUser = {};
-				for(const key in perms.data[0]){
-					if(key !== "name"){
-						permUser[key] = perms.data[0][key].data[0];
-					}
-				}
-				console.log(setUserPermissions);
-				setUserPermissions(permUser);
+				const contextData = {
+					id: userData.data[0].id,
+					token: res.data.token,
+					role: userData.data[0].role
+				};
+				updateContext(contextData);
 			}
 		}else{
 			setWrongInput(true);

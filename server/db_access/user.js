@@ -27,7 +27,7 @@ function GetUsers(callback, infos){
  * @param {object} infos {token}
  */
 function GetUserFromToken(callback, infos){
-	sql = `SELECT id, first_name, last_name, email, role, id_spot FROM ${dbName}.User WHERE  token=:token;`;
+	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM ${dbName}.User WHERE  token=:token;`;
 	console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		token: infos.token

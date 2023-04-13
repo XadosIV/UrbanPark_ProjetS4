@@ -8,7 +8,7 @@ const initialState = {
     userRole: undefined,
     setUserRole: valueRole => {},
     userPermissions: undefined,
-    setuserPermissions: valuePermissions => {}
+    setUserPermissions: valuePermissions => {}
 };
 
 const ContexteUser = React.createContext(initialState);
