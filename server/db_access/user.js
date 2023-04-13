@@ -20,6 +20,21 @@ function GetUsers(callback, infos){
 }
 
 /**
+ * GetUserFromToken
+ * Get all users matching parameters
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {object} infos {token}
+ */
+function GetUserFromToken(callback, infos){
+	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM ${dbName}.User WHERE  token=:token;`;
+	console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
+	dbConnection.query(sql, {
+		token: infos.token
+	}, callback);
+}
+
+/**
  * IsValidEmail
  * Check if the string is a valid email
  * 
@@ -90,4 +105,4 @@ function PostUser(callback, infos){
 	}
 }
 
-module.exports = {GetUsers, PostUser};
+module.exports = {GetUsers, PostUser, GetUserFromToken};

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { creationCompte } from "../services/creation_compte";
-import { useNavigate } from "react-router-dom";
+import { creationCompte, authenticate, userFromToken } from "../services";
+import { useUpdateContext } from "../interface";
 
 export function RegistrationForm(props) {
-	const navigate = useNavigate();
 	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
+	const updateContext = useUpdateContext();
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
@@ -19,8 +19,29 @@ export function RegistrationForm(props) {
 			setWrongInput(false);
 			const res = await creationCompte(infos);
 			console.log(res);
-			if(res.status === 201){
-				navigate("/");
+			if(res.status === 200){
+				const tokenData = {
+					identifier: infos.email,
+					password: infos.password
+				};
+				const resToken = await authenticate(tokenData);
+				console.log(resToken);
+				if(resToken.status === 200){
+					const resUser = await userFromToken(resToken.data.token);
+					console.log(resUser);
+					if(resUser.data.length === 1){
+						const contextData = {
+							id: resUser.data[0].id,
+							token: resToken.data.token,
+							role: resUser.data[0].role
+						};
+						updateContext(contextData);
+					}
+					setWrongInput(true);
+					setErrMessage("une erreur est survenue");
+				}
+				setWrongInput(true);
+				setErrMessage("une erreur est survenue");
 			}else{
 				setWrongInput(true);
 				setErrMessage(res.data.message);
