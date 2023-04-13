@@ -1,6 +1,6 @@
 import React from "react"
 import { Route, Routes } from "react-router-dom"
-import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration } from "./page"
+import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, Agenda } from "./page"
 
 export function AppRoutes() {
 
@@ -13,6 +13,7 @@ export function AppRoutes() {
 			<Route path="/guardians-list-schedule" element={<GuardiansListSchedule />} />
 			<Route path="/connection" element={<Connection />} />
 			<Route path="/registration" element={<Registration />} />
+			<Route path="/agenda" element={<Agenda />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	)
