@@ -4,7 +4,7 @@ import { AppRoutes } from "./app_routes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import { EndPage } from "./components"
-import { ContexteUser, initialState } from "./contexts/contexte_user"
+import { ContextUser, initialState } from "./contexts/context_user"
 
 export function App() {
 	const [ userId, setUserId ] = useState(initialState.userId);
@@ -13,7 +13,7 @@ export function App() {
 	const [ userPermissions, setUserPermissions ] = useState(initialState.userPermissions);
 
 	return (
-		<ContexteUser.Provider value={{ userId, setUserId, userToken, setUserToken, userRole, setUserRole, userPermissions, setUserPermissions }}>
+		<ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken, userRole, setUserRole, userPermissions, setUserPermissions }}>
 		<Box
 			sx={{ padding: 2, minHeight: "100%",
 				display: "grid",
@@ -42,7 +42,7 @@ export function App() {
 			<AppRoutes />
 			<EndPage/>
 		</Box>
-		</ContexteUser.Provider>
+		</ContextUser.Provider>
 	)
 }
 

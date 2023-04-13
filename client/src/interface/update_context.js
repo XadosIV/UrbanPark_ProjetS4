@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { ContexteUser } from "../contexts/contexte_user";
+import { ContextUser } from "../contexts/context_user";
 import { permsFromRole } from "../services";
 
 const useUpdateContext = () => {
-    const { setUserId, setUserToken, setUserRole, setUserPermissions } = useContext(ContexteUser);
+    const { setUserId, setUserToken, setUserRole, setUserPermissions } = useContext(ContextUser);
     async function upContext(userData){
         setUserId(userData.id);
         setUserToken(userData.token);

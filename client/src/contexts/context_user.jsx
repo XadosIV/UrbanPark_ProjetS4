@@ -11,6 +11,6 @@ const initialState = {
     setUserPermissions: valuePermissions => {}
 };
 
-const ContexteUser = React.createContext(initialState);
+const ContextUser = React.createContext(initialState);
 
-export { initialState, ContexteUser }
+export { initialState, ContextUser }

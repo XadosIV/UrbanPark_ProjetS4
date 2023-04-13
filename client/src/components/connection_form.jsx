@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { authenticate, userFromToken } from "../services/";
+import { authenticate, userFromToken } from "../services";
 import { useUpdateContext } from "../interface";
 
 export function ConnectionForm(props) {

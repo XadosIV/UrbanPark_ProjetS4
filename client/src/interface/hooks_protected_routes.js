@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { ContexteUser } from "../contexts/contexte_user"
+import { ContextUser } from "../contexts/context_user"
 
 const useIsConnected = () => {
-    const { userToken } = useContext(ContexteUser);
+    const { userToken } = useContext(ContextUser);
     return userToken !== undefined;
 }
 

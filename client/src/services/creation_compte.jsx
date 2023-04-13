@@ -6,6 +6,4 @@ async function creationCompte(userData){
     return axios.post(url, userData).then((res) => res).catch((err) => err.response);
 };
 
-export {
-	creationCompte
-};
+export { creationCompte };
