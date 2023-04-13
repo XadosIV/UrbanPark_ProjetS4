@@ -16,8 +16,9 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req,res,next) => {
-	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
+	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'){
         req.token=req.headers.authorization.split(' ')[1];
+	}
 	next();
 });
 
