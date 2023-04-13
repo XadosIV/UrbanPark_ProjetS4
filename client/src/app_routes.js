@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, ParkingSpots } from "./page";
 import { ProtectedRoutes } from "./components";
 import { useIsConnected } from "./interface";
+import { Test, NotFoundPage, Authentication, Connection, HomePage, GuardiansListSchedule, AdminPage, Registration, ParkingSpots, Agenda } from "./page"
 
 export function AppRoutes() {
 	const isConnected = useIsConnected();
@@ -23,6 +23,7 @@ export function AppRoutes() {
 				<Route path="/connection" element={<Connection />} />
 				<Route path="/registration" element={<Registration />} />
 			</Route>
+			<Route path="/agenda" element={<Agenda />} />
 			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	)
