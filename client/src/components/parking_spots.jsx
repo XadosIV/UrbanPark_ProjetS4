@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom'
 import { Button } from "@mui/material";
 import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
-import { SpotsList, ParkingList } from "../components";
+import { Spot, ParkingList } from "../components";
 import Select from 'react-select';
 import "../css/parking.css"
 
@@ -67,7 +66,13 @@ export function ParkingSpots(props) {
         <div style={{width:"200px", marginBottom:"10px"}}>
             <Select options={options} placeholder={textSelect} value={floor} onChange={handleChange}/>
         </div>
-        <SpotsList list={list}/>
+        <div className="all-spots">
+            {
+                list.map((spot) => (
+                    <Spot spot={spot} size={Math.ceil(Math.sqrt(list.length))}/>
+                ))
+            }
+		</div>
         <Button variant="contained" color="primary" 
         style={{
             backgroundColor: "#FE434C",
