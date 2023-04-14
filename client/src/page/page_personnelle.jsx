@@ -1,8 +1,9 @@
 import React from "react";
+import { InfosUser } from "../components/infos_user";
 
 export function PagePersonnelle(){
 	return<div>
-		<h1>Not Found</h1>
-		<p>Sorry, there is nothing to see here.</p>
+		<h1>Page Personelle</h1>
+		<InfosUser />
 	</div>
 }

@@ -1,7 +1,7 @@
 import axios from "axios"
 
 function TakeAllSpotTypes() {
-	const url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spot-types";
+	const url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/types";
 	return axios.get(url).then((res) => res.data);
 }
 
