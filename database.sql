@@ -35,10 +35,12 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.User (
 	password VARCHAR(50) NOT NULL,
 	role VARCHAR(45) NOT NULL,
 	token VARCHAR(20) NOT NULL,
-	id_spot INT,
+	id_spot INT DEFAULT NULL,
+	id_spot_temp INT DEFAULT NULL,
 	CONSTRAINT pk_user PRIMARY KEY (id),
 	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES `DATABASE`.Role (name),
 	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES `DATABASE`.Spot (id),
+	CONSTRAINT fk_user_spot_temp FOREIGN KEY (id_spot_temp) REFERENCES `DATABASE`.Spot (id),
 	CONSTRAINT uc_user_email UNIQUE (email),
 	CONSTRAINT uc_user_token UNIQUE (token)
 );
@@ -52,15 +54,6 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Schedule (
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
 	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id),
 	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `DATABASE`.Parking (id)
-);
-
-CREATE TABLE IF NOT EXISTS `DATABASE`.Reservation (
-	id INT NOT NULL AUTO_INCREMENT,
-	id_user INT NOT NULL,
-	date_start DATETIME NOT NULL,
-	date_end DATETIME NOT NULL,
-	CONSTRAINT pk_reservation PRIMARY KEY (id),
-	CONSTRAINT fk_reservation_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id)
 );
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Type (
