@@ -23,14 +23,19 @@
 
 | Nom | Description | Requis? |
 | ---- | ----------- | --------- |
-| role | Le rôle concerné par le créneau | false |
-| user | L'utilisateur concerné par le créneau | false |
+| role | Le rôle concerné par le créneau | X |
+| user | L'utilisateur concerné par le créneau | X |
 | parking | Le parking du créneau | false |
 | date_start | Date de début de créneau | false |
 | date_end | Date de fin de créneau | false |
 
+X : Un paramètre parmis X peut être définit, les autres doivent ne pas être définits
+
 #### **Erreurs**
-Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
+| Nom | Cause |
+| --- | ----- |
+| E_CONFLICTING_PARAMETERS | Un seul champs peut être définit parmis : role, user |
 * * *
 * * *
 # POST /api/schedule
