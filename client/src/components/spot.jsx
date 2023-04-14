@@ -18,7 +18,16 @@ export function Spot(props) {
             })
         }
         if (res) {
-            return <AssignToSub/>;
+            return <Button variant="contained" color="primary" 
+            style={{
+                backgroundColor: "#FE434C",
+                borderColor: "transparent",
+                borderRadius: 20,
+                width: 160,
+                float:"right",
+                height:"10%",
+                marginBottom:"5px"
+            }}>Assigner cette place à un abonné</Button>;
         }  
     }
 
