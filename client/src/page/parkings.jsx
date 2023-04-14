@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams } from 'react-router-dom'
 import { ParkingSpots } from "../components";
 import "../css/parking.css"

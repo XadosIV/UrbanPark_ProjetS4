@@ -61,7 +61,6 @@
 .dp-content a, .dp-content p {
 	color: black;
 	display: block;
-	padding-left:-10px;
 }
   
   /* Change color of dropdown links on hover */
@@ -77,6 +76,15 @@
 	background-color: #3e8e41;
 }
 
+#no-hover {
+	margin-bottom:10px;
+}
+
 #no-hover:hover {
 	background-color:#f9f9f9;
+}
+
+.search {
+	width:200px;
+	margin-bottom: 10px;
 }

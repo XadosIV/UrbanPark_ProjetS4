@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
-import { AssignToSub } from "../components"
 import TBS from "../services/take_by_spot"
 import TAST from "../services/take_all_spot_types"
 
@@ -46,7 +45,7 @@ export function Spot(props) {
     var infosSpot;
     if (user.length == 1) {
         infosSpot = user.map((user) => (
-            <Link to={`/users/${user.id}/profile`} style={{textDecoration:"none"}}>
+            <Link to={`/users/${user.id}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
                 Place attribuée à : <br/> {user.first_name} {user.last_name}
             </Link>))
     } else {
@@ -56,11 +55,12 @@ export function Spot(props) {
             }
         })    
     }
+    if (!infosSpot) {
+        infosSpot = <a id="no-hover">Cette place est destinée à tous les utilisateurs</a>
+    }
 
     var typesSpot;
-    if (types.length == 0) {
-        typesSpot = <p><strong>-</strong> Place accessible à tout le monde</p>
-    } else {
+    if (types.length != 0) {
         typesSpot = types.map((type) => (
             <p><strong>-</strong> Place {type.name}<br/></p>
         ))

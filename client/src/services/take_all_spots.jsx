@@ -6,18 +6,22 @@ import axios from "axios"
  *
  * @param { integer } id_park
  * @param { integer } floor
- * @param { String } type
  * @return { Promise list of User }
  */
-function TakeAllSpots(id_park=0, floor=-1){
+function TakeAllSpots(id_park=0, floor="%", number=""){
     const obj = {id_park: id_park}
     const flo = {floor: floor}
+    const nb = {number: number}
+    console.log(typeof(number))
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spots"
     if (id_park !== 0) {
-        url = url + "?" + new URLSearchParams(obj).toString();
+        url = url + "?" + new URLSearchParams(obj).toString()
     }
-    if (floor !== -1) {
-        url = url + "&" + new URLSearchParams(flo).toString();
+    if (floor !== "%") {
+        url = url + "&" + new URLSearchParams(flo).toString()
+    }
+    if (number !== "") {
+        url = url + "&" + new URLSearchParams(nb).toString()
     }
 	return axios.get(url).then((res) => res.data)
 }
