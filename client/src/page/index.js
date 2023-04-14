@@ -8,4 +8,4 @@ export * from "./home_page"
 export * from "./admin_page"
 export * from "./parkings"
 export * from "./guardians_list_schedule"
-
+export * from "./agenda"

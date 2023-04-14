@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
-import { authenticate } from "../services/auth_api";
+import { authenticate, userFromToken } from "../services";
+import { useUpdateContext } from "../interface";
 
 export function ConnectionForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail, password: ""});
 	const [wrongInput, setWrongInput] = useState(false);
-	const navigate = useNavigate();
+	const updateContext = useUpdateContext();
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -20,7 +20,17 @@ export function ConnectionForm(props) {
 		const data = {identifier: infos.mail, password: infos.password};
 		const res = await authenticate(data);
 		if(res.status === 200){
-			navigate("/");
+			console.log(res);
+			const userData = await userFromToken(res.data.token);
+			console.log(userData.data);
+			if(userData.data.length === 1){
+				const contextData = {
+					id: userData.data[0].id,
+					token: res.data.token,
+					role: userData.data[0].role
+				};
+				updateContext(contextData);
+			}
 		}else{
 			setWrongInput(true);
 		}
