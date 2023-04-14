@@ -105,7 +105,6 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 
 > Description : Supprime un utilisateur.
 
-> Renvoie : Booleen (Opération réussie ?)
 #### **Parametres** : X
 
 #### **Erreurs** :
@@ -131,7 +130,6 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | first_name | Son prénom | false | AUTH |
 | last_name | Son nom de famille | false | AUTH |
 | role | Son rôle | false | modify_role_users |
-| token | Son token d'authentification | false | AUTH |
 | id_spot | Son numéro de place | false | modify_spot_users |
 | id_spot_temp | Son numéro de place temporaire | false | modify_spot_users |
 
