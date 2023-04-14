@@ -3,9 +3,20 @@ const fs = require('fs');
 require('dotenv').config();
 
 let startDefaultQuery = fs.readFileSync("../database.sql", 'utf8', (err, data) => {
-	if (err)
+	if (err){
 		throw err;
-}).toString().replaceAll("`DATABASE`", process.env.DATABASE);
+	}
+}).toString();
+
+process.env.ADDITIONAL_SQL.split(" ").forEach(file => {
+	startDefaultQuery += fs.readFileSync(`../${file}`, 'utf8', (err, data) => {
+		if (err){
+			throw err;
+		}
+	}).toString();
+});
+
+startDefaultQuery.replaceAll("`DATABASE`", process.env.DATABASE);
 
 /**
  * StartDatabase
