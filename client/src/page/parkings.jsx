@@ -7,6 +7,6 @@ export function Parkings() {
     const name = useParams();
 
 	return(
-        <ParkingSpots name={name}/>
+        <ParkingSpots name={name} />
     )
 }

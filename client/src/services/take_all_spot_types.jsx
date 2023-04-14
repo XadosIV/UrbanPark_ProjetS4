@@ -7,7 +7,7 @@ import axios from "axios"
  * @param { integer } id_spot
  * @return { Promise list of User }
  */
-function TakeAllSpotTypes(id_spot=0){
+async function TakeAllSpotTypes(id_spot=0){
     const obj = {id_spot: id_spot}
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spot-types"
     if (id_spot !== 0) {

@@ -7,6 +7,8 @@ import TAST from "../services/take_all_spot_types"
 
 export function Spot(props) {
 
+    console.log(props.spot)
+
     function HasSub(types, user) {
         var res = false;
         if (types.length != 0 && user.length==0) {
@@ -32,13 +34,10 @@ export function Spot(props) {
 
     const [user, setUser] = useState([]);
 
-    useEffect(() => {
-        TBS.TakeBySpot(props.spot.id).then(res => {setUser(res);});
-    }, []);
-
     const [types, setTypes] = useState([]);
 
     useEffect(() => {
+        TBS.TakeBySpot(props.spot.id).then(res => {setUser(res);});
         TAST.TakeAllSpotTypes(props.spot.id).then(res => {setTypes(res);});
     }, []);
 

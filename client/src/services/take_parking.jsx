@@ -7,7 +7,7 @@ import axios from "axios"
  * @param { String } name
  * @return { Promise list of Parking }
  */
-function TakeParking(name=""){
+async function TakeParking(name=""){
     const obj = {name: name}
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/parkings"
     if (name != "") {

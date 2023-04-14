@@ -7,7 +7,7 @@ import axios from "axios"
  * @param { integer } id_spot
  * @return { User }
  */
-function TakeBySpot(id_spot){
+async function TakeBySpot(id_spot){
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/users?id_spot=" + id_spot
 	return axios.get(url).then((res) => res.data)
 }

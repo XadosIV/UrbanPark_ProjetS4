@@ -10,7 +10,7 @@ const Errors = require('../errors');
  */
 
 function GetSpots(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Spot WHERE id_park LIKE :id_park AND floor = :floor AND number LIKE :number ORDER BY floor, number;`;
+	sql = `SELECT * FROM ${dbName}.Spot WHERE id_park LIKE :id_park AND floor LIKE :floor AND number LIKE :number ORDER BY floor, number;`;
     console.log("SQL at GetSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id_park:infos.id_park||'%',
