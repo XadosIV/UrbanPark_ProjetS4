@@ -14,7 +14,7 @@
 
 # Endpoint
 
-# GET /api/schedule
+# GET /api/schedules
 > Permission requise : X
 
 > Description : Renvoie un, plusieurs ou tout les créneaux.
@@ -30,9 +30,10 @@
 
 #### **Erreurs**
 Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
 * * *
 * * *
-# POST /api/schedule
+# POST /api/schedules
 > Permission requise : X
 
 > Description : Crée/Ajoute un créneau à la base de donnée.
@@ -51,6 +52,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | Nom | Cause |
 | --- | ----- |
 | E_MISSING_PARAMETER | Tout les paramètres n'ont pas été donné. |
+
 * * *
 * * *
 # GET /api/schedule/:schedule
