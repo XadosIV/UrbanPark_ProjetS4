@@ -16,7 +16,7 @@ process.env.ADDITIONAL_SQL.split(" ").forEach(file => {
 	}).toString();
 });
 
-startDefaultQuery.replaceAll("`DATABASE`", process.env.DATABASE);
+startDefaultQuery = startDefaultQuery.replaceAll("`DATABASE`", process.env.DATABASE);
 
 /**
  * StartDatabase
