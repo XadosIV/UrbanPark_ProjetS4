@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 import { CutAddress, NeedS } from "../interface";
 import { Button } from "@mui/material";
 import TP from "../services/take_parking";
-import { SpotsList } from "../components"
-import Select from 'react-select'
-import TAS from "../services/take_all_spots"
+import TAS from "../services/take_all_spots";
+import { SpotsList } from "../components";
+import Select from 'react-select';
 import "../css/parking.css"
 
 export function ParkingSpots() {
@@ -29,18 +29,20 @@ export function ParkingSpots() {
 
     const [parkingsList, setParkingsList] = useState([]);
 
-    useEffect(() => {
-		TP.TakeParking(name.parking).then(res => setParkingsList(res))
-	}, []);
+    const [floor, setFloor] = useState(-1);
+
+    const [list, setList] = useState([]);
+
+    const [textSelect, setTextSelect] = useState("Choisir un étage");
 
     var options = []
     parkingsList.map((parking) => (
         options = NbFloors(parking.floors)
     ))
 
-    const [floor, setFloor] = useState([]);
-
-    const [list, setList] = useState([]);
+    useEffect(() => {
+		TP.TakeParking(name.parking).then(res => setParkingsList(res))
+	}, []);
 
     useEffect(() => {
         parkingsList.map((parking) => (
@@ -48,11 +50,12 @@ export function ParkingSpots() {
         ))
     }, []);
 
-    const handleChange = (e) => {
-        setFloor(e.value);
+    const handleChange = (e) => { 
         parkingsList.map((parking) => (
             TAS.TakeAllSpots(parking.id, e.value).then(res => setList(res))
-        ))
+        ));
+        setFloor(e.value);
+        setTextSelect("Étage " + e.value);
     }
 
 	return(<div>
@@ -68,13 +71,13 @@ export function ParkingSpots() {
                             <p>{CutAddress(parking.address)[1]}</p>
                         </div>
                         <div className="button-parking">               
-                            <p>{parking.nbPlaceLibre} places restantes / {parking.nbPlaceTot}</p> 
+                            <p>0 places restantes / 0</p> 
                         </div>
                     </div>        
                 ))
             }
         <div style={{width:"200px", marginBottom:"10px"}}>
-            <Select options={options} value={floor} onChange={handleChange}/>
+            <Select options={options} placeholder={textSelect} value={floor} onChange={handleChange}/>
         </div>
         <SpotsList list={list}/>
         <Button variant="contained" color="primary" 

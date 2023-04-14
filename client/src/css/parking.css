@@ -16,8 +16,8 @@
 	flex-basis: calc(42%);  
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	background-color: white;
-
+	background-color:#FFF8DC;
+	border-radius:50px;
 	justify-content:space-between;
 	align-items:center;
 }
@@ -57,14 +57,11 @@
 	padding:6px 20px 6px 20px;
 }
   
-  /* Links inside the dropdown */
+  /* Texts inside the dropdown */
 .dp-content a, .dp-content p {
 	color: black;
 	display: block;
-}
-
-.dp-content li {
-	list-style-type: none;
+	padding-left:-10px;
 }
   
   /* Change color of dropdown links on hover */

@@ -2,10 +2,25 @@ import React, { useState, useEffect } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import { AssignToSub } from "../components"
 import TBS from "../services/take_by_spot"
 import TAST from "../services/take_all_spot_types"
 
 export function Spot(props) {
+
+    function HasSub(types, user) {
+        var res = false;
+        if (types.length != 0 && user.length==0) {
+            types.map(function(type) {
+                if (type.name == "Abonné") {     
+                    res = true;
+                }
+            })
+        }
+        if (res) {
+            return <AssignToSub/>;
+        }  
+    }
 
     const [user, setUser] = useState([]);
 
@@ -26,12 +41,16 @@ export function Spot(props) {
                 Place attribuée à : <br/> {user.first_name} {user.last_name}
             </Link>))
     } else {
-        infosSpot = <a id="no-hover">Cette place n'a pas d'abonné attitré</a>
+        types.map(function(type) {
+            if (type.name == "Abonné") {     
+                infosSpot = <a id="no-hover">Cette place n'a pas d'abonné attitré</a>
+            }
+        })    
     }
 
     var typesSpot;
     if (types.length == 0) {
-        typesSpot = <li><p><strong>-</strong> Place accessible à tout le monde</p></li>
+        typesSpot = <p><strong>-</strong> Place accessible à tout le monde</p>
     } else {
         typesSpot = types.map((type) => (
             <p><strong>-</strong> Place {type.name}<br/></p>
@@ -46,6 +65,7 @@ export function Spot(props) {
             <div class="dp-content">
                 {infosSpot}
                 {typesSpot}
+                {HasSub(types, user)}
                 <Button variant="contained" color="primary" 
                 style={{
                     backgroundColor: "#FE434C",
