@@ -65,7 +65,7 @@ INSERT IGNORE INTO `DATABASE`.User (id, first_name, last_name, email, password, 
 	(5, "Olivier", "Reivilo", "oli.reivi@mailbizarre.com", "1234aaA*", "Aboné", "5555555555555555", 5, NULL),
 	(6, "José", "Esoj", "jojo.eso@mail.com", "1234aaA*", "Aboné", "6666666666666666", NULL, NULL);
 
-INSERT IGNORE INTO UrbanPark.Schedule (id, id_user, id_parking, date_start, date_end) VALUES
+INSERT IGNORE INTO `DATABASE`.Schedule (id, id_user, id_parking, date_start, date_end) VALUES
 	(0, 1, 'H', '2023-04-14 08:00:00', '2023-04-14 16:00:00'),
 	(1, 1, 'H', '2023-04-15 08:00:00', '2023-04-15 16:00:00'),
 	(2, 1, 'H', '2023-04-16 08:00:00', '2023-04-16 16:00:00'),
