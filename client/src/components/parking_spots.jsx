@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom'
-import { CutAddress, NeedS } from "../interface";
 import { Button } from "@mui/material";
 import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
-import { SpotsList } from "../components";
+import { SpotsList, ParkingList } from "../components";
 import Select from 'react-select';
 import "../css/parking.css"
 
-export function ParkingSpots() {
+export function ParkingSpots(props) {
 
     /**
      * NbFloors
@@ -25,8 +24,6 @@ export function ParkingSpots() {
         return opt
     }
 
-    const name = useParams();
-
     const [parkingsList, setParkingsList] = useState([]);
 
     const [floor, setFloor] = useState(-1);
@@ -41,7 +38,7 @@ export function ParkingSpots() {
     ))
 
     useEffect(() => {
-		TP.TakeParking(name.parking).then(res => setParkingsList(res))
+		TP.TakeParking(props.name.parking).then(res => setParkingsList(res))
 	}, []);
 
     useEffect(() => {
@@ -60,22 +57,13 @@ export function ParkingSpots() {
 
 	return(<div>
         <div className="title-parking">
-            <h1>Parking {name.parking}</h1>
+            <h1>Parking {props.name.parking}</h1>
         </div>
-            {
-                parkingsList.map((parking) => (
-                    <div className="parking-item">	
-                        <div>
-                            <h2>{parking.floors} étage{NeedS(parking.floors)}</h2>    
-                            <p>{CutAddress(parking.address)[0]}</p>
-                            <p>{CutAddress(parking.address)[1]}</p>
-                        </div>
-                        <div className="button-parking">               
-                            <p>0 places restantes / 0</p> 
-                        </div>
-                    </div>        
-                ))
-            }
+        {
+            parkingsList.map((parking) =>
+                <ParkingList parking={parking} button={false}/>
+            )
+        }
         <div style={{width:"200px", marginBottom:"10px"}}>
             <Select options={options} placeholder={textSelect} value={floor} onChange={handleChange}/>
         </div>
