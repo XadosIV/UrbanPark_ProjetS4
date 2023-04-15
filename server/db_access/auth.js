@@ -61,8 +61,8 @@ function GetToken(callback, infos){
 }
 
 /**
- * GetToken
- * Get token from mail and password
+ * HasPermission
+ * Check if a user (by token) has the permission given
  * 
  * @param {string} token
  * @param {string} perm
