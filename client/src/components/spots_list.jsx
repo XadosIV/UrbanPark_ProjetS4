@@ -4,6 +4,22 @@ import { Spot } from "../components"
 export function SpotsList(props) {
 
     const filteredData = props.list.filter((el) => {
+        var testNb = el.number == props.inputNumber;
+        var testFl = el.floor == props.inputFloor;
+
+        /**
+         * TestTy
+         * Returns a boolean if el.name_type is equal to the prop entered.
+         *
+         * @return { Boolean }
+         */
+        function TestTy() {
+            var res = false;
+            if (el.name_type != null) { 
+                res = el.name_type.toLowerCase() == props.inputType 
+            }
+            return res;
+        }
         //if no input the return the original
         if (props.inputFloor === "%" && (props.inputNumber === 0 || props.inputNumber === "") && props.inputType === "%") {
             return el;
@@ -12,30 +28,22 @@ export function SpotsList(props) {
         else {
             if (props.inputNumber == 0) {
                 if (props.inputFloor == "%") {
-                    if (el.name_type != null) {
-                        return el.name_type.toLowerCase() == props.inputType
-                    }
+                    return TestTy()
                 } else if (props.inputType == "%") {
-                    return el.floor == props.inputFloor
+                    return testFl
                 } else {
-                    if (el.name_type != null) {
-                        return el.floor == props.inputFloor && el.name_type.toLowerCase() == props.inputType
-                    }
+                    return testFl && TestTy()
                 }
             } else if (props.inputType == "%") {
                 if (props.inputFloor == "%") {
-                    return el.number == props.inputNumber
+                    return testNb
                 } else {
-                    return el.floor == props.inputFloor && el.number == props.inputNumber
+                    return testFl && testNb
                 }
             } else if (props.inputFloor == "%") {
-                if (el.name_type != null) {
-                    return el.name_type.toLowerCase() == props.inputType && el.number == props.inputNumber
-                }
+                    return TestTy() && testNb
             } else {
-                if (el.name_type != null) {
-                    return el.floor == props.inputFloor && el.number == props.inputNumber && el.name_type.toLowerCase() == props.inputType
-                }
+                return testFl && testNb && TestTy()
             }
         }
     })

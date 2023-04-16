@@ -6,6 +6,8 @@ import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList } from "../components";
 import { InputHandler } from "../interface"
 import Select from 'react-select';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
@@ -111,15 +113,18 @@ export function ParkingSpots(props) {
             </div>
         </div>
         <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber} inputType={type}/>
-        <Button variant="contained" color="primary" 
-        style={{
-            backgroundColor: "#FE434C",
-            borderColor: "transparent",
-            borderRadius: 20,
-            width: 250,
-            float:"right",
-            height:"10%",
-            marginBottom:"50px"
-        }}>Ajouter des places</Button>	
+        
+        <Popup trigger={<Button variant="contained" color="primary" 
+            style={{
+                backgroundColor: "#FE434C",
+                borderColor: "transparent",
+                borderRadius: 20,
+                width: 250,
+                float:"right",
+                height:"10%",
+                marginBottom:"50px"
+            }}>Ajouter des places</Button>} position="bottom center">
+            <div>Popup content here !!</div>
+        </Popup>
     </div>)
 }
