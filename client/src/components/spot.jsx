@@ -7,8 +7,14 @@ import TAST from "../services/take_all_spot_types"
 
 export function Spot(props) {
 
-    console.log(props.spot)
-
+    /**
+     * HasSub
+     * Return a button to assign a spot if there is "Abonné" type and no user
+     * 
+     * @param { Array of Spot Types } types - The types of the spot 
+     * @param { Array of User } user - The user of the spot
+     * @returns { Button }
+     */
     function HasSub(types, user) {
         var res = false;
         if (types.length != 0 && user.length==0) {
@@ -37,15 +43,15 @@ export function Spot(props) {
     const [types, setTypes] = useState([]);
 
     useEffect(() => {
-        TBS.TakeBySpot(props.spot.id).then(res => {setUser(res);});
-        TAST.TakeAllSpotTypes(props.spot.id).then(res => {setTypes(res);});
+        TBS.TakeBySpot(props.spot.id).then(res => setUser(res));
+        TAST.TakeAllSpotTypes(props.spot.id).then(res => setTypes(res));
     }, []);
 
     var infosSpot;
     if (user.length == 1) {
-        infosSpot = user.map((user) => (
-            <Link to={`/users/${user.id}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
-                Place attribuée à : <br/> {user.first_name} {user.last_name}
+        infosSpot = user.map((u) => (
+            <Link to={`/users/${u.id}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
+                Place attribuée à : <br/> {u.first_name} {u.last_name}
             </Link>))
     } else {
         types.map(function(type) {

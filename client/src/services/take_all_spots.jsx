@@ -8,10 +8,11 @@ import axios from "axios"
  * @param { integer } floor
  * @return { Promise list of User }
  */
-async function TakeAllSpots(id_park=0, floor="%", number=0){
+async function TakeAllSpots(id_park=0, floor="%", number=0, type="%"){
     const id = {id_park: id_park}
     const fl = {floor: floor}
     const nb = {number: number}
+    const ty = {type: type}
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spots"
     if (id_park !== 0) {
         url += "?" + new URLSearchParams(id).toString()
@@ -21,6 +22,9 @@ async function TakeAllSpots(id_park=0, floor="%", number=0){
     }
     if (number !== 0) {
         url += "&" + new URLSearchParams(nb).toString()
+    }
+    if (type !== "%") {
+        url += "&" + new URLSearchParams(ty).toString()
     }
 	return axios.get(url).then((res) => res.data)
 }

@@ -35,22 +35,26 @@ export function ParkingSpots(props) {
     function AllTypes(list) {
         var opt = [{value:"%", label:"Tous les types"}]
         for (let i=0; i<list.length; i++) {
-            opt.push({value:list[i].toString(), label:"Place " + list[i].toString()})
+            opt.push({value:list[i].name.toLowerCase(), label:"Type " + list[i].name.toLowerCase()})
         }
         return opt
     }
 
     const [parkingsList, setParkingsList] = useState([]);
 
-    const [floor, setFloor] = useState("%");
-
     const [list, setList] = useState([]);
+
+    const [floor, setFloor] = useState("%");
 
     const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
 
     const [inputTextSpotNumber, setInputTextSpotNumber] = useState(0);
 
+    const [type, setType] = useState("%");
+
     const [spotTypes, setSpotTypes] = useState([]);
+
+    const [textSelectType, setTextSelectType] = useState("Choisir un type");
     
     useEffect(() => {
 		TP.TakeParking(props.name.parking).then(res => setParkingsList(res));
@@ -65,12 +69,14 @@ export function ParkingSpots(props) {
 
     var optionsType = AllTypes(spotTypes)
 
-    const handleChangeFloor = (e) => {
-        setFloor(e.value); 
-        if (e.value == "%") {
-            setTextSelectFloor("Tous les étages");
-        } else {
-            setTextSelectFloor("Étage " + e.value);
+    let handleChange = (funText, funSet, text) => { 
+        return (e) => {
+            funSet(e.value); 
+            if (e.value == "%") {
+                funText("Tous les " + text.toLowerCase());
+            } else {
+                funText(text.substring(0, text.length - 1) + " " + e.value);
+            }
         }
     }
 
@@ -78,14 +84,16 @@ export function ParkingSpots(props) {
         <div className="title-parking">
             <h1>Parking {props.name.parking}</h1>
         </div>
-        {
-            parkingsList.map((parking) =>
-                <ParkingList parking={parking} button={false}/>
-            )
-        }
-        <div style={{width:"420px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}> 
+        <div style={{marginBottom:"30px"}}>
+            {
+                parkingsList.map((parking) =>
+                    <ParkingList parking={parking} button={false}/>
+                )
+            }
+        </div>
+        <div style={{width:"630px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}> 
             <div className="search">
-                <Select options={optionsFloor} placeholder={textSelectFloor} value={floor} onChange={handleChangeFloor}/>
+                <Select options={optionsFloor} placeholder={textSelectFloor} value={floor} onChange={handleChange(setTextSelectFloor, setFloor, "Étages")}/>
             </div>
             <div className="search">
                 <TextField
@@ -99,10 +107,10 @@ export function ParkingSpots(props) {
                 />
             </div>
             <div className="search">
-                <Select options={optionsType} placeholder={textSelectType} value={type} onChange={handleChangeType}/>
+                <Select options={optionsType} placeholder={textSelectType} value={type} onChange={handleChange(setTextSelectType, setType, "Types")}/>
             </div>
         </div>
-        <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber}/>
+        <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber} inputType={type}/>
         <Button variant="contained" color="primary" 
         style={{
             backgroundColor: "#FE434C",
