@@ -5,4 +5,6 @@ exports.E_PASSWORD_FORMAT_INVALID											="E_PASSWORD_FORMAT_INVALID";
 exports.E_MISSING_PARAMETER													="E_MISSING_PARAMETER";
 exports.E_UNDEFINED_USER													="E_UNDEFINED_USER";
 exports.E_WRONG_PASSWORD													="E_WRONG_PASSWORD";
+exports.E_USER_NOT_FOUND                                                    ="E_USER_NOT_FOUND";
+exports.E_WRONG_PARAMETER                                                   ="E_WRONG_PARAMETER";
 exports.E_PERMISSION_DOESNT_EXIST                                           ="E_PERMISSION_DOESNT_EXIST";
