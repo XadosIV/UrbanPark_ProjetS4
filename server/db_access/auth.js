@@ -72,35 +72,40 @@ function HasPermission(token, perm, callback){
 	perm = perm.toLowerCase()
 
 	GetUserFromToken((err, res) => {
-		if (err) callback(err, {})
-		if (res.length == 0){
-			// If no user were found by the request
-			let errorCode = Errors.E_UNDEFINED_USER;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error,[]);
+		if (err){
+			callback(err, {})
 		}else{
-			role = res[0].role // take role from the user
-			GetPermRole((err, res) => { // and check for its permissions
-				if (err) callback(err, {})
-				res = res[0] // role must exist cause a user cant have no role
-				if (res[perm]){ //check if perm exist
-					perm = res[perm].readInt8() // SQL store boolean as buffer, readInt8 convert them into int (0 or 1)
-					if (perm){ // we now can know if the user has the permission
-						callback(null, true)
+			if (res.length == 0){
+				// If no user were found by the request
+				let errorCode = Errors.E_UNDEFINED_USER;
+				let error = new Error(errorCode);
+				error.code = errorCode;
+				callback(error,[]);
+			}else{
+				role = res[0].role // take role from the user
+				GetPermRole((err, res) => { // and check for its permissions
+					if (err){
+						callback(err, {})
 					}else{
-						callback(null, false)
+						res = res[0] // role must exist cause a user cant have no role
+						if (res[perm]){ //check if perm exist
+							perm = res[perm].readInt8() // SQL store boolean as buffer, readInt8 convert them into int (0 or 1)
+							if (perm){ // we now can know if the user has the permission
+								callback(null, true)
+							}else{
+								callback(null, false)
+							}
+						}else{
+							// the permission dont exist
+							let errorCode = Errors.E_PERMISSION_DOESNT_EXIST;
+							let error = new Error(errorCode);
+							error.code = errorCode;
+							callback(error,[]);
+						}
 					}
-				}else{
-					// the permission dont exist
-					let errorCode = Errors.E_PERMISSION_DOESNT_EXIST;
-					let error = new Error(errorCode);
-					error.code = errorCode;
-					callback(error,[]);
-				}
-			}, {role:role})
+				}, {role:role})
+			}
 		}
-		
 	}, {token:token})
 }
 
