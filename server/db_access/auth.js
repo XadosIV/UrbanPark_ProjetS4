@@ -93,7 +93,7 @@ function HasPermission(token, perm, callback){
 					}
 				}else{
 					// the permission dont exist
-					let errorCode = Errors.E_PERMISSION_DONT_EXIST;
+					let errorCode = Errors.E_PERMISSION_DOESNT_EXIST;
 					let error = new Error(errorCode);
 					error.code = errorCode;
 					callback(error,[]);
