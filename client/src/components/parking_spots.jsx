@@ -56,10 +56,10 @@ export function ParkingSpots(props) {
     const [spotTypes, setSpotTypes] = useState([]);
 
     const [textSelectType, setTextSelectType] = useState("Choisir un type");
-    
+
     useEffect(() => {
-		TP.TakeParking(props.name.parking).then(res => setParkingsList(res));
-        TAS.TakeAllSpots(parkingsList[0]).then(res => setList(res));
+		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
+        TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
         TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
 	}, []);
 
@@ -82,10 +82,7 @@ export function ParkingSpots(props) {
     }
 
 	return(<div>
-        <div className="title-parking">
-            <h1>Parking {props.name.parking}</h1>
-        </div>
-        <div style={{marginBottom:"30px"}}>
+        <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
                 parkingsList.map((parking) =>
                     <ParkingList parking={parking} button={false}/>

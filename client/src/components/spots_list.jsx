@@ -4,9 +4,6 @@ import { Spot } from "../components"
 export function SpotsList(props) {
 
     const filteredData = props.list.filter((el) => {
-        var testNb = el.number == props.inputNumber;
-        var testFl = el.floor == props.inputFloor;
-
         /**
          * TestTy
          * Returns a boolean if el.name_type is equal to the prop entered.
@@ -20,32 +17,16 @@ export function SpotsList(props) {
             }
             return res;
         }
-        //if no input the return the original
-        if (props.inputFloor === "%" && (props.inputNumber === 0 || props.inputNumber === "") && props.inputType === "%") {
-            return el;
-        }
-        //return the item which contains the user input
-        else {
-            if (props.inputNumber == 0) {
-                if (props.inputFloor == "%") {
-                    return TestTy()
-                } else if (props.inputType == "%") {
-                    return testFl
-                } else {
-                    return testFl && TestTy()
-                }
-            } else if (props.inputType == "%") {
-                if (props.inputFloor == "%") {
-                    return testNb
-                } else {
-                    return testFl && testNb
-                }
-            } else if (props.inputFloor == "%") {
-                    return TestTy() && testNb
-            } else {
-                return testFl && testNb && TestTy()
+
+        var tabRight = [[props.inputFloor === "%", el.floor == props.inputFloor], [props.inputNumber === "" || props.inputNumber === 0, el.number == props.inputNumber], [props.inputType === "%", TestTy()]]
+        var res = true;
+
+        for (let i=0; i<tabRight.length; i++) {
+            if (!tabRight[i][0]) {
+                res = res && tabRight[i][1]
             }
         }
+        return res
     })
 
 	return (<div className="all-spots">

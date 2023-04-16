@@ -6,14 +6,14 @@ const Errors = require('../errors');
  * Return a JSON with every parking corresponding to paramaters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {name}
+ * @param {object} infos {id}
  */
 
 function GetParkings(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Parking WHERE name LIKE :name;`;
+	sql = `SELECT * FROM ${dbName}.Parking WHERE id LIKE :id;`;
     console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
-        name:infos.name||'%'
+        id:infos.id||'%'
     }, callback);
 }
 
