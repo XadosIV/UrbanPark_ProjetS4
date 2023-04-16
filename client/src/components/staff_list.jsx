@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
-import { InputHandler, CreateListPerson } from "../interface"
+import { InputHandler } from "../interface"
+import TBR from "../services/take_by_role"
 
 export function StaffList() {
 
@@ -10,11 +11,11 @@ export function StaffList() {
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		CreateListPerson("Gardien").then(res => {setGuardiansList(res);})
+		TBR.TakeByRole("Gardien").then(res => {setGuardiansList(res);})
 	}, []);
 
 	useEffect(() => {
-		CreateListPerson("Agent d'entretien").then(res => {setServiceList(res);})
+		TBR.TakeByRole("Agent d'entretien").then(res => {setServiceList(res);})
 	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
