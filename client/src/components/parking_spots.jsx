@@ -7,7 +7,6 @@ import { SpotsList, ParkingList } from "../components";
 import { InputHandler } from "../interface"
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
@@ -119,12 +118,12 @@ export function ParkingSpots(props) {
                 backgroundColor: "#FE434C",
                 borderColor: "transparent",
                 borderRadius: 20,
-                width: 250,
-                float:"right",
+                width: "16%",
+                marginLeft: "42%",
                 height:"10%",
                 marginBottom:"50px"
             }}>Ajouter des places</Button>} position="bottom center">
-            <div>Popup content here !!</div>
+            <div></div>
         </Popup>
     </div>)
 }
