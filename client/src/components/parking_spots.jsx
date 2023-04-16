@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
+import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList } from "../components";
 import { InputHandler } from "../interface"
 import Select from 'react-select';
@@ -24,32 +25,52 @@ export function ParkingSpots(props) {
         return opt
     }
 
+    /**
+     * AllTypes
+     * Returns a lists of options for a Select React component composed of every type 
+     *
+     * @param { Array } list - List of types in the parking
+     * @return { Array }
+     */
+    function AllTypes(list) {
+        var opt = [{value:"%", label:"Tous les types"}]
+        for (let i=0; i<list.length; i++) {
+            opt.push({value:list[i].toString(), label:"Place " + list[i].toString()})
+        }
+        return opt
+    }
+
     const [parkingsList, setParkingsList] = useState([]);
 
     const [floor, setFloor] = useState("%");
 
     const [list, setList] = useState([]);
 
-    const [textSelect, setTextSelect] = useState("Choisir un étage");
+    const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
 
     const [inputTextSpotNumber, setInputTextSpotNumber] = useState(0);
 
-    var options = []
-    parkingsList.map((parking) => (
-        options = NbFloors(parking.floors)
-    ))
-
+    const [spotTypes, setSpotTypes] = useState([]);
+    
     useEffect(() => {
 		TP.TakeParking(props.name.parking).then(res => setParkingsList(res));
         TAS.TakeAllSpots(parkingsList[0]).then(res => setList(res));
+        TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
 	}, []);
+
+    var optionsFloor = []
+    parkingsList.map((parking) => (
+        optionsFloor = NbFloors(parking.floors)
+    ))
+
+    var optionsType = AllTypes(spotTypes)
 
     const handleChangeFloor = (e) => {
         setFloor(e.value); 
         if (e.value == "%") {
-            setTextSelect("Tous les étages");
+            setTextSelectFloor("Tous les étages");
         } else {
-            setTextSelect("Étage " + e.value);
+            setTextSelectFloor("Étage " + e.value);
         }
     }
 
@@ -64,7 +85,7 @@ export function ParkingSpots(props) {
         }
         <div style={{width:"420px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}> 
             <div className="search">
-                <Select options={options} placeholder={textSelect} value={floor} onChange={handleChangeFloor}/>
+                <Select options={optionsFloor} placeholder={textSelectFloor} value={floor} onChange={handleChangeFloor}/>
             </div>
             <div className="search">
                 <TextField
@@ -76,6 +97,9 @@ export function ParkingSpots(props) {
                     name="searchbarUser"
                     onChange={InputHandler(setInputTextSpotNumber)}
                 />
+            </div>
+            <div className="search">
+                <Select options={optionsType} placeholder={textSelectType} value={type} onChange={handleChangeType}/>
             </div>
         </div>
         <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber}/>
