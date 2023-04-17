@@ -1,5 +1,6 @@
 import React from "react";
 import { InfosUser } from "../components/infos_user";
+import "../css/page-perso.css";
 
 export function PagePersonnelle(){
 	return<div>
