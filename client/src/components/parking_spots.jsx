@@ -4,7 +4,6 @@ import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
 import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList } from "../components";
-import { InputHandler } from "../interface"
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
 import "../css/parking.css"
@@ -41,21 +40,33 @@ export function ParkingSpots(props) {
         return opt
     }
 
+    var baseValueFloorType = "%"
+    var baseValueNumber = 0
+
     const [parkingsList, setParkingsList] = useState([]);
 
     const [list, setList] = useState([]);
+    
 
-    const [floor, setFloor] = useState("%");
+    const [floor, setFloor] = useState(baseValueFloorType);
 
     const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
 
-    const [inputTextSpotNumber, setInputTextSpotNumber] = useState(0);
+    const [inputTextSpotNumber, setInputTextSpotNumber] = useState(baseValueNumber);
 
-    const [type, setType] = useState("%");
+
+    const [type, setType] = useState(baseValueFloorType);
 
     const [spotTypes, setSpotTypes] = useState([]);
 
     const [textSelectType, setTextSelectType] = useState("Choisir un type");
+
+
+    const [secondFloor, setSecondFloor] = useState(baseValueFloorType);
+
+    const [textSelectSecondFloor, setTextSelectSecondFloor] = useState("Choisir un étage");
+
+    const [inputTextSpotSecondNumber, setInputTextSpotSecondNumber] = useState(baseValueNumber);
 
     useEffect(() => {
 		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
@@ -70,13 +81,46 @@ export function ParkingSpots(props) {
 
     var optionsType = AllTypes(spotTypes)
 
-    let handleChange = (funText, funSet, text) => { 
+    let handleChange = (funText, funSet, text, id) => { 
         return (e) => {
             funSet(e.value); 
-            if (e.value == "%") {
+            if (e.value == baseValueFloorType) {
                 funText("Tous les " + text.toLowerCase());
+                if (id) {
+                    document.getElementById(id).className = "search-second"
+                    if (document.getElementById("number2").classList.contains("search-second")) {
+                        document.getElementById("text2").className = "search-second"
+                    }
+                    setSecondFloor(baseValueFloorType)
+                    setTextSelectSecondFloor("Choisir un étage")
+                }
             } else {
                 funText(text.substring(0, text.length - 1) + " " + e.value);
+                if (id) {
+                    document.getElementById(id).className = "search"
+                    document.getElementById("text2").className = "search"
+                }
+            }
+        }
+    }
+
+    let inputHandler = (fun, id) => { 
+        return (e) => {
+            fun(e.target.value.toLowerCase());
+            if (e.target.value == baseValueNumber) {
+                if (id) {
+                    document.getElementById(id).className = "search-second"
+                    if (document.getElementById("floor2").classList.contains("search-second")) {
+                        document.getElementById("text2").className = "search-second"
+                    }
+                    setInputTextSpotSecondNumber(baseValueNumber)
+                    document.getElementById("searchbarNumber2").value = ""
+                }
+            } else {
+                if (id) {
+                    document.getElementById(id).className = "search"
+                    document.getElementById("text2").className = "search"
+                }
             }
         }
     }
@@ -89,26 +133,45 @@ export function ParkingSpots(props) {
                 )
             }
         </div>
-        <div style={{width:"630px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}> 
+        <div className="all-searchs">    
             <div className="search">
-                <Select options={optionsFloor} placeholder={textSelectFloor} value={floor} onChange={handleChange(setTextSelectFloor, setFloor, "Étages")}/>
+                <Select options={optionsType} placeholder={textSelectType} value={type} onChange={handleChange(setTextSelectType, setType, "Types")}/>
+            </div>
+            <div className="search">
+                <Select options={optionsFloor} placeholder={textSelectFloor} value={floor} onChange={handleChange(setTextSelectFloor, setFloor, "Étages", "floor2")}/>
             </div>
             <div className="search">
                 <TextField
                     style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
                     size="small"
-                    id="searchbarUser"
+                    id="searchbarNumber"
                     label="Numéro de la place..."
                     type="text"
-                    name="searchbarUser"
-                    onChange={InputHandler(setInputTextSpotNumber)}
+                    name="searchbarNumber"
+                    onChange={inputHandler(setInputTextSpotNumber, "number2")}
                 />
             </div>
-            <div className="search">
-                <Select options={optionsType} placeholder={textSelectType} value={type} onChange={handleChange(setTextSelectType, setType, "Types")}/>
+
+            <div className="search-second" id="text2">
+                <p style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
+            </div>
+            <div className="search-second" id="floor2">
+                <Select options={optionsFloor} placeholder={textSelectSecondFloor} value={secondFloor} onChange={handleChange(setTextSelectSecondFloor, setSecondFloor, "Étages")}/>
+            </div>
+            <div className="search-second" id="number2"> 
+                <TextField
+                    style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+                    size="small"
+                    id="searchbarNumber2"
+                    label="Numéro de la place..."
+                    type="text"
+                    name="searchbarNumber2"
+                    defaultValue=""
+                    onChange={inputHandler(setInputTextSpotSecondNumber)}
+                />
             </div>
         </div>
-        <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber} inputType={type}/>
+        <SpotsList list={list} inputFloor={floor} inputNumber={inputTextSpotNumber} inputType={type} inputSecondFloor={secondFloor} inputSecondNumber={inputTextSpotSecondNumber}/>
         
         <Popup trigger={<Button variant="contained" color="primary" 
             style={{

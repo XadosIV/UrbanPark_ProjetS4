@@ -7,7 +7,6 @@ const { GetParkings } = require('./parking');
  * Return a JSON with every spots
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {id_park, floor, number, type}
  */
 
 function GetAllSpots(callback){

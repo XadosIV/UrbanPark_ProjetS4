@@ -84,7 +84,25 @@
 	background-color:#f9f9f9;
 }
 
+.all-searchs {
+	display: grid;
+	flex-direction:column; 
+	width:630px;
+	height:130px;
+	justify-content:space-between;
+	grid-template-columns: repeat(3,150px);  /* 3 columns */
+	grid-template-rows: repeat(2,50px); /* 2 rows  */
+	grid-gap:10px 10px; /* 50 pixels of space added between rows and 30 pixels added between columns  */
+}
+
 .search {
+	visibility: visible;
+	width:200px;
+	margin-bottom: 10px;
+}
+
+.search-second {
+	visibility: hidden;
 	width:200px;
 	margin-bottom: 10px;
 }

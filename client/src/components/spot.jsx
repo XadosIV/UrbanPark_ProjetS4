@@ -38,8 +38,6 @@ export function Spot(props) {
         }  
     }
 
-    console.log(props.spot)
-
     var infosSpot;
     if (props.spot.id_user != null) {
         infosSpot = <Link to={`/users/${props.spot.id_user}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
