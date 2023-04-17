@@ -14,7 +14,7 @@ export function ParkingList(parking) {
     function PutButton(value) {
         if (value) {
             return (
-            <Link to={`/parkings/${parking.parking.name}`} style={{textDecoration:"none"}}>
+            <Link to={`/parkings/${parking.parking.id}`} style={{textDecoration:"none"}}>
                 <Button variant="contained" color="primary">Voir les places</Button>
             </Link>)
         }

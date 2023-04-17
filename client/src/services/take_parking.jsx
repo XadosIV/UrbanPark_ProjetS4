@@ -7,10 +7,10 @@ import axios from "axios"
  * @param { String } name
  * @return { Promise list of Parking }
  */
-async function TakeParking(name=""){
-    const obj = {name: name}
+async function TakeParking(id=""){
+    const obj = {id: id}
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/parkings"
-    if (name != "") {
+    if (id != "") {
         url = url + "?" + new URLSearchParams(obj).toString();
     }
 	return axios.get(url).then((res) => res.data)

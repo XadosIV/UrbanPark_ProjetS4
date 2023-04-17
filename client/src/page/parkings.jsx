@@ -4,9 +4,9 @@ import { ParkingSpots } from "../components";
 import "../css/parking.css"
 
 export function Parkings() {
-    const name = useParams();
+    const id = useParams();
 
 	return(
-        <ParkingSpots name={name} />
+        <ParkingSpots id={id} />
     )
 }

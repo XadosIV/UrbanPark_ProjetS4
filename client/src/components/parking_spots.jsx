@@ -7,7 +7,6 @@ import { SpotsList, ParkingList } from "../components";
 import { InputHandler } from "../interface"
 import Select from 'react-select';
 import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
@@ -57,10 +56,10 @@ export function ParkingSpots(props) {
     const [spotTypes, setSpotTypes] = useState([]);
 
     const [textSelectType, setTextSelectType] = useState("Choisir un type");
-    
+
     useEffect(() => {
-		TP.TakeParking(props.name.parking).then(res => setParkingsList(res));
-        TAS.TakeAllSpots(parkingsList[0]).then(res => setList(res));
+		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
+        TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
         TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
 	}, []);
 
@@ -83,10 +82,7 @@ export function ParkingSpots(props) {
     }
 
 	return(<div>
-        <div className="title-parking">
-            <h1>Parking {props.name.parking}</h1>
-        </div>
-        <div style={{marginBottom:"30px"}}>
+        <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
                 parkingsList.map((parking) =>
                     <ParkingList parking={parking} button={false}/>
@@ -119,12 +115,12 @@ export function ParkingSpots(props) {
                 backgroundColor: "#FE434C",
                 borderColor: "transparent",
                 borderRadius: 20,
-                width: 250,
-                float:"right",
+                width: "16%",
+                marginLeft: "42%",
                 height:"10%",
                 marginBottom:"50px"
             }}>Ajouter des places</Button>} position="bottom center">
-            <div>Popup content here !!</div>
+            <div></div>
         </Popup>
     </div>)
 }
