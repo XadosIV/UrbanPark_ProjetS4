@@ -68,14 +68,3 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Typed (
 	CONSTRAINT fk_typed_spot FOREIGN KEY (id_spot) REFERENCES `DATABASE`.Spot (id),
 	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES `DATABASE`.Type (name)
 );
-
--- Default rows
-INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gérant", 1, 1, 1, 1);
-INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES ("Gardien", 1, 1, 1, 1);
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Agent d'entretien");
-INSERT IGNORE INTO `DATABASE`.Role (name) VALUES ("Abonné");
-INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Abonné");
-INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Handicapée");
-INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Électrique");
-INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Urgence");
-INSERT IGNORE INTO `DATABASE`.Type (name) VALUES ("Municipale");
