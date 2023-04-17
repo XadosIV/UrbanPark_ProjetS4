@@ -1,5 +1,6 @@
 const {dbConnection, dbName} = require('../database');
-const {GetUsers} = require("./user");
+const {GetUsers, GetUserFromToken} = require("./user");
+const {GetPermRole} = require("./role")
 const Errors = require('../errors');
 var crypto = require("crypto");
 
@@ -59,4 +60,53 @@ function GetToken(callback, infos){
 	}, {email:infos.email});
 }
 
-module.exports = {GenerateNewToken, GetToken};
+/**
+ * HasPermission
+ * Check if a user (by token) has the permission given
+ * 
+ * @param {string} token
+ * @param {string} perm
+ * @param {function(*,*)} callback (err, hasPerm(booleen))
+ */
+function HasPermission(token, perm, callback){
+	perm = perm.toLowerCase()
+
+	GetUserFromToken((err, res) => {
+		if (err){
+			callback(err, {})
+		}else{
+			if (res.length == 0){
+				// If no user were found by the request
+				let errorCode = Errors.E_UNDEFINED_USER;
+				let error = new Error(errorCode);
+				error.code = errorCode;
+				callback(error,[]);
+			}else{
+				role = res[0].role // take role from the user
+				GetPermRole((err, res) => { // and check for its permissions
+					if (err){
+						callback(err, {})
+					}else{
+						res = res[0] // role must exist cause a user cant have no role
+						if (res[perm]){ //check if perm exist
+							perm = res[perm].readInt8() // SQL store boolean as buffer, readInt8 convert them into int (0 or 1)
+							if (perm){ // we now can know if the user has the permission
+								callback(null, true)
+							}else{
+								callback(null, false)
+							}
+						}else{
+							// the permission dont exist
+							let errorCode = Errors.E_PERMISSION_DOESNT_EXIST;
+							let error = new Error(errorCode);
+							error.code = errorCode;
+							callback(error,[]);
+						}
+					}
+				}, {role:role})
+			}
+		}
+	}, {token:token})
+}
+
+module.exports = {GenerateNewToken, GetToken, HasPermission};
