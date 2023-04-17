@@ -17,12 +17,12 @@ export function Spot(props) {
      */
     function HasSub(types, user) {
         var res = false;
-        if (types.length != 0 && user.length==0) {
-            types.map(function(type) {
-                if (type.name == "Abonné") {     
+        if (types.length != 0 && user != null) {
+            for (let type of types) {
+                if (type == "Abonné") {     
                     res = true;
                 }
-            })
+            }
         }
         if (res) {
             return <Button variant="contained" color="primary" 
@@ -38,37 +38,29 @@ export function Spot(props) {
         }  
     }
 
-    const [user, setUser] = useState([]);
-
-    const [types, setTypes] = useState([]);
-
-    useEffect(() => {
-        TBS.TakeBySpot(props.spot.id).then(res => setUser(res));
-        TAST.TakeAllSpotTypes(props.spot.id).then(res => setTypes(res));
-    }, []);
+    console.log(props.spot)
 
     var infosSpot;
-    if (user.length == 1) {
-        infosSpot = user.map((u) => (
-            <Link to={`/users/${u.id}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
-                Place attribuée à : <br/> {u.first_name} {u.last_name}
-            </Link>))
+    if (props.spot.id_user != null) {
+        infosSpot = <Link to={`/users/${props.spot.id_user}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
+                        Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}
+                    </Link>
     } else {
-        types.map(function(type) {
-            if (type.name == "Abonné") {     
+        for (let type of props.spot.types) {
+            if (type == "Abonné") {     
                 infosSpot = <a id="no-hover">Cette place n'a pas d'abonné attitré</a>
             }
-        })    
+        }  
     }
     if (!infosSpot) {
         infosSpot = <a id="no-hover">Cette place est destinée à tous les utilisateurs</a>
     }
 
-    var typesSpot;
-    if (types.length != 0) {
-        typesSpot = types.map((type) => (
-            <p><strong>-</strong> Place {type.name}<br/></p>
-        ))
+    var typesSpot = [];
+    if (props.spot.types.length != 0) {
+        for (let type of props.spot.types) {
+            typesSpot.push(<p><strong>-</strong> Place {type}<br/></p>)
+        }
     }
 
 	return (<div className="spot">
@@ -79,7 +71,7 @@ export function Spot(props) {
             <div class="dp-content">
                 {infosSpot}
                 {typesSpot}
-                {HasSub(types, user)}
+                {HasSub(props.spot.types, props.spot.id_user)}
                 <Button variant="contained" color="primary" 
                 style={{
                     backgroundColor: "#FE434C",
