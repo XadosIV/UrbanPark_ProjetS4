@@ -11,7 +11,7 @@ const { GetParkings } = require('./parking');
  */
 
 function GetAllSpots(callback){
-	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id as id_user, uu.id as id_user_temp FROM ${dbName}.Spot s LEFT JOIN ${dbName}.User u ON s.id = u.id_spot LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp`;
+	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id as id_user, uu.id as id_user_temp, u.first_name, u.last_name FROM ${dbName}.Spot s LEFT JOIN ${dbName}.User u ON s.id = u.id_spot LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp ORDER BY floor, number`;
     console.log("SQL at GetAllSpots : " + sql);
     dbConnection.query(sql, (err, data) => {
         if (err){
