@@ -124,6 +124,8 @@ export function ParkingSpots(props) {
             }
         }
     }
+    console.log(floor+1)
+    console.log(optionsFloor.slice(floor+1))
 
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
@@ -156,7 +158,7 @@ export function ParkingSpots(props) {
                 <p style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
             </div>
             <div className="search-second" id="floor2">
-                <Select options={optionsFloor} placeholder={textSelectSecondFloor} value={secondFloor} onChange={handleChange(setTextSelectSecondFloor, setSecondFloor, "Étages")}/>
+                <Select options={optionsFloor.slice(parseInt(floor)+2)} placeholder={textSelectSecondFloor} value={secondFloor} onChange={handleChange(setTextSelectSecondFloor, setSecondFloor, "Étages")}/>
             </div>
             <div className="search-second" id="number2"> 
                 <TextField
