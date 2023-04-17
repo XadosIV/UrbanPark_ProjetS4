@@ -10,8 +10,8 @@ const Errors = require('../errors');
  */
 function GetSpotTypes(callback, infos){
 	//Don't ask why this is that hard, only @UP-4303 knows
-	let sql = `SELECT t.name FROM ${dbName}.typed y
-	RIGHT JOIN ${dbName}.type t ON t.name=y.name_type
+	let sql = `SELECT t.name FROM ${dbName}.Typed y
+	RIGHT JOIN ${dbName}.Type t ON t.name=y.name_type
 	GROUP BY t.name
 	HAVING MAX(case when y.id_spot LIKE :id_spot OR (case when "%" = :id_spot then 1 else 0 end) then 1 else 0 end);`;
 	console.log("SQL at GetSpotTypes : " + sql);

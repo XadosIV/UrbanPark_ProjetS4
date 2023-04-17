@@ -15,6 +15,7 @@ function GetSchedules(callback, infos){
 		error.code = errorCode;
 		callback(error,[]);
 	}else if (infos.role){
+		
 		GetSchedulesRole(callback, infos);
 	} else {
 		GetSchedulesUser(callback, infos);
