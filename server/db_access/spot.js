@@ -111,15 +111,4 @@ function PostSpot(callback, infos){
     }, infos)
 }
 
-/**
- * PostSpot
- * Create a new spot with no type
- * 
- * @param {function(*,*)} callback (err, data)
- * @param {object} infos {number, floor, parking}
- */
-/*function UpdateSpot(){
-
-}*/
-
 module.exports = {GetAllSpots, GetSpots, PostSpot};
