@@ -149,7 +149,7 @@ app.get('/api/schedules', (req, res) => {
 		}else{
 			res.status(200).json(data);
 		}
-	})
+	}, req.query);
 })
 
 module.exports = app;
