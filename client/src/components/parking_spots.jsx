@@ -203,7 +203,7 @@ export function ParkingSpots(props) {
         <SpotsList list={list} infos={infos}/>
         {
             parkingsList.map((parking) => (
-                <NewSpotForm floors={parking.floors}/>
+                <NewSpotForm floors={parking.floors} name={parking.name}/>
             ))
         }
         

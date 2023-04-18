@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { NbFloors } from "../interface"
+import { CreationSpot } from "../services"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 
@@ -9,6 +10,7 @@ export function NewSpotForm(props) {
     const [infos, setInfos] = useState({floor: 0, number: 0});
 
 	const [wrongInput, setWrongInput] = useState(false);
+    const [errMessage, setErrMessage] = useState("");
 
     const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
 
@@ -19,25 +21,19 @@ export function NewSpotForm(props) {
     }
 
 	const handlleSubmit = async (event) => {
-		/*event.preventDefault();
+		event.preventDefault();
 		console.log(infos);
-		const data = {identifier: infos.mail, password: infos.password};
-		const res = await authenticate(data);
-		if(res.status === 200){
-			console.log(res);
-			const userData = await userFromToken(res.data.token);
-			console.log(userData.data);
-			if(userData.data.length === 1){
-				const contextData = {
-					id: userData.data[0].id,
-					token: res.data.token,
-					role: userData.data[0].role
-				};
-				updateContext(contextData);
-			}
-		}else{
-			setWrongInput(true);
-		}*/
+        setWrongInput(false);
+        const res = await CreationSpot(infos);
+        console.log(res);
+        if(res.status === 200) {
+            setWrongInput(true);
+            setErrMessage("une erreur est survenue");
+        }else{
+            setWrongInput(true);
+            setErrMessage(res.data.message);
+        }
+		
 	}
 
     var optionsFloor = []
@@ -61,6 +57,7 @@ export function NewSpotForm(props) {
                 marginBottom:"100px"
             }}>Ajouter des places</Button>} position="right center"> 
             <div className="form_div">
+                <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>
                 <form onSubmit={handlleSubmit} className="form">
                     <div className="inputs_divs">
                     <Select 
@@ -98,6 +95,7 @@ export function NewSpotForm(props) {
                         type="submit"
                     >Ajouter</Button>
                 </form>
+                { wrongInput && <p className="err_message"> { errMessage } </p>}
             </div>
         </Popup>
     )
