@@ -12,6 +12,19 @@
 	background-color: white;
 }
 
+.div-info-place{
+	display: flex;
+	flex: auto;
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	justify-content:center;	
+	align-items:center;
+	background-color: white;
+}
+
 .modif-infos-button{
     background-color: rgb(20,94,168);
 }

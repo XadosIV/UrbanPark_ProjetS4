@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, placeFromId } from "../services";
 import { Button, TextField } from "@mui/material";
+import { SpotName } from "../interface/spot_name";
 
 export function InfosUser(){
     const { userToken } = useContext(ContextUser);
@@ -9,8 +10,8 @@ export function InfosUser(){
         email: "",
         first_name: "",
         id: undefined,
-        id_spot: undefined,
-        id_spot_temp: undefined,
+        id_spot: null,
+        id_spot_temp: null,
         last_name: "",
         role: "",
     });
@@ -33,12 +34,16 @@ export function InfosUser(){
         }
         fetchUserInfos();
     }, [userToken, setInfosUser]);
-
+    
     useEffect(() => {
+        console.log("upPlace", infosUser)
         async function fetchMaPlace() {
-            const id_place = infosUser.id_spot === null ? infosUser.id_spot : infosUser.id_spot_temp;
-            const resMaPlace = await placeFromId(id_place);
-            setMaPlace(resMaPlace);
+            const id_place = infosUser.id_spot === null ? infosUser.id_spot_temp : infosUser.id_spot;
+            if(id_place != null){
+                const resMaPlace = await placeFromId(id_place);
+                console.log("place", resMaPlace.data[0]);
+                setMaPlace(resMaPlace.data[0]);
+            }
         }
         fetchMaPlace();
     }, [infosUser, setMaPlace]);
@@ -153,8 +158,11 @@ export function InfosUser(){
                 </form>
             }
             { affMaPlace &&
-                <div>
-                    Ma place
+                <div className="div-info-place">
+                    <h3> { SpotName(maPlace) } </h3>
+                    <ul>
+                        { maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) }
+                    </ul>
                 </div>
             }
 	</div>
