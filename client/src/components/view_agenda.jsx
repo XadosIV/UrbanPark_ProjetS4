@@ -10,7 +10,6 @@ export function AgendaTest (){
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
-	const [parkingsList, setParkingsList] = useState([]);
 
 	function FormatSchedule (list)
 	{
@@ -18,31 +17,59 @@ export function AgendaTest (){
 		let i = 0;
 		list.forEach(element => {
 			let idparking = element.parking;
-			let user = element.user;
+			let parking = element.name;
+			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
 
-			take_parking.TakeParking(idparking).then(res=> {
+			let trouve = false
 
-			// console.log(res)
-				
-			let newElement = {
-				id: i,
-				title: "nettoyage parking " + String(res[0].name) + " by " + String(user),
-				start: new Date(dateStart),
-				end: new Date(dateEnd),
-			  };
-			sortie.push(newElement);
-			});
+			function MemeParking(idparking, elem)
+			{
+				return elem.idparking == idparking;
+			}
+			function MemeDepart(dateStart, elem)
+			{
+				return  elem.d_st == dateStart;
+			}
+			function MemeFin(dateEnd, elem)
+			{
+				return  elem.d_en == dateEnd;
+			}
+
+			let j = 0;
+
+			while (j < sortie.length && !trouve)
+			{
+				if (MemeParking(idparking, sortie[j]) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
+				{
+					trouve = true;
+					sortie[j].title += " and " + user;
+				}
+				j++;
+			}
+			if (!trouve)
+			{
+					
+				let newElement = {
+					id: i,
+					idparking: idparking,
+					title: "nettoyage parking " + parking + " by " + user,
+					start: new Date(dateStart),
+					d_st: dateStart,
+					d_en: dateEnd,
+					end: new Date(dateEnd),
+				};
+				sortie.push(newElement);
+			}
+			i++;
 		});
-		setEventsList(sortie);
 		return sortie;
 	}
 
 	useEffect(() => {
 		TakeAllEvents().then(res => {
-			const list = FormatSchedule(res)
-			setEventsList(list);
+			setEventsList(FormatSchedule(res));
 		})
 	}, []);
 
@@ -67,7 +94,7 @@ export function AgendaTest (){
 				events={eventsList}
 				startAccessor="start"
 				endAccessor="end"
-				style={{height:500}}
+				style={{height:500, width:700}}
 				culture="fr"
 				messages={messages}
 			/>
