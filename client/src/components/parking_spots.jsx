@@ -4,25 +4,11 @@ import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
 import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList, NewSpotForm } from "../components";
+import { NbFloors } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
-
-    /**
-     * NbFloors
-     * Returns a lists of options for a Select React component composed of every floor 
-     *
-     * @param { integer } nb - Number of floors in the parking
-     * @return { Array }
-     */
-    function NbFloors(nb) {
-        var opt = [{value:"%", label:"Tous les étages"}]
-        for (let i=0; i<nb; i++) {
-            opt.push({value:i.toString(), label:"Étage " + i.toString()})
-        }
-        return opt
-    }
 
     /**
      * AllTypes
@@ -82,7 +68,7 @@ export function ParkingSpots(props) {
             return <TextField
             error
             helperText="Chiffre supérieur au premier"
-            style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
             size="small"
             id="searchbarNumber2"
             label="Numéro de la place..."
@@ -93,7 +79,7 @@ export function ParkingSpots(props) {
         />
         } else {
             return <TextField
-            style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
             size="small"
             id="searchbarNumber2"
             label="Numéro de la place..."
@@ -122,18 +108,18 @@ export function ParkingSpots(props) {
 
     const [infos, setInfos] = useState({checkedPlaces:false, checkedFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
-    var optionsFloor = []
-    parkingsList.map((parking) => (
-        optionsFloor = NbFloors(parking.floors)
-    ))
-
-    var optionsType = AllTypes(spotTypes)
-
     useEffect(() => {
 		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
         TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
         TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
 	}, []);
+
+    var optionsFloor = []
+    parkingsList.map((parking) => (
+        optionsFloor = NbFloors(parking.floors, {value:"%", label:"Tous les étages"})
+    ))
+
+    var optionsType = AllTypes(spotTypes)
     
     const handleChangeTextField = (event) => {
         const name = event.target.name;
@@ -153,7 +139,6 @@ export function ParkingSpots(props) {
         } else {
             fun(text.substring(0, text.length - 1) + " " +  event.value);
         }
-        console.log(event)
         const value = event.value;
         setInfos(values => ({...values, [name]: value}))
     }
@@ -173,15 +158,24 @@ export function ParkingSpots(props) {
             <input type="checkbox" name="checkedFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
         </div>
         <form className="all-searchs">
-            <div className="search">
-                <Select options={optionsType} placeholder={textSelectType} name="type" value={infos.type} onChange={event => handleChangeSelects(event, "type", "Types", setTextSelectType)}/>
-            </div>
-			<div className="search">
-                <Select options={optionsFloor} placeholder={textSelectFloor} name="firstFloor" value={infos.firstFloor} onChange={event => handleChangeSelects(event, "firstFloor", "Étages", setTextSelectFloor)}/>
-            </div>
-            <div className="search">
+                <Select 
+                    className="front-search"
+                    options={optionsType} 
+                    placeholder={textSelectType} 
+                    name="type" value={infos.type} 
+                    onChange={event => handleChangeSelects(event, "type", "Types", setTextSelectType)}
+                />
+                <Select 
+                    className="front-search"
+                    options={optionsFloor} 
+                    placeholder={textSelectFloor} 
+                    name="firstFloor" 
+                    value={infos.firstFloor} 
+                    onChange={event => handleChangeSelects(event, "firstFloor", "Étages", setTextSelectFloor)}
+                />
                 <TextField
-                    style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+                    style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                    className="search"
                     size="small"
                     id="searchbarNumber"
                     label="Numéro de la place..."
@@ -189,20 +183,29 @@ export function ParkingSpots(props) {
                     name="firstNumber"
                     onChange={handleChangeTextField}
                 />
-            </div>
 
-            <div className="search-second" id="text2">
-                <p style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
-            </div>
-            <div className="search-second" id="floor2">
-                <Select options={optionsFloor.slice(parseInt(infos.firstFloor)+2)} placeholder={textSelectSecondFloor} name="secondFloor" value={infos.secondFloor} onChange={event => handleChangeSelects(event, "secondFloor", "Étages", setTextSelectSecondFloor)}/>
-            </div>
+
+                <p className="front-search-second" id="text2" style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
+
+                <Select 
+                    className="front-search-second" 
+                    id="floor2"
+                    options={optionsFloor.slice(parseInt(infos.firstFloor)+2)} 
+                    placeholder={textSelectSecondFloor} 
+                    name="secondFloor" value={infos.secondFloor} 
+                    onChange={event => handleChangeSelects(event, "secondFloor", "Étages", setTextSelectSecondFloor)}
+                />
             <div className="search-second" id="number2"> 
                 {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
             </div>
 		</form>  
 
         <SpotsList list={list} infos={infos}/>
-        <NewSpotForm />
+        {
+            parkingsList.map((parking) => (
+                <NewSpotForm floors={parking.floors}/>
+            ))
+        }
+        
     </div>)
 }

@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
+import { NbFloors } from "../interface"
 import Popup from 'reactjs-popup';
+import Select from 'react-select';
 
 export function NewSpotForm(props) {
 
-    const [infos, setInfos] = useState({mail: props.mail, password: ""});
+    const [infos, setInfos] = useState({floor: 0, number: 0});
+
 	const [wrongInput, setWrongInput] = useState(false);
+
+    const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -35,6 +40,15 @@ export function NewSpotForm(props) {
 		}*/
 	}
 
+    var optionsFloor = []
+    optionsFloor = NbFloors(props.floors)
+
+    const handleChangeSelect = (event, name) => {
+        setTextSelectFloor("Étage " +  event.value);     
+        const value = event.value;
+        setInfos(values => ({...values, [name]: value}))
+    }
+
     return (
         <Popup trigger={<Button variant="contained" color="primary" 
             style={{
@@ -45,25 +59,36 @@ export function NewSpotForm(props) {
                 marginLeft: "42%",
                 height:"10%",
                 marginBottom:"100px"
-            }}>Ajouter des places</Button>} position="right center">
+            }}>Ajouter des places</Button>} position="right center"> 
             <div className="form_div">
                 <form onSubmit={handlleSubmit} className="form">
                     <div className="inputs_divs">
-                    <TextField
-                        required
-                        id="mail"
-                        label="mail"
-                        type="text"
-                        name="mail"
-                        onChange={handleChange}
+                    <Select 
+                        id="floor"
+                        className="front-search"
+                        options={optionsFloor} 
+                        placeholder={textSelectFloor} 
+                        name="floor" 
+                        value={infos.floor} 
+                        onChange={event => handleChangeSelect(event, "floor")}
                     />
                     <TextField
                         required
-                        id="password"
-                        label="mot de passe"
-                        type="password"
-                        name="password"
+                        style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                        size="small"
+                        id="number"
+                        label="Numéro"
+                        type="text"
+                        name="number"
+                        className="search"
                         onChange={handleChange}
+                    />
+                    <Select
+                        isMulti
+                        name="colors"
+                        placeholder="Choisir des types"
+                        options={optionsFloor}
+                        className="front-search-second-add"
                     />
                     </div>
                     <Button
@@ -71,7 +96,7 @@ export function NewSpotForm(props) {
                         variant="contained" 
                         color="primary" 
                         type="submit"
-                    >connexion</Button>
+                    >Ajouter</Button>
                 </form>
             </div>
         </Popup>

@@ -140,7 +140,7 @@ function PostSpot(callback, infos){
 					callback(err,data);
 				}
 			});
-		}}, {id:infos.parking})}
+		}}, {id:infos.id_park})}
     }, infos);
 }
 

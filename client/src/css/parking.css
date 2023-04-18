@@ -95,25 +95,41 @@
 	grid-gap:10px 10px; /* 50 pixels of space added between rows and 30 pixels added between columns  */
 }
 
-.search {
+.search, .front-search {
 	visibility: visible;
 	width:200px;
 	margin-bottom: 10px;
 }
 
-.search-second {
+.front-search {
+	z-index:1001;
+}
+
+.search-second, .front-search-second {
 	visibility: hidden;
 	width:200px;
 	margin-bottom: 10px;
 }
 
+.front-search-second {
+	z-index:1000;
+}
+
+.front-search-second-add {
+	width:200px;
+	margin-bottom: 10px;
+	z-index:1000;
+}
+
 .popup-content {
+	display:flex;
+	flex-direction:row;
 	margin: auto;
 	background: rgb(255, 255, 255);
-	width: 200px;
-	height: 200px;
 	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
 	padding: 5px;
+	min-width:400px;
+	justify-content: center;
 	border-radius:10px;
 }
 
@@ -125,3 +141,4 @@
 	background: rgba(0, 0, 0, 0.5);
 	background: transparent;
 }
+
