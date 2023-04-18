@@ -68,6 +68,14 @@ export function ParkingSpots(props) {
         }
     }
     
+     /**
+     * ErrorOnSecondNumber
+     * Returns a TextField with an error or not depending if the second number is valid or not
+     *
+     * @param { integer } nb1 - The number of the first TextField
+     * @param { integer } nb1 - The number of the second TextField
+     * @return { TextField }
+     */
     function ErrorOnSecondNumber(nb1, nb2) {
         console.log(nb1, nb2)
         if (nb2 < nb1 && (nb2 != 0 || nb2 != "")) {
