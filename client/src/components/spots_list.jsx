@@ -13,7 +13,7 @@ export function SpotsList(props) {
         function TestTy() {
             if (el.types.length != 0) { 
                 for (let type of el.types) {
-                    if (type.toLowerCase() == props.inputType) {
+                    if (type.toLowerCase() == props.infos.type) {
                         return true
                     }
                 }
@@ -21,23 +21,19 @@ export function SpotsList(props) {
             return false
         }
 
-        var tabRight = [[props.inputFloor === "%", el.floor, props.inputFloor], 
-                        [props.inputNumber === "" || props.inputNumber === 0, el.number, props.inputNumber]]
-        var secondTabRight = [[props.inputSecondFloor === "%", el.floor, props.inputSecondFloor], 
-                              [props.inputSecondNumber === "" || props.inputSecondNumber === 0, el.number, props.inputSecondNumber]]
+        var tabRight = [[props.infos.firstFloor === "%", el.floor, props.infos.firstFloor], 
+                        [props.infos.firstNumber === "" || props.infos.firstNumber === 0, el.number, props.infos.firstNumber]]
+        var secondTabRight = [[props.infos.secondFloor === "%", el.floor, props.infos.secondFloor], 
+                              [props.infos.secondNumber === "" || props.infos.secondNumber === 0, el.number, props.infos.secondNumber]]
 
-        var multiple = 10000
-        var value = el.floor*multiple + el.number
         var res = true;
         //Test if type entered is the right one
-        if (props.inputType !== "%") {
+        if (props.infos.type !== "%") {
             res = res && TestTy()
         }
         if (res) {
-            //Test if there is 2 second values entered
-            if (props.inputSecondFloor !== "%" && (props.inputSecondNumber !== "" && props.inputSecondNumber !== 0)) {
-                res = res && (value >= parseInt(props.inputFloor)*multiple + parseInt(props.inputNumber)) && (value <= parseInt(props.inputSecondFloor)*multiple + parseInt(props.inputSecondNumber))
-            } else if (props.inputSecondFloor !== "%" || (props.inputSecondNumber !== "" && props.inputSecondNumber !== 0)) { //Test if there is a single second value entered
+            //Test if there is a second value entered
+            if (props.infos.secondFloor !== "%" || (props.infos.secondNumber !== "" && props.inputSecondNumber !== 0)) { 
                 for (let i=0; i<secondTabRight.length; i++) {
                     //If there is, check if element is between first and second value
                     if (!secondTabRight[i][0]) { 
