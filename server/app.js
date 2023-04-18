@@ -196,8 +196,8 @@ app.get('/api/spots', (req, res) => {
 	}, req.query);
 });
 
-app.post('/api/spots', (req, res) => {
-	console.log("Request at POST /api/spots : " + JSON.stringify(req.body));
+app.post('/api/spot', (req, res) => {
+	//console.log("Request at POST /api/spot : " + JSON.stringify(req.body));
 	if (req.body && req.body.number && req.body.floor && req.body.id_park){
 		PostSpot((err, data) => {
 			if (err){
