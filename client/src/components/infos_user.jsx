@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken } from "../services";
+import { userFromToken, placeFromId } from "../services";
 import { Button, TextField } from "@mui/material";
 
 export function InfosUser(){
@@ -14,7 +14,16 @@ export function InfosUser(){
         last_name: "",
         role: "",
     });
+    const [ maPlace, setMaPlace ] = useState({
+        id: undefined,
+	    number: undefined,
+	    floor: undefined,
+	    id_parking: "",
+	    id_user: undefined,
+	    types:[]
+    });
     const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
+    const [ affMaPlace, setAffMaPlace ] = useState(false);
     const [ newInfos, setNewInfos ] = useState({});
 
     useEffect(() => {
@@ -24,6 +33,15 @@ export function InfosUser(){
         }
         fetchUserInfos();
     }, [userToken, setInfosUser]);
+
+    useEffect(() => {
+        async function fetchMaPlace() {
+            const id_place = infosUser.id_spot === null ? infosUser.id_spot : infosUser.id_spot_temp;
+            const resMaPlace = await placeFromId(id_place);
+            setMaPlace(resMaPlace);
+        }
+        fetchMaPlace();
+    }, [infosUser, setMaPlace]);
 
     const noPaste = (e) => {
 		e.preventDefault();
@@ -50,6 +68,20 @@ export function InfosUser(){
                 color="primary"
                 className="modif-infos-button"
                 onClick={ () => {
+                    setAffFormModifInfo(false);
+                    affMaPlace ? setAffMaPlace(false) : setAffMaPlace(true);
+                } }
+                style={{
+                    backgroundColor: "#145EA8",
+                    color:"#FFFFFF"
+                }}
+            > Ma Place </Button>
+            <Button 
+                classvariant="contained"
+                color="primary"
+                className="modif-infos-button"
+                onClick={ () => {
+                    setAffMaPlace(false);
                     affFormModifInfo ? setAffFormModifInfo(false) : setAffFormModifInfo(true);
                 } }
                 style={{
@@ -58,7 +90,8 @@ export function InfosUser(){
                 }}
             > modifier mes informations </Button>
             </div>
-            { affFormModifInfo && 
+            { /*affFormModifInfo*/ false && 
+                // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
                 <form  onSubmit={ handlleSubmit }>
                     <div className="inputs_divs">
                     <TextField
@@ -118,6 +151,11 @@ export function InfosUser(){
                         type="submit"
                     >valider les changements</Button>
                 </form>
+            }
+            { affMaPlace &&
+                <div>
+                    Ma place
+                </div>
             }
 	</div>
 }
