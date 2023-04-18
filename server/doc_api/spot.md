@@ -6,7 +6,7 @@
 	"id":1,
 	"number":3,
 	"floor":0,
-	"id_parking":"h",
+	"id_park":"h",
 	"id_user":1,
 	"types":[ // See : Ressources - Type
 		1,

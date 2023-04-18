@@ -1,6 +1,7 @@
 const {dbConnection, dbName} = require('../database');
-const Errors = require('../errors');
 const { GetParkings } = require('./parking');
+const {SpotTypeExists} = require('./spot_types');
+const Errors = require('../errors');
 
 /**
  * GetAllSpots
@@ -65,49 +66,82 @@ function GetSpots(callback, infos){
 }
 
 /**
+ * InsertListTyped
+ * Insert the link between multiple spot types and a spot in the database
+ * 
+ * @param {int} id_spot ID of the spot
+ * @param {Array<string>} names_types Names of the types
+ * @param {function(*,*)} callback (err, data)
+ */
+function InsertListTyped(id_spot, name_types, callback){
+	sql = `INSERT INTO ${dbName}.Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
+	//console.log("SQL at InsertListTyped : " + sql + " with " + {id_spot:id_spot,names_types:names_types});
+	dbConnection.query(sql, {
+			id_spot:id_spot,
+			name_type:name_types.pop()
+		}, (err, data) => {
+		if(err){
+			callback(err,data);
+		}else if(name_types.length>0){
+			InsertListTyped(id_spot,name_types,callback);
+		}else{
+			callback(err,data);
+		}
+	});
+}
+
+/**
  * PostSpot
  * Create a new spot with no type
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {number, floor, parking}
+ * @param {object} infos {number, floor, id_park, types}
  */
 function PostSpot(callback, infos){
-    GetSpots((err, res) => {
-        if (err){
-            callback(err, [])
-        }else{
-            if (res.length == 1){
-                let errorCode = Errors.E_SPOT_ALREADY_EXIST;
-                let error = new Error(errorCode);
-                error.code = errorCode;
-                callback(error, []);
-            }else{
-                GetParkings( (err, parkings) => {
-                    if (err){
-                        callback(err, []);
-                    }else{
-                        if (parkings.length != 1){
-                            let errorCode = Errors.E_UNDEFINED_PARKING;
-                            let error = new Error(errorCode);
-                            error.code = errorCode;
-                            callback(error, []);
-                        }else{
-                            if (infos.floor >= parkings[0].floors){
-                                let errorCode = Errors.E_WRONG_FLOOR;
-                                let error = new Error(errorCode);
-                                error.code = errorCode;
-                                callback(error, []);
-                            }else{
-                                sql = `INSERT INTO ${dbName}.Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
-                                console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
-                                dbConnection.query(sql, infos, callback);
-                            }
-                        }
-                    }
-                }, {id:infos.parking})
-            }
-        }
-    }, infos)
+	GetSpots((err, res) => {
+		if (err){
+			callback(err, []);
+		}else if (res.length == 1){
+			let errorCode = Errors.E_SPOT_ALREADY_EXIST;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error, []);
+		}else{ GetParkings((err, parkings) => {
+		if (err){
+			callback(err, []);
+		}else if (parkings.length != 1){
+			let errorCode = Errors.E_UNDEFINED_PARKING;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error, []);
+		}else if (infos.floor >= parkings[0].floors){
+			let errorCode = Errors.E_WRONG_FLOOR;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error, []);
+		}else{
+			sql = `INSERT INTO ${dbName}.Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
+			//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
+			dbConnection.query(sql, infos, (err, data) => {
+				if(err){
+					callback(err,data);
+				}else if(infos.types && infos.types.length>0){
+				GetSpots((err,data) =>{
+					if(err){
+						callback(err,data);
+					}else{
+						InsertListTyped(data[0].id, infos.types, callback);
+					}},{
+						id_park: infos.id_park,
+						floor: infos.floor,
+						number: infos.number
+					});
+				}else{
+					callback(err,data);
+				}
+			});
+		}}, {id:infos.parking})}
+    }, infos);
 }
 
 module.exports = {GetAllSpots, GetSpots, PostSpot};
