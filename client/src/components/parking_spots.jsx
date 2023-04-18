@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
 import TAST from "../services/take_all_spot_types"
-import { SpotsList, ParkingList } from "../components";
+import { SpotsList, ParkingList, NewSpotForm } from "../components";
 import Select from 'react-select';
-import Popup from 'reactjs-popup';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
@@ -50,6 +49,7 @@ export function ParkingSpots(props) {
                 document.getElementById("number2").className = "search"
             } else {    
                 document.getElementById("number2").className = "search-second"
+                infos.secondNumber = baseValueNumber;
             }
         }
         if (document.getElementById("floor2")) {
@@ -57,6 +57,7 @@ export function ParkingSpots(props) {
                 document.getElementById("floor2").className = "search"
             } else {    
                 document.getElementById("floor2").className = "search-second"
+                infos.secondFloor = baseValueFloorType;
             }
         }
         if (document.getElementById("text2")) {
@@ -77,7 +78,6 @@ export function ParkingSpots(props) {
      * @return { TextField }
      */
     function ErrorOnSecondNumber(nb1, nb2) {
-        console.log(nb1, nb2)
         if (nb2 < nb1 && (nb2 != 0 || nb2 != "")) {
             return <TextField
             error
@@ -88,7 +88,7 @@ export function ParkingSpots(props) {
             label="Numéro de la place..."
             type="text"
             name="secondNumber"
-            defaultValue=""
+            value={infos.secondNumber}
             onChange={handleChangeTextField}
         />
         } else {
@@ -99,13 +99,14 @@ export function ParkingSpots(props) {
             label="Numéro de la place..."
             type="text"
             name="secondNumber"
-            defaultValue=""
+            value={infos.secondNumber}
             onChange={handleChangeTextField}
         />
         }
     }
 
     var baseValueFloorType = "%"
+    var baseValueNumber = ""
 
     const [parkingsList, setParkingsList] = useState([]);
 
@@ -119,7 +120,7 @@ export function ParkingSpots(props) {
 
     const [textSelectSecondFloor, setTextSelectSecondFloor] = useState("Choisir un étage");
 
-    const [infos, setInfos] = useState({checkedPlaces:false, checkedFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: 0, secondNumber: 0})
+    const [infos, setInfos] = useState({checkedPlaces:false, checkedFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
     var optionsFloor = []
     parkingsList.map((parking) => (
@@ -202,18 +203,6 @@ export function ParkingSpots(props) {
 		</form>  
 
         <SpotsList list={list} infos={infos}/>
-        
-        <Popup trigger={<Button variant="contained" color="primary" 
-            style={{
-                backgroundColor: "#FE434C",
-                borderColor: "transparent",
-                borderRadius: 20,
-                width: "16%",
-                marginLeft: "42%",
-                height:"10%",
-                marginBottom:"50px"
-            }}>Ajouter des places</Button>} position="bottom center">
-            <div></div>
-        </Popup>
+        <NewSpotForm />
     </div>)
 }
