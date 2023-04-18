@@ -4,7 +4,7 @@ import { userFromToken, placeFromId } from "../services";
 import { Button, TextField } from "@mui/material";
 import { SpotName } from "../interface/spot_name";
 
-export function InfosUser(){
+export function InfosUser(props){
     const { userToken } = useContext(ContextUser);
     const [ infosUser, setInfosUser ] = useState({
         email: "",
@@ -19,7 +19,7 @@ export function InfosUser(){
         id: undefined,
 	    number: undefined,
 	    floor: undefined,
-	    id_parking: "",
+	    id_park: "",
 	    id_user: undefined,
 	    types:[]
     });
@@ -68,6 +68,7 @@ export function InfosUser(){
             <div className="div-info-user">
             <h3> { infosUser.first_name + " " + infosUser.last_name } </h3>
             <p> { infosUser.email } </p>
+            { (props.role === "Abonné") &&
             <Button 
                 classvariant="contained"
                 color="primary"
@@ -80,7 +81,7 @@ export function InfosUser(){
                     backgroundColor: "#145EA8",
                     color:"#FFFFFF"
                 }}
-            > Ma Place </Button>
+            > Ma Place </Button> }
             <Button 
                 classvariant="contained"
                 color="primary"
@@ -159,7 +160,7 @@ export function InfosUser(){
             }
             { affMaPlace &&
                 <div className="div-info-place">
-                    <h3> { SpotName(maPlace) } </h3>
+                    <h3> { maPlace.id_park && maPlace.floor && maPlace.number && SpotName(maPlace)  } { !maPlace.id_park && !maPlace.floor && !maPlace.number && "Place Indisponible" } </h3>
                     <ul>
                         { maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) }
                     </ul>
