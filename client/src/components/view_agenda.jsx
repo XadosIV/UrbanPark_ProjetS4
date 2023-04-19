@@ -6,7 +6,12 @@ import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
 
-export function AgendaTest (){
+export function AgendaTest (props){
+	console.log(props)
+	const role = props.props.role;
+	const id = props.props.user;
+	console.log(id)
+
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
@@ -16,17 +21,19 @@ export function AgendaTest (){
 		let sortie = []
 		let i = 0;
 		list.forEach(element => {
-			let idparking = element.parking;
+			let idUser = element.user
+			let idParking = element.parking;
 			let parking = element.name;
 			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
-
+			
 			let trouve = false
+			let utile = true;
 
-			function MemeParking(idparking, elem)
+			function MemeParking(idParking, elem)
 			{
-				return elem.idparking == idparking;
+				return elem.idparking == idParking;
 			}
 			function MemeDepart(dateStart, elem)
 			{
@@ -41,7 +48,7 @@ export function AgendaTest (){
 
 			while (j < sortie.length && !trouve)
 			{
-				if (MemeParking(idparking, sortie[j]) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
+				if (MemeParking(idParking, sortie[j]) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
 				{
 					trouve = true;
 					sortie[j].title += " and " + user;
@@ -53,7 +60,7 @@ export function AgendaTest (){
 					
 				let newElement = {
 					id: i,
-					idparking: idparking,
+					idparking: idParking,
 					title: "nettoyage parking " + parking + " by " + user,
 					start: new Date(dateStart),
 					d_st: dateStart,
@@ -68,7 +75,7 @@ export function AgendaTest (){
 	}
 
 	useEffect(() => {
-		TakeAllEvents().then(res => {
+		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
 	}, []);

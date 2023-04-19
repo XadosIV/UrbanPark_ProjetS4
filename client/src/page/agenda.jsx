@@ -4,6 +4,6 @@ import { AgendaTest} from "../components";
 export function Agenda() {
 
 	return(<div>
-		<AgendaTest/>
+		<AgendaTest props={{user:2}}/>
 	</div>)
 }
