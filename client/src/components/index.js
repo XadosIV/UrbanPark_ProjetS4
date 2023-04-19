@@ -26,3 +26,5 @@ export * from "./parking_spots"
 export * from "./protected_route"
 export * from "./view_agenda"
 export * from "./infos_user"
+export * from "./new_spot_form"
+
