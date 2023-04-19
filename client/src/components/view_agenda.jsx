@@ -7,8 +7,8 @@ import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
 
 export function AgendaTest (props){
-	const role = props.props.role;
-	const id = props.props.user;
+	let role = null;
+	let id = 0;
 
 	const localizer = momentLocalizer(moment);
 
@@ -73,6 +73,17 @@ export function AgendaTest (props){
 	}
 
 	useEffect(() => {
+		if (props.props)
+		{
+			if (props.props.user)
+			{
+				id = props.props.user;
+			}
+			if (props.props.role)
+			{
+				role = props.props.role;
+			}
+		}
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
