@@ -34,10 +34,10 @@ export function PagePersoAbonne(){
     useEffect(() => {
         async function fetchParking() {
             if(maPlace.id_park !== ""){
-                console.log("idP", maPlace);
+                //console.log("idP", maPlace);
                 const resParking = await TP.TakeParking(maPlace.id_park);
                 setParkPlace(resParking[0]);
-                console.log("parking", resParking[0])
+                //console.log("parking", resParking[0])
             }
         }
         fetchParking();
@@ -50,12 +50,12 @@ export function PagePersoAbonne(){
                     setIsPlaceTemp(false);
                     const resMaPlace = await placeFromId(infosUser.id_spot);
                     setMaPlace(resMaPlace.data[0]);
-                    console.log("place", resMaPlace.data[0]);
+                    //console.log("place", resMaPlace.data[0]);
                 }else{
                     setIsPlaceTemp(true);
                     const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
                     setMaPlace(resMaPlaceTemp.data[0]);
-                    console.log("place_temp", resMaPlaceTemp.data[0]);
+                    //console.log("place_temp", resMaPlaceTemp.data[0]);
                 }
             }
         }
@@ -66,7 +66,7 @@ export function PagePersoAbonne(){
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
             setInfosUser(resInfosUser.data[0]);
-            console.log("user", resInfosUser.data[0])
+            //console.log("user", resInfosUser.data[0])
         }
         fetchUserInfos();
     }, [userToken]);
@@ -78,21 +78,33 @@ export function PagePersoAbonne(){
             return "Place Indisponible";
         }
     }
+
+    const listeTypes = () => {
+        if(maPlace.types.length !== 0){
+            return maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) 
+        }else{
+            return <li> aucun types </li>
+        }
+    }
             
 	return(
         <div className="div-place">
-            { isPlaceTemp && <p className="msg-place-temp"> /!\ vous avez été assigné une place temporaire </p> }
             <div className="div-info-place">
-                <ul>
-                    <li> { parkPlace.name } </li>
-                    <li> { parkPlace.address } </li>
-                </ul>
                 <div>
-                    { affSpotName }
+                    { isPlaceTemp && <p className="msg-place-temp"> /!\ vous avez été assigné une place temporaire </p> }
                 </div>
-                <ul>
-                    { maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) }
-                </ul>
+                <div className="aff-place">
+                    <h2>
+                        { affSpotName() }
+                    </h2>
+                    <ul>
+                        <li> { parkPlace.name } </li>
+                        <li> { parkPlace.address } </li>
+                    </ul>
+                    <ul>
+                        { listeTypes() }
+                    </ul>
+                </div>
             </div>
             <div className="edt-place">
                 {/* edt place */}
