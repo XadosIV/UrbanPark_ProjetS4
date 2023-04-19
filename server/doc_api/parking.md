@@ -18,7 +18,7 @@
 # Endpoints
 * * *
 * * *
-# GET: /api/parking
+# GET: /api/parkings
 > Permission requise : X
 
 > Description : Renvoie un, plusieurs, ou tout les parkings, selon certains filtres.
@@ -37,7 +37,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 * * *
 * * *
 
-# POST: /api/parking
+# POST: /api/parkings
 > Permission requise : X
 
 > Description : Crée/Ajoute un parking à la base de donnée.
