@@ -25,7 +25,7 @@ export function ParkingList(parking) {
 	return (
         <div className="list-item">	
             <div>
-                <h2>{parking.parking.name}<br/>{parking.parking.floors} étage{NeedS(parking.parking.floors)}</h2>    
+                <h2>Parking {parking.parking.name} ({parking.parking.id})<br/>{parking.parking.floors} étage{NeedS(parking.parking.floors)}</h2>    
                 <p>{address[0]}</p>
                 <p>{address[1]}</p>
             </div>

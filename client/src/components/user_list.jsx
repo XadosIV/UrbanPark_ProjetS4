@@ -16,7 +16,7 @@ export function UserList() {
 	const [inputTextUsers, setInputTextUsers] = useState("");
 
 	return (<div className="UserList">
-			<Separation value="Les utilisateurs"/>
+			<Separation value=" Tous les utilisateurs"/>
 			
 			<TextField
 				style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}

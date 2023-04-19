@@ -13,6 +13,7 @@ exports.E_PERMISSION_DOESNT_EXIST											="E_PERMISSION_DOESNT_EXIST";
 exports.E_UNDEFINED_PARKING													="E_UNDEFINED_PARKING";
 exports.E_WRONG_FLOOR														="E_WRONG_FLOOR";
 exports.E_SPOT_ALREADY_EXIST												="E_SPOT_ALREADY_EXIST";
+exports.E_SPOT_NOT_FOUND                                                    ="E_SPOT_NOT_FOUND";
 exports.E_ROLE_NOT_FOUND													="E_ROLE_NOT_FOUND";
 exports.E_DATETIME_FORMAT_INVALID											="E_DATETIME_FORMAT_INVALID";
 exports.E_OVERLAPPING_SCHEDULES												="E_OVERLAPPING_SCHEDULES";
