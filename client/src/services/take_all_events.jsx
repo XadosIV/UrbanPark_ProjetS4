@@ -6,8 +6,18 @@ import axios from "axios"
  *
  * @return { Promise list of Schedule }
  */
-async function TakeAllEvents(){
-    var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/schedules"
+async function TakeAllEvents(user =0, role = null){
+	console.log(user)
+	var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/schedules"
+	if (user !== 0) {
+		const obj = {user: user}
+        url = url + "?" + new URLSearchParams(obj).toString();
+    }
+	if (role !== null) {
+		const obj = {user: user}
+        url = url + "&" + new URLSearchParams(obj).toString();
+    }
+	console.log(url)
 	return axios.get(url).then((res) => res.data)
 }
 
