@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
-import TBS from "../services/take_by_spot"
-import TAST from "../services/take_all_spot_types"
 
 export function Spot(props) {
 
@@ -17,7 +15,7 @@ export function Spot(props) {
      */
     function HasSub(types, user) {
         var res = false;
-        if (types.length != 0 && user != null) {
+        if (types.length != 0 && user == null) {
             for (let type of types) {
                 if (type == "Abonné") {     
                     res = true;
@@ -38,10 +36,12 @@ export function Spot(props) {
         }  
     }
 
-    console.log(props.spot)
-
     var infosSpot;
-    if (props.spot.id_user != null) {
+    if (props.spot.id_user_temp != null) {
+        infosSpot = <Link to={`/users/${props.spot.id_user}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
+                        Place attribuée temporairement à : <br/> {props.spot.first_name_temp} {props.spot.last_name_temp}
+                    </Link>
+    } else if (props.spot.id_user != null) {
         infosSpot = <Link to={`/users/${props.spot.id_user}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
                         Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}
                     </Link>
