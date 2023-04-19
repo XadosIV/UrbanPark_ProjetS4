@@ -101,10 +101,6 @@
 	margin-bottom: 10px;
 }
 
-.front-search {
-	z-index:1001;
-}
-
 .search-second, .front-search-second {
 	visibility: hidden;
 	width:200px;
@@ -115,10 +111,14 @@
 	z-index:1000;
 }
 
-.front-search-second-add {
-	width:200px;
+.front-search-second-add, .front-search-floor {
+	width:300px;
 	margin-bottom: 10px;
 	z-index:1000;
+}
+
+.front-search, .front-search-floor {
+	z-index:1001;
 }
 
 .popup-content {
@@ -142,3 +142,13 @@
 	background: transparent;
 }
 
+.inputs-divs {
+    display: flex;
+    flex-direction: column;
+	justify-content: center;
+}
+
+.err-message {
+    color: red;
+	text-align: center;
+}
