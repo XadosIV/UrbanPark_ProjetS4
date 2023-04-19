@@ -34,8 +34,8 @@ export function StaffPreview(list) {
 
 	return (
         <ul className="staff-list">
-            {filteredData.map((staff) => (
-                <li>
+            {filteredData.map((staff, index) => (
+                <li key={index}>
                     <div className="staff-infos">
                         <div>
                             <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>

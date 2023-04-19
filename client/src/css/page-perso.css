@@ -7,7 +7,7 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
-	justify-content:space-between;	
+	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
 }
@@ -20,9 +20,13 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
-	justify-content:center;	
+	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
+}
+
+.div-info-place>ul{
+	list-style: none;
 }
 
 .modif-infos-button{
@@ -40,4 +44,18 @@
 
 .inputs_divs>* {
     margin: 5%;
+}
+.msg-place-temp{
+	color: red;
+}
+
+.div-button-place{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
+.div-place{
+	display: flex;
+	flex-direction: column;
 }

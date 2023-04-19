@@ -9,7 +9,7 @@ import axios from "axios"
  */
 async function TakeAllSpotTypes(id_spot=0){
     const obj = {id_spot: id_spot}
-    var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/spot-types"
+    var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/types"
     if (id_spot !== 0) {
         url = url + "?" + new URLSearchParams(obj).toString();
     }
