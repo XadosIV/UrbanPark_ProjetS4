@@ -7,10 +7,8 @@ import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
 
 export function AgendaTest (props){
-	console.log(props)
 	const role = props.props.role;
 	const id = props.props.user;
-	console.log(id)
 
 	const localizer = momentLocalizer(moment);
 
