@@ -14,7 +14,7 @@
 
 # Endpoint
 
-# GET /api/schedule
+# GET /api/schedules
 > Permission requise : X
 
 > Description : Renvoie un, plusieurs ou tout les créneaux.
@@ -32,13 +32,18 @@
 X : Un paramètre parmis X peut être définit, les autres doivent ne pas être définits
 
 #### **Erreurs**
+<<<<<<< HEAD
+Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
+=======
 
 | Nom | Cause |
 | --- | ----- |
 | E_CONFLICTING_PARAMETERS | Un seul champs peut être définit parmis : role, user |
+>>>>>>> origin/p-test
 * * *
 * * *
-# POST /api/schedule
+# POST /api/schedules
 > Permission requise : X
 
 > Description : Crée/Ajoute un créneau à la base de donnée.
@@ -61,6 +66,7 @@ X : Un paramètre parmis X est requis, les autres doivent ne pas être définits
 | --- | ----- |
 | E_MISSING_PARAMETER | Tout les paramètres n'ont pas été donnés. |
 | E_CONFLICTING_PARAMETERS | Un seul champs doit être définit parmis : role, user |
+
 * * *
 * * *
 # GET /api/schedule/:schedule

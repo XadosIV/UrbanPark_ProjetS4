@@ -11,7 +11,7 @@
 * * *
 * * *
 
-# GET /api/type
+# GET /api/types
 > Permission requise : X
 
 > Description : Renvoie tout les types ou recherche un type par nom.
@@ -24,9 +24,10 @@
 
 #### **Erreurs**
 Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
 * * *
 * * *
-# POST /api/type
+# POST /api/types
 > Permission requise : X
 
 > Description : Crée/Ajoute un type à la base de donnée.
@@ -42,6 +43,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | Nom | Cause |
 | --- | ----- |
 | E_MISSING_PARAMETER | Le nom du type n'a pas été donné. |
+
 * * *
 * * *
 # GET /api/type/:type

@@ -45,7 +45,7 @@ function GetAllSpots(callback){
  * Return a JSON with every spots corresponding to paramaters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {id_park, floor, number, type}
+ * @param {object} infos {id_park, floor, number, type, id}
  */
 function GetSpots(callback, infos){
     GetAllSpots((err, spots) => {

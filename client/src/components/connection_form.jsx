@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { authenticate, userFromToken } from "../services";
 import { useUpdateContext } from "../interface";
+import { useNavigate } from "react-router-dom";
 
 export function ConnectionForm(props) {
 	const [infos, setInfos] = useState({mail: props.mail, password: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const updateContext = useUpdateContext();
+	const navigate = useNavigate();
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -30,6 +32,7 @@ export function ConnectionForm(props) {
 					role: userData.data[0].role
 				};
 				updateContext(contextData);
+				navigate("/perso");
 			}
 		}else{
 			setWrongInput(true);
