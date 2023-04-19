@@ -1,9 +1,9 @@
 import React from "react";
-import { AgendaTest} from "../components";
+import { ViewAgenda} from "../components";
 
 export function Agenda() {
 
 	return(<div>
-		<AgendaTest props={{role:"gardien"}}/>
+		<ViewAgenda/>
 	</div>)
 }

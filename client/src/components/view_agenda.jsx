@@ -6,7 +6,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
 
-export function AgendaTest (props){
+export function ViewAgenda (props){
 	let role = null;
 	let id = 0;
 
