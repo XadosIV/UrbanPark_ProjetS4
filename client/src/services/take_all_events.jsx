@@ -12,11 +12,15 @@ async function TakeAllEvents(user =0, role = null){
 	if (user !== 0) {
 		const obj = {user: user}
         url = url + "?" + new URLSearchParams(obj).toString();
+		if (role !== null) {
+			const obj = {user: user}
+			url = url + "&" + new URLSearchParams(obj).toString();
+		}
     }
-	if (role !== null) {
+	else if (role !== null) {
 		const obj = {user: user}
-        url = url + "&" + new URLSearchParams(obj).toString();
-    }
+		url = url + "?" + new URLSearchParams(obj).toString();
+	}
 	console.log(url)
 	return axios.get(url).then((res) => res.data)
 }
