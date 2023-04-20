@@ -20,7 +20,6 @@ async function TakeAllEvents(user =0, role = null){
 		const obj = {role: role}
 		url = url + "?" + new URLSearchParams(obj).toString();
 	}
-	console.log(url)
 	return axios.get(url).then((res) => res.data)
 }
 
