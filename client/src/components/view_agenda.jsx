@@ -4,7 +4,6 @@ import moment from "moment";
 import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
-import { ButtonAddSchedules } from "./button_add_schedules";
 
 export function ViewAgenda (props){
 	let role = null;
@@ -114,7 +113,6 @@ export function ViewAgenda (props){
 				culture="fr"
 				messages={messages}
 			/>
-			<ButtonAddSchedules/>
 		</div>
 	)
 }

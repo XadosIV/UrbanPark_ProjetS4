@@ -1,5 +1,5 @@
 import React from "react";
-import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType } from "../components";
+import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType, NewScheduleForm } from "../components";
 import { Button } from "@mui/material";
 import "../css/admin.css"
 
@@ -10,6 +10,8 @@ export function AdminPage() {
 			<ParkingsStaff/>
 			<CreateSpotType/>
 		</div>
+		<br/><br/><hr/><br/><br/>
+		<NewScheduleForm />
 		<br/><br/><hr/>
 		<div className="searchs">
 			<StaffList/>

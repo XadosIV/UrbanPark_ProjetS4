@@ -308,7 +308,7 @@ app.post('/api/schedule', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : role*, user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définits. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
+		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Champs obligatoires : user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définis. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
 	}
 });
 

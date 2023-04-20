@@ -152,7 +152,7 @@ export function NewSpotForm(props) {
                             infos.number++;
                         } else {
                             setWrongInput(true);
-                            setErrMessage("Une place n'a pas pu être créée dû à : " + res.data.message);
+                            setErrMessage(res.data.message);
                             infos.number = stock;
                             break;
                         }
