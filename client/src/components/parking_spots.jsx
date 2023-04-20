@@ -140,11 +140,6 @@ export function ParkingSpots(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
-    const handleRemount = () => {
-        TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
-        TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
-    }
-
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
@@ -195,7 +190,7 @@ export function ParkingSpots(props) {
 		    </form> 
             {
                 parkingsList.map((parking) => (
-                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id} onchange={handleRemount}/>
+                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
                 ))
             }
         </div> 
