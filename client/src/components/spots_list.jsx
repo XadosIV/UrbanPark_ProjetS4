@@ -40,7 +40,7 @@ export function SpotsList(props) {
                         res = res && tabRight[i][1] >= tabRight[i][2] && secondTabRight[i][1] <= secondTabRight[i][2] 
                     } else { //If there is no second value, check the first one to see if it's equal
                         if (!tabRight[i][0]) {
-                            res = res && tabRight[i][1] == tabRight[i][2]
+                            res = res && tabRight[i][1] === tabRight[i][2]
                         }
                     }
                 }
@@ -49,7 +49,7 @@ export function SpotsList(props) {
                 //Check every value entered
                 for (let j=0; j<tabRight.length; j++) {
                     if (!tabRight[j][0]) {
-                        res = res && tabRight[j][1] == tabRight[j][2]
+                        res = res && tabRight[j][1] === tabRight[j][2]
                     }
                 }
             }

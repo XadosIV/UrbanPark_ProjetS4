@@ -71,7 +71,7 @@ export function Spot(props) {
     }
 
     var typesSpot = [];
-    if (props.spot.types.length != 0) {
+    if (props.spot.types.length !== 0) {
         for (let type of props.spot.types) {
             typesSpot.push(<p><strong>-</strong> Place {type}<br/></p>)
         }
