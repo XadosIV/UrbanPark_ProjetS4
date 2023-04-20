@@ -7,7 +7,7 @@ export function AdminPage() {
 
 	return(<div>
 		<div style={{minWidth:"50%"}}>
-			<ParkingsStaff/>
+			<ParkingsStaff admin={true} />
 			<CreateSpotType/>
 		</div>
 		<br/><br/><hr/><br/><br/>

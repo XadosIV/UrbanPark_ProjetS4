@@ -7,7 +7,7 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
-	justify-content:space-between;	
+	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
 }
@@ -20,9 +20,53 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
-	justify-content:center;	
+	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
+	flex-direction: column;
+}
+
+.div-edt{
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	background-color: white;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.div-edt>* {
+	margin: 2%;
+}
+
+.div-info-place ul{
+	list-style: none;
+}
+
+.aff-place {
+	display: flex;
+	justify-content: space-around;
+	width: 100%;
+	align-items: center;
+}
+
+.div-UI{
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	background-color: white;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.UI-Button>*{
+	margin: 1%;
 }
 
 .modif-infos-button{
@@ -40,4 +84,18 @@
 
 .inputs_divs>* {
     margin: 5%;
+}
+.msg-place-temp{
+	color: red;
+}
+
+.div-button-place{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
+.div-place{
+	display: flex;
+	flex-direction: column;
 }

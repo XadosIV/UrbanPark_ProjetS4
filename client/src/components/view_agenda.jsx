@@ -4,11 +4,11 @@ import moment from "moment";
 import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
+import take_parking from "../services/take_parking";
+import take_by_id from "../services/take_by_id";
+
 
 export function ViewAgenda (props){
-	let role = null;
-	let id = 0;
-
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
@@ -18,27 +18,36 @@ export function ViewAgenda (props){
 		let sortie = []
 		let i = 0;
 		list.forEach(element => {
-			let idUser = element.user
+			let role = element.role;
 			let idParking = element.parking;
 			let parking = element.name;
 			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
-			
-			let trouve = false
+
+			let startTitle = "";
+
+			if (role == "Gardien"){
+				startTitle = "Gardiennage ";
+			}
+			else {
+				startTitle = "Nettoyage parking ";
+			}
+
+			let trouve = false;
 			let utile = true;
 
 			function MemeParking(idParking, elem)
 			{
-				return elem.idparking == idParking;
+				return elem.idparking === idParking;
 			}
 			function MemeDepart(dateStart, elem)
 			{
-				return  elem.d_st == dateStart;
+				return  elem.d_st === dateStart;
 			}
 			function MemeFin(dateEnd, elem)
 			{
-				return  elem.d_en == dateEnd;
+				return  elem.d_en === dateEnd;
 			}
 
 			let j = 0;
@@ -58,7 +67,7 @@ export function ViewAgenda (props){
 				let newElement = {
 					id: i,
 					idparking: idParking,
-					title: "nettoyage parking " + parking + " by " + user,
+					title: startTitle + parking + " by " + user,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
@@ -72,6 +81,9 @@ export function ViewAgenda (props){
 	}
 
 	useEffect(() => {
+		let role = null;
+		let id = 0;
+
 		if (props.props)
 		{
 			if (props.props.user)
@@ -109,7 +121,7 @@ export function ViewAgenda (props){
 				events={eventsList}
 				startAccessor="start"
 				endAccessor="end"
-				style={{height:500, width:700}}
+				style={{height:500, width:600}}
 				culture="fr"
 				messages={messages}
 			/>

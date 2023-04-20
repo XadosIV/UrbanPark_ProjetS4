@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ContextUser } from "../contexts/context_user";
-import { userFromToken, placeFromId } from "../services";
+import { useContext, useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
-import { SpotName } from "../interface/spot_name";
+import { ContextUser } from "../contexts/context_user";
+import { userFromToken } from "../services";
 
-export function InfosUser(props){
+export function PersonalInfos(){
     const { userToken } = useContext(ContextUser);
     const [ infosUser, setInfosUser ] = useState({
         email: "",
@@ -15,38 +14,17 @@ export function InfosUser(props){
         last_name: "",
         role: "",
     });
-    const [ maPlace, setMaPlace ] = useState({
-        id: undefined,
-	    number: undefined,
-	    floor: undefined,
-	    id_park: "",
-	    id_user: undefined,
-	    types:[]
-    });
-    const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
-    const [ affMaPlace, setAffMaPlace ] = useState(false);
     const [ newInfos, setNewInfos ] = useState({});
+    const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
 
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
             setInfosUser(resInfosUser.data[0]);
+            //console.log("user", resInfosUser.data[0])
         }
         fetchUserInfos();
-    }, [userToken, setInfosUser]);
-    
-    useEffect(() => {
-        console.log("upPlace", infosUser)
-        async function fetchMaPlace() {
-            const id_place = infosUser.id_spot === null ? infosUser.id_spot_temp : infosUser.id_spot;
-            if(id_place != null){
-                const resMaPlace = await placeFromId(id_place);
-                console.log("place", resMaPlace.data[0]);
-                setMaPlace(resMaPlace.data[0]);
-            }
-        }
-        fetchMaPlace();
-    }, [infosUser, setMaPlace]);
+    }, [userToken]);
 
     const noPaste = (e) => {
 		e.preventDefault();
@@ -64,30 +42,16 @@ export function InfosUser(props){
         console.log(newInfos);
     }
 
-	return<div>
-            <div className="div-info-user">
+    return(<div>
+        <div className="div-info-user">
             <h3> { infosUser.first_name + " " + infosUser.last_name } </h3>
             <p> { infosUser.email } </p>
-            { (props.role === "Abonné") &&
+            <div className="div-button-place">
             <Button 
                 classvariant="contained"
                 color="primary"
                 className="modif-infos-button"
                 onClick={ () => {
-                    setAffFormModifInfo(false);
-                    affMaPlace ? setAffMaPlace(false) : setAffMaPlace(true);
-                } }
-                style={{
-                    backgroundColor: "#145EA8",
-                    color:"#FFFFFF"
-                }}
-            > Ma Place </Button> }
-            <Button 
-                classvariant="contained"
-                color="primary"
-                className="modif-infos-button"
-                onClick={ () => {
-                    setAffMaPlace(false);
                     affFormModifInfo ? setAffFormModifInfo(false) : setAffFormModifInfo(true);
                 } }
                 style={{
@@ -96,7 +60,10 @@ export function InfosUser(props){
                 }}
             > modifier mes informations </Button>
             </div>
-            { /*affFormModifInfo*/ false && 
+        </div>
+        <div className="div-info-user" style={ /*affFormModifInfo*/ false ? {  } : { display: "none" }} >
+            <div className="form-modif-infos">
+            { affFormModifInfo && 
                 // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
                 <form  onSubmit={ handlleSubmit }>
                     <div className="inputs_divs">
@@ -158,13 +125,7 @@ export function InfosUser(props){
                     >valider les changements</Button>
                 </form>
             }
-            { affMaPlace &&
-                <div className="div-info-place">
-                    <h3> { maPlace.id_park && maPlace.floor && maPlace.number && SpotName(maPlace)  } { !maPlace.id_park && !maPlace.floor && !maPlace.number && "Place Indisponible" } </h3>
-                    <ul>
-                        { maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) }
-                    </ul>
-                </div>
-            }
-	</div>
+            </div>
+        </div>
+    </div>)
 }

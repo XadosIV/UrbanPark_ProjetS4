@@ -1,12 +1,13 @@
 import React from "react";
 import { useParams } from 'react-router-dom'
-import { ParkingSpots } from "../components";
+import { ParkingSpots, GoBack } from "../components";
 import "../css/parking.css"
 
 export function Parkings() {
     const id = useParams();
 
-	return(
+	return(<div>
+        <GoBack />
         <ParkingSpots id={id} />
-    )
+    </div>)
 }
