@@ -51,9 +51,13 @@ CREATE TABLE IF NOT EXISTS `DATABASE`.Schedule (
 	id_parking CHAR NOT NULL,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
+	first_spot INT DEFAULT NULL,
+	last_spot INT DEFAULT NULL,
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
 	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES `DATABASE`.User (id),
-	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `DATABASE`.Parking (id)
+	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES `DATABASE`.Parking (id),
+	CONSTRAINT fk_schedule_first_spot FOREIGN KEY (first_spot) REFERENCES `DATABASE`.Spot (id),
+	CONSTRAINT fk_schedule_last_spot FOREIGN KEY (last_spot) REFERENCES `DATABASE`.Spot (id)
 );
 
 CREATE TABLE IF NOT EXISTS `DATABASE`.Type (
