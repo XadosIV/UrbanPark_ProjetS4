@@ -1,9 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import { ContextUser } from "../contexts/context_user";
+import { userFromToken } from "../services";
 
 export function Spot(props) {
+    const { userToken } = useContext(ContextUser);
+	const [ roleUser, setRoleUser ] = useState("");
+    const admin = roleUser === "Gérant";
+
+	useEffect(() => {
+        async function fetchUserInfos() {
+            const resUserToken = await userFromToken(userToken);
+            setRoleUser(resUserToken.data[0].role);
+            //console.log("token", resUserToken.data[0])
+        }
+        fetchUserInfos();
+    }, [userToken]);
 
     /**
      * HasSub
@@ -15,9 +29,9 @@ export function Spot(props) {
      */
     function HasSub(types, user) {
         var res = false;
-        if (types.length != 0 && user == null) {
+        if (types.length !== 0 && user == null) {
             for (let type of types) {
-                if (type == "Abonné") {     
+                if (type === "Abonné") {     
                     res = true;
                 }
             }
@@ -47,7 +61,7 @@ export function Spot(props) {
                     </Link>
     } else {
         for (let type of props.spot.types) {
-            if (type == "Abonné") {     
+            if (type === "Abonné") {     
                 infosSpot = <a id="no-hover">Cette place n'a pas d'abonné attitré</a>
             }
         }  
@@ -64,14 +78,15 @@ export function Spot(props) {
     }
 
 	return (<div className="spot">
-        <div class="dp">
+        <div className="dp">
             <Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
                 Place {SpotName(props.spot)}
             </Button>
-            <div class="dp-content">
+            <div className="dp-content">
                 {infosSpot}
                 {typesSpot}
                 {HasSub(props.spot.types, props.spot.id_user)}
+                { admin &&
                 <Button variant="contained" color="primary" 
                 style={{
                     backgroundColor: "#FE434C",
@@ -80,7 +95,7 @@ export function Spot(props) {
                     width: 160,
                     float:"right",
                     height:"10%",
-                }}>Ajouter un type à cette place</Button>
+                }}>Ajouter un type à cette place</Button>}
             </div>
         </div>
     </div>)

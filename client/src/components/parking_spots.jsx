@@ -7,8 +7,22 @@ import { SpotsList, ParkingList, NewSpotForm } from "../components";
 import { NbFloors } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
+import { useContext } from "react";
+import { userFromToken } from "../services";
+import { ContextUser } from "../contexts/context_user";
 
 export function ParkingSpots(props) {
+    const { userToken } = useContext(ContextUser);
+	const [ roleUser, setRoleUser ] = useState("");
+    const admin = roleUser === "Gérant";
+
+	useEffect(() => {
+        async function fetchUserInfos() {
+            const resUserToken = await userFromToken(userToken);
+            setRoleUser(resUserToken.data[0].role);
+        }
+        fetchUserInfos();
+    }, [userToken]);
 
     /**
      * AllTypes
@@ -34,7 +48,7 @@ export function ParkingSpots(props) {
      * @return { TextField }
      */
     function ErrorOnSecondNumber(nb1, nb2) {
-        if (nb2 < nb1 && (nb2 != 0 || nb2 != "")) {
+        if (nb2 < nb1 && (nb2 !== 0 || nb2 !== "")) {
             return <TextField
             error
             helperText="Chiffre supérieur au premier"
@@ -71,7 +85,7 @@ export function ParkingSpots(props) {
      * @return { TextField }
      */
     function ErrorOnFirstNumber(nb1) {
-        if (nb1 < 0 && (nb1 != 0 || nb1 != "")) {
+        if (nb1 < 0 && (nb1 !== 0 || nb1 !== "")) {
             return <TextField
             error
             helperText="Chiffre négatif impossible"
@@ -140,11 +154,21 @@ export function ParkingSpots(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+    const addSpotSiAdmin = () => {
+        if(admin){
+            if(parkingsList){
+                if(parkingsList.length === 1){
+                    return <NewSpotForm floors={parkingsList[0].floors} name={parkingsList[0].name} options={{floor:optionsFloor, type:optionsType}} id={parkingsList[0].id}/>
+                }
+            }
+        }
+    }
+
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
-                parkingsList.map((parking) =>
-                    <ParkingList parking={parking} button={false}/>
+                parkingsList.map((parking, index) =>
+                    <ParkingList parking={parking} button={false} key={index} />
                 )
             }
         </div>
@@ -189,12 +213,9 @@ export function ParkingSpots(props) {
                 </div>
 		    </form> 
             {
-                parkingsList.map((parking) => (
-                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
-                ))
+                addSpotSiAdmin()
             }
-        </div> 
-        
+        </div>  
 
         <SpotsList list={list} infos={infos}/>  
     </div>)

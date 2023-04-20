@@ -3,7 +3,7 @@ import { ParkingList } from "./parking_list";
 import { Button } from "@mui/material";
 import TP from "../services/take_parking"
 
-export function ParkingsStaff() {
+export function ParkingsStaff({admin}) {
 
 	const [parkingsList, setParkingsList] = useState([]);
 
@@ -22,6 +22,7 @@ export function ParkingsStaff() {
 					))
 				}
 			</div>
+			{ admin &&
 			<Button variant="contained" color="primary" 
 			style={{
 				backgroundColor: "#FE434C",
@@ -30,6 +31,6 @@ export function ParkingsStaff() {
 				width: 250,
 				float:"right",
 				height:"120%"
-			}}>Ajouter un parking</Button>	
+			}}>Ajouter un parking</Button>}
 		</div>)
 }

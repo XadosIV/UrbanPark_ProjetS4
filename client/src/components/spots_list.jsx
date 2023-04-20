@@ -11,9 +11,9 @@ export function SpotsList(props) {
          * @return { Boolean }
          */
         function TestTy() {
-            if (el.types.length != 0) { 
+            if (el.types.length !== 0) { 
                 for (let type of el.types) {
-                    if (type == props.infos.type) {
+                    if (type === props.infos.type) {
                         return true
                     }
                 }
@@ -59,8 +59,8 @@ export function SpotsList(props) {
 
 	return (<div className="all-spots">
             	{
-                    filteredData.map((spot) => (
-                        <Spot spot={spot}/>
+                    filteredData.map((spot, index) => (
+                        <Spot spot={spot} key={index} />
                     ))
                 }
 		</div>)
