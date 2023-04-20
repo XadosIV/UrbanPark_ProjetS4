@@ -8,6 +8,10 @@
 	"floor":0,
 	"id_park":"h",
 	"id_user":1,
+	"first_name":"Honoré",
+	"last_name":"Eronoh",
+	"first_name_temp":"Jean",
+	"last_name_temp":"Neaj",
 	"types":[ // See : Ressources - Type
 		1,
 		3

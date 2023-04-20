@@ -4,25 +4,11 @@ import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
 import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList, NewSpotForm } from "../components";
+import { NbFloors } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
 
 export function ParkingSpots(props) {
-
-    /**
-     * NbFloors
-     * Returns a lists of options for a Select React component composed of every floor 
-     *
-     * @param { integer } nb - Number of floors in the parking
-     * @return { Array }
-     */
-    function NbFloors(nb) {
-        var opt = [{value:"%", label:"Tous les étages"}]
-        for (let i=0; i<nb; i++) {
-            opt.push({value:i.toString(), label:"Étage " + i.toString()})
-        }
-        return opt
-    }
 
     /**
      * AllTypes
@@ -34,39 +20,9 @@ export function ParkingSpots(props) {
     function AllTypes(list) {
         var opt = [{value:"%", label:"Tous les types"}]
         for (let i=0; i<list.length; i++) {
-            opt.push({value:list[i].name.toLowerCase(), label:"Type " + list[i].name.toLowerCase()})
+            opt.push({value:list[i].name.toString(), label:"Type " + list[i].name.toLowerCase()})
         }
         return opt
-    }
-
-    /**
-     * ShowSecondValues
-     * Change the class of second values to show them or not
-     */
-    function ShowSecondValues() {
-        if (document.getElementById("number2")) {
-            if (infos.checkedPlaces) {
-                document.getElementById("number2").className = "search"
-            } else {    
-                document.getElementById("number2").className = "search-second"
-                infos.secondNumber = baseValueNumber;
-            }
-        }
-        if (document.getElementById("floor2")) {
-            if (infos.checkedFloor) {
-                document.getElementById("floor2").className = "search"
-            } else {    
-                document.getElementById("floor2").className = "search-second"
-                infos.secondFloor = baseValueFloorType;
-            }
-        }
-        if (document.getElementById("text2")) {
-            if (infos.checkedFloor || infos.checkedPlaces) {
-                document.getElementById("text2").className = "search"
-            } else {
-                document.getElementById("text2").className = "search-second"
-            }
-        }
     }
     
      /**
@@ -82,7 +38,7 @@ export function ParkingSpots(props) {
             return <TextField
             error
             helperText="Chiffre supérieur au premier"
-            style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
             size="small"
             id="searchbarNumber2"
             label="Numéro de la place..."
@@ -90,10 +46,11 @@ export function ParkingSpots(props) {
             name="secondNumber"
             value={infos.secondNumber}
             onChange={handleChangeTextField}
+            disabled={!infos.checkedsecondNumber}
         />
         } else {
             return <TextField
-            style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
             size="small"
             id="searchbarNumber2"
             label="Numéro de la place..."
@@ -101,6 +58,7 @@ export function ParkingSpots(props) {
             name="secondNumber"
             value={infos.secondNumber}
             onChange={handleChangeTextField}
+            disabled={!infos.checkedsecondNumber}
         />
         }
     }
@@ -114,26 +72,20 @@ export function ParkingSpots(props) {
 
     const [spotTypes, setSpotTypes] = useState([]);
 
-    const [textSelectType, setTextSelectType] = useState("Choisir un type");
-
-    const [textSelectFloor, setTextSelectFloor] = useState("Choisir un étage");
-
-    const [textSelectSecondFloor, setTextSelectSecondFloor] = useState("Choisir un étage");
-
-    const [infos, setInfos] = useState({checkedPlaces:false, checkedFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
-
-    var optionsFloor = []
-    parkingsList.map((parking) => (
-        optionsFloor = NbFloors(parking.floors)
-    ))
-
-    var optionsType = AllTypes(spotTypes)
+    const [infos, setInfos] = useState({checkedsecondNumber:false, checkedsecondFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
     useEffect(() => {
 		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
         TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
         TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
 	}, []);
+
+    var optionsFloor = []
+    parkingsList.map((parking) => (
+        optionsFloor = NbFloors(parking.floors, {value:"%", label:"Tous les étages"})
+    ))
+
+    var optionsType = AllTypes(spotTypes)
     
     const handleChangeTextField = (event) => {
         const name = event.target.name;
@@ -145,20 +97,13 @@ export function ParkingSpots(props) {
         const name = event.target.name;
         const value = !infos[name]
         setInfos(values => ({...values, [name]: value}))
+        setInfos(values => ({...values, [name.substring(7)]: ""}))
     }
 
-    const handleChangeSelects = (event, name, text, fun) => {
-        if (event.value == baseValueFloorType) {
-            fun("Tous les " + text.toLowerCase());
-        } else {
-            fun(text.substring(0, text.length - 1) + " " +  event.value);
-        }
-        console.log(event)
+    const handleChangeSelects = (event, name) => {
         const value = event.value;
         setInfos(values => ({...values, [name]: value}))
     }
-
-    ShowSecondValues()
 
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
@@ -168,20 +113,33 @@ export function ParkingSpots(props) {
                 )
             }
         </div>
-        <div style={{maxWidth:"500px", marginBottom:"10px"}}>
-            <input type="checkbox" name="checkedPlaces" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
-            <input type="checkbox" name="checkedFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
-        </div>
-        <form className="all-searchs">
-            <div className="search">
-                <Select options={optionsType} placeholder={textSelectType} name="type" value={infos.type} onChange={event => handleChangeSelects(event, "type", "Types", setTextSelectType)}/>
+        
+            <div style={{maxWidth:"500px", marginBottom:"10px"}}>
+                <input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
+                <input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
             </div>
-			<div className="search">
-                <Select options={optionsFloor} placeholder={textSelectFloor} name="firstFloor" value={infos.firstFloor} onChange={event => handleChangeSelects(event, "firstFloor", "Étages", setTextSelectFloor)}/>
-            </div>
-            <div className="search">
+           
+        
+        <div style={{display:"flex", flexDirection:"row"}}>
+            <form className="all-searchs">
+                <Select 
+                    className="front-search"
+                    options={optionsType} 
+                    defaultValue = {optionsType[0]}
+                    name="type" 
+                    onChange={event => handleChangeSelects(event, "type")}
+                />
+                <Select 
+                    className="front-search"
+                    options={optionsFloor} 
+                    defaultValue = {optionsFloor[0]}
+                    name="firstFloor" 
+                    onChange={event => handleChangeSelects(event, "firstFloor")}
+                    isSearchable={false}
+                />
                 <TextField
-                    style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
+                    style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                    className="search"
                     size="small"
                     id="searchbarNumber"
                     label="Numéro de la place..."
@@ -189,20 +147,29 @@ export function ParkingSpots(props) {
                     name="firstNumber"
                     onChange={handleChangeTextField}
                 />
-            </div>
 
-            <div className="search-second" id="text2">
-                <p style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
-            </div>
-            <div className="search-second" id="floor2">
-                <Select options={optionsFloor.slice(parseInt(infos.firstFloor)+2)} placeholder={textSelectSecondFloor} name="secondFloor" value={infos.secondFloor} onChange={event => handleChangeSelects(event, "secondFloor", "Étages", setTextSelectSecondFloor)}/>
-            </div>
-            <div className="search-second" id="number2"> 
-                {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
-            </div>
-		</form>  
+                <p className="search" style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
+                <Select 
+                    className="front-search-second"
+                    options={optionsFloor.slice(infos.firstFloor+2)} 
+                    defaultValue = {optionsFloor.slice(infos.firstFloor+2)[0]}
+                    name="secondFloor" 
+                    onChange={event => handleChangeSelects(event, "secondFloor")}
+                    isSearchable={false}
+                    isDisabled={!infos.checkedsecondFloor}
+                />
+                <div className="search"> 
+                    {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
+                </div>
+		    </form> 
+            {
+                parkingsList.map((parking) => (
+                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
+                ))
+            }
+        </div> 
+        
 
-        <SpotsList list={list} infos={infos}/>
-        <NewSpotForm />
+        <SpotsList list={list} infos={infos}/>  
     </div>)
 }

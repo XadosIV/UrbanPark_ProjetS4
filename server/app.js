@@ -217,8 +217,8 @@ app.get('/api/spot/:spot', (req, res) => {
 });
 
 app.post('/api/spot', (req, res) => {
-	//console.log("Request at POST /api/spot : " + JSON.stringify(req.body));
-	if (req.body && req.body.number && req.body.floor && req.body.id_park){
+	console.log("Request at POST /api/spot : " + JSON.stringify(req.body));
+	if (req.body && !isNaN(req.body.number) && !isNaN(req.body.floor) && req.body.id_park){
 		PostSpot((err, data) => {
 			if (err){
 				if (err.code == Errors.E_WRONG_FLOOR){

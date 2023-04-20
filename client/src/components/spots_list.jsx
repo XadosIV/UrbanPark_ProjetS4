@@ -13,7 +13,7 @@ export function SpotsList(props) {
         function TestTy() {
             if (el.types.length != 0) { 
                 for (let type of el.types) {
-                    if (type.toLowerCase() == props.infos.type) {
+                    if (type == props.infos.type) {
                         return true
                     }
                 }
