@@ -11,7 +11,7 @@ const Errors = require('../errors');
 function GetSpotTypes(callback, infos){
 	//Don't ask why this is that hard, only @UP-4303 knows
 	//We could've did it in 2 separate functions, but what is life without challenge ?
-	let sql = `SELECT t.name FROM ${dbName}.typed y
+	let sql = `SELECT t.name FROM ${dbName}.Typed y
 		RIGHT JOIN ${dbName}.Type t ON t.name=y.name_type
 		GROUP BY t.Name
 		HAVING MAX(case when y.id_spot LIKE :id_spot OR "%" = :id_spot then 1 else 0 end);`;
