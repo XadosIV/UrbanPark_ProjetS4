@@ -284,7 +284,7 @@ app.post('/api/schedule', (req, res) => {
 				}else if(err.code == Errors.E_ROLE_NOT_FOUND){
 					res.status(400).json({"code":err.code,"message":"Ce role n'existe pas"});
 				}else if(err.code == Errors.E_DATETIME_FORMAT_INVALID){
-					res.status(400).json({"code":err.code,"message":"Ce role n'existe pas"});
+					res.status(400).json({"code":err.code,"message":"Le format de la date est invalide"});
 				}else if(err.code == Errors.E_WRONG_DATETIME_ORDER){
 					res.status(400).json({"code":err.code,"message":"La date de fin ne peut pas précéder la date de commencement"});
 				}else if(err.code == Errors.E_OVERLAPPING_SCHEDULES){
