@@ -7,6 +7,7 @@ import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
 import take_by_id from "../services/take_by_id";
 
+
 export function ViewAgenda (props){
 	const localizer = momentLocalizer(moment);
 

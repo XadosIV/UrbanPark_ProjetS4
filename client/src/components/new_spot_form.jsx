@@ -15,10 +15,16 @@ export function NewSpotForm(props) {
      * @return { TextField }
      */
     function ErrorOnSecondNumero(nb1, nb2) {
-        if (nb2 < nb1 && (nb2 != 0 || nb2 != "")) {
+        var errorText;
+        if ((nb2 < nb1 || nb2 < 0) && (nb2 != 0 || nb2 != "")) {
+            if (nb2 < nb1) {
+                errorText = "Chiffre supérieur au premier"
+            } else {
+                errorText = "Chiffre négatif impossible"
+            }
             return <TextField
                 error
-                helperText="Chiffre supérieur au premier"
+                helperText={errorText}
                 style = {{marginLeft:"10px", marginTop:"5px", width:"200px", alignSelf:"center"}}
                 size="small"
                 id="secondNumber"
@@ -146,7 +152,7 @@ export function NewSpotForm(props) {
                             infos.number++;
                         } else {
                             setWrongInput(true);
-                            setErrMessage("Une place n'a pas pu être créée dû à : " + res.data.message);
+                            setErrMessage(res.data.message);
                             infos.number = stock;
                             break;
                         }
