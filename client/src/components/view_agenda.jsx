@@ -5,11 +5,9 @@ import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
 import take_parking from "../services/take_parking";
+import take_by_id from "../services/take_by_id";
 
 export function ViewAgenda (props){
-	let role = null;
-	let id = 0;
-
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
@@ -19,14 +17,14 @@ export function ViewAgenda (props){
 		let sortie = []
 		let i = 0;
 		list.forEach(element => {
-			let idUser = element.user
+			let idUser = element.user;
 			let idParking = element.parking;
 			let parking = element.name;
 			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
 			
-			let trouve = false
+			let trouve = false;
 			let utile = true;
 
 			function MemeParking(idParking, elem)
@@ -73,15 +71,18 @@ export function ViewAgenda (props){
 	}
 
 	useEffect(() => {
-		if (props.info)
+		let role = null;
+		let id = 0;
+
+		if (props.props)
 		{
-			if (props.info.user)
+			if (props.props.user)
 			{
-				id = props.info.user;
+				id = props.props.user;
 			}
-			if (props.info.role)
+			if (props.props.role)
 			{
-				role = props.info.role;
+				role = props.props.role;
 			}
 		}
 		TakeAllEvents(id, role).then(res => {
@@ -110,7 +111,7 @@ export function ViewAgenda (props){
 				events={eventsList}
 				startAccessor="start"
 				endAccessor="end"
-				style={{height:500, width:700}}
+				style={{height:500, width:600}}
 				culture="fr"
 				messages={messages}
 			/>
