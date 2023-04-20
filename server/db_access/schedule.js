@@ -79,17 +79,22 @@ function GetSchedulesUser(callback, infos) {
  * @param {function(*,*)} callback (err, data)
  */
 function PostSchedule(infos, callback) {
-	if (infos.role && infos.user) {
+	if(infos.role && infos.user) {
 		let errorCode = Errors.E_CONFLICTING_PARAMETERS;
 		let error = new Error(errorCode);
 		error.code = errorCode;
 		callback(error, []);
-	} else if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) {
+	}else if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) {
 		let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
 		let error = new Error(errorCode);
 		error.code = errorCode;
 		callback(error, []);
-	} else if (infos.role) {
+	}else if (infos.date_start > infos.date_end){
+		let errorCode = Errors.E_WRONG_DATETIME_ORDER;
+		let error = new Error(errorCode);
+		error.code = errorCode;
+		callback(error, []);
+	}else if (infos.role) {
 		PostScheduleRole(infos, callback);
 	} else {
 		PostScheduleUser(infos, callback);
