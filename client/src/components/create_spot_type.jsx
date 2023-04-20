@@ -9,11 +9,11 @@ export function CreateSpotType() {
         TAST.TakeAllSpotTypes().then(res => {setSpotTypes(res);});
     }, []);
 
-  return (<div class="dropdown">
-            <button class="dropbtn" style={{width: 200, height:"120%"}}>Types de places</button>
-                <div class="dropdown-content">
-                {spotTypes.map((type) => (<p style={{textAlign:"center"}}>{type.name}</p>))}
-                      <Button variant="contained" color="primary" 
+  return (<div className="dropdown">
+            <Button className="dropbtn" style={{width: 200, height:"120%"}}>Types de places</Button>
+                <div className="dropdown-content">
+                {spotTypes.map((type, index) => (<p key={index} style={{textAlign:"center"}}>{type.name}</p>))}
+                      <Button variant="contained" color="primary"
                       style={{
                       backgroundColor: "#FE434C",
                       borderColor: "transparent",

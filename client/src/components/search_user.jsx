@@ -25,8 +25,8 @@ export function SearchUser(list) {
 
 	return (
         <ul className="user-list">
-            {filteredData.map((user) => (
-                <li>
+            {filteredData.map((user, index) => (
+                <li key={index}>
                     <div className="main-content">
                         <div>
                             <div>

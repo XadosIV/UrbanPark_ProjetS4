@@ -38,15 +38,15 @@ export function ViewAgenda (props){
 
 			function MemeParking(idParking, elem)
 			{
-				return elem.idparking == idParking;
+				return elem.idparking === idParking;
 			}
 			function MemeDepart(dateStart, elem)
 			{
-				return  elem.d_st == dateStart;
+				return  elem.d_st === dateStart;
 			}
 			function MemeFin(dateEnd, elem)
 			{
-				return  elem.d_en == dateEnd;
+				return  elem.d_en === dateEnd;
 			}
 
 			let j = 0;
