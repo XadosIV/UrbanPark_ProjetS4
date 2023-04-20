@@ -4,9 +4,7 @@ import moment from "moment";
 import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
-import take_parking from "../services/take_parking";
-import take_by_id from "../services/take_by_id";
-
+import { UpdateScheduleForm } from "../components";
 
 export function ViewAgenda (props){
 	const localizer = momentLocalizer(moment);
@@ -67,11 +65,14 @@ export function ViewAgenda (props){
 				let newElement = {
 					id: i,
 					idparking: idParking,
-					title: startTitle + parking + " by " + user,
+					title: startTitle + " du parking " + parking + " par " + user,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
 					end: new Date(dateEnd),
+					user: element.id,
+					first_spot:element.first_spot,
+					last_spot:element.last_spot
 				};
 				sortie.push(newElement);
 			}
@@ -114,6 +115,22 @@ export function ViewAgenda (props){
 		event: "Evenement",
 	};
 
+	const [selectedEvent, setSelectedEvent] = useState(undefined)
+	const [modalState, setModalState] = useState(false)
+	const handleSelectedEvent = (event) => {
+		setSelectedEvent(event)
+		setModalState(!modalState)
+	}
+
+	const ButtonUpdateSchedule = () => {
+		console.log(selectedEvent)
+		return (
+		    <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
+				<UpdateScheduleForm event={selectedEvent}/>
+		    </div>
+		)
+	}
+
 	return (
 		<div>
 			<Calendar
@@ -121,10 +138,12 @@ export function ViewAgenda (props){
 				events={eventsList}
 				startAccessor="start"
 				endAccessor="end"
+				onSelectEvent={(e) => handleSelectedEvent(e)}
 				style={{height:500, width:600}}
 				culture="fr"
 				messages={messages}
 			/>
+			{selectedEvent && <ButtonUpdateSchedule />}
 		</div>
 	)
 }
