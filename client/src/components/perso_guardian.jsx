@@ -1,28 +1,27 @@
 import React, { useState } from "react";
-import { AdminPage } from "../page";
+import { AdminGuardian, ScheduleService, ScheduleGuardian } from ".";
 import { Button } from "@mui/material";
-import { EdtGardien } from "./edt_gardien";
-import { EdtAgentEntratien } from "./edt_agent_entretien";
 
-export function PersoGerant(){
+export function PersoGuardian(props){
+    const { id } = props;
     const [ affEdtGardien, setAffEdtGardien ] = useState(false);
     const [ affEdtEntretient, setAffEdtEntretien ] = useState(false);
-    const [ affAdminPage, setAffAdminPage ] = useState(false);
+    const [ affAdminGardien, setAffAdminGardien ] = useState(false);
 
     const toggleAffGardien = () => {
         setAffEdtEntretien(false);
-        setAffAdminPage(false);
+        setAffAdminGardien(false);
         affEdtGardien ? setAffEdtGardien(false) : setAffEdtGardien(true);
     }
     const toggleAffEntretient = () => {
         setAffEdtGardien(false);
-        setAffAdminPage(false);
+        setAffAdminGardien(false);
         affEdtEntretient ? setAffEdtEntretien(false) : setAffEdtEntretien(true);
     }
-    const toggleAffAdminPage = () => {
+    const toggleAffAdminGardien = () => {
         setAffEdtGardien(false);
         setAffEdtEntretien(false);
-        affAdminPage ? setAffAdminPage(false) : setAffAdminPage(true);
+        affAdminGardien ? setAffAdminGardien(false) : setAffAdminGardien(true);
     }
 
     return(<div className="div-perso">
@@ -32,7 +31,7 @@ export function PersoGerant(){
                 variant="contained" 
                 color="primary" 
                 onClick={ toggleAffGardien }
-            > planning des gardien </Button>
+            > mon planning </Button>
             <Button 
                 className="UI-Button" 
                 variant="contained" 
@@ -43,11 +42,11 @@ export function PersoGerant(){
                 className="UI-Button" 
                 variant="contained" 
                 color="primary" 
-                onClick={ toggleAffAdminPage }
-            > options Administrateur </Button>
+                onClick={ toggleAffAdminGardien }
+            > options d'administration </Button>
         </div>
-        { affEdtGardien && <EdtGardien /> }
-        { affEdtEntretient && <EdtAgentEntratien /> }
-        { affAdminPage && <AdminPage /> }
+        { affEdtGardien && <ScheduleGuardian id={id} /> }
+        { affEdtEntretient && <ScheduleService /> }
+        { affAdminGardien  && <AdminGuardian /> }
     </div>)
 }

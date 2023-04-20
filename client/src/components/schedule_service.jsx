@@ -1,7 +1,7 @@
 import React from "react";
 import { ViewAgenda } from "./view_agenda";
 
-export function EdtAgentEntratien(props){
+export function ScheduleService(props){
     const { id } = props;
     const input = id ? {user: id} : {role: "Agent d'entretien"};
 

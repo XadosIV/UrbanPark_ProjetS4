@@ -4,7 +4,7 @@ import { userFromToken, placeFromId } from "../services";
 import TP from "../services/take_parking";
 import { SpotName } from "../interface/spot_name";
 
-export function PersoMaPlace(){
+export function PersoMySpot(){
     const { userToken } = useContext(ContextUser);
     const [ infosUser, setInfosUser ] = useState({
         email: "",

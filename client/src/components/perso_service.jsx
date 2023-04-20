@@ -1,9 +1,9 @@
 import React from "react";
-import { EdtAgentEntratien } from "../components";
+import { ScheduleService } from ".";
 import { useState } from "react";
 import { Button } from "@mui/material";
 
-export function PersoAgenentEntretient(props){
+export function PersoService(props){
     const { id } = props;
     const [ affEdtEntretient, setAffEdtEntretien ] = useState(false);
 
@@ -20,6 +20,6 @@ export function PersoAgenentEntretient(props){
             onClick={ toggleAffEntretient }
         > mon planning </Button>
         </div>
-        { affEdtEntretient && <EdtAgentEntratien id={id} /> }
+        { affEdtEntretient && <ScheduleService id={id} /> }
     </div>)
 }

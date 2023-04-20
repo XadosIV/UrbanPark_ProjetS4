@@ -35,27 +35,26 @@ export function StaffPreview(list) {
     }
 
 	return (
-			<ul className="staff-list">
-            {filteredData.map((staff, index) => (
-                <li key={index}>
-                    <div style={{display:"flex", alignItems:"center", flexDirection:"row"}}>
-                      <div className="staff-infos">
-                        <div>
-                          <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>
-                          <p>{staff.role} - {Working(staff.id)}</p>
-                        </div>                       
-                      </div>
-
-                      <div className="button-schedule" style={{marginLeft:"30px"}}>
-                        <Button variant="contained" color="primary" onClick={()=>agenda == staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
-                      </div>
-                    </div>
+        <ul className="staff-list">
+        {filteredData.map((staff, index) => (
+            <li key={index}>
+                <div style={{display:"flex", alignItems:"center", flexDirection:"row"}}>
+                    <div className="staff-infos">
                     <div>
-                      {agenda == staff.id && <ViewAgenda props={{user:staff.id}}/>}
+                        <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>
+                        <p>{staff.role} - {Working(staff.id)}</p>
+                    </div>                       
                     </div>
-                </li>))
-            }
-			</ul>
-		</div>
+
+                    <div className="button-schedule" style={{marginLeft:"30px"}}>
+                    <Button variant="contained" color="primary" onClick={()=>agenda == staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
+                    </div>
+                </div>
+                <div>
+                    {agenda == staff.id && <ViewAgenda props={{user:staff.id}}/>}
+                </div>
+            </li>))
+        }
+        </ul>
     )
 }

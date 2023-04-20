@@ -3,7 +3,7 @@ import { Button, TextField } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken } from "../services";
 
-export function InfosPersonelles(){
+export function PersonalInfos(){
     const { userToken } = useContext(ContextUser);
     const [ infosUser, setInfosUser ] = useState({
         email: "",

@@ -1,8 +1,8 @@
 import React from "react";
-import { ParkingsStaff, StaffList, UserList } from "../components";
+import { ParkingsStaff, StaffList, UserList } from ".";
 import "../css/admin.css"
 
-export function AdminGardien() {
+export function AdminGuardian() {
 
 	return(<div>
 		<div style={{minWidth:"50%"}}>
