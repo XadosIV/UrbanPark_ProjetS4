@@ -44,7 +44,7 @@ function GetSchedules(callback, infos){
  */
 function GetSchedulesRole(callback, infos){
 	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end;`;
-	//console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
+	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role:infos.role||'%',
 		parking:infos.parking||'%',
@@ -62,7 +62,7 @@ function GetSchedulesRole(callback, infos){
  */
 function GetSchedulesUser(callback, infos){
 	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end;`
-	//console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
+	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		user:infos.user||'%',
 		parking:infos.parking||'%',
@@ -97,7 +97,7 @@ function PostSchedule(infos, callback){
 }
 
 /**
- * PostScheduleRoles
+ * PostScheduleRole
  * Insert a schedule for every user with the role in the database
  * 
  * @param {object} infos {role, parking, date_start, date_end}
@@ -114,7 +114,7 @@ function PostScheduleRole(infos, callback){
 			callback(error,{});
 		}else{
 			sql = `SELECT id FROM ${dbName}.User WHERE role LIKE :role`;
-			//console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
+			// console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, {
 				role:infos.role||'%'
 			}, (err, data)=>{
@@ -166,7 +166,7 @@ function PostScheduleUser(infos, callback){
 					callback(error,{});
 				}else{
 					sql = `INSERT INTO ${dbName}.Schedule (id_user, id_parking, date_start, date_end) VALUES (:user, :parking, :date_start, :date_end);`;
-					//console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
+					console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, callback);
 				}
 			});
@@ -207,12 +207,13 @@ function PostScheduleUsers(infos, ids, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function IsntScheduleOverlapping(infos, callback){
-	sql = `SELECT * FROM ${dbName}.Schedule WHERE id_user=:user AND date_start < :date_end OR date_end > :date_start;`;
-	//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
+	sql = `SELECT * FROM ${dbName}.Schedule WHERE id_user=:user AND (date_start < :date_end AND date_end > :date_start);`;
+	// console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) =>{
 		if (err){
 			callback(err,data)
 		}else{
+			// console.log(data);
 			callback(err,data.length == 0);
 		}
 	});
