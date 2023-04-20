@@ -233,9 +233,16 @@ function PostScheduleUser(infos, callback) {
 					error.code = errorCode;
 					callback(error, {});
 				} else {
-					sql = `INSERT INTO ${dbName}.Schedule (id_user, id_parking, date_start, date_end, ) VALUES (:user, :parking, :date_start, :date_end);`;
-					console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
-					dbConnection.query(sql, infos, callback);
+					sql = `INSERT INTO ${dbName}.Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
+					//console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
+					dbConnection.query(sql, {
+						user:infos.user,
+						parking:infos.parking,
+						date_start:infos.date_start,
+						date_end:infos.date_end,
+						first_spot:infos.first_spot||null,
+						last_spot:infos.last_spot||null
+					}, callback);
 				}
 			});
 		}
