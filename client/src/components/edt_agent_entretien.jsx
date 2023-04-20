@@ -3,8 +3,9 @@ import { ViewAgenda } from "./view_agenda";
 
 export function EdtAgentEntratien(props){
     const { id } = props;
-    return(<div className="div-edt-gardien">
-        <h2>Emploi du temps agent d'entretien</h2>
-        <ViewAgenda props={{user: id}} />
+    const input = id ? {user: id} : {role: "Agent d'entretien"};
+
+    return(<div className="div-edt">
+        <ViewAgenda props={input} />
     </div>)
 }

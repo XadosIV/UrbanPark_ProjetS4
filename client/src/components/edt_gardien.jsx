@@ -3,9 +3,9 @@ import { ViewAgenda } from "./view_agenda";
 
 export function EdtGardien(props){
     const { id } = props;
+    const input = id ? {user: id} : {role: "Gardien"};
 
-    return(<div className="div-edt-gardien">
-        <h2>Emploi du temps Gardien</h2>
-        <ViewAgenda props={{user: id}} />
+    return(<div className="div-edt">
+        <ViewAgenda props={input} />
     </div>)
 }

@@ -1,9 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { AdminPage } from "../page";
+import { Button } from "@mui/material";
+import { EdtGardien } from "./edt_gardien";
+import { EdtAgentEntratien } from "./edt_agent_entretien";
 
 export function PersoGerant(){
+    const [ affEdtGardien, setAffEdtGardien ] = useState(false);
+    const [ affEdtEntretient, setAffEdtEntretien ] = useState(false);
+    const [ affAdminPage, setAffAdminPage ] = useState(false);
+
+    const toggleAffGardien = () => {
+        setAffEdtEntretien(false);
+        setAffAdminPage(false);
+        affEdtGardien ? setAffEdtGardien(false) : setAffEdtGardien(true);
+    }
+    const toggleAffEntretient = () => {
+        setAffEdtGardien(false);
+        setAffAdminPage(false);
+        affEdtEntretient ? setAffEdtEntretien(false) : setAffEdtEntretien(true);
+    }
+    const toggleAffAdminPage = () => {
+        setAffEdtGardien(false);
+        setAffEdtEntretien(false);
+        affAdminPage ? setAffAdminPage(false) : setAffAdminPage(true);
+    }
 
     return(<div className="div-perso">
-        <AdminPage />
+        <div className="div-UI">
+            <Button 
+                className="UI-Button" 
+                variant="contained" 
+                color="primary" 
+                onClick={ toggleAffGardien }
+            > planning des gardien </Button>
+            <Button 
+                className="UI-Button" 
+                variant="contained" 
+                color="primary" 
+                onClick={ toggleAffEntretient }
+            > planning des agents d'entretient </Button>
+            <Button 
+                className="UI-Button" 
+                variant="contained" 
+                color="primary" 
+                onClick={ toggleAffAdminPage }
+            > options Administrateur </Button>
+        </div>
+        { affEdtGardien && <EdtGardien /> }
+        { affEdtEntretient && <EdtAgentEntratien /> }
+        { affAdminPage && <AdminPage /> }
     </div>)
 }

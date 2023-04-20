@@ -26,22 +26,21 @@
 	flex-direction: column;
 }
 
-.div-edt-gardien{
+.div-edt{
 	border:solid;
 	border-radius: 20px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	box-shadow:10px 10px 10px gray;
 	background-color: white;
+	display: flex;
+	justify-content: space-around;
+	width: 100%;
+	align-items: center;
 }
 
-.div-edt-entretien{
-	border:solid;
-	border-radius: 20px;
-	margin: 0 1rem 1rem;
-	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
-	background-color: white;
+.div-edt>* {
+	margin: 2%;
 }
 
 .div-info-place ul{
@@ -53,6 +52,23 @@
 	justify-content: space-around;
 	width: 100%;
 	align-items: center;
+}
+
+.div-UI{
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	background-color: white;
+	display: flex;
+	justify-content: space-around;
+	width: 100%;
+	align-items: center;
+}
+
+.UI-Button>*{
+	margin: 1%;
 }
 
 .modif-infos-button{
