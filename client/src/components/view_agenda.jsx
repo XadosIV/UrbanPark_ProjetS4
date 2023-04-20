@@ -27,10 +27,10 @@ export function ViewAgenda (props){
 			let startTitle = "";
 
 			if (role == "Gardien"){
-				startTitle = "gardiennage ";
+				startTitle = "Gardiennage ";
 			}
 			else {
-				startTitle = "nettoyage parking ";
+				startTitle = "Nettoyage parking ";
 			}
 
 			let trouve = false;
