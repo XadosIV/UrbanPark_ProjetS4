@@ -47,7 +47,7 @@ export function StaffPreview(list) {
 							</div>                       
 						</div>
 						
-						<div className="button-schedule">
+						<div className="button-schedule" style={{marginLeft:"30px"}}>
 							<Button variant="contained" color="primary" onClick={()=>agenda == staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
 						</div>
 					</div>
