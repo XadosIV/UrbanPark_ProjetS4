@@ -251,11 +251,11 @@ function UpdateSchedule(infos, callback){
 				}
 
 				//check overlap
-				IsntScheduleOverlapping(schedule, (err, overlap) => {
+				IsntScheduleOverlapping(schedule, (err, no_overlap) => {
 					if (err){
 						callback(err, {})
 					}else{
-						if (!overlap){
+						if (no_overlap){
 							//insert sql
 							sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end WHERE id=:id`
 							console.log(schedule)
