@@ -27,4 +27,6 @@ export * from "./protected_route"
 export * from "./view_agenda"
 export * from "./infos_user"
 export * from "./new_spot_form"
+export * from "./new_schedule_form"
+export * from "./button_add_schedules"
 

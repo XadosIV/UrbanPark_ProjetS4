@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { CreationSpot } from "../services"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
+import DatePicker from "react-datepicker";
+import setHours from 'date-fns/setHours'
+import setMinutes from 'date-fns/setMinutes'
+import 'react-datepicker/dist/react-datepicker.css'
+import "../css/parking.css"
 
-export function NewSpotForm(props) {
+export function NewScheduleForm(props) {
 
     /**
      * ErrorOnSecondNumero
@@ -27,23 +31,23 @@ export function NewSpotForm(props) {
                 helperText={errorText}
                 style = {{marginLeft:"10px", marginTop:"5px", width:"200px", alignSelf:"center"}}
                 size="small"
-                id="secondNumber"
+                id="last_spot"
                 label="Numéro"
                 type="text"
-                name="secondNumber"
+                name="last_spot"
                 className="search"
-                onChange={handleChangeSecondNum}
+                onChange={handleChange}
             />
         } else {
             return <TextField
                 style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                 size="small"
-                id="secondNumber"
+                id="last_spot"
                 label="Numéro"
                 type="text"
-                name="secondNumber"
+                name="last_spot"
                 className="search"
-                onChange={handleChangeSecondNum}
+                onChange={handleChange}
             />
         }
     }
@@ -63,10 +67,10 @@ export function NewSpotForm(props) {
                 required
                 style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                 size="small"
-                id="number"
+                id="first_spot"
                 label="Numéro"
                 type="text"
-                name="number"
+                name="first_spot"
                 className="search"
                 onChange={handleChange}
             />
@@ -75,44 +79,25 @@ export function NewSpotForm(props) {
             required
             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
             size="small"
-            id="number"
+            id="first_spot"
             label="Numéro"
             type="text"
-            name="number"
+            name="first_spot"
             className="search"
             onChange={handleChange}
         />
         }
     }
 
-    const [infos, setInfos] = useState({floor: 0, number: 0, id_park: props.id, types:[]});
-
-    const [secondNumber, setSecondNumber] = useState(0)
+    const [infos, setInfos] = useState({id_park: "", users: [], date_start: setHours(setMinutes(new Date(), 0), 17), date_end: setHours(setMinutes(new Date(), 0), 17), first_spot: 0, last_spot:0});
 
 	const [wrongInput, setWrongInput] = useState(false);
-    const [check, setCheck] = useState(false);
     const [errMessage, setErrMessage] = useState("");
-
-    const handleChangeCheck = () => {
-        setCheck(!check)
-        if (document.getElementById("second-nums")) {
-            if (document.getElementById("second-nums").classList.contains("numeros-two")) {
-                document.getElementById("second-nums").className = "numeros"
-            } else {
-                document.getElementById("second-nums").className = "numeros-two"
-                setSecondNumber(0)
-            }
-        }
-    }
 
 	const handleChange = (event) => {
         const name = event.target.name;
         const value = parseInt(event.target.value);
         setInfos(values => ({...values, [name]: value}))
-    }
-
-    const handleChangeSecondNum = (event) => {
-        setSecondNumber(event.target.value)
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
@@ -128,11 +113,11 @@ export function NewSpotForm(props) {
     }
 
 	const handlleSubmit = async (event) => {
-        event.preventDefault()
+        /*event.preventDefault()
 		console.log(infos);
         setWrongInput(false);
         if (infos.number >= 0) {
-            if (secondNumber == 0) {
+            if (infos.last_spot == 0) {
                 const res = await CreationSpot(infos); 
                 console.log(res);
                 if (res.status === 200) {
@@ -144,8 +129,8 @@ export function NewSpotForm(props) {
                 }
             } else {
                 let stock = infos.number
-                if (infos.number<secondNumber) {
-                    while (infos.number<=secondNumber && !wrongInput) {
+                if (infos.number<infos.last_spot) {
+                    while (infos.number<=infos.last_spot && !wrongInput) {
                         const res = await CreationSpot(infos); 
                         console.log(res);
                         if (res.status === 200) {
@@ -157,10 +142,10 @@ export function NewSpotForm(props) {
                             break;
                         }
                     }
-                    if (infos.number-1 == secondNumber) {
+                    if (infos.number-1 == infos.last_spot) {
                         infos.number = stock;
                         setWrongInput(true);
-                        setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
+                        setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + infos.last_spot + " créées");
                     }
                 } else {
                     setWrongInput(true);
@@ -170,8 +155,10 @@ export function NewSpotForm(props) {
         } else {
             setWrongInput(true);
             setErrMessage("La place créée ne peut pas être négative");
-        }
+        }*/
 	}
+
+    console.log(infos)
 
     return (
         <Popup trigger={<Button variant="contained" color="primary" 
@@ -183,37 +170,51 @@ export function NewSpotForm(props) {
                 marginLeft: "42%",
                 height:"100px",
                 marginBottom:"100px"
-            }}>Ajouter des places</Button>} position="left center" onClose={() => setWrongInput(false)}> 
+            }}>Ajouter des créneaux de travail</Button>} position="left center" onClose={() => setWrongInput(false)}> 
             <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>
-                <form onSubmit={handlleSubmit} className="form">
-                    <div style={{maxWidth:"200px", marginBottom:"10px"}}>
-                        <input type="checkbox" name="checkedNumeros" onChange={handleChangeCheck}/>  Créer plusieurs places<br/>
+                <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
+                <form onSubmit={handlleSubmit} className="form">       
+                    <Select 
+                        id="id_park"
+                        className="searchs-add"
+                        options={props.options.parking} 
+                        defaultValue={props.options.parking[0]}
+                        name="id_park" 
+                        isSearchable={false}
+                        onChange={handleChangeSelect}
+                    />
+                    <Select
+                        isMulti
+                        name="users"
+                        placeholder="Assigner à..."
+                        options={props.options.service}
+                        className="search-add-two "
+                        onChange={handleChangeSelect}
+                    />
+                    <div className="numeros">
+                        {ErrorOnFirstNumero(infos.first_spot)}
+                        <p style={{margin:"7px 0 0 7px"}}>à</p>
+                        {ErrorOnSecondNumero(infos.first_spot, infos.last_spot)}
                     </div>
-                    <div className="inputs-divs">
-                        <Select 
-                            id="floor"
-                            className="searchs-add"
-                            options={props.options.floor.slice(1)} 
-                            defaultValue={props.options.floor.slice(1)[0]}
-                            name="floor" 
-                            isSearchable={false}
-                            onChange={handleChangeSelect}
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", zIndex:1002}}>
+                        <DatePicker
+                            name="date_start"
+                            selected={infos.date_start}
+                            onChange={(date) => setInfos(values => ({...values, ["date_start"]: date}))}
+                            showTimeSelect
+                            minTime={setHours(setMinutes(new Date(), 0), 17)}
+                            maxTime={setHours(setMinutes(new Date(), 30), 20)}
+                            dateFormat="MMMM d, yyyy h:mm aa"
                         />
-                        <div className="numeros">
-                            {ErrorOnFirstNumero(infos.number)}
-                            <div className="numeros-two" id="second-nums">
-                                <p style={{marginLeft:"7px", marginTop:"7px"}}>à</p>
-                                {ErrorOnSecondNumero(infos.number, secondNumber)}
-                            </div>
-                        </div>
-                        <Select
-                            isMulti
-                            name="types"
-                            placeholder="Choisir des types"
-                            options={props.options.type.slice(1)}
-                            className="search-add-two "
-                            onChange={handleChangeSelect}
+                        <p style={{margin:"0 7px 7px 7px"}}>à</p>
+                        <DatePicker
+                            name="date_end"
+                            selected={infos.date_end}
+                            onChange={(date) => setInfos(values => ({...values, ["date_end"]: date}))}
+                            showTimeSelect
+                            minTime={setHours(setMinutes(new Date(), 0), 17)}
+                            maxTime={setHours(setMinutes(new Date(), 30), 20)}
+                            dateFormat="MMMM d, yyyy h:mm aa"
                         />
                     </div>
                     <Button
@@ -228,3 +229,4 @@ export function NewSpotForm(props) {
         </Popup>
     )
 }
+
