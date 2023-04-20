@@ -46,7 +46,7 @@ export function ParkingSpots(props) {
             name="secondNumber"
             value={infos.secondNumber}
             onChange={handleChangeTextField}
-            disabled={!infos.checkedPlaces}
+            disabled={!infos.checkedsecondNumber}
         />
         } else {
             return <TextField
@@ -58,7 +58,7 @@ export function ParkingSpots(props) {
             name="secondNumber"
             value={infos.secondNumber}
             onChange={handleChangeTextField}
-            disabled={!infos.checkedPlaces}
+            disabled={!infos.checkedsecondNumber}
         />
         }
     }
@@ -72,7 +72,7 @@ export function ParkingSpots(props) {
 
     const [spotTypes, setSpotTypes] = useState([]);
 
-    const [infos, setInfos] = useState({checkedPlaces:false, checkedFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
+    const [infos, setInfos] = useState({checkedsecondNumber:false, checkedsecondFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
     useEffect(() => {
 		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
@@ -97,14 +97,13 @@ export function ParkingSpots(props) {
         const name = event.target.name;
         const value = !infos[name]
         setInfos(values => ({...values, [name]: value}))
+        setInfos(values => ({...values, [name.substring(7)]: ""}))
     }
 
     const handleChangeSelects = (event, name) => {
         const value = event.value;
         setInfos(values => ({...values, [name]: value}))
     }
-
-    console.log(infos)
 
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
@@ -114,11 +113,15 @@ export function ParkingSpots(props) {
                 )
             }
         </div>
-        <div style={{maxWidth:"500px", marginBottom:"10px"}}>
-            <input type="checkbox" name="checkedPlaces" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
-            <input type="checkbox" name="checkedFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
-        </div>
-        <form className="all-searchs">
+        
+            <div style={{maxWidth:"500px", marginBottom:"10px"}}>
+                <input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
+                <input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
+            </div>
+           
+        
+        <div style={{display:"flex", flexDirection:"row"}}>
+            <form className="all-searchs">
                 <Select 
                     className="front-search"
                     options={optionsType} 
@@ -147,25 +150,26 @@ export function ParkingSpots(props) {
 
                 <p className="search" style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
                 <Select 
-                    className="front-search"
+                    className="front-search-second"
                     options={optionsFloor.slice(infos.firstFloor+2)} 
                     defaultValue = {optionsFloor.slice(infos.firstFloor+2)[0]}
                     name="secondFloor" 
                     onChange={event => handleChangeSelects(event, "secondFloor")}
                     isSearchable={false}
-                    isDisabled={!infos.checkedFloor}
+                    isDisabled={!infos.checkedsecondFloor}
                 />
                 <div className="search"> 
                     {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
                 </div>
-		</form>  
-
-        <SpotsList list={list} infos={infos}/>
-        {
-            parkingsList.map((parking) => (
-                <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
-            ))
-        }
+		    </form> 
+            {
+                parkingsList.map((parking) => (
+                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
+                ))
+            }
+        </div> 
         
+
+        <SpotsList list={list} infos={infos}/>  
     </div>)
 }

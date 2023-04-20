@@ -6,15 +6,71 @@ import Select from 'react-select';
 
 export function NewSpotForm(props) {
 
+    /**
+     * ErrorOnSecondNumero
+     * Returns a TextField with an error or not depending if the second number is valid or not
+     *
+     * @param { integer } nb1 - The number of the first TextField
+     * @param { integer } nb1 - The number of the second TextField
+     * @return { TextField }
+     */
+    function ErrorOnSecondNumero(nb1, nb2) {
+        if (nb2 < nb1 && (nb2 != 0 || nb2 != "")) {
+            return <TextField
+                error
+                helperText="Chiffre supérieur au premier"
+                style = {{marginLeft:"10px", marginTop:"5px", width:"200px", alignSelf:"center"}}
+                size="small"
+                id="secondNumber"
+                label="Numéro"
+                type="text"
+                name="secondNumber"
+                className="search"
+                onChange={handleChangeSecondNum}
+            />
+        } else {
+            return <TextField
+                style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                size="small"
+                id="secondNumber"
+                label="Numéro"
+                type="text"
+                name="secondNumber"
+                className="search"
+                onChange={handleChangeSecondNum}
+            />
+        }
+    }
+
     const [infos, setInfos] = useState({floor: 0, number: 0, id_park: props.id, types:[]});
 
+    const [secondNumber, setSecondNumber] = useState(0)
+
 	const [wrongInput, setWrongInput] = useState(false);
+    const [check, setCheck] = useState(false);
     const [errMessage, setErrMessage] = useState("");
+
+    const handleChangeCheck = () => {
+        setCheck(!check)
+        if (document.getElementById("second-nums")) {
+            if (document.getElementById("second-nums").classList.contains("numeros-two")) {
+                document.getElementById("second-nums").className = "numeros"
+            } else {
+                document.getElementById("second-nums").className = "numeros-two"
+                setSecondNumber(0)
+            }
+        }
+    }
+    console.log(infos)
 
 	const handleChange = (event) => {
         const name = event.target.name;
-        const value = event.target.value;
+        const value = parseInt(event.target.value);
         setInfos(values => ({...values, [name]: value}))
+    }
+
+    const handleChangeSecondNum = (event) => {
+        setSecondNumber(event.target.value)
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
@@ -30,17 +86,43 @@ export function NewSpotForm(props) {
     }
 
 	const handlleSubmit = async (event) => {
-		event.preventDefault();
+        event.preventDefault()
 		console.log(infos);
         setWrongInput(false);
-        const res = await CreationSpot(infos);
-        console.log(res);
-        if(res.status === 200) {
-            setWrongInput(true);
-            setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
-        }else{
-            setWrongInput(true);
-            setErrMessage(res.data.message);
+        if (secondNumber == 0) {
+            const res = await CreationSpot(infos); 
+            console.log(res);
+            if (res.status === 200) {
+                setWrongInput(true);
+                setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
+            } else {
+                setWrongInput(true);
+                setErrMessage(res.data.message);
+            }
+        } else {
+            let stock = infos.number
+            if (infos.number<secondNumber) {
+                while (infos.number<=secondNumber && !wrongInput) {
+                    const res = await CreationSpot(infos); 
+                    console.log(res);
+                    if (res.status === 200) {
+                        infos.number++;
+                    } else {
+                        setWrongInput(true);
+                        setErrMessage("Une place n'a pas pu être créée dû à : " + res.data.message);
+                        infos.number = stock;
+                        break;
+                    }
+                }
+                if (infos.number-1 == secondNumber) {
+                    infos.number = stock;
+                    setWrongInput(true);
+                    setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
+                }
+            } else {
+                setWrongInput(true);
+                setErrMessage("Le premier numéro doit être inférieur au second");
+            }
         }
 	}
 
@@ -52,41 +134,50 @@ export function NewSpotForm(props) {
                 borderRadius: 20,
                 width: "16%",
                 marginLeft: "42%",
-                height:"10%",
+                height:"100px",
                 marginBottom:"100px"
-            }}>Ajouter des places</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+            }}>Ajouter des places</Button>} position="left center" onClose={() => setWrongInput(false)}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>
                 <form onSubmit={handlleSubmit} className="form">
+                    <div style={{maxWidth:"200px", marginBottom:"10px"}}>
+                        <input type="checkbox" name="checkedNumeros" onChange={handleChangeCheck}/>  Créer plusieurs places<br/>
+                    </div>
                     <div className="inputs-divs">
-                    <Select 
-                        id="floor"
-                        className="front-search-floor"
-                        options={props.options.floor.slice(1)} 
-                        defaultValue={props.options.floor.slice(1)[0]}
-                        name="floor" 
-                        isSearchable={false}
-                        onChange={handleChangeSelect}
-                    />
-                    <TextField
-                        required
-                        style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-                        size="small"
-                        id="number"
-                        label="Numéro"
-                        type="text"
-                        name="number"
-                        className="search"
-                        onChange={handleChange}
-                    />
-                    <Select
-                        isMulti
-                        name="types"
-                        placeholder="Choisir des types"
-                        options={props.options.type.slice(1)}
-                        className="front-search-second-add"
-                        onChange={handleChangeSelect}
-                    />
+                        <Select 
+                            id="floor"
+                            className="searchs-add"
+                            options={props.options.floor.slice(1)} 
+                            defaultValue={props.options.floor.slice(1)[0]}
+                            name="floor" 
+                            isSearchable={false}
+                            onChange={handleChangeSelect}
+                        />
+                        <div className="numeros">
+                            <TextField
+                                required
+                                style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                                size="small"
+                                id="number"
+                                label="Numéro"
+                                type="text"
+                                name="number"
+                                className="search"
+                                onChange={handleChange}
+                            />
+                            <div className="numeros-two" id="second-nums">
+                                <p style={{marginLeft:"7px", marginTop:"7px"}}>à</p>
+                                {ErrorOnSecondNumero(parseInt(infos.number), parseInt(secondNumber))}
+                            </div>
+                        </div>
+                        <Select
+                            isMulti
+                            name="types"
+                            placeholder="Choisir des types"
+                            options={props.options.type.slice(1)}
+                            className="search-add-two "
+                            onChange={handleChangeSelect}
+                        />
                     </div>
                     <Button
                         className="submit_button" 

@@ -102,7 +102,6 @@
 }
 
 .search-second, .front-search-second {
-	visibility: hidden;
 	width:200px;
 	margin-bottom: 10px;
 }
@@ -128,7 +127,7 @@
 	background: rgb(255, 255, 255);
 	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
 	padding: 5px;
-	min-width:400px;
+	min-width:450px;
 	justify-content: center;
 	border-radius:10px;
 }
@@ -151,4 +150,25 @@
 .err-message {
     color: red;
 	text-align: center;
+}
+
+.numeros, .numeros-two {
+	display: flex;
+	flex-direction: row;
+}
+
+.numeros-two {
+	display:none;
+}
+
+.searchs-add, .search-add-two {
+	display: flex;
+	flex-direction: row;
+	align-self:center;
+	margin-bottom:10px;
+	z-index:1001;
+}
+
+.search-add-two {
+	z-index:1000;
 }
