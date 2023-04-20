@@ -10,7 +10,9 @@
 	"name": "Halles",
 	"parking": "H",
 	"date_start": "2023-04-14T08:00:00",
-	"date_end": "2023-04-14T16:00:00"
+	"date_end": "2023-04-14T16:00:00",
+	"first_spot":1,
+	"last_spot":2
 }
 ```
 
@@ -30,6 +32,8 @@
 | parking | Le parking du créneau | false |
 | date_start | Date de début de créneau | false |
 | date_end | Date de fin de créneau | false |
+| first_spot | Début de la zone sélectionnée | false |
+| last_spot | Fin de la zone sélectionnée | false |
 
 X : Un paramètre parmis X peut être définit, les autres doivent ne pas être définits
 
@@ -54,8 +58,11 @@ X : Un paramètre parmis X peut être définit, les autres doivent ne pas être 
 | parking | Le parking du créneau | true |
 | date_start | Date de début de créneau | true |
 | date_end | Date de fin de créneau | true |
+| first_spot | Début de la zone sélectionnée | Y |
+| last_spot | Fin de la zone sélectionnée | Y |
 
 X : Un paramètre parmis X est requis, les autres doivent ne pas être définits
+Y : Si l'un des paramètres est définit, les autres doivent être définits aussi
 
 #### **Erreurs**
 
@@ -67,7 +74,9 @@ X : Un paramètre parmis X est requis, les autres doivent ne pas être définits
 | E_ROLE_NOT_FOUND | Le champs `role` a été trouvé et est valide, mais le role n'existe pas dans la base de donnée |
 | E_DATETIME_FORMAT_INVALID | L'une des dates en paramètres n'est pas valide. Utiliser le format ISO-8601 |
 | E_WRONG_DATETIME_ORDER | La date de fin ne peut pas précéder la date de commencement |
-| E_OVERLAPPING_SCHEDULES | Ce crénaux est superposé à un autre pour un/des utilisateur(s) saisi(s) |
+| E_OVERLAPPING_SCHEDULES | Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s) |
+| E_SPOTS_IN_DIFFERENT_PARKINGS | Les places ne sont pas dans le même parking |
+| E_SPOTS_IN_DIFFERENT_FLOORS | Les places sont dans le même parking, mais pas au même étage |
 * * *
 * * *
 # GET /api/schedule/:schedule
