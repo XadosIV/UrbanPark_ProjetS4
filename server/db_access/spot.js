@@ -1,6 +1,6 @@
 const {dbConnection, dbName} = require('../database');
 const { GetParkings } = require('./parking');
-const {SpotTypeExists} = require('./spot_types');
+const {SpotTypeExists} = require('./spot_type');
 const Errors = require('../errors');
 
 /**
@@ -8,17 +8,28 @@ const Errors = require('../errors');
  * Return a JSON with every spots
  * 
  * @param {function(*,*)} callback (err, data)
+ * @param {object} infos {id_park, floor, number, type}
  */
 
-function GetAllSpots(callback){
-	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp FROM ${dbName}.Spot s LEFT JOIN ${dbName}.User u ON s.id = u.id_spot LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp ORDER BY floor, number`;
-    console.log("SQL at GetAllSpots : " + sql);
-    dbConnection.query(sql, (err, data) => {
+function GetAllSpots(callback, infos){
+	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp 
+	FROM ${dbName}.Spot s 
+	LEFT JOIN ${dbName}.User u ON s.id = u.id_spot 
+	LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp 
+	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number
+	ORDER BY floor, number`;
+    //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
+    dbConnection.query(sql, 
+		{
+			number:infos.number||'%',
+			floor:infos.floor||'%',
+			id_park:infos.id_park||'%'
+		}, (err, data) => {
         if (err){
             callback(err, [])
         }else{
             sql = `SELECT * FROM ${dbName}.Typed`
-            console.log("SQL at GetAllSpots : " + sql);
+            //console.log("SQL at GetAllSpots : " + sql);
             allSpots = data
             dbConnection.query(sql, (err, data) => {
                 if (err){
@@ -62,7 +73,7 @@ function GetSpots(callback, infos){
             }
             callback(err, spots);
         }
-    })
+    }, infos)
 }
 
 /**
@@ -140,8 +151,8 @@ function PostSpot(callback, infos){
 					callback(err,data);
 				}
 			});
-		}}, {id:infos.parking})}
-    }, infos);
+		}}, {id:infos.id_park})}
+    }, {id_park:infos.id_park, floor:infos.floor, number:infos.number});
 }
 
 module.exports = {GetAllSpots, GetSpots, PostSpot};
