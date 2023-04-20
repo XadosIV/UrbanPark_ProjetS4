@@ -26,6 +26,24 @@
 	flex-direction: column;
 }
 
+.div-edt-gardien{
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	background-color: white;
+}
+
+.div-edt-entretien{
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	background-color: white;
+}
+
 .div-info-place ul{
 	list-style: none;
 }

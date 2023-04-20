@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { PagePersoAbonne, InfosPersonelles } from "../components";
+import { PagePersoPlace, InfosPersonelles, EdtGardien, EdtAgentEntratien } from "../components";
 import "../css/page-perso.css";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken } from "../services";
@@ -22,9 +22,13 @@ export function PagePersonnelle(){
 	const persoParRole = () => {
 		switch (roleUser) {
 			case "Abonné":
-				return <PagePersoAbonne />;
+				return <PagePersoPlace />;
 			case "Gérant":
 				return <AdminPage />;
+			case "Gardien":
+				return <EdtGardien />;
+			case "Agent d'entretien":
+				return <EdtAgentEntratien />;
 			default:
 				return null;
 		}
