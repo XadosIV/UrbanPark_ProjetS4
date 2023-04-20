@@ -4,7 +4,6 @@ import moment from "moment";
 import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
-import take_parking from "../services/take_parking";
 
 export function ViewAgenda (props){
 	let role = null;
@@ -31,15 +30,15 @@ export function ViewAgenda (props){
 
 			function MemeParking(idParking, elem)
 			{
-				return elem.idparking == idParking;
+				return elem.idparking === idParking;
 			}
 			function MemeDepart(dateStart, elem)
 			{
-				return  elem.d_st == dateStart;
+				return  elem.d_st === dateStart;
 			}
 			function MemeFin(dateEnd, elem)
 			{
-				return  elem.d_en == dateEnd;
+				return  elem.d_en === dateEnd;
 			}
 
 			let j = 0;

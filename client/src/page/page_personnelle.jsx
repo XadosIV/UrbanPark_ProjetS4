@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { PagePersoPlace, InfosPersonelles, EdtGardien, EdtAgentEntratien } from "../components";
+import { PersoAbonne, PersoGardien, PersoGerant, PersoAgenentEntretient, InfosPersonelles } from "../components";
 import "../css/page-perso.css";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken } from "../services";
-import { AdminPage } from "./admin_page";
-
 
 export function PagePersonnelle(){
-	const { userToken } = useContext(ContextUser);
+	const { userToken, userId } = useContext(ContextUser);
 	const [ roleUser, setRoleUser ] = useState("");
 
 	useEffect(() => {
@@ -22,13 +20,13 @@ export function PagePersonnelle(){
 	const persoParRole = () => {
 		switch (roleUser) {
 			case "Abonné":
-				return <PagePersoPlace />;
+				return <PersoAbonne />;
 			case "Gérant":
-				return <AdminPage />;
+				return <PersoGerant />;
 			case "Gardien":
-				return <EdtGardien />;
+				return <PersoGardien id={userId} />;
 			case "Agent d'entretien":
-				return <EdtAgentEntratien />;
+				return <PersoAgenentEntretient id={userId} />;
 			default:
 				return null;
 		}
