@@ -38,7 +38,7 @@ export function PersoGerant(){
                 variant="contained" 
                 color="primary" 
                 onClick={ toggleAffEntretient }
-            > planning des agents d'entretient </Button>
+            > planning des agents d'entretien </Button>
             <Button 
                 className="UI-Button" 
                 variant="contained" 
