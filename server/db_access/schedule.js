@@ -205,6 +205,87 @@ function PostScheduleUsers(infos, ids, callback) {
 	});
 }
 
+function GetScheduleById(id, callback){
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`
+	dbConnection.query(sql, {id:id}, callback);
+
+}
+
+function UpdateSchedule(infos, callback){
+	//infos has {id, user, parking, date_start, date_end}
+	//Check date_start syntax
+	if (infos.date_start){
+		if (!IsValidDatetime(infos.date_start)){
+			let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error,{});
+			return;
+		}
+	}
+	//Check date_end syntax
+	if (infos.date_end){
+		if (!IsValidDatetime(infos.date_end)){
+			let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
+			let error = new Error(errorCode);
+			error.code = errorCode;
+			callback(error,{});
+			return;
+		}
+	}
+
+	GetScheduleById(infos.id, (err, data) => {
+		if (err){
+			callback(err, {})
+		}else{
+			if (data.length == 1){
+				data = data[0]
+				// schedule object will contains information post update, to check if everything works fine with the new data
+				schedule = {start:data.date_start, end:data.date_end, user:data.user, parking:data.parking, id:infos.id}
+				if (infos.date_start) schedule.start = infos.date_start
+				if (infos.date_end) schedule.end = infos.date_end
+				if (infos.user) schedule.user = infos.user
+				if (infos.parking) schedule.parking = infos.parking
+
+				// check order
+				if (schedule.end < schedule.start){
+					let errorCode = Errors.E_WRONG_DATETIME_ORDER;
+					let error = new Error(errorCode);
+					error.code = errorCode;
+					callback(error,{});
+					return;
+				}
+
+				//check overlap
+				IsntScheduleOverlapping(schedule, (err, no_overlap) => {
+					if (err){
+						callback(err, {})
+					}else{
+						if (no_overlap){
+							//insert sql
+							sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end WHERE id=:id`
+							console.log(schedule)
+							dbConnection.query(sql, schedule, callback);
+						}else{
+							let errorCode = Errors.E_OVERLAPPING_SCHEDULES;
+							let error = new Error(errorCode);
+							error.code = errorCode;
+							callback(error,{});
+							return;
+						}
+					}
+				})
+			}else{
+				let errorCode = Errors.E_SCHEDULE_NOT_FOUND;
+				let error = new Error(errorCode);
+				error.code = errorCode;
+				callback(error,{});
+				return;
+			}
+		}
+	})
+}
+
 /**
  * IsntScheduleOverlapping
  * Check if the new schedule isn't overlapping an existing one (true if no overlapping)
@@ -249,4 +330,5 @@ function IsntScheduleOverlappingForList(infos, ids, callback) {
 	});
 }
 
-module.exports = { GetSchedules, PostSchedule };
+
+module.exports = {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById};
