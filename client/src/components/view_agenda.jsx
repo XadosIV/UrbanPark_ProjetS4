@@ -17,13 +17,22 @@ export function ViewAgenda (props){
 		let sortie = []
 		let i = 0;
 		list.forEach(element => {
-			let idUser = element.user;
+			let role = element.role;
 			let idParking = element.parking;
 			let parking = element.name;
 			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
-			
+
+			let startTitle = "";
+
+			if (role == "Gardien"){
+				startTitle = "gardiennage ";
+			}
+			else {
+				startTitle = "nettoyage parking ";
+			}
+
 			let trouve = false;
 			let utile = true;
 
@@ -57,7 +66,7 @@ export function ViewAgenda (props){
 				let newElement = {
 					id: i,
 					idparking: idParking,
-					title: "nettoyage parking " + parking + " by " + user,
+					title: startTitle + parking + " by " + user,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
