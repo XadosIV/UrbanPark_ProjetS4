@@ -1,6 +1,6 @@
 const {dbConnection, dbName} = require('../database');
 const { GetParkings } = require('./parking');
-const {SpotTypeExists} = require('./spot_types');
+const {SpotTypeExists} = require('./spot_type');
 const Errors = require('../errors');
 
 /**

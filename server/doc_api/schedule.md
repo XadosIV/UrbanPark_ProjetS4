@@ -34,15 +34,10 @@
 X : Un paramètre parmis X peut être définit, les autres doivent ne pas être définits
 
 #### **Erreurs**
-<<<<<<< HEAD
-Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
-
-=======
 
 | Nom | Cause |
 | --- | ----- |
 | E_CONFLICTING_PARAMETERS | Un seul champs peut être définit parmis : role, user |
->>>>>>> origin/p-test
 * * *
 * * *
 # POST /api/schedules
@@ -68,7 +63,11 @@ X : Un paramètre parmis X est requis, les autres doivent ne pas être définits
 | --- | ----- |
 | E_MISSING_PARAMETER | Tout les paramètres n'ont pas été donnés. |
 | E_CONFLICTING_PARAMETERS | Un seul champs doit être définit parmis : role, user |
-
+| E_USER_NOT_FOUND | Le champs `user` a été trouvé et est valide, mais l'utilisateur n'existe pas dans la base de donnée |
+| E_ROLE_NOT_FOUND | Le champs `role` a été trouvé et est valide, mais le role n'existe pas dans la base de donnée |
+| E_DATETIME_FORMAT_INVALID | L'une des dates en paramètres n'est pas valide. Utiliser le format ISO-8601 |
+| E_WRONG_DATETIME_ORDER | La date de fin ne peut pas précéder la date de commencement |
+| E_OVERLAPPING_SCHEDULES | Ce crénaux est superposé à un autre pour un/des utilisateur(s) saisi(s) |
 * * *
 * * *
 # GET /api/schedule/:schedule
