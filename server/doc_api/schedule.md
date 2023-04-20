@@ -7,6 +7,7 @@
 	"id": 1,
 	"user": 1,
 	"last_name": "Naej",
+	"role","Gérant"
 	"name": "Halles",
 	"parking": "H",
 	"date_start": "2023-04-14T08:00:00",

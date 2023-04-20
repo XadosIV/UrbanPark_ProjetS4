@@ -1,6 +1,7 @@
 const { dbConnection, dbName } = require('../database');
 const { GetUsers } = require('./user');
 const { GetPermRole } = require('./role');
+const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 
 /**
@@ -43,7 +44,7 @@ function GetSchedules(callback, infos) {
  * @param {object} infos {role, parking, date_start, date_end}
  */
 function GetSchedulesRole(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T"), s.first_spot, s.last_spot AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T"), s.first_spot, s.last_spot AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
@@ -63,7 +64,7 @@ function GetSchedulesRole(callback, infos) {
  * @param {object} infos {user, parking, date_start, date_end}
  */
 function GetSchedulesUser(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		user: infos.user || '%',
@@ -88,7 +89,7 @@ function PostSchedule(infos, callback) {
 		let error = new Error(errorCode);
 		error.code = errorCode;
 		callback(error, []);
-	}else if (isNaN(infos.first_spot) == isNaN(infos.last_spot)) {
+	}else if (isNaN(infos.first_spot) != isNaN(infos.last_spot)) {
 		let errorCode = Errors.E_CONFLICTING_PARAMETERS;
 		let error = new Error(errorCode);
 		error.code = errorCode;
@@ -103,6 +104,38 @@ function PostSchedule(infos, callback) {
 		let error = new Error(errorCode);
 		error.code = errorCode;
 		callback(error, []);
+	}else if (!isNaN(infos.first_spot)){
+		GetSpots((err,first_spot) =>{
+			if(err){
+				callback(err,{});
+			}else if(first_spot.length != 1){
+				let errorCode = Errors.E_SPOT_NOT_FOUND;
+				let error = new Error(errorCode);
+				error.code = errorCode;
+				callback(error, []);
+			}else{
+				GetSpots((err, last_spot) => {
+					if(err){
+						callback(err, {});
+					}else if(last_spot.length != 1){
+						let errorCode = Errors.E_SPOT_NOT_FOUND;
+						let error = new Error(errorCode);
+						error.code = errorCode;
+						callback(error, []);
+					}else if(first_spot[0].id_park != last_spot[0].id_park){
+						let errorCode = Errors.E_SPOTS_IN_DIFFERENT_PARKINGS;
+						let error = new Error(errorCode);
+						error.code = errorCode;
+						callback(error, []);
+					}else if (first_spot[0].floor != last_spot[0].floor){
+						let errorCode = Errors.E_SPOTS_IN_DIFFERENT_FLOORS;
+						let error = new Error(errorCode);
+						error.code = errorCode;
+						callback(error, []);
+					}
+				}, infos.last_spot);
+			}
+		}, infos.first_spot);
 	}else if (infos.role) {
 		PostScheduleRole(infos, callback);
 	} else {
@@ -217,7 +250,6 @@ function PostScheduleUsers(infos, ids, callback) {
 function GetScheduleById(id, callback){
 	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`
 	dbConnection.query(sql, {id:id}, callback);
-
 }
 
 function UpdateSchedule(infos, callback){
