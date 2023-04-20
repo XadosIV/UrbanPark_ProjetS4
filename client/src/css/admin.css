@@ -62,7 +62,7 @@
 }
 
 .staff-list li:hover {
-	background-color: gray;
+	background-color: #F0F8FF;
 }
 
 .user-list {
@@ -90,7 +90,7 @@
 }
 
 .main-content:hover{
-	background-color: gray;
+	background-color: #F0F8FF;
 }
 
 .searchs {
