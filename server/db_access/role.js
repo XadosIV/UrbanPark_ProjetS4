@@ -3,7 +3,7 @@ const Errors = require('../errors');
 
 /**
  * GetPermRole
- * Get all users matching parameters
+ * Get the selected role
  * 
  * @param {function(*,*)} callback (err, data)
  * @param {object} infos {role}
