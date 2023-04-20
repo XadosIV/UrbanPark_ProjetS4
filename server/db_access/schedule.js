@@ -153,9 +153,9 @@ function PostSchedule(infos, callback) {
 							}
 						});
 					}
-				}, infos.last_spot);
+				},{"id":infos.last_spot});
 			}
-		}, infos.first_spot);
+		},{"id":infos.first_spot});
 	}else if (infos.role){
 		PostScheduleRole(infos, callback);
 	}else{
@@ -436,9 +436,9 @@ function IsntSpotOverlapping(infos, callback) {
 						}
 					});
 				}
-			}, infos.last_spot);
+			}, {"id":infos.last_spot});
 		}
-	}, infos.first_spot);
+	},{"id":infos.first_spot});
 }
 
 
