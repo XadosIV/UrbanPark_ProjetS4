@@ -30,7 +30,7 @@ export function ParkingSpots(props) {
      * Returns a TextField with an error or not depending if the second number is valid or not
      *
      * @param { integer } nb1 - The number of the first TextField
-     * @param { integer } nb1 - The number of the second TextField
+     * @param { integer } nb2 - The number of the second TextField
      * @return { TextField }
      */
     function ErrorOnSecondNumber(nb1, nb2) {
@@ -59,6 +59,41 @@ export function ParkingSpots(props) {
             value={infos.secondNumber}
             onChange={handleChangeTextField}
             disabled={!infos.checkedsecondNumber}
+        />
+        }
+    }
+
+    /**
+     * ErrorOnFirstNumber
+     * Returns a TextField with an error or not depending if the first number is valid or not
+     *
+     * @param { integer } nb1 - The number of the first TextField
+     * @return { TextField }
+     */
+    function ErrorOnFirstNumber(nb1) {
+        if (nb1 < 0 && (nb1 != 0 || nb1 != "")) {
+            return <TextField
+            error
+            helperText="Chiffre négatif impossible"
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
+            className="search"
+            size="small"
+            id="searchbarNumber"
+            label="Numéro de la place..."
+            type="text"
+            name="firstNumber"
+            onChange={handleChangeTextField}
+        />
+        } else {
+            return <TextField
+            style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
+            className="search"
+            size="small"
+            id="searchbarNumber"
+            label="Numéro de la place..."
+            type="text"
+            name="firstNumber"
+            onChange={handleChangeTextField}
         />
         }
     }
@@ -105,6 +140,11 @@ export function ParkingSpots(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+    const handleRemount = () => {
+        TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
+        TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
+    }
+
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
@@ -137,16 +177,7 @@ export function ParkingSpots(props) {
                     onChange={event => handleChangeSelects(event, "firstFloor")}
                     isSearchable={false}
                 />
-                <TextField
-                    style = {{marginBottom:"12px", width:"200px", alignSelf:"center"}}
-                    className="search"
-                    size="small"
-                    id="searchbarNumber"
-                    label="Numéro de la place..."
-                    type="text"
-                    name="firstNumber"
-                    onChange={handleChangeTextField}
-                />
+                {ErrorOnFirstNumber(infos.firstNumber)}
 
                 <p className="search" style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
                 <Select 
@@ -164,7 +195,7 @@ export function ParkingSpots(props) {
 		    </form> 
             {
                 parkingsList.map((parking) => (
-                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id}/>
+                    <NewSpotForm floors={parking.floors} name={parking.name} options={{floor:optionsFloor, type:optionsType}} id={parking.id} onchange={handleRemount}/>
                 ))
             }
         </div> 

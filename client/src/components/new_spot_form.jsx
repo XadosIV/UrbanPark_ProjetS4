@@ -8,10 +8,10 @@ export function NewSpotForm(props) {
 
     /**
      * ErrorOnSecondNumero
-     * Returns a TextField with an error or not depending if the second number is valid or not
+     * Returns a TextField with an error or not depending if the second numero is valid or not
      *
      * @param { integer } nb1 - The number of the first TextField
-     * @param { integer } nb1 - The number of the second TextField
+     * @param { integer } nb2 - The number of the second TextField
      * @return { TextField }
      */
     function ErrorOnSecondNumero(nb1, nb2) {
@@ -42,6 +42,43 @@ export function NewSpotForm(props) {
         }
     }
 
+    /**
+     * ErrorOnFirstNumero
+     * Returns a TextField with an error or not depending if the first numero is valid or not
+     *
+     * @param { integer } nb1 - The number of the first TextField
+     * @return { TextField }
+     */
+    function ErrorOnFirstNumero(nb1) {
+        if (nb1<0 && (nb1 != 0 || nb1 != "")) {
+            return <TextField
+                error
+                helperText="Chiffre négatif impossible"
+                required
+                style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                size="small"
+                id="number"
+                label="Numéro"
+                type="text"
+                name="number"
+                className="search"
+                onChange={handleChange}
+            />
+        } else {
+            return <TextField
+            required
+            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+            size="small"
+            id="number"
+            label="Numéro"
+            type="text"
+            name="number"
+            className="search"
+            onChange={handleChange}
+        />
+        }
+    }
+
     const [infos, setInfos] = useState({floor: 0, number: 0, id_park: props.id, types:[]});
 
     const [secondNumber, setSecondNumber] = useState(0)
@@ -61,7 +98,6 @@ export function NewSpotForm(props) {
             }
         }
     }
-    console.log(infos)
 
 	const handleChange = (event) => {
         const name = event.target.name;
@@ -89,40 +125,45 @@ export function NewSpotForm(props) {
         event.preventDefault()
 		console.log(infos);
         setWrongInput(false);
-        if (secondNumber == 0) {
-            const res = await CreationSpot(infos); 
-            console.log(res);
-            if (res.status === 200) {
-                setWrongInput(true);
-                setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
+        if (infos.number >= 0) {
+            if (secondNumber == 0) {
+                const res = await CreationSpot(infos); 
+                console.log(res);
+                if (res.status === 200) {
+                    setWrongInput(true);
+                    setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
+                } else {
+                    setWrongInput(true);
+                    setErrMessage(res.data.message);
+                }
             } else {
-                setWrongInput(true);
-                setErrMessage(res.data.message);
+                let stock = infos.number
+                if (infos.number<secondNumber) {
+                    while (infos.number<=secondNumber && !wrongInput) {
+                        const res = await CreationSpot(infos); 
+                        console.log(res);
+                        if (res.status === 200) {
+                            infos.number++;
+                        } else {
+                            setWrongInput(true);
+                            setErrMessage("Une place n'a pas pu être créée dû à : " + res.data.message);
+                            infos.number = stock;
+                            break;
+                        }
+                    }
+                    if (infos.number-1 == secondNumber) {
+                        infos.number = stock;
+                        setWrongInput(true);
+                        setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
+                    }
+                } else {
+                    setWrongInput(true);
+                    setErrMessage("Le premier numéro doit être inférieur au second");
+                }
             }
         } else {
-            let stock = infos.number
-            if (infos.number<secondNumber) {
-                while (infos.number<=secondNumber && !wrongInput) {
-                    const res = await CreationSpot(infos); 
-                    console.log(res);
-                    if (res.status === 200) {
-                        infos.number++;
-                    } else {
-                        setWrongInput(true);
-                        setErrMessage("Une place n'a pas pu être créée dû à : " + res.data.message);
-                        infos.number = stock;
-                        break;
-                    }
-                }
-                if (infos.number-1 == secondNumber) {
-                    infos.number = stock;
-                    setWrongInput(true);
-                    setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
-                }
-            } else {
-                setWrongInput(true);
-                setErrMessage("Le premier numéro doit être inférieur au second");
-            }
+            setWrongInput(true);
+            setErrMessage("La place créée ne peut pas être négative");
         }
 	}
 
@@ -154,20 +195,10 @@ export function NewSpotForm(props) {
                             onChange={handleChangeSelect}
                         />
                         <div className="numeros">
-                            <TextField
-                                required
-                                style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-                                size="small"
-                                id="number"
-                                label="Numéro"
-                                type="text"
-                                name="number"
-                                className="search"
-                                onChange={handleChange}
-                            />
+                            {ErrorOnFirstNumero(infos.number)}
                             <div className="numeros-two" id="second-nums">
                                 <p style={{marginLeft:"7px", marginTop:"7px"}}>à</p>
-                                {ErrorOnSecondNumero(parseInt(infos.number), parseInt(secondNumber))}
+                                {ErrorOnSecondNumero(infos.number, secondNumber)}
                             </div>
                         </div>
                         <Select
