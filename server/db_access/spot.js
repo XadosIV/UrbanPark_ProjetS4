@@ -18,7 +18,7 @@ function GetAllSpots(callback, infos){
 	LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp 
 	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number
 	ORDER BY floor, number`;
-    console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
+    //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 
 		{
 			number:infos.number||'%',
@@ -29,7 +29,7 @@ function GetAllSpots(callback, infos){
             callback(err, [])
         }else{
             sql = `SELECT * FROM ${dbName}.Typed`
-            console.log("SQL at GetAllSpots : " + sql);
+            //console.log("SQL at GetAllSpots : " + sql);
             allSpots = data
             dbConnection.query(sql, (err, data) => {
                 if (err){
