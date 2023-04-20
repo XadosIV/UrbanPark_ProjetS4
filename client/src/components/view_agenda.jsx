@@ -73,15 +73,15 @@ export function ViewAgenda (props){
 	}
 
 	useEffect(() => {
-		if (props.props)
+		if (props.info)
 		{
-			if (props.props.user)
+			if (props.info.user)
 			{
-				id = props.props.user;
+				id = props.info.user;
 			}
-			if (props.props.role)
+			if (props.info.role)
 			{
-				role = props.props.role;
+				role = props.info.role;
 			}
 		}
 		TakeAllEvents(id, role).then(res => {
