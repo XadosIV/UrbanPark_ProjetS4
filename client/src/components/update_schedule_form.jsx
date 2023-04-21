@@ -173,13 +173,13 @@ export function UpdateScheduleForm(props) {
                 if (infos.last_spot == infos.first_spot) {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + " bloquée pour être nettoyées de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
+                        setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + " bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                     })
                 } else {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data.id_park + res.data.floor + "-" + res.data.number + " à " + res2.data.id_park + res2.data.floor + "-" + res2.data.number + " bloquées pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
+                            setErrMessage("Places " + res.data.id_park + res.data.floor + "-" + res.data.number + " à " + res2.data.id_park + res2.data.floor + "-" + res2.data.number + " bloquées pour être nettoyées de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                         })
                     })
                 }

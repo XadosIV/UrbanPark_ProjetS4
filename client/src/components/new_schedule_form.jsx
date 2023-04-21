@@ -98,13 +98,13 @@ export function NewScheduleForm() {
                 setWrongInput(true);
                 if (infos.last_spot == infos.first_spot) {
                     placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
+                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                     })
                 } else {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyée")
+                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées  de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                         })
                     })
                 }
@@ -245,7 +245,7 @@ export function NewScheduleForm() {
                         type="submit"
                     >Ajouter</Button>
                 </form>
-                { wrongInput && <p className="err-message"> { errMessage } </p>}
+                { wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
             </div>
         </Popup>
     )
