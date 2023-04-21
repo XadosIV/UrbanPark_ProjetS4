@@ -132,7 +132,7 @@ export function ViewAgenda (props){
 	}
 
 	return (
-		<div>
+		<div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
 			<Calendar
 				localizer={localizer}
 				events={eventsList}
