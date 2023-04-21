@@ -275,13 +275,20 @@ function PostScheduleUsers(infos, ids, callback) {
 }
 
 function GetScheduleById(id, callback){
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, p.name, s.id_parking AS parking, DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
 	dbConnection.query(sql, {id:id}, callback);
 }
 
 function UpdateSchedule(infos, callback){
 	//infos has {id, user, parking, date_start, date_end}
 	//Check date_start syntax
+
+	let doSqlRequest = (schedule) => {
+		//insert sql
+		sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end, first_spot=:first, last_spot=:last WHERE id=:id`
+		dbConnection.query(sql, schedule, callback);
+	}
+
 	if (infos.date_start){
 		if (!IsValidDatetime(infos.date_start)){
 			let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
@@ -309,13 +316,15 @@ function UpdateSchedule(infos, callback){
 			if (data.length == 1){
 				data = data[0]
 				// schedule object will contains information post update, to check if everything works fine with the new data
-				schedule = {start:data.date_start, end:data.date_end, user:data.user, parking:data.parking, id:infos.id}
+				schedule = {start:data.date_start, end:data.date_end, user:data.user, parking:data.parking, first:data.first_spot, last:data.last_spot, id:infos.id}
 				if (infos.date_start) schedule.start = infos.date_start
 				if (infos.date_end) schedule.end = infos.date_end
 				if (infos.user) schedule.user = infos.user
 				if (infos.parking) schedule.parking = infos.parking
+				if (infos.first_spot) schedule.first = infos.first_spot
+				if (infos.last_spot) schedule.last = infos.last_spot
 
-				// check order
+				// check schedule order
 				if (schedule.end < schedule.start){
 					let errorCode = Errors.E_WRONG_DATETIME_ORDER;
 					let error = new Error(errorCode);
@@ -324,16 +333,84 @@ function UpdateSchedule(infos, callback){
 					return;
 				}
 
-				//check overlap
+				//check schedule overlap
 				IsntScheduleOverlapping(schedule, (err, no_overlap) => {
 					if (err){
 						callback(err, {})
 					}else{
 						if (no_overlap){
-							//insert sql
-							sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end WHERE id=:id`
-							console.log(schedule)
-							dbConnection.query(sql, schedule, callback);
+							
+							// get first spot
+							if (schedule.first && schedule.last){
+								GetSpots((err, first_spot) => {
+									if (err){
+										callback(err, [])
+									}else if (first_spot.length == 0){
+											let errorCode = Errors.E_SPOT_NOT_FOUND;
+											let error = new Error(errorCode);
+											error.code = errorCode;
+											callback(error,{});
+											return;
+									}else{
+										// get second spot
+										GetSpots((err, last_spot) => {
+											if (err){
+												callback(err, [])
+											}else if(last_spot.length == 0){
+												let errorCode = Errors.E_SPOT_NOT_FOUND;
+												let error = new Error(errorCode);
+												error.code = errorCode;
+												callback(error,{});
+												return;
+											}else{
+												first_spot = first_spot[0]
+												last_spot = last_spot[0]
+												//check spot restriction error
+												if (first_spot.id_park != last_spot.id_park){
+													let errorCode = Errors.E_SPOTS_IN_DIFFERENT_PARKINGS;
+													let error = new Error(errorCode);
+													error.code = errorCode;
+													callback(error,{});
+													return;
+												}else if (first_spot.id_park != schedule.parking){
+													let errorCode = Errors.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING;
+													let error = new Error(errorCode);
+													error.code = errorCode;
+													callback(error,{});
+													return;
+												}else if (first_spot.floor != last_spot.floor){
+													let errorCode = Errors.E_SPOTS_IN_DIFFERENT_FLOORS;
+													let error = new Error(errorCode);
+													error.code = errorCode;
+													callback(error,{});
+													return;
+												}else if (first_spot.number >= last_spot.number){
+													let errorCode = Errors.E_WRONG_SPOT_ORDER;
+													let error = new Error(errorCode);
+													error.code = errorCode;
+													callback(error,{});
+													return;
+												}else{
+													//Check overlapping spots
+													IsntSpotOverlapping({date_start:schedule.start, date_end:schedule.end, first_spot:schedule.first, last_spot:schedule.last}, (err, no_overlap_spot) => {
+														if (no_overlap_spot){
+															doSqlRequest(schedule)
+														}else{
+															let errorCode = Errors.E_OVERLAPPING_SPOTS;
+															let error = new Error(errorCode);
+															error.code = errorCode;
+															callback(error,{});
+															return;
+														}
+													})
+												}
+											}
+										}, {id:schedule.last})
+									}
+								}, {id:schedule.first})
+							}else{
+								doSqlRequest(schedule);
+							}
 						}else{
 							let errorCode = Errors.E_OVERLAPPING_SCHEDULES;
 							let error = new Error(errorCode);
@@ -368,7 +445,6 @@ function IsntScheduleOverlapping(infos, callback) {
 		if (err) {
 			callback(err, data)
 		} else {
-			console.log(data);
 			callback(err, data.length == 0);
 		}
 	});
@@ -419,7 +495,7 @@ function IsntSpotOverlapping(infos, callback) {
 			GetSpots((err, last_spot) => {
 				if(err){
 					callback(err, {});
-				}else if(first_spot.length != 1){
+				}else if(last_spot.length != 1){
 					let errorCode = Errors.E_SPOT_NOT_FOUND;
 					let error = new Error(errorCode);
 					error.code = errorCode;
@@ -431,7 +507,6 @@ function IsntSpotOverlapping(infos, callback) {
 						if (err) {
 							callback(err, data)
 						} else {
-							console.log(data);
 							callback(err, data.length == 0);
 						}
 					});
