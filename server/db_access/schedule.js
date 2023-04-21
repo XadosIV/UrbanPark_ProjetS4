@@ -516,5 +516,20 @@ function IsntSpotOverlapping(infos, callback) {
 	},{"id":infos.first_spot});
 }
 
+/**
+ * DeleteUSchedule
+ * Delete user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {int} id
+ */
+function DeleteSchedule(callback, id){
+	sql = `DELETE FROM ${dbName}.Schedule WHERE id=:id;`;
+	//console.log("SQL at DeleteUser : " + sql + " with id=" + id);
+	dbConnection.query(sql, {
+		id:id
+	}, callback);
+}
 
-module.exports = {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById};
+
+module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById};
