@@ -29,11 +29,10 @@ export function ViewAgenda (props){
 				startTitle = "Gardiennage ";
 			}
 			else {
-				startTitle = "Nettoyage parking ";
+				startTitle = "Nettoyage ";
 			}
 
 			let trouve = false;
-			let utile = true;
 
 			function MemeParking(idParking, elem)
 			{
@@ -56,13 +55,15 @@ export function ViewAgenda (props){
 				{
 					trouve = true;
 					sortie[j].title += " and " + user;
+					sortie[j].user.push(element.user)
+					sortie[j].id_schedule.push(element.id)
 				}
 				j++;
 			}
 			if (!trouve)
 			{
-					
 				let newElement = {
+					id_schedule:[element.id],
 					id: i,
 					idparking: idParking,
 					title: startTitle + " du parking " + parking + " par " + user,
@@ -70,7 +71,7 @@ export function ViewAgenda (props){
 					d_st: dateStart,
 					d_en: dateEnd,
 					end: new Date(dateEnd),
-					user: element.id,
+					user: [element.user],
 					first_spot:element.first_spot,
 					last_spot:element.last_spot
 				};
@@ -123,7 +124,6 @@ export function ViewAgenda (props){
 	}
 
 	const ButtonUpdateSchedule = () => {
-		console.log(selectedEvent)
 		return (
 		    <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
 				<UpdateScheduleForm event={selectedEvent}/>

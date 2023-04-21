@@ -137,7 +137,7 @@ export function NewScheduleForm() {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyée")
+                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées")
                         })
                     })
                 }

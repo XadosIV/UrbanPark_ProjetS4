@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
-import { CreationSchedule, placeFromId } from "../services"
+import { Button } from "@mui/material";
+import { UpdateSchedule, placeFromId, DeleteSchedule } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -60,7 +60,7 @@ export function UpdateScheduleForm(props) {
 
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
-    const [infos, setInfos] = useState({id_park: props.event.idparking, user: [props.event.user], date_start: props.event.d_st, date_end: props.event.d_en, first_spot: props.event.first_spot, last_spot:props.event.last_spot});
+    const [infos, setInfos] = useState({parking: props.event.idparking, user: props.event.user, date_start: props.event.d_st, date_end: props.event.d_en, first_spot: props.event.first_spot, last_spot:props.event.last_spot});
 
 	const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
@@ -88,72 +88,52 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!Array.isArray(infos.user) || infos.user.length == 1) {
-            if (Array.isArray(infos.user)) {
-                infos.user = infos.user[0]
+        var scheduleAdded = 0;
+        let stock = infos.user
+        for (let i=0; i<props.event.user.length; i++) {
+            var fun;
+            infos.user = stock[i]
+            if (props.event.user.includes(stock[i])) {
+                fun = UpdateSchedule(infos, props.event.id_schedule[i]);
+            } else {
+                fun = DeleteSchedule(props.event.id_schedule[i]);
             }
-            const res = await CreationSchedule(infos); 
-            console.log(res);
+            const res = await fun
             if (res.status === 200) {
-                setWrongInput(true);
-                if (infos.last_spot == infos.first_spot) {
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyée")
-                        })
-                    })
-                }
+                scheduleAdded++;
             } else {
                 setWrongInput(true);
                 setErrMessage(res.data.message);
+                break;
             }
-        } else {
-            var stock = infos.user;
-            var scheduleAdded = 0;
-            for (let user of stock) {
-                infos.user = user;
-                const res = await CreationSchedule(infos); 
-                console.log(res);
-                if (res.status === 200) {
-                    scheduleAdded++;
-                } else {
-                    setWrongInput(true);
-                    setErrMessage(res.data.message);
-                    break;
-                }
-            }
-            if (scheduleAdded == stock.length) {
-                if (infos.last_spot == infos.first_spot) {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyée")
-                        })
-                    })
-                }
-            }
-    
         }
-	}
+        if (scheduleAdded == props.event.user.length) {
+            if (infos.last_spot == infos.first_spot) {
+                setWrongInput(true);
+                placeFromId(infos.first_spot).then(res => {
+                    setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + "  bloquée pour être nettoyées")
+                })
+            } else {
+                setWrongInput(true);
+                placeFromId(infos.first_spot).then(res => {
+                    placeFromId(infos.last_spot).then(res2 => {
+                        setErrMessage("Places " + res.data.id_park + res.data.floor + "-" + res.data.number + " à " + res2.data.id_park + res2.data.floor + "-" + res2.data.number + "  bloquées pour être nettoyée")
+                    })
+                })
+            }
+        }
+    }
+
+    
+    const [fp, setFP] = useState("")
+    const [lp, setLP] = useState("")
 
     var optionsService = AllServices(serviceList)
     var optionsParking = AllParkings(parkingsList)
 
     useEffect(() => {
-        TP.TakeParking().then(res => {
-            setParkingsList(res);
-            TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
-        });
+        TP.TakeParking().then(res => setParkingsList(res));
+        TAS.TakeAllSpots(infos.parking).then(res => setSpotsList(res))
         TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
         BaseSpot(infos.first_spot, setFP)
         BaseSpot(infos.last_spot, setLP)
@@ -171,16 +151,35 @@ export function UpdateScheduleForm(props) {
         }
     }
 
+
     function BaseUser(id_user, list) {
+        var opts=[]
         for (let user of list) {
-            if (user.id == id_user) {      
-                return user.first_name + " " + user.last_name;
+            if (!Array.isArray(id_user) || id_user.length == 1) {  
+                if (Array.isArray(id_user)) {
+                    id_user = id_user[0]
+                }
+                if (user.id == id_user) {   
+                    for (let opt of optionsService) { 
+                        if (opt.value == user.id) {
+                            opts.push(opt);
+                        }
+                    }
+                }
+            } else {            
+                for (let id of id_user) {
+                    if (user.id == id) {
+                        for (let opt of optionsService) { 
+                            if (opt.value == user.id) {
+                                opts.push(opt);
+                            }
+                        }
+                    }
+                }
             }
         }
+        return opts
     }
-
-    const [fp, setFP] = useState("")
-    const [lp, setLP] = useState("")
 
     function BaseSpot(spot, fun) {
         placeFromId(spot).then(res => fun(res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number))
@@ -192,6 +191,7 @@ export function UpdateScheduleForm(props) {
                 backgroundColor: "#FE434C",
                 borderColor: "transparent",
                 borderRadius: 20,
+                width:"300px",
                 height:"100px",
                 margin:"10px"
             }}>Modifier : {props.event.title}</Button>} position="right center" onClose={() => setWrongInput(false)}> 
@@ -203,7 +203,7 @@ export function UpdateScheduleForm(props) {
                             id="parking"
                             className="searchs-add"
                             options={optionsParking} 
-                            placeholder={BaseParking(infos.id_park, parkingsList)}
+                            placeholder={BaseParking(infos.parking, parkingsList)}
                             name="parking" 
                             isSearchable={false}
                             onChange={handleChangeSelect}
@@ -213,7 +213,7 @@ export function UpdateScheduleForm(props) {
                         <Select
                             isMulti
                             name="user"
-                            placeholder={BaseUser(infos.user, serviceList)}
+                            defaultValue={BaseUser(infos.user, serviceList)}
                             options={optionsService}
                             className="search-add-two "
                             onChange={handleChangeSelect}
