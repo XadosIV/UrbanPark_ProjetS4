@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
-import { CreationSchedule, placeFromId } from "../services"
+import { Button } from "@mui/material";
+import { UpdateSchedule, placeFromId, DeleteSchedule } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -11,7 +11,7 @@ import TAS from "../services/take_all_spots"
 import TP from "../services/take_parking";
 import TBR from "../services/take_by_role";
 
-export function NewScheduleForm() {
+export function UpdateScheduleForm(props) {
 
     /**
      * AllSpots
@@ -58,13 +58,73 @@ export function NewScheduleForm() {
         return opt
     }
 
+    /**
+     * BaseParking
+     * Returns a string corresponding to the base parking
+     *
+     * @param { integer } id_park - id of the parking
+     * @param { Array } list - List of parkings
+     * @return { string }
+     */
+    function BaseParking(id_park, list) {
+        for (let parking of list) {
+            if (parking.id == id_park) {      
+                return "Parking " + parking.name.toLowerCase();
+            }
+        }
+    }
+
+    /**
+     * BaseUser
+     * Returns a array corresponding to the base user being passed in a react select defaultValue
+     *
+     * @param { integer } id_user - id of the user
+     * @param { Array } list - List of users
+     * @return { Array }
+     */
+    function BaseUser(id_user, list) {
+        var opts=[]
+        if (!Array.isArray(id_user)) {
+            id_user = [id_user]
+        }
+        for (let user of list) {
+            for (let id of id_user) {
+                if (user.id == id) {
+                    for (let opt of optionsService) { 
+                        if (opt.value == user.id) {
+                            opts.push(opt);
+                        }
+                    }
+                }
+            }
+        }
+        return opts
+    }
+
+    /**
+     * BaseSpot
+     * Returns a array corresponding to the base spot being passed in a react select defaultValue
+     *
+     * @param { integer } spot - id of the spot
+     * @param { Array } list - List of options being passed in a react select
+     * @return { Array }
+     */
+    function BaseSpot(spot, list) {
+        var opts=[]
+        for (let s of list) {
+            if (s.value == spot) {
+                opts.push(s);
+            }
+        }
+        return opts
+    }
+
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
-    const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19), first_spot: 0, last_spot:0});
+    const [infos, setInfos] = useState({parking: props.event.idparking, user: props.event.user, date_start: props.event.d_st, date_end: props.event.d_en, first_spot: props.event.first_spot, last_spot:props.event.last_spot});
 
 	const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
-    const [spotsList, setSpotsList] = useState([])
 
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
@@ -73,8 +133,9 @@ export function NewScheduleForm() {
         var value = [];
         if (selectedOptions.value) {
             if (name.name == "parking") {
-                TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
-                setOptionsSpots(values => ({...values, change: true}))
+                TAS.TakeAllSpots(selectedOptions.value).then(res => {
+                    setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
+                })
             }
             value = selectedOptions.value
         } else {
@@ -88,37 +149,18 @@ export function NewScheduleForm() {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!Array.isArray(infos.user) || infos.user.length == 1) {
-            if (Array.isArray(infos.user)) {
-                infos.user = infos.user[0]
-            }
-            const res = await CreationSchedule(infos); 
-            console.log(res);
-            if (res.status === 200) {
-                setWrongInput(true);
-                if (infos.last_spot == infos.first_spot) {
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées  de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                        })
-                    })
-                }
-            } else {
-                setWrongInput(true);
-                setErrMessage(res.data.message);
-            }
-        } else {
-            var stock = infos.user;
+        if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
             var scheduleAdded = 0;
-            for (let user of stock) {
-                infos.user = user;
-                const res = await CreationSchedule(infos); 
-                console.log(res);
+            let stock = infos.user
+            for (let i=0; i<props.event.user.length; i++) {
+                var fun;
+                infos.user = stock[i]
+                if (props.event.user.includes(stock[i])) {
+                    fun = UpdateSchedule(infos, props.event.id_schedule[i]);
+                } else {
+                    fun = DeleteSchedule(props.event.id_schedule[i]);
+                }
+                const res = await fun
                 if (res.status === 200) {
                     scheduleAdded++;
                 } else {
@@ -127,38 +169,42 @@ export function NewScheduleForm() {
                     break;
                 }
             }
-            if (scheduleAdded == stock.length) {
+            if (scheduleAdded == props.event.user.length) {
                 if (infos.last_spot == infos.first_spot) {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
+                        setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + " bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                     })
                 } else {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées")
+                            setErrMessage("Places " + res.data.id_park + res.data.floor + "-" + res.data.number + " à " + res2.data.id_park + res2.data.floor + "-" + res2.data.number + " bloquées pour être nettoyées de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                         })
                     })
                 }
             }
-    
+        } else {
+            setWrongInput(true);
+            setErrMessage("Vous n'avez rien modifié");
         }
-	}
+    }
 
     var optionsService = AllServices(serviceList)
     var optionsParking = AllParkings(parkingsList)
 
     useEffect(() => {
-        TP.TakeParking().then(res => {
-            setParkingsList(res);
-            TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
+        TP.TakeParking().then(res => setParkingsList(res));
+        TAS.TakeAllSpots(infos.parking).then(res => {
+            setOptionsSpots({opts:AllSpots(res), change:false});
         });
-        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res));
     }, [])
 
     useEffect(() => {
-        setOptionsSpots({opts:AllSpots(spotsList), change:false})
+        TAS.TakeAllSpots(infos.parking).then(res => {
+            setOptionsSpots({opts:AllSpots(res), change:false})
+        })
     }, [optionsSpots.change])
 
     return (
@@ -167,20 +213,19 @@ export function NewScheduleForm() {
                 backgroundColor: "#FE434C",
                 borderColor: "transparent",
                 borderRadius: 20,
-                width: "16%",
-                marginLeft: "42%",
+                width:"300px",
                 height:"100px",
-                marginBottom:"100px"
-            }}>Ajouter des créneaux de travail</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+                margin:"10px 0 0 170px"
+            }}>Modifier : {props.event.title}</Button>} position="right center" onClose={() => setWrongInput(false)}> 
             <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
+                <h3 style={{textAlign:"center"}}>Modification du créneau :</h3>
                 <form onSubmit={handlleSubmit} className="form">   
                     <div style={{zIndex:1007}}>   
                         <Select 
                             id="parking"
                             className="searchs-add"
                             options={optionsParking} 
-                            placeholder="Choisir un parking..."
+                            placeholder={BaseParking(infos.parking, parkingsList)}
                             name="parking" 
                             isSearchable={false}
                             onChange={handleChangeSelect}
@@ -190,7 +235,7 @@ export function NewScheduleForm() {
                         <Select
                             isMulti
                             name="user"
-                            placeholder="Assigner à..."
+                            defaultValue={BaseUser(infos.user, serviceList)}
                             options={optionsService}
                             className="search-add-two "
                             onChange={handleChangeSelect}
@@ -202,7 +247,7 @@ export function NewScheduleForm() {
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                             size="small"
                             id="first_spot"
-                            label="Numéro"
+                            defaultValue={BaseSpot(infos.first_spot, optionsSpots.opts)}
                             type="text"
                             name="first_spot"
                             className="search"
@@ -214,7 +259,7 @@ export function NewScheduleForm() {
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                             size="small"
                             id="last_spot"
-                            label="Numéro"
+                            defaultValue={BaseSpot(infos.last_spot, optionsSpots.opts)}
                             type="text"
                             name="last_spot"
                             className="search"
@@ -243,7 +288,7 @@ export function NewScheduleForm() {
                         variant="contained" 
                         color="primary" 
                         type="submit"
-                    >Ajouter</Button>
+                    >Modifier</Button>
                 </form>
                 { wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
             </div>
