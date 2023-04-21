@@ -58,6 +58,67 @@ export function UpdateScheduleForm(props) {
         return opt
     }
 
+    /**
+     * BaseParking
+     * Returns a string corresponding to the base parking
+     *
+     * @param { integer } id_park - id of the parking
+     * @param { Array } list - List of parkings
+     * @return { string }
+     */
+    function BaseParking(id_park, list) {
+        for (let parking of list) {
+            if (parking.id == id_park) {      
+                return "Parking " + parking.name.toLowerCase();
+            }
+        }
+    }
+
+    /**
+     * BaseUser
+     * Returns a array corresponding to the base user being passed in a react select defaultValue
+     *
+     * @param { integer } id_user - id of the user
+     * @param { Array } list - List of users
+     * @return { Array }
+     */
+    function BaseUser(id_user, list) {
+        var opts=[]
+        if (!Array.isArray(id_user)) {
+            id_user = [id_user]
+        }
+        for (let user of list) {
+            for (let id of id_user) {
+                if (user.id == id) {
+                    for (let opt of optionsService) { 
+                        if (opt.value == user.id) {
+                            opts.push(opt);
+                        }
+                    }
+                }
+            }
+        }
+        return opts
+    }
+
+    /**
+     * BaseSpot
+     * Returns a array corresponding to the base spot being passed in a react select defaultValue
+     *
+     * @param { integer } spot - id of the spot
+     * @param { Array } list - List of options being passed in a react select
+     * @return { Array }
+     */
+    function BaseSpot(spot, list) {
+        var opts=[]
+        for (let s of list) {
+            if (s.value == spot) {
+                opts.push(s);
+            }
+        }
+        return opts
+    }
+
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
     const [infos, setInfos] = useState({parking: props.event.idparking, user: props.event.user, date_start: props.event.d_st, date_end: props.event.d_en, first_spot: props.event.first_spot, last_spot:props.event.last_spot});
@@ -145,43 +206,6 @@ export function UpdateScheduleForm(props) {
             setOptionsSpots({opts:AllSpots(res), change:false})
         })
     }, [optionsSpots.change])
-
-    function BaseParking(id_park, list) {
-        for (let parking of list) {
-            if (parking.id == id_park) {      
-                return "Parking " + parking.name.toLowerCase();
-            }
-        }
-    }
-
-    function BaseUser(id_user, list) {
-        var opts=[]
-        if (!Array.isArray(id_user)) {
-            id_user = [id_user]
-        }
-        for (let user of list) {
-            for (let id of id_user) {
-                if (user.id == id) {
-                    for (let opt of optionsService) { 
-                        if (opt.value == user.id) {
-                            opts.push(opt);
-                        }
-                    }
-                }
-            }
-        }
-        return opts
-    }
-
-    function BaseSpot(spot, list) {
-        var opts=[]
-        for (let s of list) {
-            if (s.value == spot) {
-                opts.push(s);
-            }
-        }
-        return opts
-    }
 
     return (
         <Popup trigger={<Button variant="contained" color="primary" 
