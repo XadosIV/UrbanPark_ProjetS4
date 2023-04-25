@@ -25,7 +25,7 @@ export function ViewAgenda (props){
 
 			let startTitle = "";
 
-			if (role == "Gardien"){
+			if (role === "Gardien"){
 				startTitle = "Gardiennage ";
 			}
 			else {
@@ -125,7 +125,7 @@ export function ViewAgenda (props){
 
 	const ButtonUpdateSchedule = () => {
 		return (
-		    <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
+		    <div className={`modal-${modalState === true ? 'show' : 'hide'}`}>
 				<UpdateScheduleForm event={selectedEvent}/>
 		    </div>
 		)
