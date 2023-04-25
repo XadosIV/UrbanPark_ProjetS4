@@ -1,3 +1,9 @@
+exports.SendError = (name, message, callback) => {
+    let error = new Error(message);
+    error.code = name;
+    callback(error, null);
+}
+
 exports.E_INTERNAL_ERROR													="E_INTERNAL_ERROR";
 exports.E_EMAIL_ALREADY_USED												="E_EMAIL_ALREADY_USED";
 exports.E_EMAIL_FORMAT_INVALID												="E_EMAIL_FORMAT_INVALID";
