@@ -68,7 +68,7 @@ export function UpdateScheduleForm(props) {
      */
     function BaseParking(id_park, list) {
         for (let parking of list) {
-            if (parking.id == id_park) {      
+            if (parking.id === id_park) {      
                 return "Parking " + parking.name.toLowerCase();
             }
         }
@@ -89,9 +89,9 @@ export function UpdateScheduleForm(props) {
         }
         for (let user of list) {
             for (let id of id_user) {
-                if (user.id == id) {
+                if (user.id === id) {
                     for (let opt of optionsService) { 
-                        if (opt.value == user.id) {
+                        if (opt.value === user.id) {
                             opts.push(opt);
                         }
                     }
@@ -112,7 +112,7 @@ export function UpdateScheduleForm(props) {
     function BaseSpot(spot, list) {
         var opts=[]
         for (let s of list) {
-            if (s.value == spot) {
+            if (s.value === spot) {
                 opts.push(s);
             }
         }
@@ -132,7 +132,7 @@ export function UpdateScheduleForm(props) {
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
-            if (name.name == "parking") {
+            if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => {
                     setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
                 })
@@ -149,7 +149,7 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
+        if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
             var scheduleAdded = 0;
             let stock = infos.user
             for (let i=0; i<props.event.user.length; i++) {
@@ -169,8 +169,8 @@ export function UpdateScheduleForm(props) {
                     break;
                 }
             }
-            if (scheduleAdded == props.event.user.length) {
-                if (infos.last_spot == infos.first_spot) {
+            if (scheduleAdded === props.event.user.length) {
+                if (infos.last_spot === infos.first_spot) {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + " bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))

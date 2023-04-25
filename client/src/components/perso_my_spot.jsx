@@ -33,11 +33,11 @@ export function PersoMySpot(){
 
     useEffect(() => {
         async function fetchParking() {
-            if(maPlace.id_park !== ""){
-                //console.log("idP", maPlace);
+            if(maPlace){
+                console.log("idP", maPlace);
                 const resParking = await TP.TakeParking(maPlace.id_park);
+                console.log("parking", resParking)
                 setParkPlace(resParking[0]);
-                //console.log("parking", resParking[0])
             }
         }
         fetchParking();
@@ -49,13 +49,13 @@ export function PersoMySpot(){
                 if(infosUser.id_spot_temp == null){
                     setIsPlaceTemp(false);
                     const resMaPlace = await placeFromId(infosUser.id_spot);
-                    setMaPlace(resMaPlace.data[0]);
-                    //console.log("place", resMaPlace.data[0]);
+                    console.log("place", resMaPlace);
+                    setMaPlace(resMaPlace);
                 }else{
                     setIsPlaceTemp(true);
                     const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
-                    setMaPlace(resMaPlaceTemp.data[0]);
-                    //console.log("place_temp", resMaPlaceTemp.data[0]);
+                    console.log("place_temp", resMaPlaceTemp);
+                    setMaPlace(resMaPlaceTemp);
                 }
             }
         }
@@ -65,14 +65,14 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
+            console.log("user", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
-            //console.log("user", resInfosUser.data[0])
         }
         fetchUserInfos();
     }, [userToken]);
 
     const affSpotName = () => {
-        if(maPlace.id_park && maPlace.floor && maPlace.number){
+        if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
             return SpotName(maPlace);
         }else{
             return "Place Indisponible";
