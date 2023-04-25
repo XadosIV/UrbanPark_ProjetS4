@@ -49,12 +49,12 @@ export function PersoMySpot(){
                 if(infosUser.id_spot_temp == null){
                     setIsPlaceTemp(false);
                     const resMaPlace = await placeFromId(infosUser.id_spot);
-                    console.log("place", resMaPlace);
+                    //console.log("place", resMaPlace);
                     setMaPlace(resMaPlace);
                 }else{
                     setIsPlaceTemp(true);
                     const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
-                    console.log("place_temp", resMaPlaceTemp);
+                    //console.log("place_temp", resMaPlaceTemp);
                     setMaPlace(resMaPlaceTemp);
                 }
             }
@@ -65,7 +65,7 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            console.log("user", resInfosUser)
+            //console.log("user", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
         }
         fetchUserInfos();
