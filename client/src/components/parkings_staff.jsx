@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import { ParkingList } from "./parking_list";
 import { Button } from "@mui/material";
+import TP from "../services/take_parking"
 
-export function ParkingsStaff() {
+export function ParkingsStaff({admin}) {
 
 	const [parkingsList, setParkingsList] = useState([]);
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/parkings").then((res) => 
-			setParkingsList(res.data)
-		)}, []);
+		TP.TakeParking().then(res => {setParkingsList(res);})
+	}, []);
 
 	return (<div>
             <div className="title-parkings">
@@ -19,10 +18,11 @@ export function ParkingsStaff() {
 			<div className="parking-list">
 				{
 					parkingsList.map((parking, index) => (
-						<ParkingList key={index} parking={parking}/>
+						<ParkingList key={index} parking={parking} button={true}/>
 					))
 				}
 			</div>
+			{ admin &&
 			<Button variant="contained" color="primary" 
 			style={{
 				backgroundColor: "#FE434C",
@@ -31,6 +31,6 @@ export function ParkingsStaff() {
 				width: 250,
 				float:"right",
 				height:"120%"
-			}}>Ajouter un parking</Button>	
+			}}>Ajouter un parking</Button>}
 		</div>)
 }

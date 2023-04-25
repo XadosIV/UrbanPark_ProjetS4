@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { ViewAgenda } from "./"
 
 export function StaffPreview(list) {
+	const[agenda, SetAgenda] = useState(0);
 
     const filteredData = list.list.filter((el) => {
         //if no input the return the original
@@ -34,21 +36,25 @@ export function StaffPreview(list) {
 
 	return (
         <ul className="staff-list">
-            {filteredData.map((staff) => (
-                <li>
+        {filteredData.map((staff, index) => (
+            <li key={index}>
+                <div style={{display:"flex", alignItems:"center", flexDirection:"row"}}>
                     <div className="staff-infos">
-                        <div>
-                            <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>
-                            <p>{staff.role} - {Working(staff.id)}</p>
-                        </div>                       
+                    <div>
+                        <h3>{staff.first_name} {staff.last_name} - {staff.email}</h3>
+                        <p>{staff.role} - {Working(staff.id)}</p>
+                    </div>                       
                     </div>
-                    
-                    <div className="button-schedule">
-                        <Link to={`/${staff.id}/schedule`} style={{textDecoration:"none"}}>
-                            <Button variant="contained" color="primary">Voir l'emploi du temps</Button>
-                        </Link>
+
+                    <div className="button-schedule" style={{marginLeft:"30px"}}>
+                    <Button variant="contained" color="primary" onClick={()=>agenda == staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
                     </div>
-                </li>))}
-		</ul>
+                </div>
+                <div>
+                    {agenda == staff.id && <ViewAgenda props={{user:staff.id}}/>}
+                </div>
+            </li>))
+        }
+        </ul>
     )
 }

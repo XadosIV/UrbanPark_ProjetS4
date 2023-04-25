@@ -85,7 +85,7 @@ export function App() {
 					<Link to="/">
 						<Typography variant="h3">Logo</Typography>
 					</Link>
-					<Link to="/authentication">
+					<Link to="/perso">
 						<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
 					</Link>
 				</Stack>

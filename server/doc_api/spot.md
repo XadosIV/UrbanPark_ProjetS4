@@ -6,8 +6,12 @@
 	"id":1,
 	"number":3,
 	"floor":0,
-	"id_parking":"h",
+	"id_park":"h",
 	"id_user":1,
+	"first_name":"Honoré",
+	"last_name":"Eronoh",
+	"first_name_temp":"Jean",
+	"last_name_temp":"Neaj",
 	"types":[ // See : Ressources - Type
 		1,
 		3
@@ -19,7 +23,7 @@
 * * *
 * * *
 
-# GET /api/spot
+# GET /api/spots
 > Permission requise : X
 
 > Description : Renvoie une, plusieurs ou toutes les places selon certains filtres.
@@ -35,9 +39,10 @@
 | type | Le type de place. | false |
 #### **Erreurs**
 Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
+
 * * *
 * * *
-# POST /api/spot
+# POST /api/spots
 > Permission requise : X
 
 > Description : Crée/Ajoute une place à la base de donnée.
@@ -55,6 +60,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | Nom | Cause |
 | --- | ----- |
 | E_MISSING_PARAMETER | Tout les paramètres n'ont pas été donné. |
+
 * * *
 * * *
 
@@ -113,5 +119,6 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | E_MISSING_PARAMETER | Au moins un paramètre est nécessaire. |
 | E_SPOT_EXISTING_TYPE | Le type à ajouter appartient déjà à la place |
 | E_SPOT_NOT_EXISTING_TYPE | Le type à supprimer de la place n'est pas attribué à celle-ci. |
+
 * * *
 * * *

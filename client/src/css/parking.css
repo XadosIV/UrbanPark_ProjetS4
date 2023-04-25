@@ -1,0 +1,174 @@
+.button-places {
+	display:flex;
+	flex-direction:column;
+	text-align:center;
+}
+
+.title-parking {
+	color:red;
+	text-decoration: underline;
+	text-align:center;
+}
+
+.parking-item {
+	display: flex;
+	flex-direction:row;
+	flex-basis: calc(42%);  
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	background-color:#FFF8DC;
+	border-radius:50px;
+	justify-content:space-between;
+	align-items:center;
+}
+
+.parking-item p {
+	color:black;
+}
+
+.all-spots {
+	display: flex;                       /* establish flex container */
+	flex-wrap: wrap;                     /* enable flex items to wrap */
+}
+
+.spot {
+	flex:0 0 12%; 
+	height: 100px; 
+	margin-bottom: 5px; 
+	margin-right:0.5%; 
+	text-align:center;
+}
+
+  /* The container <div> - needed to position the dropdown content */
+.dp {
+	position: relative;
+	display: inline-block;
+}
+  
+  /* Dropdown Content (Hidden by Default) */
+.dp-content {
+	display: none;
+	position: absolute;
+	background-color: #f9f9f9;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+	width:160px;
+	vertical-align:middle;
+	padding:6px 20px 6px 20px;
+}
+  
+  /* Texts inside the dropdown */
+.dp-content a, .dp-content p {
+	color: black;
+	display: block;
+}
+  
+  /* Change color of dropdown links on hover */
+.dp-content a:hover {background-color: #f1f1f1}
+  
+  /* Show the dropdown menu on hover */
+.dp:hover .dp-content {
+	display: block;
+}
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+.dp:hover .dropbtn {
+	background-color: #3e8e41;
+}
+
+#no-hover {
+	margin-bottom:10px;
+}
+
+#no-hover:hover {
+	background-color:#f9f9f9;
+}
+
+.all-searchs {
+	display: grid;
+	flex-direction:column; 
+	width:630px;
+	height:130px;
+	justify-content:space-between;
+	grid-template-columns: repeat(3,150px);  /* 3 columns */
+	grid-template-rows: repeat(2,50px); /* 2 rows  */
+	grid-gap:10px 10px; /* 50 pixels of space added between rows and 30 pixels added between columns  */
+}
+
+.search, .front-search {
+	visibility: visible;
+	width:200px;
+	margin-bottom: 10px;
+}
+
+.search-second, .front-search-second {
+	width:200px;
+	margin-bottom: 10px;
+}
+
+.front-search-second {
+	z-index:1000;
+}
+
+.front-search-second-add, .front-search-floor {
+	width:300px;
+	margin-bottom: 10px;
+	z-index:1000;
+}
+
+.front-search, .front-search-floor {
+	z-index:1001;
+}
+
+.popup-content {
+	display:flex;
+	flex-direction:row;
+	margin: auto;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	padding: 5px;
+	min-width:450px;
+	justify-content: center;
+	border-radius:10px;
+}
+
+.popup-arrow {
+	color: rgb(255, 255, 255);
+}
+  
+.popup-overlay {
+	background: rgba(0, 0, 0, 0.5);
+	background: transparent;
+}
+
+.inputs-divs {
+    display: flex;
+    flex-direction: column;
+	justify-content: center;
+}
+
+.err-message {
+    color: red;
+	text-align: center;
+}
+
+.numeros, .numeros-two {
+	display: flex;
+	flex-direction: row;
+}
+
+.numeros-two {
+	display:none;
+}
+
+.searchs-add, .search-add-two {
+	display: flex;
+	flex-direction: row;
+	align-self:center;
+	margin-bottom:10px;
+	z-index:1001;
+}
+
+.search-add-two {
+	z-index:1000;
+}
