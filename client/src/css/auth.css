@@ -18,7 +18,7 @@
     align-content: space-evenly;
 }
 
-.inputs_divs {
+.inputs-divs {
     display: flex;
     flex-direction: column;
 }

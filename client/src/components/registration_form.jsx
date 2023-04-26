@@ -62,7 +62,7 @@ export function RegistrationForm(props) {
 
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
-			<div className="inputs_divs">
+			<div className="inputs-divs">
                 <TextField
 					required
 					id="email"

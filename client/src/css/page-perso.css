@@ -53,6 +53,14 @@
 	align-items: center;
 }
 
+.p-form-title{
+	align-self: top;
+}
+
+.form-modif-infos{
+	width: 100%;
+}
+
 .div-UI{
 	border:solid;
 	border-radius: 20px;
@@ -75,7 +83,20 @@
 
 .inputs_divs {
     display: flex;
-    flex-direction: column;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.input-div{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.input-div>*{
+	margin: 5%;
 }
 
 .form>* {
@@ -85,7 +106,12 @@
 .inputs_divs>* {
     margin: 5%;
 }
+
 .msg-place-temp{
+	color: red;
+}
+
+.err-input{
 	color: red;
 }
 

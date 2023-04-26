@@ -16,6 +16,8 @@ export function PersonalInfos(){
     });
     const [ newInfos, setNewInfos ] = useState({});
     const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
+    const [ errInput, setErrInput ] = useState(false);
+    const [ errMessage, setErrMessage ] = useState("");
 
     useEffect(() => {
         async function fetchUserInfos() {
@@ -61,69 +63,93 @@ export function PersonalInfos(){
             > modifier mes informations </Button>
             </div>
         </div>
-        <div className="div-info-user" style={ /*affFormModifInfo*/ false ? {  } : { display: "none" }} >
+        <div className="div-info-user" style={ affFormModifInfo ? {  } : { display: "none" }} >
             <div className="form-modif-infos">
             { affFormModifInfo && 
                 // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
                 <form  onSubmit={ handlleSubmit }>
                     <div className="inputs_divs">
-                    <TextField
-                        id="email"
-                        label="email"
-                        type="text"
-                        name="email"
-                        defaultValue={infosUser.email}
-                        onChange={ handleChange }
-                    />
-                    <TextField
-                        id="first_name"
-                        label="first_name"
-                        type="text"
-                        name="first_name"
-                        defaultValue={infosUser.first_name}
-                        onChange={ handleChange }
-                    />
-                    <TextField
-                        id="last_name"
-                        label="last_name"
-                        type="text"
-                        name="last_name"
-                        defaultValue={infosUser.last_name}
-                        onChange={ handleChange }
-                    />
-                    <TextField
-                        id="new_password"
-                        label="nouveau mot de passe"
-                        type="password"
-                        name="new_password"
-                        onPaste={ noPaste }
-                        onChange={ handleChange }
-                    />
-                    <TextField
-                        id="new_password_conf"
-                        label="confirmation du nouveau mot de passe"
-                        type="password"
-                        name="new_password_conf"
-                        onPaste={ noPaste }
-                        onChange={ handleChange }
-                    />
-                    <TextField
-                        required
-                        id="password"
-                        label="mot de passe"
-                        type="password"
-                        name="password"
-                        onPaste={ noPaste }
-                        onChange={ handleChange }
-				    />
+                        <div className="input-div">
+                            <p className="p-form-title">Changer mes informations</p>
+                            <TextField
+                                id="email"
+                                label="email"
+                                type="text"
+                                name="email"
+                                defaultValue={infosUser.email}
+                                onChange={ handleChange }
+                            />
+                            <TextField
+                                id="first_name"
+                                label="first_name"
+                                type="text"
+                                name="first_name"
+                                defaultValue={infosUser.first_name}
+                                onChange={ handleChange }
+                            />
+                            <TextField
+                                id="last_name"
+                                label="last_name"
+                                type="text"
+                                name="last_name"
+                                defaultValue={infosUser.last_name}
+                                onChange={ handleChange }
+                            />
+                            <TextField
+                                required
+                                id="password"
+                                label="mot de passe"
+                                type="password"
+                                name="password"
+                                onPaste={ noPaste }
+                                onChange={ handleChange }
+                            />
+                            <Button 
+                                className="submit_button"
+                                variant="contained" 
+                                color="primary" 
+                                type="submit"
+                            >valider les changements</Button>
+                        </div>
+                        <div className="input-div">
+                            <p className="p-form-title">changer mon mot de passe</p>
+                            <TextField
+                                id="new_password"
+                                label="nouveau mot de passe"
+                                type="password"
+                                name="new_password"
+                                onPaste={ noPaste }
+                                onChange={ handleChange }
+                            />
+                            <TextField
+                                id="new_password_conf"
+                                label="confirmation du nouveau mot de passe"
+                                type="password"
+                                name="new_password_conf"
+                                onPaste={ noPaste }
+                                onChange={ handleChange }
+                            />
+                            <TextField
+                                required
+                                id="password"
+                                label="mot de passe"
+                                type="password"
+                                name="password"
+                                onPaste={ noPaste }
+                                onChange={ handleChange }
+                            />
+                            <Button 
+                                className="submit_button"
+                                variant="contained" 
+                                color="primary" 
+                                type="submit"
+                            >modifier mon mot de passe</Button>
+                        </div>
                     </div>
-                    <Button 
-                        className="submit_button"
-                        variant="contained" 
-                        color="primary" 
-                        type="submit"
-                    >valider les changements</Button>
                 </form>
+            }
+            {   errInput &&
+                <p className="err-input"> { errMessage } </p>
             }
             </div>
         </div>

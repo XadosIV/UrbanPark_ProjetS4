@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { AdminPage } from "../page";
 import { Button } from "@mui/material";
-import { ScheduleGuardian, ScheduleService } from "../components";
+import { ScheduleGuardian, ScheduleService, AdminPage } from "../components";
 
 export function PersoAdmin(){
     const [ affEdtGardien, setAffEdtGardien ] = useState(false);
