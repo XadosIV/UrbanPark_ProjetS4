@@ -70,8 +70,10 @@ function UpdateUser(callback, infos){
 	let checkNewTokenNeeded = () => {
 		// Fonction envoyant la reqûete sql
 		let sqlRequest = (err, token) => {
-			if (err) callback(err, {});
-		
+			if (err) {
+				callback(err, {});
+				return;
+			}
 			// if token generated, add it to infos
 			if (token) infos.token = token;
 		
@@ -103,7 +105,7 @@ function UpdateUser(callback, infos){
 			const {GenerateNewToken} = require('./auth');
 			GenerateNewToken(sqlRequest)
 		}else{
-			sqlRequest({}, null)
+			sqlRequest(null, null)
 		}
 	}
 
