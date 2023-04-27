@@ -34,9 +34,9 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchParking() {
             if(maPlace){
-                console.log("idP", maPlace);
+                // console.log("idP", maPlace);
                 const resParking = await TP.TakeParking(maPlace.id_park);
-                console.log("parking", resParking)
+                // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
             }
         }

@@ -1,4 +1,5 @@
 const {dbConnection, dbName} = require('../database');
+const { hasPermission } = require('./auth');
 const Errors = require('../errors');
 
 /**
@@ -42,9 +43,19 @@ function DeleteUser(callback, id){
  * Update user's information matching parameters
  * 
  * @param {function(*,*)} callback (err, data)
- * @param {object} infos {id, first_name, last_name, email, password, role, id_spot, id_spot_temp}
+ * @param {object} infos {id*, token*, first_name, last_name, email, password, role, id_spot, id_spot_temp}
+ * <>* -> required
  */
 function UpdateUser(callback, infos){
+
+	//Verification param required
+	if(!(infos.id) || !(infos.token)){
+		let errorCode = Errors.E_MISSING_PARAMETER;
+		let error = new Error(errorCode);
+		error.code = errorCode;
+		callback(error,{});
+		return;
+	}
 
 	//Verification syntaxe
 	if (infos.email){

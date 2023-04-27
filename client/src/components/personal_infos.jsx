@@ -15,6 +15,7 @@ export function PersonalInfos(){
         role: "",
     });
     const [ newInfos, setNewInfos ] = useState({});
+    const [ newMdp, setNewMdp ] = useState({});
     const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
     const [ errInput, setErrInput ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
@@ -24,6 +25,13 @@ export function PersonalInfos(){
             const resInfosUser = await userFromToken(userToken);
             setInfosUser(resInfosUser.data[0]);
             //console.log("user", resInfosUser.data[0])
+            const tmpUserInfos = {
+                email: resInfosUser.data[0].email,
+                first_name: resInfosUser.data[0].first_name,
+                last_name: resInfosUser.data[0].last_name
+            };
+            // console.log("tmpUserInfos", tmpUserInfos);
+            setNewInfos(tmpUserInfos);
         }
         fetchUserInfos();
     }, [userToken]);
@@ -33,15 +41,22 @@ export function PersonalInfos(){
 		return false;
 	}
 
-    const handleChange = (event) => {
+    const handleChangeInfos = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setNewInfos(values => ({...values, [name]: value}))
     }
+    const handleChangeMdp = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setNewMdp(values => ({...values, [name]: value}))
+    }
 
     const handlleSubmit = (e) => {
         e.preventDefault();
-        console.log(newInfos);
+        console.log("userInfos", newInfos);
+        console.log("newMdp", newMdp);
+        console.log(e.target.name);
     }
 
     return(<div>
@@ -67,8 +82,8 @@ export function PersonalInfos(){
             <div className="form-modif-infos">
             { affFormModifInfo && 
                 // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
-                <form  onSubmit={ handlleSubmit }>
-                    <div className="inputs_divs">
+                <div className="inputs_divs">
+                <form  onSubmit={ handlleSubmit } name="form-modif-infos">
                         <div className="input-div">
                             <p className="p-form-title">Changer mes informations</p>
                             <TextField
@@ -77,7 +92,7 @@ export function PersonalInfos(){
                                 type="text"
                                 name="email"
                                 defaultValue={infosUser.email}
-                                onChange={ handleChange }
+                                onChange={ handleChangeInfos }
                             />
                             <TextField
                                 id="first_name"
@@ -85,7 +100,7 @@ export function PersonalInfos(){
                                 type="text"
                                 name="first_name"
                                 defaultValue={infosUser.first_name}
-                                onChange={ handleChange }
+                                onChange={ handleChangeInfos }
                             />
                             <TextField
                                 id="last_name"
@@ -93,7 +108,7 @@ export function PersonalInfos(){
                                 type="text"
                                 name="last_name"
                                 defaultValue={infosUser.last_name}
-                                onChange={ handleChange }
+                                onChange={ handleChangeInfos }
                             />
                             <TextField
                                 required
@@ -102,7 +117,7 @@ export function PersonalInfos(){
                                 type="password"
                                 name="password"
                                 onPaste={ noPaste }
-                                onChange={ handleChange }
+                                onChange={ handleChangeInfos }
                             />
                             <Button 
                                 className="submit_button"
@@ -111,42 +126,46 @@ export function PersonalInfos(){
                                 type="submit"
                             >valider les changements</Button>
                         </div>
-                        <div className="input-div">
-                            <p className="p-form-title">changer mon mot de passe</p>
-                            <TextField
-                                id="new_password"
-                                label="nouveau mot de passe"
-                                type="password"
-                                name="new_password"
-                                onPaste={ noPaste }
-                                onChange={ handleChange }
-                            />
-                            <TextField
-                                id="new_password_conf"
-                                label="confirmation du nouveau mot de passe"
-                                type="password"
-                                name="new_password_conf"
-                                onPaste={ noPaste }
-                                onChange={ handleChange }
-                            />
-                            <TextField
-                                required
-                                id="password"
-                                label="mot de passe"
-                                type="password"
-                                name="password"
-                                onPaste={ noPaste }
-                                onChange={ handleChange }
-                            />
-                            <Button 
-                                className="submit_button"
-                                variant="contained" 
-                                color="primary" 
-                                type="submit"
-                            >modifier mon mot de passe</Button>
-                        </div>
+                </form>
+                <form onSubmit={ handlleSubmit } name="form-modif-mdp">
+                <div className="input-div">
+                    <p className="p-form-title">changer mon mot de passe</p>
+                    <TextField
+                        required
+                        id="new_password"
+                        label="nouveau mot de passe"
+                        type="password"
+                        name="new_password"
+                        onPaste={ noPaste }
+                        onChange={ handleChangeMdp }
+                    />
+                    <TextField
+                        required
+                        id="new_password_conf"
+                        label="confirmation du nouveau mot de passe"
+                        type="password"
+                        name="new_password_conf"
+                        onPaste={ noPaste }
+                        onChange={ handleChangeMdp }
+                    />
+                    <TextField
+                        required
+                        id="password"
+                        label="mot de passe"
+                        type="password"
+                        name="password"
+                        onPaste={ noPaste }
+                        onChange={ handleChangeMdp }
+                    />
+                    <Button 
+                        className="submit_button"
+                        variant="contained" 
+                        color="primary" 
+                        type="submit"
+                    >modifier mon mot de passe</Button>
                     </div>
                 </form>
+                </div>
             }
             {   errInput &&
                 <p className="err-input"> { errMessage } </p>
