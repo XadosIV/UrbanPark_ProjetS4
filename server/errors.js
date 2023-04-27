@@ -1,7 +1,22 @@
-exports.SendError = (name, message, callback) => {
+exports.SendError = (name, message, callback, httpCode=400) => {
     let error = new Error(message);
     error.code = name;
+    error.httpCode = httpCode;
     callback(error, null);
+}
+
+exports.HandleError = (error, res) => {
+    if (error.httpCode){
+        res.status(error.httpCode).json({
+            "code":error.code,
+            "message":error.message
+        })
+    }else{
+        res.status(500).json({
+            "code":this.E_INTERNAL_ERROR,
+            "message":"Une erreur est survenue."
+        })
+    }
 }
 
 exports.E_INTERNAL_ERROR													="E_INTERNAL_ERROR";
