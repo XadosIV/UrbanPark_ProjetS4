@@ -196,7 +196,7 @@ app.get('/api/spots', (req, res) => {
 	}, req.query);
 });
 
-app.get('/api/spot/:spot', (req, res) => {
+app.get('/api/spots/:spot', (req, res) => {
 	console.log("Request at GET /api/spot/:spot : " + JSON.stringify(req.query));
 	if (parseInt(req.params.spot)){
 		GetSpots((err, data) => {
