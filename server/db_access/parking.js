@@ -18,6 +18,7 @@ function GetParkings(callback, infos){
 }
 
 /**
+ * PostParking
  * 
  * @param {object} infos {id, name, floor, address} 
  * @param {function(*,*)} callback 
