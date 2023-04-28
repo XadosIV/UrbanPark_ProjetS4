@@ -249,7 +249,7 @@ app.delete('/api/spot/:id', (req, res) => {
 				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 			}
 			else {
-				res.status(200).json(data);
+				res.status(200).json();
 			}
 		}, parseInt(req.params.id))
 	}else{
