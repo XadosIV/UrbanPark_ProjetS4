@@ -532,8 +532,15 @@ function DeleteSchedule(callback, id){
 	}, callback);
 }
 
+/**
+ * AdaptSchedule
+ * Adapt a schedule for the place suppression
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {int} id
+ */
 function AdaptSchedule(callback, id){
-	sql = `SELECT * FROM ${dbName}.Schedule WHERE first_spot=:id`;
+	sql = `SELECT id, first_spot, last_spot FROM ${dbName}.Schedule WHERE first_spot=:id`;
 	dbConnection.query(sql, {
 		id:id
 	}, (err, data) => {
@@ -547,7 +554,7 @@ function AdaptSchedule(callback, id){
 					callback(err, res);
 				}
 				else {
-					sql = `SELECT * FROM ${dbName}.Schedule WHERE last_spot=:id`;
+					sql = `SELECT id, first_spot, last_spot FROM ${dbName}.Schedule WHERE last_spot=:id`;
 					dbConnection.query(sql, {
 						id:id
 					}, (err, data) => {
@@ -569,6 +576,13 @@ function AdaptSchedule(callback, id){
 	});
 }
 
+/**
+ * AdaptScheduleStart
+ * Adapt a schedule for the first place suppression
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} fdata {id, first_spot, last_spot}
+ */
 function AdaptScheduleStart(callback, fdata){
 	if (fdata.length == 0){
 		callback(null, {})
@@ -639,6 +653,13 @@ function AdaptScheduleStart(callback, fdata){
 	}
 }
 
+/**
+ * AdaptScheduleEnd
+ * Adapt a schedule for the last place suppression
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} fdata {id, first_spot, last_spot}
+ */
 function AdaptScheduleEnd(callback, fdata){
 	if (fdata.length == 0){
 		callback(null, {})

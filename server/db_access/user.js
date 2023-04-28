@@ -212,6 +212,13 @@ function PostUser(callback, infos){
 	}
 }
 
+/**
+ * RemoveSpotUsers
+ * Remove the place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {int} id
+ */
 function RemoveSpotUsers(callback, id){
 	sql = `SELECT id FROM ${dbName}.User WHERE id_spot=:id`;
 	dbConnection.query(sql, {
@@ -240,6 +247,13 @@ function RemoveSpotUsers(callback, id){
 	});
 }
 
+/**
+ * RemoveSpotUserPrinc
+ * Remove the place place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} infos {id}
+ */
 function RemoveSpotUserPrinc(callback, infos){
 	if (infos.length > 0){
 		sql = `UPDATE ${dbName}.User SET id_spot=NULL WHERE id=:id`;
@@ -266,6 +280,13 @@ function RemoveSpotUserPrinc(callback, infos){
 	}
 }
 
+/**
+ * RemoveSpotUserTemp
+ * Remove the temp place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} infos {id}
+ */
 function RemoveSpotUserTemp(callback, infos){
 	if (infos.length > 0){
 		sql = `UPDATE ${dbName}.User SET id_spot_temp=NULL WHERE id=:id`;
