@@ -531,5 +531,110 @@ function DeleteSchedule(callback, id){
 	}, callback);
 }
 
+function AdaptSchedule(callback, id){
+	sql = `SELECT * FROM ${dbName}.Schedule WHERE first_spot=:id`;
+	dbConnection.query(sql, {
+		id:id
+	}, (err, data) => {
+		if (err){
+			callback(err, {})
+		}
+		else{
+			for (i = 0; i < data.length; i++){
+				let id_schedule = data[0].id
+				let first_spot = data[0].first_spot
+				let last_spot = data[0].last_spot
+				sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+				dbConnection.query(sql, {
+					id:first_spot
+				}, (err, data) => {
+					if (err){
+						callback(err, {})
+					}
+					else{
+						sql = `SELECT id FROM ${dbName}.Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
+						dbConnection.query(sql, {
+							prev_num:data[0].number,
+							prev_id_park:data[0].id_park,
+							prev_floor:data[0].floor
+						}, (err, data) => {
+							if (err){
+								callback(err, {})
+							}
+							else{
+								if (data[0].id == last_spot){
+									DeleteSchedule((err, data), id_schedule)
+								}
+								else{
+									sql = `UPDATE ${dbName}.Schedule SET first_spot=:new WHERE id=:id`;
+									dbConnection.query(sql, {
+										id:id_schedule,
+										new:data[0].id
+									}, (err, data) => {
+										if (err){
+											callback(err, {})
+										}
+									})
+								}
+							}
+						})
+					}
+				})
+			};
+		}
+	});
+	sql = `SELECT * FROM ${dbName}.Schedule WHERE last_spot=:id`;
+	dbConnection.query(sql, {
+		id:id
+	}, (err, data) => {
+		if (err){
+			callback(err, {})
+		}
+		else{
+			for (i = 0; i < data.length; i++){
+				let id_schedule = data[0].id
+				let first_spot = data[0].first_spot
+				let last_spot = data[0].last_spot
+				sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+				dbConnection.query(sql, {
+					id:last_spot
+				}, (err, data) => {
+					if (err){
+						callback(err, {})
+					}
+					else{
+						sql = `SELECT id FROM ${dbName}.Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
+						dbConnection.query(sql, {
+							prev_num:data[0].number,
+							prev_id_park:data[0].id_park,
+							prev_floor:data[0].floor
+						}, (err, data) => {
+							if (err){
+								callback(err, {})
+							}
+							else{
+								if (data[0].id == first_spot){
+									DeleteSchedule((err, data), id_schedule)
+								}
+								else{
+									sql = `UPDATE ${dbName}.Schedule SET last_spot=:new WHERE id=:id`;
+									dbConnection.query(sql, {
+										id:id_schedule,
+										new:data[0].id
+									}, (err, data) => {
+										if (err){
+											callback(err, {})
+										}
+									})
+								}
+							}
+						})
+					}
+				})
+			};
+		}
+	});
+	callback(null, {});
+}
 
-module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById};
+module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById, AdaptSchedule};
