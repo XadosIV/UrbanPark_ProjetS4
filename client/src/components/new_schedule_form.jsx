@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import { CreationSchedule, placeFromId } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
@@ -72,7 +72,7 @@ export function NewScheduleForm() {
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
-            if (name.name == "parking") {
+            if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             }
@@ -88,7 +88,7 @@ export function NewScheduleForm() {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!Array.isArray(infos.user) || infos.user.length == 1) {
+        if (!Array.isArray(infos.user) || infos.user.length === 1) {
             if (Array.isArray(infos.user)) {
                 infos.user = infos.user[0]
             }
@@ -96,7 +96,7 @@ export function NewScheduleForm() {
             console.log(res);
             if (res.status === 200) {
                 setWrongInput(true);
-                if (infos.last_spot == infos.first_spot) {
+                if (infos.last_spot === infos.first_spot) {
                     placeFromId(infos.first_spot).then(res => {
                         setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
                     })
@@ -127,8 +127,8 @@ export function NewScheduleForm() {
                     break;
                 }
             }
-            if (scheduleAdded == stock.length) {
-                if (infos.last_spot == infos.first_spot) {
+            if (scheduleAdded === stock.length) {
+                if (infos.last_spot === infos.first_spot) {
                     setWrongInput(true);
                     placeFromId(infos.first_spot).then(res => {
                         setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
