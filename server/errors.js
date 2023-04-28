@@ -46,3 +46,6 @@ exports.E_SPOTS_IN_DIFFERENT_FLOORS											="E_SPOTS_IN_DIFFERENT_FLOORS";
 exports.E_WRONG_SPOT_ORDER													="E_WRONG_SPOT_ORDER";
 exports.E_OVERLAPPING_SPOTS													="E_OVERLAPPING_SPOTS";
 exports.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING                          ="E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING";
+exports.E_WRONG_ID_FORMAT                                                   ="E_WRONG_ID_FORMAT";
+exports.E_WRONG_FLOOR_FORMAT                                                ="E_WRONG_FLOOR_FORMAT";
+exports.E_PARKING_ALREADY_EXIST                                             ="E_PARKING_ALREADY_EXIST";
