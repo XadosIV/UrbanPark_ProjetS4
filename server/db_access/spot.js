@@ -139,45 +139,36 @@ function PostSpot(callback, infos){
 		if (err){
 			callback(err, []);
 		}else if (res.length == 1){
-			let errorCode = Errors.E_SPOT_ALREADY_EXIST;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, []);
-		}else{ GetParkings((err, parkings) => {
-		if (err){
-			callback(err, []);
-		}else if (parkings.length != 1){
-			let errorCode = Errors.E_UNDEFINED_PARKING;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, []);
-		}else if (infos.floor >= parkings[0].floors){
-			let errorCode = Errors.E_WRONG_FLOOR;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, []);
+			Errors.SendError(Errors.E_SPOT_ALREADY_EXIST, "La place existe déjà.", callback);
 		}else{
-			sql = `INSERT INTO ${dbName}.Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
-			//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
-			dbConnection.query(sql, infos, (err, data) => {
-				if(err){
-					callback(err,data);
-				}else if(infos.types && infos.types.length>0){
-				GetSpots((err,data) =>{
-					if(err){
-						callback(err,data);
-					}else{
-						InsertListTyped(data[0].id, infos.types, callback);
-					}},{
-						id_park: infos.id_park,
-						floor: infos.floor,
-						number: infos.number
-					});
+			GetParkings((err, parkings) => {
+				if (err){
+					callback(err, []);
+				}else if (parkings.length != 1){
+					Errors.SendError(Errors.E_UNDEFINED_PARKING, "Le parking n'existe pas.", callback);
+				}else if (infos.floor >= parkings[0].floors){
+					Errors.SendError(Errors.E_WRONG_FLOOR, "L'étage n'existe pas.",callback);
 				}else{
-					callback(err,data);
+					sql = `INSERT INTO ${dbName}.Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
+					//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
+					dbConnection.query(sql, infos, (err, data) => {
+						if(err){
+							callback(err,data);
+						}else if(infos.types && infos.types.length>0) {
+							GetSpots((err,data) => {
+								if(err){
+									callback(err,data);
+								}else{
+									InsertListTyped(data[0].id, infos.types, callback);
+								}
+							}, {id_park: infos.id_park, floor: infos.floor,	number: infos.number});
+						}else{
+							callback(err,data);
+						}
+					});
 				}
-			});
-		}}, {id:infos.id_park})}
+			}, {id:infos.id_park})
+		}
     }, {id_park:infos.id_park, floor:infos.floor, number:infos.number});
 }
 
