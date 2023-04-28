@@ -77,10 +77,7 @@ function HasPermission(token, perm, callback){
 		}else{
 			if (res.length == 0){
 				// If no user were found by the request
-				let errorCode = Errors.E_UNDEFINED_USER;
-				let error = new Error(errorCode);
-				error.code = errorCode;
-				callback(error,[]);
+				SendError(Errors.E_UNDEFINED_USER, "L'utilisateur n'existe pas.", callback);
 			}else{
 				role = res[0].role // take role from the user
 				GetPermRole((err, res) => { // and check for its permissions
@@ -97,10 +94,7 @@ function HasPermission(token, perm, callback){
 							}
 						}else{
 							// the permission dont exist
-							let errorCode = Errors.E_PERMISSION_DOESNT_EXIST;
-							let error = new Error(errorCode);
-							error.code = errorCode;
-							callback(error,[]);
+							SendError(Errors.E_PERMISSION_DOESNT_EXIST, "La permission demandé n'existe pas.", callback);
 						}
 					}
 				}, {role:role})
