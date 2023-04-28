@@ -3,6 +3,7 @@ const { GetUsers } = require('./user');
 const { GetPermRole } = require('./role');
 const { GetSpots } = require('./spot');
 const Errors = require('../errors');
+const e = require('express');
 
 /**
  * IsValidDatetime
@@ -540,101 +541,171 @@ function AdaptSchedule(callback, id){
 			callback(err, {})
 		}
 		else{
-			for (i = 0; i < data.length; i++){
-				let id_schedule = data[0].id
-				let first_spot = data[0].first_spot
-				let last_spot = data[0].last_spot
-				sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+			console.log(data)
+			AdaptScheduleStart((err, res) => {
+				if (err){
+					callback(err, res);
+				}
+				else {
+					sql = `SELECT * FROM ${dbName}.Schedule WHERE last_spot=:id`;
+					dbConnection.query(sql, {
+						id:id
+					}, (err, data) => {
+						if (err){
+							callback(err, res);
+						}
+						else{
+							console.log(data)
+							AdaptScheduleEnd((err, res) => {
+								callback(err, res);
+							}, data)
+						}
+					}, {
+						id:id
+					})
+				}
+			}, data);
+		}
+	});
+}
+
+function AdaptScheduleStart(callback, fdata){
+	if (fdata.length == 0){
+		callback(null, {})
+	}
+	else {
+		let info = fdata.shift()
+		let id_schedule = info.id
+		let first_spot = info.first_spot
+		let last_spot = info.last_spot
+		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+		dbConnection.query(sql, {
+			id:first_spot
+		}, (err, data) => {
+			if (err){
+				callback(err, {})
+			}
+			else{
+				console.log(data)
+				let place_a_modifier = data.shift()
+				sql = `SELECT id FROM ${dbName}.Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
 				dbConnection.query(sql, {
-					id:first_spot
+					prev_num:place_a_modifier.number,
+					prev_id_park:place_a_modifier.id_park,
+					prev_floor:place_a_modifier.floor
 				}, (err, data) => {
 					if (err){
 						callback(err, {})
 					}
 					else{
-						sql = `SELECT id FROM ${dbName}.Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
-						dbConnection.query(sql, {
-							prev_num:data[0].number,
-							prev_id_park:data[0].id_park,
-							prev_floor:data[0].floor
-						}, (err, data) => {
-							if (err){
-								callback(err, {})
-							}
-							else{
-								if (data[0].id == last_spot){
-									DeleteSchedule((err, data), id_schedule)
+						if (data[0].id == last_spot){
+							DeleteSchedule((err, data) => {
+								if (err){
+									callback(err, data);
 								}
-								else{
-									sql = `UPDATE ${dbName}.Schedule SET first_spot=:new WHERE id=:id`;
-									dbConnection.query(sql, {
-										id:id_schedule,
-										new:data[0].id
-									}, (err, data) => {
-										if (err){
-											callback(err, {})
-										}
-									})
+								else if (fdata.length > 0){
+									AdaptScheduleStart((err, data) => {
+										callback(err, data);
+									}, fdata)
 								}
-							}
-						})
+								else {
+									callback(err, data)
+								}
+							}, id_schedule)
+						}
+						else{
+							sql = `UPDATE ${dbName}.Schedule SET first_spot=:new WHERE id=:id`;
+							dbConnection.query(sql, {
+								id:id_schedule,
+								new:data[0].id
+							}, (err, data) => {
+								if (err){
+									callback(err, data);
+								}
+								else if (fdata.length > 0){
+									AdaptScheduleStart((err, data) => {
+										callback(err, data);
+									}, fdata)
+								}
+								else {
+									callback(err, data)
+								}
+							})
+						}
 					}
 				})
-			};
-		}
-	});
-	sql = `SELECT * FROM ${dbName}.Schedule WHERE last_spot=:id`;
-	dbConnection.query(sql, {
-		id:id
-	}, (err, data) => {
-		if (err){
-			callback(err, {})
-		}
-		else{
-			for (i = 0; i < data.length; i++){
-				let id_schedule = data[0].id
-				let first_spot = data[0].first_spot
-				let last_spot = data[0].last_spot
-				sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+			}
+		})
+	}
+}
+
+function AdaptScheduleEnd(callback, fdata){
+	if (fdata.length == 0){
+		callback(null, {})
+	}
+	else {
+		let info = fdata.shift()
+		let id_schedule = info.id
+		let first_spot = info.first_spot
+		let last_spot = info.last_spot
+		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
+		dbConnection.query(sql, {
+			id:last_spot
+		}, (err, data) => {
+			if (err){
+				callback(err, {})
+			}
+			else{
+				let place_a_modifier = data.shift()
+				sql = `SELECT id FROM ${dbName}.Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
 				dbConnection.query(sql, {
-					id:last_spot
+					prev_num:place_a_modifier.number,
+					prev_id_park:place_a_modifier.id_park,
+					prev_floor:place_a_modifier.floor
 				}, (err, data) => {
 					if (err){
 						callback(err, {})
 					}
 					else{
-						sql = `SELECT id FROM ${dbName}.Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
-						dbConnection.query(sql, {
-							prev_num:data[0].number,
-							prev_id_park:data[0].id_park,
-							prev_floor:data[0].floor
-						}, (err, data) => {
-							if (err){
-								callback(err, {})
-							}
-							else{
-								if (data[0].id == first_spot){
-									DeleteSchedule((err, data), id_schedule)
+						if (data[0].id == first_spot){
+							DeleteSchedule((err, data) => {
+								if (err){
+									callback(err, data);
 								}
-								else{
-									sql = `UPDATE ${dbName}.Schedule SET last_spot=:new WHERE id=:id`;
-									dbConnection.query(sql, {
-										id:id_schedule,
-										new:data[0].id
-									}, (err, data) => {
-										if (err){
-											callback(err, {})
-										}
-									})
+								else if (fdata.length > 0){
+									AdaptScheduleEnd((err, data) => {
+										callback(err, data);
+									}, fdata)
 								}
-							}
-						})
+								else {
+									callback(err, data)
+								}
+							}, id_schedule)
+						}
+						else{
+							sql = `UPDATE ${dbName}.Schedule SET last_spot=:new WHERE id=:id`;
+							dbConnection.query(sql, {
+								id:id_schedule,
+								new:data[0].id
+							}, (err, data) => {
+								if (err){
+									callback(err, data);
+								}
+								else if (fdata.length > 0){
+									AdaptScheduleEnd((err, data) => {
+										callback(err, data);
+									}, fdata)
+								}
+								else {
+									callback(err, data)
+								}
+							})
+						}
 					}
 				})
-			};
-		}
-	});
-	callback(null, {});
+			}
+		})
+	}
 }
 
 module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById, AdaptSchedule};
