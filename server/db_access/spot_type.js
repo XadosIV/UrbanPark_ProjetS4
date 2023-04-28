@@ -42,4 +42,20 @@ function SpotTypeExists(name, callback) {
 	});
 }
 
-module.exports = {GetSpotTypes, SpotTypeExists};
+/**
+ * DeleteSpotType
+ * Delete all the types from a place by the place's id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {int} id
+ */
+function DeleteSpotType (callback, id){
+	let sql = `DELETE FROM ${dbName}.Typed WHERE id_spot=:id`
+	dbConnection.query(sql,{
+		id:id
+	}, (err, data) => {
+		callback(err, data);
+	});
+}
+
+module.exports = {GetSpotTypes, SpotTypeExists, DeleteSpotType};
