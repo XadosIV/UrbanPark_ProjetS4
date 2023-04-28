@@ -165,6 +165,10 @@ function PostSpot(callback, infos){
 function DeleteSpot(callback, id){
 	const {AdaptSchedule} = require("./schedule")
 	const {DeleteSpotType} = require("./spot_type")
+	const {RemoveSpotUsers} = require("./user")
+	// AdaptSchedule((err, res) => {
+	// 	callback(err, res);
+	// }, id)
 	AdaptSchedule((err, res) =>{
 		if (err){
 			callback(err, res);
@@ -175,12 +179,19 @@ function DeleteSpot(callback, id){
 					callback(err, res);
 				}
 				else{
-					sql = `DELETE FROM ${dbName}.Spot WHERE id=:id`;
-					dbConnection.query(sql,{
-						id:id
-					}, (err, data) => {
-						callback(err, data)
-					});
+					RemoveSpotUsers((err, res) => {
+						if (err){
+							callback(err, res)
+						}
+						else {
+							sql = `DELETE FROM ${dbName}.Spot WHERE id=:id`;
+							dbConnection.query(sql,{
+								id:id
+							}, (err, data) => {
+								callback(err, data)
+							});
+						}
+					}, id)
 				}
 			}, id);
 		};
