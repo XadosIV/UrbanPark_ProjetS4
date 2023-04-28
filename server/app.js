@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('./db_access/user');
-const {GetParkings, PostParking} = require('./db_access/parking');
+const {GetParkings, PostParking, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
 const {GetSpots, PostSpot} = require('./db_access/spot')
@@ -148,6 +148,17 @@ app.post('/api/parking', (req, res) => {
 		}
 	})
 });
+
+app.delete('/api/parking/:id', (req, res) => {
+	console.log(req.params);
+	DeleteParking(req.params, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json();
+		}
+	});
+})
 
 app.get('/api/types', (req, res) => {
 	console.log("Request at GET /api/types : " + JSON.stringify(req.query));
