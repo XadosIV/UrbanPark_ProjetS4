@@ -50,11 +50,7 @@ function UpdateUser(callback, infos){
 
 	//Verification param required
 	if(!(infos.id) || !(infos.token)){
-		let errorCode = Errors.E_MISSING_PARAMETER;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error,{});
-		return;
+		return Errors.SendError(Errors.E_MISSING_PARAMETER, "Champs obligatoires : id, token", callback);
 	}
 	//Verification syntaxe
 	if (infos.email){
