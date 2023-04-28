@@ -77,6 +77,32 @@ function GetSpots(callback, infos){
 }
 
 /**
+ * GetSpotsMultipleFloors
+ * Return a JSON with every spots corresponding to paramaters
+ * 
+ * @param {*} infos {id_park, floors, number, type, id}
+ * @param {*} callback 
+ */
+function GetSpotsMultipleFloors(infos, callback, recData=[]){
+	GetSpots({
+		"id_park":infos.id_park,
+		"floor":infos.floors.pop(),
+		"number":infos.number,
+		"type":infos.type,
+		"id":infos.id
+	},(err,data)=>{
+		if(err){
+			callback(err,data);
+		}else if(infos.floors.length>0){
+			data= recData.concat(data);
+			GetSpotsMultipleFloors(ids,callback,data);
+		}else{
+			callback(err,data);
+		}
+	});
+}
+
+/**
  * InsertListTyped
  * Insert the link between multiple spot types and a spot in the database
  * 
@@ -155,4 +181,23 @@ function PostSpot(callback, infos){
     }, {id_park:infos.id_park, floor:infos.floor, number:infos.number});
 }
 
-module.exports = {GetAllSpots, GetSpots, PostSpot};
+/**
+ * DeleteSpots
+ * Delete a list of spots
+ * 
+ * @param {Array<int>} ids 
+ * @param {function(*,*)} callback (err, data)
+ */
+function DeleteSpots(ids, callback){
+	DeleteSpot(ids.pop(), (err, data) => {
+		if(err){
+			callback(err,data);
+		}else if(ids.length>0){
+			DeleteSpots(ids,callback);
+		}else{
+			callback(err,data);
+		}
+	});
+}
+
+module.exports = {GetAllSpots, GetSpots, GetSpotsMultipleFloors, PostSpot, DeleteSpots};
