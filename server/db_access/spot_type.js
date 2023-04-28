@@ -22,6 +22,48 @@ function GetSpotTypes(callback, infos){
 }
 
 /**
+ * TypeExist
+ * Return if a type is existing or not.
+ * 
+ * @param {string} name of the type
+ * @param {function (*,*)} callback (err, boolean)
+ */
+function TypeExist(name, callback){
+	let sql = `SELECT * FROM ${dbName}.type WHERE name=:name`
+	dbConnection.query(sql, {name: name}, (err, data) => {
+		if (err){
+			callback(err, null)
+		}else{
+			callback(null, data.length >= 1)
+		}
+	})
+}
+
+/**
+ * PostType
+ * Create new spot type
+ * 
+ * @param {object} infos {name}
+ * @param {function(*,*)} callback (err, data)
+ */
+function PostType(infos, callback){
+	if (!infos.name) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Le champ 'name' doit être fourni.", callback);
+
+	TypeExist(infos.name, (err, exist) => {
+		if (err){
+			callback(err, null);
+		}else{
+			if (exist) return Errors.SendError(Errors.E_TYPE_ALREADY_EXIST, "Ce type existe déjà.", callback);
+
+			let sql = `INSERT INTO ${dbName}.type(\`name\`) VALUES (:name)`
+
+			dbConnection.query(sql, {name:infos.name}, callback)
+		}
+	})
+}
+
+
+/**
  * SpotTypeExists
  * Does this spot type exists ?
  * 
@@ -42,4 +84,4 @@ function SpotTypeExists(name, callback) {
 	});
 }
 
-module.exports = {GetSpotTypes, SpotTypeExists};
+module.exports = {GetSpotTypes, SpotTypeExists, PostType};

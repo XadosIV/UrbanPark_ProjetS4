@@ -3,7 +3,7 @@ const app = express();
 const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('./db_access/user');
 const {GetParkings} = require('./db_access/parking');
-const {GetSpotTypes} = require('./db_access/spot_type');
+const {GetSpotTypes, PostType} = require('./db_access/spot_type');
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
 const {GetSpots, PostSpot} = require('./db_access/spot')
 const {GetPermRole} = require('./db_access/role');
@@ -149,6 +149,16 @@ app.get('/api/types', (req, res) => {
 		}
 	}, req.query);
 });
+
+app.post('/api/type', (req, res) => {
+	PostType(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json()
+		}
+	})
+})
 
 app.get('/api/spots', (req, res) => {
 	console.log("Request at GET /api/spots : " + JSON.stringify(req.query));
