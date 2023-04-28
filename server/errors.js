@@ -49,3 +49,5 @@ exports.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING                          ="E_
 exports.E_WRONG_ID_FORMAT                                                   ="E_WRONG_ID_FORMAT";
 exports.E_WRONG_FLOOR_FORMAT                                                ="E_WRONG_FLOOR_FORMAT";
 exports.E_PARKING_ALREADY_EXIST                                             ="E_PARKING_ALREADY_EXIST";
+exports.E_SPOT_TYPE_FORMAT_INVALID                                          ="E_SPOT_TYPE_FORMAT_INVALID"
+exports.E_SPOT_TYPE_ALREADY_EXIST                                           ="E_SPOT_TYPE_ALREADY_EXIST"
