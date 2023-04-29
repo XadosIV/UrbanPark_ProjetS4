@@ -1,4 +1,4 @@
-const {dbConnection, dbName} = require('../database');
+const {dbConnection} = require('../database');
 const Errors = require('../errors');
 
 /**
@@ -10,7 +10,7 @@ const Errors = require('../errors');
  */
 
 function GetParkings(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Parking WHERE id LIKE :id;`;
+	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
     console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%'
@@ -37,7 +37,7 @@ function PostParking(infos, callback){
         }else{
             if (data.length >= 1) return Errors.SendError(Errors.E_PARKING_ALREADY_EXIST, "Le parking existe déjà.", callback)
 
-            let sql = `INSERT INTO ${dbName}.parking (id, name, floors, address) VALUES (:id, :name, :floor, :address)`
+            let sql = `INSERT INTO Parking (id, name, floors, address) VALUES (:id, :name, :floor, :address)`
             
             dbConnection.query(sql, infos, callback);
         }

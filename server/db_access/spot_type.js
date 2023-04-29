@@ -1,4 +1,4 @@
-const {dbConnection, dbName} = require('../database');
+const {dbConnection} = require('../database');
 const Errors = require('../errors');
 
 /**
@@ -11,8 +11,8 @@ const Errors = require('../errors');
 function GetSpotTypes(callback, infos){
 	//Don't ask why this is that hard, only @UP-4303 knows
 	//We could've did it in 2 separate functions, but what is life without challenge ?
-	let sql = `SELECT t.name FROM ${dbName}.Typed y
-		RIGHT JOIN ${dbName}.Type t ON t.name=y.name_type
+	let sql = `SELECT t.name FROM Typed y
+		RIGHT JOIN Type t ON t.name=y.name_type
 		WHERE t.name LIKE :name
 		GROUP BY t.Name
 		HAVING MAX(case when y.id_spot LIKE :id_spot OR "%" = :id_spot then 1 else 0 end);`;
@@ -31,7 +31,7 @@ function GetSpotTypes(callback, infos){
  * @param {function(*,*)} callback (err, boolean)
  */
 function SpotTypeExists(name, callback) {
-	let sql = `SELECT name FROM ${dbName}.Type WHERE name LIKE :name;`;
+	let sql = `SELECT name FROM Type WHERE name LIKE :name;`;
 	console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         name:name
@@ -81,7 +81,7 @@ function PostSpotType(callback, infos){
 				error.code = errorCode;
 				callback(error,data);
 			}else{
-				let sql=`INSERT INTO ${dbName}.Type (name) VALUES (:name);`;
+				let sql=`INSERT INTO Type (name) VALUES (:name);`;
 				//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, infos, callback);
 			}
