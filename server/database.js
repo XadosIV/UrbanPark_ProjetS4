@@ -29,11 +29,9 @@ startDefaultQuery = startDefaultQuery.replaceAll("`DATABASE`", process.env.DATAB
  */
 function StartDatabase(dbConnection, query=startDefaultQuery) {
 	dbConnection.connect();
-	dbConnection.query(`USE ${dbName}`);
+	dbConnection.query(`USE ${process.env.DATABASE}`);
 	dbConnection.query(query);
 }
-
-let dbName = process.env.DATABASE;
 
 // ==============================
 // Initiate connection to database
@@ -45,4 +43,4 @@ let dbConnection = mysql.createConnection({
 	password : process.env.PASSWORD
 });
 
-module.exports = {dbConnection, StartDatabase, dbName};
+module.exports = {dbConnection, StartDatabase};
