@@ -81,7 +81,7 @@ export function PersoMySpot(){
 
     const listeTypes = () => {
         if(maPlace.types.length !== 0){
-            return maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) 
+            return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
         }else{
             return <li> aucun types </li>
         }

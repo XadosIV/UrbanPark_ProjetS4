@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken } from "../services";
+import { userFromToken, updateInfoPerso, authenticate } from "../services";
 
 export function PersonalInfos(){
-    const { userToken } = useContext(ContextUser);
+    const { userToken, setUserToken, userId } = useContext(ContextUser);
     const [ infosUser, setInfosUser ] = useState({
         email: "",
         first_name: "",
@@ -16,23 +16,21 @@ export function PersonalInfos(){
     });
     const [ newInfos, setNewInfos ] = useState({});
     const [ newMdp, setNewMdp ] = useState({});
+    const [ newEmail, setNewEmail ] = useState({});
     const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
     const [ errInput, setErrInput ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
+    const regexNomPrenom = new RegExp(/^[a-zéèêëçîïùüñöôõàâäãß]+(((['`-]?)( )?){1}[a-zéèêëçîïùüñöôõàâäãß])+$/, "gi");
 
-    useEffect(() => {
-        async function fetchUserInfos() {
-            const resInfosUser = await userFromToken(userToken);
+    async function fetchUserInfos() {
+        const resInfosUser = await userFromToken(userToken);
+        // console.log("user", resInfosUser.data[0])
+        if(resInfosUser.data[0]){
             setInfosUser(resInfosUser.data[0]);
-            //console.log("user", resInfosUser.data[0])
-            const tmpUserInfos = {
-                email: resInfosUser.data[0].email,
-                first_name: resInfosUser.data[0].first_name,
-                last_name: resInfosUser.data[0].last_name
-            };
-            // console.log("tmpUserInfos", tmpUserInfos);
-            setNewInfos(tmpUserInfos);
         }
+    }
+    
+    useEffect(() => {
         fetchUserInfos();
     }, [userToken]);
 
@@ -51,12 +49,115 @@ export function PersonalInfos(){
         const value = event.target.value;
         setNewMdp(values => ({...values, [name]: value}))
     }
+    const handleChangeEmail = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setNewEmail(values => ({...values, [name]: value}))
+    }
 
-    const handlleSubmit = (e) => {
+    async function fetchToken(mail, password){
+        const tokenData = {
+            identifier: mail,
+            password: password
+        }
+        const resToken = await authenticate(tokenData);
+        // console.log("resToken", resToken);
+        if(resToken.status === 200){
+            return resToken.data.token;
+        }else{
+            setErrInput(true);
+            setErrMessage("mot de passe invalide");
+        }
+    }
+
+    function clearForm(form){
+        for (let i = 0; i < form.length; i++) {
+            let elem = form[i];  
+            if(elem.tagName === "INPUT"){
+                if(elem.type === "password" || elem.id === "email"){
+                    elem.value = "";
+                    elem.blur(); // ne marche pas
+                }
+            }
+        }
+    }
+
+    const handlleSubmit = async (e) => {
+        console.log("event", e.target);
         e.preventDefault();
-        console.log("userInfos", newInfos);
-        console.log("newMdp", newMdp);
-        console.log(e.target.name);
+        // console.log("userInfos", newInfos);
+        // console.log("newMdp", newMdp);
+        let dataSent = {id: userId, token: userToken};
+        let resUp;
+        let pass;
+        let nouvmail;
+        let nouvpass;
+        if(e.target.name === "form-modif-infos"){
+            let bonLst = regexNomPrenom.test(newInfos.last_name);
+            regexNomPrenom.lastIndex = 0;
+            let bonFst = regexNomPrenom.test(newInfos.first_name);
+            regexNomPrenom.lastIndex = 0;
+            // console.log("fst", newInfos.first_name, bonFst);
+            // console.log("lst", newInfos.last_name, bonLst);
+            if(bonFst && bonLst){
+                dataSent = {
+                    ...dataSent,
+                    first_name: newInfos.first_name,
+                    last_name: newInfos.last_name
+                }
+                pass = newInfos.password;
+            }else{
+                setErrInput(true);
+                setErrMessage("nom ou prénom invalide");
+            }
+        }else if(e.target.name === "form-modif-mdp"){
+            if(newMdp.new_password === newMdp.new_password_conf){
+                dataSent = {
+                    ...dataSent,
+                    password: newMdp.new_password
+                };
+                pass = newMdp.password;
+                nouvpass = newMdp.new_password_conf;
+            }
+        }else if(e.target.name === "form-modif-mail"){
+            dataSent = {
+                ...dataSent,
+                email: newEmail.email
+            };
+            pass = newEmail.password;
+            nouvmail = newEmail.email;
+        }
+
+        let fetchT = await fetchToken(infosUser.email, pass);
+        if(pass){
+            if(userToken === fetchT){
+                resUp = await updateInfoPerso(dataSent);
+                if(resUp.status === 200){
+                    setErrInput(false);
+                    // console.log("nouvpass", nouvpass);
+                    // console.log("nouvmail", nouvmail);
+                    if(nouvmail){
+                        fetchT = await fetchToken(nouvmail, pass);
+                    }
+                    if(nouvpass){
+                        fetchT = await fetchToken(infosUser.email, nouvpass);
+                    }
+                    // console.log("userToken", userToken);
+                    // console.log("fetchT", fetchT);
+                    setUserToken(fetchT);
+                }else{
+                    setErrInput(true);
+                    setErrMessage(resUp.data.message);
+                }
+            }else{
+                setErrInput(true);
+                setErrMessage("mot de passe invalide");
+            }
+        }
+        // console.log("dataSent", dataSent);
+        // console.log("resUp", resUp);
+        fetchUserInfos();
+        clearForm(e.target);
     }
 
     return(<div>
@@ -84,48 +185,40 @@ export function PersonalInfos(){
                 // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
                 <div className="inputs_divs">
                 <form  onSubmit={ handlleSubmit } name="form-modif-infos">
-                        <div className="input-div">
-                            <p className="p-form-title">Changer mes informations</p>
-                            <TextField
-                                id="email"
-                                label="email"
-                                type="text"
-                                name="email"
-                                defaultValue={infosUser.email}
-                                onChange={ handleChangeInfos }
-                            />
-                            <TextField
-                                id="first_name"
-                                label="first_name"
-                                type="text"
-                                name="first_name"
-                                defaultValue={infosUser.first_name}
-                                onChange={ handleChangeInfos }
-                            />
-                            <TextField
-                                id="last_name"
-                                label="last_name"
-                                type="text"
-                                name="last_name"
-                                defaultValue={infosUser.last_name}
-                                onChange={ handleChangeInfos }
-                            />
-                            <TextField
-                                required
-                                id="password"
-                                label="mot de passe"
-                                type="password"
-                                name="password"
-                                onPaste={ noPaste }
-                                onChange={ handleChangeInfos }
-                            />
-                            <Button 
-                                className="submit_button"
-                                variant="contained" 
-                                color="primary" 
-                                type="submit"
-                            >valider les changements</Button>
-                        </div>
+                    <div className="input-div">
+                        <p className="p-form-title">Changer mes informations</p>
+                        <TextField
+                            required
+                            id="first_name"
+                            label="Prénom"
+                            type="text"
+                            name="first_name"
+                            defaultValue={infosUser.first_name}
+                            onChange={ handleChangeInfos }
+                        />
+                        <TextField
+                            id="last_name"
+                            label="Nom"
+                            type="text"
+                            name="last_name"
+                            defaultValue={infosUser.last_name}
+                            onChange={ handleChangeInfos }
+                        />
+                        <TextField
+                            id="password"
+                            label="mot de passe"
+                            type="password"
+                            name="password"
+                            onPaste={ noPaste }
+                            onChange={ handleChangeInfos }
+                        />
+                        <Button 
+                            className="submit_button"
+                            variant="contained" 
+                            color="primary" 
+                            type="submit"
+                        >valider les changements</Button>
+                    </div>
                 </form>
                 <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                 <div className="input-div">
@@ -142,7 +235,7 @@ export function PersonalInfos(){
                     <TextField
                         required
                         id="new_password_conf"
-                        label="confirmation du nouveau mot de passe"
+                        label="confirmation nouveau mot de passe"
                         type="password"
                         name="new_password_conf"
                         onPaste={ noPaste }
@@ -156,6 +249,34 @@ export function PersonalInfos(){
                         name="password"
                         onPaste={ noPaste }
                         onChange={ handleChangeMdp }
+                    />
+                    <Button 
+                        className="submit_button"
+                        variant="contained" 
+                        color="primary" 
+                        type="submit"
+                    >modifier mon mot de passe</Button>
+                    </div>
+                </form>
+                <form onSubmit={ handlleSubmit } name="form-modif-mail">
+                <div className="input-div">
+                    <p className="p-form-title">changer mon email</p>
+                    <TextField
+                        required
+                        id="email"
+                        label="nouvel email"
+                        type="text"
+                        name="email"
+                        onChange={ handleChangeEmail }
+                    />
+                    <TextField
+                        required
+                        id="password"
+                        label="mot de passe"
+                        type="password"
+                        name="password"
+                        onPaste={ noPaste }
+                        onChange={ handleChangeEmail }
                     />
                     <Button 
                         className="submit_button"

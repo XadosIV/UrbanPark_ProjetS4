@@ -97,7 +97,7 @@ app.put('/api/users/:id', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			res.status(200).json();
+			res.status(200).json(data);
 		}
 	}, req.body);
 });
@@ -162,13 +162,13 @@ app.get('/api/spots', (req, res) => {
 });
 
 app.get('/api/spot/:spot', (req, res) => {
-	console.log("Request at GET /api/spot/:spot : " + JSON.stringify(req.query));
+	console.log("Request at GET /api/spot/:spot : " + JSON.stringify(req.params));
 	if (parseInt(req.params.spot)){
 		GetSpots((err, data) => {
 			if (err){ 
 				Errors.HandleError(err, res);
 			}else{
-				if (data.length == 0){
+				if (data.length == 1){
 					res.status(200).json(data[0]);
 				}else{
 					res.status(400).json({"code":Errors.E_SPOT_NOT_FOUND, "message":"Aucune place n'a l'id demandé."})

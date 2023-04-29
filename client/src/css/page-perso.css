@@ -59,6 +59,8 @@
 
 .form-modif-infos{
 	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .div-UI{
@@ -113,6 +115,7 @@
 
 .err-input{
 	color: red;
+	align-self: center;
 }
 
 .div-button-place{

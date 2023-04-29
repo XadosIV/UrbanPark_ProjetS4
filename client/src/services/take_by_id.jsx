@@ -1,15 +1,15 @@
 import axios from "axios";
 
 /**
- * TakeByRole
- * Returns a list of users corresponding to the role given in parameter (If no role, get all users)
+ * TakeById
+ * Returns a user corresponding to the id given in parameter (If no id, get all users)
  *
- * @param { Int } role
+ * @param { Int } id
  * @return { Promise User }
  */
-async function TakeById(id){
+async function takeById(id){
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/users/"+String(id)
 	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeById };
+export { takeById };
