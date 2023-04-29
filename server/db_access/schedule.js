@@ -1,4 +1,4 @@
-const { dbConnection, dbName } = require('../database');
+const { dbConnection } = require('../database');
 const { GetUsers } = require('./user');
 const { GetPermRole } = require('./role');
 const { GetSpots } = require('./spot');
@@ -41,7 +41,7 @@ function GetSchedules(callback, infos) {
  * @param {object} infos {role, parking, date_start, date_end}
  */
 function GetSchedulesRole(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
@@ -61,7 +61,7 @@ function GetSchedulesRole(callback, infos) {
  * @param {object} infos {user, parking, date_start, date_end}
  */
 function GetSchedulesUser(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		user: infos.user || '%',
@@ -148,7 +148,7 @@ function PostScheduleRole(infos, callback) {
 		} else if (data.length != 1) {
 			Errors.SendError(Errors.E_ROLE_NOT_FOUND, "Ce rôle n'existe pas.", callback);
 		} else {
-			sql = `SELECT id FROM ${dbName}.User WHERE role LIKE :role`;
+			sql = `SELECT id FROM User WHERE role LIKE :role`;
 			console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, {
 				role: infos.role || '%'
@@ -191,7 +191,7 @@ function PostScheduleUser(infos, callback) {
 				} else if (!isntOverlapping) {
 					Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
 				} else {
-					sql = `INSERT INTO ${dbName}.Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
+					sql = `INSERT INTO Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
 					//console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, {
 						user:infos.user,
@@ -233,7 +233,7 @@ function PostScheduleUsers(infos, ids, callback) {
 }
 
 function GetScheduleById(id, callback){
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
 	dbConnection.query(sql, {id:id}, callback);
 }
 
@@ -243,7 +243,7 @@ function UpdateSchedule(infos, callback){
 
 	let doSqlRequest = (schedule) => {
 		//insert sql
-		sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end, first_spot=:first, last_spot=:last WHERE id=:id`
+		sql = `UPDATE Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end, first_spot=:first, last_spot=:last WHERE id=:id`
 		dbConnection.query(sql, schedule, callback);
 	}
 
@@ -349,7 +349,7 @@ function UpdateSchedule(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function IsntScheduleOverlapping(infos, callback) {
-	sql = `SELECT * FROM ${dbName}.Schedule WHERE id_user=:user AND (date_start < :date_end AND date_end > :date_start);`;
+	sql = `SELECT * FROM Schedule WHERE id_user=:user AND (date_start < :date_end AND date_end > :date_start);`;
 	//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {
 		if (err) {
@@ -405,7 +405,7 @@ function IsntSpotOverlapping(infos, callback) {
 				}else if(last_spot.length != 1){
 					return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 				}else{
-					sql = `SELECT s.id FROM ${dbName}.Schedule s JOIN ${dbName}.Spot spf ON s.first_spot=spf.id JOIN ${dbName}.Spot spl ON s.last_spot=spl.id WHERE s.date_start < :date_end AND s.date_end > :date_start AND spf.number < :first_spot AND spl.number > :last_spot;`;
+					sql = `SELECT s.id FROM Schedule s JOIN Spot spf ON s.first_spot=spf.id JOIN Spot spl ON s.last_spot=spl.id WHERE s.date_start < :date_end AND s.date_end > :date_start AND spf.number < :first_spot AND spl.number > :last_spot;`;
 					//console.log("SQL at IsntSpotOverlapping : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if (err) {
@@ -428,7 +428,7 @@ function IsntSpotOverlapping(infos, callback) {
  * @param {int} id
  */
 function DeleteSchedule(callback, id){
-	sql = `DELETE FROM ${dbName}.Schedule WHERE id=:id;`;
+	sql = `DELETE FROM Schedule WHERE id=:id;`;
 	//console.log("SQL at DeleteUser : " + sql + " with id=" + id);
 	dbConnection.query(sql, {
 		id:id

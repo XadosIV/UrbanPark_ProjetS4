@@ -1,4 +1,4 @@
-const {dbConnection, dbName} = require('../database');
+const {dbConnection} = require('../database');
 const { GetParkings } = require('./parking');
 const {SpotTypeExists} = require('./spot_type');
 const Errors = require('../errors');
@@ -13,9 +13,9 @@ const Errors = require('../errors');
 
 function GetAllSpots(callback, infos){
 	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp 
-	FROM ${dbName}.Spot s 
-	LEFT JOIN ${dbName}.User u ON s.id = u.id_spot 
-	LEFT JOIN ${dbName}.User uu ON s.id = uu.id_spot_temp 
+	FROM Spot s 
+	LEFT JOIN User u ON s.id = u.id_spot 
+	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
 	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number
 	ORDER BY floor, number`;
     //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
@@ -28,7 +28,7 @@ function GetAllSpots(callback, infos){
         if (err){
             callback(err, [])
         }else{
-            sql = `SELECT * FROM ${dbName}.Typed`
+            sql = `SELECT * FROM Typed`
             //console.log("SQL at GetAllSpots : " + sql);
             allSpots = data
             dbConnection.query(sql, (err, data) => {
@@ -111,7 +111,7 @@ function GetSpotsMultipleFloors(infos, callback, recData=[]){
  * @param {function(*,*)} callback (err, data)
  */
 function InsertListTyped(id_spot, name_types, callback){
-	sql = `INSERT INTO ${dbName}.Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
+	sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
 	//console.log("SQL at InsertListTyped : " + sql + " with " + {id_spot:id_spot,names_types:names_types});
 	dbConnection.query(sql, {
 			id_spot:id_spot,
@@ -149,7 +149,7 @@ function PostSpot(callback, infos){
 				}else if (infos.floor >= parkings[0].floors){
 					Errors.SendError(Errors.E_WRONG_FLOOR, "L'étage n'existe pas.",callback);
 				}else{
-					sql = `INSERT INTO ${dbName}.Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
+					sql = `INSERT INTO Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
 					//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if(err){
