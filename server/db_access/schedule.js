@@ -1,4 +1,4 @@
-const { dbConnection, dbName } = require('../database');
+const { dbConnection } = require('../database');
 const { GetUsers } = require('./user');
 const { GetPermRole } = require('./role');
 const { GetSpots } = require('./spot');
@@ -25,10 +25,7 @@ function IsValidDatetime(datetime) {
  */
 function GetSchedules(callback, infos) {
 	if (infos.role && infos.user) {
-		let errorCode = Errors.E_CONFLICTING_PARAMETERS;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error, []);
+		Errors.SendError(Errors.E_CONFLICTING_PARAMETERS, "Un seul champs peut être définit parmis : role, user", callback);
 	} else if (infos.role) {
 		GetSchedulesRole(callback, infos);
 	} else {
@@ -44,7 +41,7 @@ function GetSchedules(callback, infos) {
  * @param {object} infos {role, parking, date_start, date_end}
  */
 function GetSchedulesRole(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
@@ -64,7 +61,7 @@ function GetSchedulesRole(callback, infos) {
  * @param {object} infos {user, parking, date_start, date_end}
  */
 function GetSchedulesUser(callback, infos) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		user: infos.user || '%',
@@ -85,67 +82,41 @@ function GetSchedulesUser(callback, infos) {
  */
 function PostSchedule(infos, callback) {
 	if(infos.role && infos.user) {
-		let errorCode = Errors.E_CONFLICTING_PARAMETERS;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error, []);
+		Errors.SendError(Errors.E_CONFLICTING_PARAMETERS, 
+			"Un seul champ peut être définit parmis : role, user.",
+			callback);
 	}else if (isNaN(infos.first_spot) != isNaN(infos.last_spot)) {
-		let errorCode = Errors.E_CONFLICTING_PARAMETERS;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error, []);
+		Errors.SendError(Errors.E_MISSING_PARAMETER, 
+			"Les champs suivants doivent être définits : first_spot, last_spot.",
+			callback);
 	}else if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) {
-		let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error, []);
+		Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
 	}else if (infos.date_start > infos.date_end){
-		let errorCode = Errors.E_WRONG_DATETIME_ORDER;
-		let error = new Error(errorCode);
-		error.code = errorCode;
-		callback(error, []);
+		Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
 	}else if (!isNaN(infos.first_spot)){
 		GetSpots((err,first_spot) =>{
 			if(err){
 				callback(err,{});
 			}else if(first_spot.length != 1){
-				let errorCode = Errors.E_SPOT_NOT_FOUND;
-				let error = new Error(errorCode);
-				error.code = errorCode;
-				callback(error, []);
+				Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 			}else{
 				GetSpots((err, last_spot) => {
 					if(err){
 						callback(err, {});
 					}else if(last_spot.length != 1){
-						let errorCode = Errors.E_SPOT_NOT_FOUND;
-						let error = new Error(errorCode);
-						error.code = errorCode;
-						callback(error, []);
+						Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 					}else if(first_spot[0].id_park != last_spot[0].id_park){
-						let errorCode = Errors.E_SPOTS_IN_DIFFERENT_PARKINGS;
-						let error = new Error(errorCode);
-						error.code = errorCode;
-						callback(error, []);
+						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_PARKINGS, "Les places sélectionnées ne sont pas dans le même parking.", callback);
 					}else if (first_spot[0].floor != last_spot[0].floor){
-						let errorCode = Errors.E_SPOTS_IN_DIFFERENT_FLOORS;
-						let error = new Error(errorCode);
-						error.code = errorCode;
-						callback(error, []);
+						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
 					}else if (first_spot[0].number > last_spot[0].number){
-						let errorCode = Errors.E_SPOTS_IN_DIFFERENT_FLOORS;
-						let error = new Error(errorCode);
-						error.code = errorCode;
-						callback(error, []);
+						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
 					}else{
 						IsntSpotOverlapping(infos, (err, isntOverlapping)=>{
 							if(err){
 								callback(err, []);
 							}else if(!isntOverlapping){
-								let errorCode = Errors.E_OVERLAPPING_SPOTS;
-								let error = new Error(errorCode);
-								error.code = errorCode;
-								callback(error, []);
+								Errors.SendError(Errors.E_OVERLAPPING_SPOTS, "La sélection est superposée à un autre créneau.", callback);
 							}else if(infos.role){
 								PostScheduleRole(infos, callback);
 							}else{
@@ -175,12 +146,9 @@ function PostScheduleRole(infos, callback) {
 		if (err) {
 			callback(err, data);
 		} else if (data.length != 1) {
-			let errorCode = Errors.E_ROLE_NOT_FOUND;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, {});
+			Errors.SendError(Errors.E_ROLE_NOT_FOUND, "Ce rôle n'existe pas.", callback);
 		} else {
-			sql = `SELECT id FROM ${dbName}.User WHERE role LIKE :role`;
+			sql = `SELECT id FROM User WHERE role LIKE :role`;
 			console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, {
 				role: infos.role || '%'
@@ -188,15 +156,11 @@ function PostScheduleRole(infos, callback) {
 				if (err) {
 					callback(err, data);
 				} else {
-					console.log(data)
 					IsntScheduleOverlappingForList(infos, data.map(i => i.id), (err, isntOverlapping) => {
 						if (err) {
 							callback(err, {});
 						} else if (!isntOverlapping) {
-							let errorCode = Errors.E_OVERLAPPING_SCHEDULES;
-							let error = new Error(errorCode);
-							error.code = errorCode;
-							callback(error, {});
+							Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
 						} else {
 							PostScheduleUsers(infos, data.map(i => i.id), callback);
 						}
@@ -219,21 +183,15 @@ function PostScheduleUser(infos, callback) {
 		if (err) {
 			callback(err, data);
 		} else if (data.length != 1) {
-			let errorCode = Errors.E_USER_NOT_FOUND;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, {});
+			Errors.SendError(Errors.E_USER_NOT_FOUND, "Cet utilisateur n'existe pas.", callback);
 		} else {
 			IsntScheduleOverlapping(infos, (err, isntOverlapping) => {
 				if (err) {
 					callback(err, {});
 				} else if (!isntOverlapping) {
-					let errorCode = Errors.E_OVERLAPPING_SCHEDULES;
-					let error = new Error(errorCode);
-					error.code = errorCode;
-					callback(error, {});
+					Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
 				} else {
-					sql = `INSERT INTO ${dbName}.Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
+					sql = `INSERT INTO Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
 					//console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, {
 						user:infos.user,
@@ -275,7 +233,7 @@ function PostScheduleUsers(infos, ids, callback) {
 }
 
 function GetScheduleById(id, callback){
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM ${dbName}.Schedule s JOIN ${dbName}.User u ON s.id_user = u.id JOIN ${dbName}.Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
+	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
 	dbConnection.query(sql, {id:id}, callback);
 }
 
@@ -285,27 +243,19 @@ function UpdateSchedule(infos, callback){
 
 	let doSqlRequest = (schedule) => {
 		//insert sql
-		sql = `UPDATE ${dbName}.Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end, first_spot=:first, last_spot=:last WHERE id=:id`
+		sql = `UPDATE Schedule SET id_user=:user, id_parking=:parking, date_start=:start, date_end=:end, first_spot=:first, last_spot=:last WHERE id=:id`
 		dbConnection.query(sql, schedule, callback);
 	}
 
 	if (infos.date_start){
 		if (!IsValidDatetime(infos.date_start)){
-			let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error,{});
-			return;
+			return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
 		}
 	}
 	//Check date_end syntax
 	if (infos.date_end){
 		if (!IsValidDatetime(infos.date_end)){
-			let errorCode = Errors.E_DATETIME_FORMAT_INVALID;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error,{});
-			return;
+			return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
 		}
 	}
 
@@ -326,11 +276,7 @@ function UpdateSchedule(infos, callback){
 
 				// check schedule order
 				if (schedule.end < schedule.start){
-					let errorCode = Errors.E_WRONG_DATETIME_ORDER;
-					let error = new Error(errorCode);
-					error.code = errorCode;
-					callback(error,{});
-					return;
+					return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
 				}
 
 				//check schedule overlap
@@ -346,61 +292,33 @@ function UpdateSchedule(infos, callback){
 									if (err){
 										callback(err, [])
 									}else if (first_spot.length == 0){
-											let errorCode = Errors.E_SPOT_NOT_FOUND;
-											let error = new Error(errorCode);
-											error.code = errorCode;
-											callback(error,{});
-											return;
+										return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 									}else{
 										// get second spot
 										GetSpots((err, last_spot) => {
 											if (err){
 												callback(err, [])
 											}else if(last_spot.length == 0){
-												let errorCode = Errors.E_SPOT_NOT_FOUND;
-												let error = new Error(errorCode);
-												error.code = errorCode;
-												callback(error,{});
-												return;
+												return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 											}else{
 												first_spot = first_spot[0]
 												last_spot = last_spot[0]
 												//check spot restriction error
 												if (first_spot.id_park != last_spot.id_park){
-													let errorCode = Errors.E_SPOTS_IN_DIFFERENT_PARKINGS;
-													let error = new Error(errorCode);
-													error.code = errorCode;
-													callback(error,{});
-													return;
+													return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_PARKINGS, "Les places sélectionnées ne sont pas dans le même parking.", callback);
 												}else if (first_spot.id_park != schedule.parking){
-													let errorCode = Errors.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING;
-													let error = new Error(errorCode);
-													error.code = errorCode;
-													callback(error,{});
-													return;
+													return Errors.SendError(Errors.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING, "Les places sont dans un parking différent de celui attribué par le créneau.", callback);
 												}else if (first_spot.floor != last_spot.floor){
-													let errorCode = Errors.E_SPOTS_IN_DIFFERENT_FLOORS;
-													let error = new Error(errorCode);
-													error.code = errorCode;
-													callback(error,{});
-													return;
+													return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
 												}else if (first_spot.number >= last_spot.number){
-													let errorCode = Errors.E_WRONG_SPOT_ORDER;
-													let error = new Error(errorCode);
-													error.code = errorCode;
-													callback(error,{});
-													return;
+													return Errors.SendError(Errors.E_WRONG_SPOT_ORDER, "La place de fin ne peut pas être avant la place de début.", callback);
 												}else{
 													//Check overlapping spots
 													IsntSpotOverlapping({date_start:schedule.start, date_end:schedule.end, first_spot:schedule.first, last_spot:schedule.last}, (err, no_overlap_spot) => {
 														if (no_overlap_spot){
 															doSqlRequest(schedule)
 														}else{
-															let errorCode = Errors.E_OVERLAPPING_SPOTS;
-															let error = new Error(errorCode);
-															error.code = errorCode;
-															callback(error,{});
-															return;
+															return Errors.SendError(Errors.E_OVERLAPPING_SPOTS, "La sélection est superposée à un autre créneau.", callback);
 														}
 													})
 												}
@@ -412,20 +330,12 @@ function UpdateSchedule(infos, callback){
 								doSqlRequest(schedule);
 							}
 						}else{
-							let errorCode = Errors.E_OVERLAPPING_SCHEDULES;
-							let error = new Error(errorCode);
-							error.code = errorCode;
-							callback(error,{});
-							return;
+							return Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour l'utilisateur concerné.", callback);
 						}
 					}
 				})
 			}else{
-				let errorCode = Errors.E_SCHEDULE_NOT_FOUND;
-				let error = new Error(errorCode);
-				error.code = errorCode;
-				callback(error,{});
-				return;
+				return Errors.SendError(Errors.E_SCHEDULE_NOT_FOUND, "Le créneau demandé n'existe pas.", callback);
 			}
 		}
 	})
@@ -439,7 +349,7 @@ function UpdateSchedule(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function IsntScheduleOverlapping(infos, callback) {
-	sql = `SELECT * FROM ${dbName}.Schedule WHERE id_user=:user AND (date_start < :date_end AND date_end > :date_start);`;
+	sql = `SELECT * FROM Schedule WHERE id_user=:user AND (date_start < :date_end AND date_end > :date_start);`;
 	//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {
 		if (err) {
@@ -487,21 +397,15 @@ function IsntSpotOverlapping(infos, callback) {
 		if(err){
 			callback(err,{});
 		}else if(first_spot.length != 1){
-			let errorCode = Errors.E_SPOT_NOT_FOUND;
-			let error = new Error(errorCode);
-			error.code = errorCode;
-			callback(error, []);
+			return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 		}else{
 			GetSpots((err, last_spot) => {
 				if(err){
 					callback(err, {});
 				}else if(last_spot.length != 1){
-					let errorCode = Errors.E_SPOT_NOT_FOUND;
-					let error = new Error(errorCode);
-					error.code = errorCode;
-					callback(error, []);
+					return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 				}else{
-					sql = `SELECT s.id FROM ${dbName}.Schedule s JOIN ${dbName}.Spot spf ON s.first_spot=spf.id JOIN ${dbName}.Spot spl ON s.last_spot=spl.id WHERE s.date_start < :date_end AND s.date_end > :date_start AND spf.number < :first_spot AND spl.number > :last_spot;`;
+					sql = `SELECT s.id FROM Schedule s JOIN Spot spf ON s.first_spot=spf.id JOIN Spot spl ON s.last_spot=spl.id WHERE s.date_start < :date_end AND s.date_end > :date_start AND spf.number < :first_spot AND spl.number > :last_spot;`;
 					//console.log("SQL at IsntSpotOverlapping : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if (err) {
@@ -524,7 +428,7 @@ function IsntSpotOverlapping(infos, callback) {
  * @param {int} id
  */
 function DeleteSchedule(callback, id){
-	sql = `DELETE FROM ${dbName}.Schedule WHERE id=:id;`;
+	sql = `DELETE FROM Schedule WHERE id=:id;`;
 	//console.log("SQL at DeleteUser : " + sql + " with id=" + id);
 	dbConnection.query(sql, {
 		id:id
