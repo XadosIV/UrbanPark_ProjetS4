@@ -1,5 +1,4 @@
-const {dbConnection, dbName} = require('../database');
-const Errors = require('../errors');
+const {dbConnection} = require('../database');
 
 /**
  * GetPermRole
@@ -9,7 +8,7 @@ const Errors = require('../errors');
  * @param {object} infos {role}
  */
 function GetPermRole(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Role WHERE name=:role;`;
+	sql = `SELECT * FROM Role WHERE name=:role;`;
 	console.log("SQL at GetPermRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role

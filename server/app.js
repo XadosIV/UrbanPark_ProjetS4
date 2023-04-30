@@ -5,7 +5,8 @@ const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('
 const {GetParkings, PostParking, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
-const {GetSpots, PostSpot, UpdateSpot} = require('./db_access/spot')
+const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
+
 const {GetPermRole} = require('./db_access/role');
 const Errors = require('./errors');
 
@@ -247,6 +248,23 @@ app.put('/api/spot/:id', (req, res) => {
 			res.status(200).json();
 		}
 	}, req.body)
+})
+
+app.delete('/api/spot/:id', (req, res) => {
+	console.log("Request at DELETE /api/post/:id : " + JSON.stringify(req.query));
+	if (parseInt(req.params.id)){
+		DeleteSpot((err, data)=>{
+			if (err){
+				console.log(err);
+				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
+			}
+			else {
+				res.status(200).json();
+			}
+		}, parseInt(req.params.id))
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","id":"Champs obligatoires : id"});
+	}
 })
 
 // TODO
