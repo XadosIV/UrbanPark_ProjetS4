@@ -69,9 +69,7 @@ function PutParkings(infos, callback){
 					"floors":infos.floors||oldParking.floors,
 					"address":infos.address||oldParking.address,
 					"id":infos.id
-				}, (err, dataUpdate) => {
-					callback(err, dataUpdate)
-				});
+				}, callback);
 			};
 
 			if (infos.floors && infos.floors < oldParking.floors){
