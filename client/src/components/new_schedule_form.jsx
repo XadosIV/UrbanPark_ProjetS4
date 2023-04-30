@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, TextareaAutosize } from "@mui/material";
 import { CreationSchedule, placeFromId } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
@@ -59,6 +59,7 @@ export function NewScheduleForm() {
     }
 
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
+    const [optionsUsers, setOptionsUsers] = useState({opts:[], change:false})
 
     const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19), first_spot: 0, last_spot:0});
 
@@ -68,6 +69,7 @@ export function NewScheduleForm() {
 
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
+    const [guardiansList, setGuardiansList] = useState([]);
 
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
@@ -75,6 +77,8 @@ export function NewScheduleForm() {
             if (name.name == "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
+            } else if (name.name == "type") {
+                setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
             }
             value = selectedOptions.value
         } else {
@@ -88,7 +92,11 @@ export function NewScheduleForm() {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!Array.isArray(infos.user) || infos.user.length == 1) {
+        if (infos.user.length == 0) {
+            setWrongInput(true)
+            setErrMessage("Vous n'avez assigné ce créneau à personne")
+        }
+        else if (!Array.isArray(infos.user) || infos.user.length == 1) {
             if (Array.isArray(infos.user)) {
                 infos.user = infos.user[0]
             }
@@ -146,8 +154,8 @@ export function NewScheduleForm() {
         }
 	}
 
-    var optionsService = AllServices(serviceList)
     var optionsParking = AllParkings(parkingsList)
+    const newScheduleOptions = [{value:"guardiansList", label: "Gardien"}, {value:"serviceList", label:"Agent d'entretien"}]
 
     useEffect(() => {
         TP.TakeParking().then(res => {
@@ -155,6 +163,7 @@ export function NewScheduleForm() {
             TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
         });
         TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res))
     }, [])
 
     useEffect(() => {
@@ -174,7 +183,19 @@ export function NewScheduleForm() {
             }}>Ajouter des créneaux de travail</Button>} position="right center" onClose={() => setWrongInput(false)}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
-                <form onSubmit={handlleSubmit} className="form">   
+                <form onSubmit={handlleSubmit} className="form"> 
+                    <div style={{zIndex:1008}}>
+                        <Select 
+                            id="type"
+                            autosize={true}
+                            className="searchs-add"
+                            options={newScheduleOptions} 
+                            placeholder="Type de créneau..."
+                            name="type" 
+                            isSearchable={false}
+                            onChange={handleChangeSelect}
+                        />
+                    </div>  
                     <div style={{zIndex:1007}}>   
                         <Select 
                             id="parking"
@@ -191,7 +212,7 @@ export function NewScheduleForm() {
                             isMulti
                             name="user"
                             placeholder="Assigner à..."
-                            options={optionsService}
+                            options={optionsUsers.opts}
                             className="search-add-two "
                             onChange={handleChangeSelect}
                         />

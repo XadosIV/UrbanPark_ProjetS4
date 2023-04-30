@@ -48,7 +48,7 @@ export function ParkingSpots(props) {
      * @return { TextField }
      */
     function ErrorOnSecondNumber(nb1, nb2) {
-        if (nb2 < nb1 && (nb2 !== 0 || nb2 !== "")) {
+        if (nb2 < nb1 && (nb2 !== 0 || nb2 !== "") && infos.checkedsecondNumber) {
             return <TextField
             error
             helperText="Chiffre supérieur au premier"
@@ -112,6 +112,22 @@ export function ParkingSpots(props) {
         }
     }
 
+    /**
+     * NewSecondOptions
+     * Returns a list of select react options for the second select - Without the ones used by the first one
+     *
+     * @param { array } opts - The base list of options
+     * @param { integer } floor - The floor of the first select
+     * @return { array }
+     */
+    function NewSecondOptions(opts, floor) {
+        if (floor !== "%") {
+            return opts.slice(floor+2)
+        } else {
+            return []
+        }
+    }
+
     var baseValueFloorType = "%"
     var baseValueNumber = ""
 
@@ -145,8 +161,12 @@ export function ParkingSpots(props) {
     const handleChangeChecks = (event) => {
         const name = event.target.name;
         const value = !infos[name]
+        var newVal = baseValueNumber;
+        if (name === "checkedsecondFloor") {
+            newVal = baseValueFloorType
+        }
         setInfos(values => ({...values, [name]: value}))
-        setInfos(values => ({...values, [name.substring(7)]: ""}))
+        setInfos(values => ({...values, [name.substring(7)]: newVal}))
     }
 
     const handleChangeSelects = (event, name) => {
@@ -201,8 +221,8 @@ export function ParkingSpots(props) {
                 <p className="search" style={{marginTop:"-5px", textAlign:"center"}}>Choisir toutes les <br/>places entre :</p>
                 <Select 
                     className="front-search-second"
-                    options={optionsFloor.slice(infos.firstFloor+2)} 
-                    defaultValue = {optionsFloor.slice(infos.firstFloor+2)[0]}
+                    options={NewSecondOptions(optionsFloor, infos.firstFloor)} 
+                    defaultValue = {NewSecondOptions(optionsFloor, infos.firstFloor)[0]}
                     name="secondFloor" 
                     onChange={event => handleChangeSelects(event, "secondFloor")}
                     isSearchable={false}

@@ -9,10 +9,10 @@ const Errors = require('../errors');
  * @param {object} infos {role}
  */
 function GetPermRole(callback, infos){
-	sql = `SELECT * FROM ${dbName}.Role WHERE name=:role;`;
+	sql = `SELECT * FROM ${dbName}.Role WHERE name LIKE :role;`;
 	console.log("SQL at GetPermRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
-		role: infos.role
+		role: infos.role||'%'
 	}, callback);
 }
 
