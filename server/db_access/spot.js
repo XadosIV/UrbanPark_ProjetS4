@@ -173,6 +173,49 @@ function PostSpot(callback, infos){
 }
 
 /**
+ * DeleteSpot
+ * Delete a spot and all his references by id
+ * 
+ * @param {function (*,*)} callback (err, data)
+ * @param {int} id
+ */
+function DeleteSpot(callback, id){
+	const {AdaptSchedule} = require("./schedule")
+	const {DeleteSpotType} = require("./spot_type")
+	const {RemoveSpotUsers} = require("./user")
+	// AdaptSchedule((err, res) => {
+	// 	callback(err, res);
+	// }, id)
+	AdaptSchedule((err, res) =>{
+		if (err){
+			callback(err, res);
+		}
+		else{
+			DeleteSpotType((err, res) => {
+				if (err){
+					callback(err, res);
+				}
+				else{
+					RemoveSpotUsers((err, res) => {
+						if (err){
+							callback(err, res)
+						}
+						else {
+							sql = `DELETE FROM ${dbName}.Spot WHERE id=:id`;
+							dbConnection.query(sql,{
+								id:id
+							}, (err, data) => {
+								callback(err, data)
+							});
+						}
+					}, id)
+				}
+			}, id);
+		};
+	}, id)
+}
+
+/**
  * DeleteSpots
  * Delete a list of spots
  * 
@@ -191,4 +234,4 @@ function DeleteSpots(ids, callback){
 	});
 }
 
-module.exports = {GetAllSpots, GetSpots, GetSpotsMultipleFloors, PostSpot, DeleteSpots};
+module.exports = {GetAllSpots, GetSpots, GetSpotsMultipleFloors, PostSpot, DeleteSpots, DeleteSpot};

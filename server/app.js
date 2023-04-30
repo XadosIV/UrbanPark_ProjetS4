@@ -7,7 +7,7 @@ const {GetParkings, PostParking, PutParkings, DeleteParking} = require('./db_acc
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
 
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
-const {GetSpots, PostSpot} = require('./db_access/spot')
+const {GetSpots, PostSpot, DeleteSpot} = require('./db_access/spot')
 const {GetPermRole} = require('./db_access/role');
 const Errors = require('./errors');
 
@@ -250,6 +250,23 @@ app.post('/api/spot', (req, res) => {
 		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : number, floor, id_park"});
 	}
 });
+
+app.delete('/api/spot/:id', (req, res) => {
+	console.log("Request at DELETE /api/post/:id : " + JSON.stringify(req.query));
+	if (parseInt(req.params.id)){
+		DeleteSpot((err, data)=>{
+			if (err){
+				console.log(err);
+				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
+			}
+			else {
+				res.status(200).json();
+			}
+		}, parseInt(req.params.id))
+	}else{
+		res.status(400).json({"code":"E_MISSING_PARAMETER","id":"Champs obligatoires : id"});
+	}
+})
 
 // TODO
 // [ deprecated ] à changer vers /role/:role

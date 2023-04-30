@@ -197,4 +197,106 @@ function PostUser(callback, infos){
 	}
 }
 
-module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser};
+/**
+ * RemoveSpotUsers
+ * Remove the place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {int} id
+ */
+function RemoveSpotUsers(callback, id){
+	sql = `SELECT id FROM ${dbName}.User WHERE id_spot=:id`;
+	dbConnection.query(sql, {
+		id:id
+	}, (err, data) => {
+		if (err){
+			callback(err, {})
+		}
+		else{
+			RemoveSpotUserPrinc((err, data) => {
+				sql = `SELECT id FROM ${dbName}.User WHERE id_spot_temp=:id`;
+				dbConnection.query(sql, {
+					id:id
+				}, (err, data) => {
+					if (err){
+						callback(err, {})
+					}
+					else{
+						RemoveSpotUserTemp((err, data) => {
+							callback(err, data);
+						}, data)
+					}
+				});
+			}, data)
+		}
+	});
+}
+
+/**
+ * RemoveSpotUserPrinc
+ * Remove the place place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} infos {id}
+ */
+function RemoveSpotUserPrinc(callback, infos){
+	if (infos.length > 0){
+		sql = `UPDATE ${dbName}.User SET id_spot=NULL WHERE id=:id`;
+		dbConnection.query(sql, {
+			id:infos.shift().id
+		}, (err, data) => {
+			if (err){
+				callback(err, data);
+			}
+			else if (infos.length > 0){
+				RemoveSpotUser((err, data) => {
+					callback(err, data);
+				}, {
+					liste:infos
+				})
+			}
+			else {
+				callback(err, data)
+			}
+		})
+	}
+	else {
+		callback(null, {})
+	}
+}
+
+/**
+ * RemoveSpotUserTemp
+ * Remove the temp place of a user by id
+ * 
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array} infos {id}
+ */
+function RemoveSpotUserTemp(callback, infos){
+	if (infos.length > 0){
+		sql = `UPDATE ${dbName}.User SET id_spot_temp=NULL WHERE id=:id`;
+		dbConnection.query(sql, {
+			id:infos.shift().id
+		}, (err, data) => {
+			if (err){
+				callback(err, data);
+			}
+			else if (infos.length > 0){
+				RemoveSpotUser((err, data) => {
+					callback(err, data);
+				}, {
+					liste:infos
+				})
+			}
+			else {
+				callback(err, data)
+			}
+		})
+	}
+	else {
+		callback(null, {})
+	}
+}
+
+
+module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser, RemoveSpotUsers};
