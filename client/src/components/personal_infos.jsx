@@ -83,7 +83,7 @@ export function PersonalInfos(){
     }
 
     const handlleSubmit = async (e) => {
-        console.log("event", e.target);
+        // console.log("event", e.target);
         e.preventDefault();
         // console.log("userInfos", newInfos);
         // console.log("newMdp", newMdp);
