@@ -205,7 +205,7 @@ function PostUser(callback, infos){
  * @param {int} id
  */
 function RemoveSpotUsers(callback, id){
-	sql = `SELECT id FROM ${dbName}.User WHERE id_spot=:id`;
+	sql = `SELECT id FROM User WHERE id_spot=:id`;
 	dbConnection.query(sql, {
 		id:id
 	}, (err, data) => {
@@ -214,7 +214,7 @@ function RemoveSpotUsers(callback, id){
 		}
 		else{
 			RemoveSpotUserPrinc((err, data) => {
-				sql = `SELECT id FROM ${dbName}.User WHERE id_spot_temp=:id`;
+				sql = `SELECT id FROM User WHERE id_spot_temp=:id`;
 				dbConnection.query(sql, {
 					id:id
 				}, (err, data) => {
@@ -241,7 +241,7 @@ function RemoveSpotUsers(callback, id){
  */
 function RemoveSpotUserPrinc(callback, infos){
 	if (infos.length > 0){
-		sql = `UPDATE ${dbName}.User SET id_spot=NULL WHERE id=:id`;
+		sql = `UPDATE User SET id_spot=NULL WHERE id=:id`;
 		dbConnection.query(sql, {
 			id:infos.shift().id
 		}, (err, data) => {
@@ -274,7 +274,7 @@ function RemoveSpotUserPrinc(callback, infos){
  */
 function RemoveSpotUserTemp(callback, infos){
 	if (infos.length > 0){
-		sql = `UPDATE ${dbName}.User SET id_spot_temp=NULL WHERE id=:id`;
+		sql = `UPDATE User SET id_spot_temp=NULL WHERE id=:id`;
 		dbConnection.query(sql, {
 			id:infos.shift().id
 		}, (err, data) => {

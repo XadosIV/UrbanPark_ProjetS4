@@ -83,21 +83,21 @@ function GetSpots(callback, infos){
  * @param {*} callback 
  */
 function GetSpotsMultipleFloors(infos, callback, recData=[]){
-	GetSpots({
-		"id_park":infos.id_park,
-		"floor":infos.floors.pop(),
-		"number":infos.number,
-		"type":infos.type,
-		"id":infos.id
-	},(err,data)=>{
+	poppedFloor = infos.floors.pop();
+	GetSpots((err,data)=>{
+		console.log(data);
 		if(err){
 			callback(err,data);
 		}else if(infos.floors.length>0){
 			data= recData.concat(data);
-			GetSpotsMultipleFloors(ids,callback,data);
+			GetSpotsMultipleFloors(infos,callback,data);
 		}else{
+			data= recData.concat(data);
 			callback(err,data);
 		}
+	},{
+		"id_park":infos.id_park,
+		"floor":poppedFloor
 	});
 }
 
@@ -180,12 +180,9 @@ function PostSpot(callback, infos){
  * @param {int} id
  */
 function DeleteSpot(callback, id){
-	const {AdaptSchedule} = require("./schedule")
-	const {DeleteSpotType} = require("./spot_type")
-	const {RemoveSpotUsers} = require("./user")
-	// AdaptSchedule((err, res) => {
-	// 	callback(err, res);
-	// }, id)
+	const {AdaptSchedule} = require("./schedule");
+	const {DeleteSpotType} = require("./spot_type");
+	const {RemoveSpotUsers} = require("./user");
 	AdaptSchedule((err, res) =>{
 		if (err){
 			callback(err, res);
@@ -201,7 +198,7 @@ function DeleteSpot(callback, id){
 							callback(err, res)
 						}
 						else {
-							sql = `DELETE FROM ${dbName}.Spot WHERE id=:id`;
+							sql = `DELETE FROM Spot WHERE id=:id`;
 							dbConnection.query(sql,{
 								id:id
 							}, (err, data) => {
@@ -223,7 +220,7 @@ function DeleteSpot(callback, id){
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteSpots(ids, callback){
-	DeleteSpot(ids.pop(), (err, data) => {
+	DeleteSpot((err, data) => {
 		if(err){
 			callback(err,data);
 		}else if(ids.length>0){
@@ -231,7 +228,7 @@ function DeleteSpots(ids, callback){
 		}else{
 			callback(err,data);
 		}
-	});
+	},ids.pop());
 }
 
 module.exports = {GetAllSpots, GetSpots, GetSpotsMultipleFloors, PostSpot, DeleteSpots, DeleteSpot};

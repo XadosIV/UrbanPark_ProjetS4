@@ -13,7 +13,7 @@ const Errors = require('../errors');
 
 function GetParkings(callback, infos){
 	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
-    console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
+    //console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%'
     }, callback);
@@ -22,16 +22,16 @@ function GetParkings(callback, infos){
 /**
  * PostParking
  * 
- * @param {object} infos {id, name, floor, address} 
+ * @param {object} infos {id, name, floors, address} 
  * @param {function(*,*)} callback 
  */
 function PostParking(infos, callback){
-    if ( !(infos.id && infos.name && infos.floor && infos.address) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, 
-        "Les champs suivants doivent être remplis : 'id', 'name', 'floor', 'address'", callback);
+    if ( !(infos.id && infos.name && infos.floors && infos.address) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, 
+        "Les champs suivants doivent être remplis : 'id', 'name', 'floors', 'address'", callback);
     
     if (infos.id.length != 1) return Errors.SendError(Errors.E_WRONG_ID_FORMAT, "L'id ne doit faire qu'un caractère.", callback);
-    if (isNaN(infos.floor)) return Errors.SendError(Errors.E_WRONG_FLOOR_FORMAT, "Le champ 'floor' doit être un nombre.", callback);
-    if (parseInt(infos.floor) <= 0) return Errors.SendError(Errors.E_WRONG_FLOOR, "Le nombre d'étage ne peut pas être inférieur ou égal à zéro.", callback);
+    if (isNaN(infos.floors)) return Errors.SendError(Errors.E_WRONG_FLOORS_FORMAT, "Le champ 'floors' doit être un nombre.", callback);
+    if (parseInt(infos.floors) <= 0) return Errors.SendError(Errors.E_WRONG_FLOORS, "Le nombre d'étage ne peut pas être inférieur ou égal à zéro.", callback);
 
     GetParkings( (err, data) => {
         if (err) {
@@ -39,7 +39,7 @@ function PostParking(infos, callback){
         }else{
             if (data.length >= 1) return Errors.SendError(Errors.E_PARKING_ALREADY_EXIST, "Le parking existe déjà.", callback)
 
-            let sql = `INSERT INTO Parking (id, name, floors, address) VALUES (:id, :name, :floor, :address)`
+            let sql = `INSERT INTO Parking (id, name, floors, address) VALUES (:id, :name, :floors, :address)`
             
             dbConnection.query(sql, infos, callback);
         }
@@ -50,23 +50,23 @@ function PostParking(infos, callback){
  * PutParkings
  * Modify selected parking
  * 
- * @param {object} infos {id, name, floor, address}
+ * @param {object} infos {id, name, floors, address}
  * @param {function(*,*)} callback
  */
 function PutParkings(infos, callback){
 	GetParkings((err,data)=>{
 		if(err){
 			callback(err,data);
-		}else if(data.length != 0){
+		}else if(data.length != 1){
 			return Errors.SendError(Errors.E_UNDEFINED_PARKING, "Ce parking n'existe pas", callback);
 		}else{
 			let oldParking = data[0];
 			let update = (err,data)=>{
-				sql = `UPDATE Parking SET name=:name, floor=:floor, address=:address WHERE id=:id;`;
+				sql = `UPDATE Parking SET name=:name, floors=:floors, address=:address WHERE id=:id;`;
 				//console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, {
 					"name":infos.name||oldParking.name,
-					"floor":infos.floor||oldParking.floor,
+					"floors":infos.floors||oldParking.floors,
 					"address":infos.address||oldParking.address,
 					"id":infos.id
 				}, (err, dataUpdate) => {
@@ -74,15 +74,17 @@ function PutParkings(infos, callback){
 				});
 			};
 
-			if (infos.floor && infos.floor < oldParking.floor){
+			if (infos.floors && infos.floors < oldParking.floors){
 				GetSpotsMultipleFloors({
 					"id_park":infos.id,
-					"floors":Range(infos.floor+1, oldParking.floor)
+					"floors":Range(infos.floors, oldParking.floors-1)
 				}, (err,spotsToDelete)=>{
 					if(err){
 						callback(err, spotsToDelete);
+					}else if(spotsToDelete.length>0){
+						DeleteSpots(spotsToDelete.map(i => i.id), update);
 					}else{
-						DeleteSpots({"ids":spotsToDelete.map(i => i.id)}, update);
+						update(err,spotsToDelete);
 					}
 				});
 			}else{

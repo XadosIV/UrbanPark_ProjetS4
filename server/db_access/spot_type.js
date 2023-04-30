@@ -96,7 +96,7 @@ function PostSpotType(callback, infos){
  * @param {int} id
  */
 function DeleteSpotType (callback, id){
-	let sql = `DELETE FROM ${dbName}.Typed WHERE id_spot=:id`
+	let sql = `DELETE FROM Typed WHERE id_spot=:id`
 	dbConnection.query(sql,{
 		id:id
 	}, (err, data) => {
