@@ -110,6 +110,7 @@ export function PersonalInfos(){
                 setErrInput(true);
                 setErrMessage("nom ou prénom invalide");
             }
+            setNewInfos({});
         }else if(e.target.name === "form-modif-mdp"){
             if(newMdp.new_password === newMdp.new_password_conf){
                 dataSent = {
@@ -119,6 +120,7 @@ export function PersonalInfos(){
                 pass = newMdp.password;
                 nouvpass = newMdp.new_password_conf;
             }
+            setNewMdp({});
         }else if(e.target.name === "form-modif-mail"){
             dataSent = {
                 ...dataSent,
@@ -126,6 +128,7 @@ export function PersonalInfos(){
             };
             pass = newEmail.password;
             nouvmail = newEmail.email;
+            setNewEmail({});
         }
 
         let fetchT = await fetchToken(infosUser.email, pass);
@@ -225,6 +228,15 @@ export function PersonalInfos(){
                     <p className="p-form-title">changer mon mot de passe</p>
                     <TextField
                         required
+                        id="password"
+                        label="mot de passe"
+                        type="password"
+                        name="password"
+                        onPaste={ noPaste }
+                        onChange={ handleChangeMdp }
+                    />
+                    <TextField
+                        required
                         id="new_password"
                         label="nouveau mot de passe"
                         type="password"
@@ -238,15 +250,6 @@ export function PersonalInfos(){
                         label="confirmation nouveau mot de passe"
                         type="password"
                         name="new_password_conf"
-                        onPaste={ noPaste }
-                        onChange={ handleChangeMdp }
-                    />
-                    <TextField
-                        required
-                        id="password"
-                        label="mot de passe"
-                        type="password"
-                        name="password"
                         onPaste={ noPaste }
                         onChange={ handleChangeMdp }
                     />
