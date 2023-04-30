@@ -27,8 +27,8 @@
     margin: 5%;
 }
 
-.inputs_divs>* {
-    margin: 5%;
+.inputs-divs>* {
+    margin: 5px;
 }
 
 .err_message {

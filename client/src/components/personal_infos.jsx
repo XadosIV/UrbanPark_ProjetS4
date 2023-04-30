@@ -108,7 +108,7 @@ export function PersonalInfos(){
                 pass = newInfos.password;
             }else{
                 setErrInput(true);
-                setErrMessage("nom ou prénom invalide");
+                setErrMessage("Nom ou prénom invalide");
             }
         }else if(e.target.name === "form-modif-mdp"){
             if(newMdp.new_password === newMdp.new_password_conf){
@@ -151,7 +151,7 @@ export function PersonalInfos(){
                 }
             }else{
                 setErrInput(true);
-                setErrMessage("mot de passe invalide");
+                setErrMessage("Mot de passe invalide");
             }
         }
         // console.log("dataSent", dataSent);
@@ -187,7 +187,7 @@ export function PersonalInfos(){
                 <form  onSubmit={ handlleSubmit } name="form-modif-infos">
                     <div className="input-div">
                         <p className="p-form-title">Changer mes informations</p>
-                        <TextField
+                        <div><TextField
                             required
                             id="first_name"
                             label="Prénom"
@@ -195,8 +195,8 @@ export function PersonalInfos(){
                             name="first_name"
                             defaultValue={infosUser.first_name}
                             onChange={ handleChangeInfos }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             id="last_name"
                             label="Nom"
                             type="text"
@@ -204,7 +204,8 @@ export function PersonalInfos(){
                             defaultValue={infosUser.last_name}
                             onChange={ handleChangeInfos }
                         />
-                        <TextField
+                        </div>
+                        <div><TextField
                             id="password"
                             label="mot de passe"
                             type="password"
@@ -212,18 +213,20 @@ export function PersonalInfos(){
                             onPaste={ noPaste }
                             onChange={ handleChangeInfos }
                         />
-                        <Button 
+                        </div>
+                        <div><Button 
                             className="submit_button"
                             variant="contained" 
                             color="primary" 
                             type="submit"
                         >valider les changements</Button>
+                        </div>
                     </div>
                 </form>
                 <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                 <div className="input-div">
-                    <p className="p-form-title">changer mon mot de passe</p>
-                    <TextField
+                    <p className="p-form-title">Changer mon mot de passe</p>
+                    <div><TextField
                         required
                         id="new_password"
                         label="nouveau mot de passe"
@@ -231,8 +234,8 @@ export function PersonalInfos(){
                         name="new_password"
                         onPaste={ noPaste }
                         onChange={ handleChangeMdp }
-                    />
-                    <TextField
+                    /></div>
+                    <div><TextField
                         required
                         id="new_password_conf"
                         label="confirmation nouveau mot de passe"
@@ -240,8 +243,8 @@ export function PersonalInfos(){
                         name="new_password_conf"
                         onPaste={ noPaste }
                         onChange={ handleChangeMdp }
-                    />
-                    <TextField
+                    /></div>
+                    <div><TextField
                         required
                         id="password"
                         label="mot de passe"
@@ -249,27 +252,27 @@ export function PersonalInfos(){
                         name="password"
                         onPaste={ noPaste }
                         onChange={ handleChangeMdp }
-                    />
-                    <Button 
+                    /></div>
+                    <div><Button 
                         className="submit_button"
                         variant="contained" 
                         color="primary" 
                         type="submit"
-                    >modifier mon mot de passe</Button>
+                    >modifier mon mot de passe</Button></div>
                     </div>
                 </form>
                 <form onSubmit={ handlleSubmit } name="form-modif-mail">
                 <div className="input-div">
-                    <p className="p-form-title">changer mon email</p>
-                    <TextField
+                    <p className="p-form-title">Changer mon email</p>
+                    <div><TextField
                         required
                         id="email"
                         label="nouvel email"
                         type="text"
                         name="email"
                         onChange={ handleChangeEmail }
-                    />
-                    <TextField
+                    /></div>
+                    <div><TextField
                         required
                         id="password"
                         label="mot de passe"
@@ -277,13 +280,13 @@ export function PersonalInfos(){
                         name="password"
                         onPaste={ noPaste }
                         onChange={ handleChangeEmail }
-                    />
-                    <Button 
+                    /></div>
+                    <div><Button 
                         className="submit_button"
                         variant="contained" 
                         color="primary" 
                         type="submit"
-                    >modifier mon mot de passe</Button>
+                    >modifier mon email</Button></div>
                     </div>
                 </form>
                 </div>
