@@ -5,7 +5,8 @@ const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('
 const {GetParkings, PostParking, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
-const {GetSpots, PostSpot, DeleteSpot} = require('./db_access/spot')
+const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
+
 const {GetPermRole} = require('./db_access/role');
 const Errors = require('./errors');
 
@@ -237,6 +238,17 @@ app.post('/api/spot', (req, res) => {
 		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : number, floor, id_park"});
 	}
 });
+
+app.put('/api/spot/:id', (req, res) => {
+	req.body.id = req.params.id
+	UpdateSpot((err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json();
+		}
+	}, req.body)
+})
 
 app.delete('/api/spot/:id', (req, res) => {
 	console.log("Request at DELETE /api/post/:id : " + JSON.stringify(req.query));
