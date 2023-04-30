@@ -1,5 +1,4 @@
 const {dbConnection} = require('../database');
-const { GetParkings } = require('./parking');
 const {SpotTypeExists} = require('./spot_type');
 const Errors = require('../errors');
 
@@ -135,6 +134,7 @@ function InsertListTyped(id_spot, name_types, callback){
  * @param {object} infos {number, floor, id_park, types}
  */
 function PostSpot(callback, infos){
+	const { GetParkings } = require('./parking');
 	GetSpots((err, res) => {
 		if (err){
 			callback(err, []);

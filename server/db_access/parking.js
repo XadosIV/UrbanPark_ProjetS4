@@ -1,5 +1,5 @@
-const {dbConnection, dbName} = require('../database');
-const {GetSpots, GetSpotsMultipleFloors, DeleteSpots} = require('./spot.js');
+const {dbConnection} = require('../database');
+const {GetSpotsMultipleFloors, DeleteSpots} = require('./spot.js');
 const {Range} = require('../utils.js');
 const Errors = require('../errors');
 
