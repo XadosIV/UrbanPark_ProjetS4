@@ -108,7 +108,7 @@ export function PersonalInfos(){
                 pass = newInfos.password;
             }else{
                 setErrInput(true);
-                setErrMessage("nom ou prénom invalide");
+                setErrMessage("Nom ou prénom invalide");
             }
             setNewInfos({});
         }else if(e.target.name === "form-modif-mdp"){
@@ -154,7 +154,7 @@ export function PersonalInfos(){
                 }
             }else{
                 setErrInput(true);
-                setErrMessage("mot de passe invalide");
+                setErrMessage("Mot de passe invalide");
             }
         }
         // console.log("dataSent", dataSent);
@@ -185,13 +185,11 @@ export function PersonalInfos(){
         <div className="div-info-user" style={ affFormModifInfo ? {  } : { display: "none" }} >
             <div className="form-modif-infos">
             { affFormModifInfo && 
-                // TODO changer pour avoir un form pour update le mdp et un autre pour le reste
-                <div className="inputs_divs">
+            <div className="inputs_divs">
                 <form  onSubmit={ handlleSubmit } name="form-modif-infos">
                     <div className="input-div">
                         <p className="p-form-title">Changer mes informations</p>
                         <TextField
-                            required
                             id="first_name"
                             label="Prénom"
                             type="text"
@@ -208,6 +206,7 @@ export function PersonalInfos(){
                             onChange={ handleChangeInfos }
                         />
                         <TextField
+                            required
                             id="password"
                             label="mot de passe"
                             type="password"
@@ -224,72 +223,72 @@ export function PersonalInfos(){
                     </div>
                 </form>
                 <form onSubmit={ handlleSubmit } name="form-modif-mdp">
-                <div className="input-div">
-                    <p className="p-form-title">changer mon mot de passe</p>
-                    <TextField
-                        required
-                        id="password"
-                        label="mot de passe"
-                        type="password"
-                        name="password"
-                        onPaste={ noPaste }
-                        onChange={ handleChangeMdp }
-                    />
-                    <TextField
-                        required
-                        id="new_password"
-                        label="nouveau mot de passe"
-                        type="password"
-                        name="new_password"
-                        onPaste={ noPaste }
-                        onChange={ handleChangeMdp }
-                    />
-                    <TextField
-                        required
-                        id="new_password_conf"
-                        label="confirmation nouveau mot de passe"
-                        type="password"
-                        name="new_password_conf"
-                        onPaste={ noPaste }
-                        onChange={ handleChangeMdp }
-                    />
-                    <Button 
-                        className="submit_button"
-                        variant="contained" 
-                        color="primary" 
-                        type="submit"
-                    >modifier mon mot de passe</Button>
+                    <div className="input-div">
+                        <p className="p-form-title">Changer mon mot de passe</p>
+                        <TextField
+                            required
+                            id="password"
+                            label="mot de passe"
+                            type="password"
+                            name="password"
+                            onPaste={ noPaste }
+                            onChange={ handleChangeMdp }
+                        />
+                        <TextField
+                            required
+                            id="new_password"
+                            label="nouveau mot de passe"
+                            type="password"
+                            name="new_password"
+                            onPaste={ noPaste }
+                            onChange={ handleChangeMdp }
+                        />
+                        <TextField
+                            required
+                            id="new_password_conf"
+                            label="confirmation nouveau mot de passe"
+                            type="password"
+                            name="new_password_conf"
+                            onPaste={ noPaste }
+                            onChange={ handleChangeMdp }
+                        />
+                        <Button 
+                            className="submit_button"
+                            variant="contained" 
+                            color="primary" 
+                            type="submit"
+                        >modifier mon mot de passe</Button>
                     </div>
                 </form>
                 <form onSubmit={ handlleSubmit } name="form-modif-mail">
-                <div className="input-div">
-                    <p className="p-form-title">changer mon email</p>
-                    <TextField
-                        required
-                        id="email"
-                        label="nouvel email"
-                        type="text"
-                        name="email"
-                        onChange={ handleChangeEmail }
-                    />
-                    <TextField
-                        required
-                        id="password"
-                        label="mot de passe"
-                        type="password"
-                        name="password"
-                        onPaste={ noPaste }
-                        onChange={ handleChangeEmail }
-                    />
-                    <Button 
-                        className="submit_button"
-                        variant="contained" 
-                        color="primary" 
-                        type="submit"
-                    >modifier mon mot de passe</Button>
+                    <div className="input-div">
+                        <p className="p-form-title">Changer mon email</p>
+                        <TextField
+                            required
+                            id="email"
+                            label="nouvel email"
+                            type="text"
+                            name="email"
+                            onChange={ handleChangeEmail }
+                        />
+                        <TextField
+                            required
+                            id="password"
+                            label="mot de passe"
+                            type="password"
+                            name="password"
+                            onPaste={ noPaste }
+                            onChange={ handleChangeEmail }
+                        />
+                        <Button 
+                            className="submit_button"
+                            variant="contained" 
+                            color="primary" 
+                            type="submit"
+                        >modifier mon email</Button>
                     </div>
                 </form>
-                </div>
+            </div>
             }
             {   errInput &&
                 <p className="err-input"> { errMessage } </p>

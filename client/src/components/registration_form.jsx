@@ -63,7 +63,7 @@ export function RegistrationForm(props) {
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs-divs">
-                <TextField
+                <div><TextField
 					required
 					id="email"
 					label="email"
@@ -71,24 +71,24 @@ export function RegistrationForm(props) {
 					name="email"
 					defaultValue={props.mail}
 					onChange={handleChange}
-				/>
-				<TextField
+				/></div>
+				<div><TextField
 					required
 					id="first_name"
 					label="first_name"
 					type="text"
 					name="first_name"
 					onChange={handleChange}
-				/>
-                <TextField
+				/></div>
+                <div><TextField
 					required
 					id="last_name"
 					label="last_name"
 					type="text"
 					name="last_name"
 					onChange={handleChange}
-				/>
-                <TextField
+				/></div>
+                <div><TextField
 					required
 					id="password"
 					label="mot de passe"
@@ -96,8 +96,8 @@ export function RegistrationForm(props) {
 					name="password"
 					onChange={handleChange}
 					onPaste={ noPaste }
-				/>
-                <TextField
+				/></div>
+                <div><TextField
 					required
 					id="password_conf"
 					label="confirmation du mot de passe"
@@ -105,7 +105,7 @@ export function RegistrationForm(props) {
 					name="password_conf"
 					onChange={handleChange}
 					onPaste={ noPaste }
-				/>
+				/></div>
 			</div>
 			<Button 
 				className="submit_button"
