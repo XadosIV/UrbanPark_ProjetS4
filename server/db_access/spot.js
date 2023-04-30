@@ -305,7 +305,7 @@ function ToggleTypes(id, toggle, callback){
 	}
 }
 
- * DeleteSpot
+ /* DeleteSpot
  * Delete a spot and all his references by id
  * 
  * @param {function (*,*)} callback (err, data)
