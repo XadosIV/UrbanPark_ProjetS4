@@ -54,11 +54,11 @@ function PostParking(infos, callback){
  * @param {function(*,*)} callback
  */
 function PutParkings(infos, callback){
-	GetParkings({"id":infos.id}, (err,data)=>{
+	GetParkings((err,data)=>{
 		if(err){
 			callback(err,data);
-		}else if(data.length() != 0){
-			return SendError(Errors.E_UNDEFINED_PARKING);
+		}else if(data.length != 0){
+			return Errors.SendError(Errors.E_UNDEFINED_PARKING, "Ce parking n'existe pas", callback);
 		}else{
 			let oldParking = data[0];
 			let update = (err,data)=>{
@@ -89,7 +89,7 @@ function PutParkings(infos, callback){
 				update(err,data);
 			}
 		}
-	});
+	},{"id":infos.id});
 }
 
 /**
