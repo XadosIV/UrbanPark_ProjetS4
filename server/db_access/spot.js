@@ -219,6 +219,7 @@ function UpdateSpot(callback, infos){
  * if toggle_type == [] then, delete all types
  */
 function CheckToggleTypes(id, toggle, callback){
+	if (toggle == undefined) return callback(null, null);
 	if (toggle && toggle.length != undefined && typeof(toggle) == 'object'){ // check if it's an array (not a string, not a object, an array.)
 		if (toggle.length == 0){
 			let sql = `DELETE FROM Typed WHERE id_spot = :id`
