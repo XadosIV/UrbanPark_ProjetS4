@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { creationCompte, authenticate, userFromToken } from "../services";
-import { useUpdateContext } from "../interface";
+import { useUpdateContext, isValideNom } from "../interface";
 
 export function RegistrationForm(props) {
 	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
@@ -15,6 +15,9 @@ export function RegistrationForm(props) {
 		if(infos.password !== infos.password_conf){
 			setWrongInput(true);
 			setErrMessage("la confirmation du mot de passe est invalide");
+		}else if(!isValideNom(infos.first_name) || !isValideNom(infos.last_name)){
+			setWrongInput(true);
+			setErrMessage("nom ou prénom invalide");
 		}else{
 			setWrongInput(false);
 			const res = await creationCompte(infos);
@@ -63,6 +66,22 @@ export function RegistrationForm(props) {
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs-divs">
+				<div><TextField
+					required
+					id="last_name"
+					label="Nom"
+					type="text"
+					name="last_name"
+					onChange={handleChange}
+				/></div>
+				<div><TextField
+					required
+					id="first_name"
+					label="Prénom"
+					type="text"
+					name="first_name"
+					onChange={handleChange}
+				/></div>
                 <div><TextField
 					required
 					id="email"
@@ -70,22 +89,6 @@ export function RegistrationForm(props) {
 					type="text"
 					name="email"
 					defaultValue={props.mail}
-					onChange={handleChange}
-				/></div>
-				<div><TextField
-					required
-					id="first_name"
-					label="first_name"
-					type="text"
-					name="first_name"
-					onChange={handleChange}
-				/></div>
-                <div><TextField
-					required
-					id="last_name"
-					label="last_name"
-					type="text"
-					name="last_name"
 					onChange={handleChange}
 				/></div>
                 <div><TextField

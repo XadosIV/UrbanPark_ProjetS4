@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, updateInfoPerso, authenticate } from "../services";
+import { isValideNom } from "../interface"
 
 export function PersonalInfos(){
     const { userToken, setUserToken, userId } = useContext(ContextUser);
@@ -20,7 +21,6 @@ export function PersonalInfos(){
     const [ affFormModifInfo, setAffFormModifInfo ] = useState(false);
     const [ errInput, setErrInput ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
-    const regexNomPrenom = new RegExp(/^[a-zéèêëçîïùüñöôõàâäãß]+(((['`-]?)( )?){1}[a-zéèêëçîïùüñöôõàâäãß])+$/, "gi");
 
     async function fetchUserInfos() {
         const resInfosUser = await userFromToken(userToken);
@@ -93,10 +93,8 @@ export function PersonalInfos(){
         let nouvmail;
         let nouvpass;
         if(e.target.name === "form-modif-infos"){
-            let bonLst = regexNomPrenom.test(newInfos.last_name);
-            regexNomPrenom.lastIndex = 0;
-            let bonFst = regexNomPrenom.test(newInfos.first_name);
-            regexNomPrenom.lastIndex = 0;
+            let bonLst = isValideNom(newInfos.last_name);
+            let bonFst = isValideNom(newInfos.first_name);
             // console.log("fst", newInfos.first_name, bonFst);
             // console.log("lst", newInfos.last_name, bonLst);
             if(bonFst && bonLst){
