@@ -41,11 +41,12 @@ function DeleteUser(id, callback){
 * isMySelf
 * check if the token and the id point to the same user
 * 
-* @param {function(*,*)} callback (err, data)
 * @param {object} infos {id*, token*}
 * <>* -> required
+* @param {function(*,*)} callback (err, data)
+* 
 */
-function isMySelf(callback, infos){
+function isMySelf(infos, callback){
 	// console.log("info Myself", infos);
 	//Verification param required
 	if(!(infos.id) || !(infos.token)){
@@ -144,7 +145,7 @@ function UpdateUser(infos, callback){
 		}
 
 		// fonction check if autorisé
-		isMySelf((err, data) => {
+		isMySelf(infos, (err, data) => {
 			if (err){ 
 				callback(err, {});
 				return;
@@ -166,7 +167,7 @@ function UpdateUser(infos, callback){
 					})
 				}
 			}
-		}, infos)
+		})
 	}
 		
 	//Verification doublon
