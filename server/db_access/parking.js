@@ -5,11 +5,11 @@ const Errors = require('../errors');
  * GetParkings
  * Return a JSON with every parking corresponding to paramaters
  * 
- * @param {function(*,*)} callback (err, data)
  * @param {object} infos {id}
+ * @param {function(*,*)} callback (err, data)
  */
 
-function GetParkings(callback, infos){
+function GetParkings(infos, callback){
 	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
     console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
@@ -31,7 +31,7 @@ function PostParking(infos, callback){
     if (isNaN(infos.floor)) return Errors.SendError(Errors.E_WRONG_FLOOR_FORMAT, "Le champ 'floor' doit être un nombre.", callback);
     if (parseInt(infos.floor) <= 0) return Errors.SendError(Errors.E_WRONG_FLOOR, "Le nombre d'étage ne peut pas être inférieur ou égal à zéro.", callback);
 
-    GetParkings( (err, data) => {
+    GetParkings({id:infos.id}, (err, data) => {
         if (err) {
             callback(err, null);
         }else{
@@ -41,7 +41,7 @@ function PostParking(infos, callback){
             
             dbConnection.query(sql, infos, callback);
         }
-    } , {id:infos.id})
+    })
 }
 
 /**
@@ -54,7 +54,7 @@ function DeleteParking(infos, callback){
     if (!infos.id) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Spécifier l'id du parking à supprimer.", callback)
 
     //check if parking exist
-    GetParkings( (err, data) => {
+    GetParkings({id:infos.id}, (err, data) => {
         if (err){
             callback(err,null)
         }else{
@@ -111,7 +111,7 @@ function DeleteParking(infos, callback){
                 }
             })
         }
-    }, {id:infos.id})
+    })
 }
 
 module.exports = {GetParkings, PostParking, DeleteParking};
