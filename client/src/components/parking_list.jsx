@@ -28,18 +28,16 @@ export function ParkingList(parking) {
 		return false;
 	}
 
-    function test() {
-        return <Example/>
-    }
-
     var address = CutAddress(parking.parking.address);
     const [visible, setVisible] = useState(true);
 
-    function Example() {
+    function AdminVerif() {
         const [isOpen, setIsOpen] = useState(false);
 
         const customStyles = {
-            alignText:"center",
+            overlay: {
+                zIndex : 100000
+            },
             content: {
                 top: '35%',
                 left: '50%',
@@ -120,12 +118,12 @@ export function ParkingList(parking) {
                 <Button variant="contained" color="primary" style={{marginTop:"20px", backgroundColor:"red"}} onClick={() => setIsOpen(true)}>Supprimer ce parking</Button>
                 <ReactModal
                     isOpen={isOpen}
-                    contentLabel="Example Modal"
+                    contentLabel="Suppression"
                     onRequestClose={() => setIsOpen(false)}
                     style={customStyles}>
                     <p style={{color:"red", alignText:"center"}}>
                         ATTENTION !</p>Vous êtes sur le point de supprimer le parking {parking.parking.name} ! 
-                        <br/> Veuillez entrer votre mot de passe afin de le supprimer
+                        <br/> Veuillez entrer votre mot de passe afin de valider cette action.
                         <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                         <div className="input-div">
                             <div><TextField
@@ -163,7 +161,7 @@ export function ParkingList(parking) {
             <div className="button-parking">               
                 <p>{parking.parking.nbPlaceLibre} places restantes / {parking.parking.nbPlaceTot}</p> 
                 {PutButton(parking.button)}
-                {parking.admin && <Example/>}
+                {parking.admin && <AdminVerif/>}
             </div>
         </div>)}</div>)
 }
