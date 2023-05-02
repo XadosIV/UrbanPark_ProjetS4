@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS Role (
 	modify_spot_users BIT(1) DEFAULT 0,
 	modify_role_users BIT(1) DEFAULT 0,
 	delete_other_user BIT(1) DEFAULT 0,
+	modify_other_users BIT(1) DEFAULT 0,
 	CONSTRAINT pk_role PRIMARY KEY (name)
 );
 

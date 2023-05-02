@@ -12,7 +12,7 @@ export function PersonalPage(){
         async function fetchUserInfos() {
             const resUserToken = await userFromToken(userToken);
             setRoleUser(resUserToken.data[0].role);
-            //console.log("token", resUserToken.data[0])
+            // console.log("token", resUserToken.data[0])
         }
         fetchUserInfos();
     }, [userToken]);

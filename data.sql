@@ -50,9 +50,9 @@ INSERT IGNORE INTO Spot (id, number, floor, id_park) VALUES
 	(35, 5, 2, 'J'),
 	(36, 6, 2, 'J');
 
-INSERT IGNORE INTO Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user) VALUES
-	("Gérant", 1, 1, 1, 1),
-	("Gardien", 1, 1, 1, 1);
+INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user, modify_other_users) VALUES
+	("Gérant", 1, 1, 1, 1, 1),
+	("Gardien", 1, 1, 1, 1, 1);
 
 INSERT IGNORE INTO Role (name) VALUES
 	("Agent d'entretien"),

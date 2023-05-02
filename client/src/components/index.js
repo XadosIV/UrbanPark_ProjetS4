@@ -37,4 +37,4 @@ export * from "./perso_guardian"
 export * from "./perso_admin"
 export * from "./admin_guardian"
 export * from "./update_schedule_form"
-
+export * from "./admin_page"
