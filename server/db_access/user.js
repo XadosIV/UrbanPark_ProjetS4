@@ -190,10 +190,10 @@ function UpdateUser(infos, callback){
 * GetUserFromToken
 * Get all users matching parameters
 * 
-* @param {function(*,*)} callback (err, data)
 * @param {object} infos {token}
+* @param {function(*,*)} callback (err, data)
 */
-function GetUserFromToken(callback, infos){
+function GetUserFromToken(infos, callback){
 	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM User WHERE  token=:token;`;
 	console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
@@ -246,10 +246,11 @@ function IsValidPassword(password){
 * PostUser
 * Create a new user with "Abonné" role
 * 
-* @param {function(*,*)} callback (err, data)
 * @param {object} infos {first_name, last_name, email, password}
+* @param {function(*,*)} callback (err, data)
+* 
 */
-function PostUser(callback, infos){
+function PostUser(infos, callback){
 	const {GenerateNewToken} = require('./auth');
 	
 	if (!IsValidEmail(infos.email)){

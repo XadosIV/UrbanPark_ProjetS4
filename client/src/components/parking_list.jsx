@@ -163,7 +163,7 @@ export function ParkingList(parking) {
             <div className="button-parking">               
                 <p>{parking.parking.nbPlaceLibre} places restantes / {parking.parking.nbPlaceTot}</p> 
                 {PutButton(parking.button)}
-                <Example/>
+                {parking.admin && <Example/>}
             </div>
         </div>)}</div>)
 }

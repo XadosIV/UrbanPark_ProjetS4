@@ -18,7 +18,7 @@ export function ParkingsStaff({admin}) {
 			<div className="parking-list">
 				{
 					parkingsList.map((parking, index) => (
-						<ParkingList key={index} parking={parking} button={true}/>
+						<ParkingList key={index} parking={parking} button={true} admin={admin}/>
 					))
 				}
 			</div>
