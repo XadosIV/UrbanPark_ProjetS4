@@ -47,8 +47,8 @@ export function ConnectionForm(props) {
 
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
-			<div className="inputs_divs">
-			<TextField
+			<div className="inputs-divs">
+			<div><TextField
 				required
 				id="mail"
 				label="mail"
@@ -56,8 +56,8 @@ export function ConnectionForm(props) {
 				name="mail"
 				defaultValue={props.mail}
 				onChange={handleChange}
-			/>
-			<TextField
+			/></div>
+			<div><TextField
 				required
 				id="password"
 				label="mot de passe"
@@ -65,7 +65,7 @@ export function ConnectionForm(props) {
 				name="password"
 				onChange={handleChange}
 				onPaste={ noPaste }
-			/>
+			/></div>
 			</div>
 			<Button
 				className="submit_button" 

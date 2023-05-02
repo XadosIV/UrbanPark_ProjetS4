@@ -54,3 +54,4 @@ exports.E_SPOT_TYPE_ALREADY_EXIST                                           ="E_
 exports.E_BUSY_SPOT                                                         ="E_BUSY_SPOT";
 exports.E_TYPE_DONT_EXIST                                                   ="E_TYPE_DONT_EXIST";
 exports.E_WRONG_PARAMETER_FORMAT                                            ="E_WRONG_PARAMETER_FORMAT";
+exports.E_NAME_FORMAT_INVALID                                               ="E_NAME_FORMAT_INVALID";
