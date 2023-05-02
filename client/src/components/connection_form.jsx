@@ -44,7 +44,6 @@ export function ConnectionForm(props) {
 		return false;
 	}
 
-
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
 			<div className="inputs-divs">
