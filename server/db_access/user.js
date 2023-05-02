@@ -193,7 +193,7 @@ function UpdateUser(infos, callback){
 * @param {function(*,*)} callback (err, data)
 * @param {object} infos {token}
 */
-function GetUserFromToken(callback, infos){
+function GetUserFromToken(infos, callback){
 	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM User WHERE  token=:token;`;
 	console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
@@ -249,9 +249,8 @@ function IsValidPassword(password){
 * @param {function(*,*)} callback (err, data)
 * @param {object} infos {first_name, last_name, email, password}
 */
-function PostUser(callback, infos){
+function PostUser(infos, callback){
 	const {GenerateNewToken} = require('./auth');
-	
 	if (!IsValidEmail(infos.email)){
 		return Errors.SendError(Errors.E_EMAIL_FORMAT_INVALID, "Le format de l'email n'est pas conforme.", callback);
 	}else if (!IsValidPassword(infos.password)){
