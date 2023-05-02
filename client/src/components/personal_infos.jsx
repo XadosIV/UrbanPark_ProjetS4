@@ -187,23 +187,23 @@ export function PersonalInfos(){
                 <form  onSubmit={ handlleSubmit } name="form-modif-infos">
                     <div className="input-div">
                         <p className="p-form-title">Changer mes informations</p>
-                        <TextField
+                        <div><TextField
                             id="first_name"
                             label="Prénom"
                             type="text"
                             name="first_name"
                             defaultValue={infosUser.first_name}
                             onChange={ handleChangeInfos }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             id="last_name"
                             label="Nom"
                             type="text"
                             name="last_name"
                             defaultValue={infosUser.last_name}
                             onChange={ handleChangeInfos }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             required
                             id="password"
                             label="mot de passe"
@@ -211,7 +211,7 @@ export function PersonalInfos(){
                             name="password"
                             onPaste={ noPaste }
                             onChange={ handleChangeInfos }
-                        />
+                        /></div>
                         <Button 
                             className="submit_button"
                             variant="contained" 
@@ -223,7 +223,7 @@ export function PersonalInfos(){
                 <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                     <div className="input-div">
                         <p className="p-form-title">Changer mon mot de passe</p>
-                        <TextField
+                        <div><TextField
                             required
                             id="password"
                             label="mot de passe"
@@ -231,8 +231,8 @@ export function PersonalInfos(){
                             name="password"
                             onPaste={ noPaste }
                             onChange={ handleChangeMdp }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             required
                             id="new_password"
                             label="nouveau mot de passe"
@@ -240,8 +240,8 @@ export function PersonalInfos(){
                             name="new_password"
                             onPaste={ noPaste }
                             onChange={ handleChangeMdp }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             required
                             id="new_password_conf"
                             label="confirmation nouveau mot de passe"
@@ -249,7 +249,7 @@ export function PersonalInfos(){
                             name="new_password_conf"
                             onPaste={ noPaste }
                             onChange={ handleChangeMdp }
-                        />
+                        /></div>
                         <Button 
                             className="submit_button"
                             variant="contained" 
@@ -261,15 +261,15 @@ export function PersonalInfos(){
                 <form onSubmit={ handlleSubmit } name="form-modif-mail">
                     <div className="input-div">
                         <p className="p-form-title">Changer mon email</p>
-                        <TextField
+                        <div><TextField
                             required
                             id="email"
                             label="nouvel email"
                             type="text"
                             name="email"
                             onChange={ handleChangeEmail }
-                        />
-                        <TextField
+                        /></div>
+                        <div><TextField
                             required
                             id="password"
                             label="mot de passe"
@@ -277,7 +277,7 @@ export function PersonalInfos(){
                             name="password"
                             onPaste={ noPaste }
                             onChange={ handleChangeEmail }
-                        />
+                        /></div>
                         <Button 
                             className="submit_button"
                             variant="contained" 

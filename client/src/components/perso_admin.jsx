@@ -30,7 +30,7 @@ export function PersoAdmin(){
                 variant="contained" 
                 color="primary" 
                 onClick={ toggleAffGardien }
-            > planning des gardien </Button>
+            > planning des gardiens </Button>
             <Button 
                 className="UI-Button" 
                 variant="contained" 
