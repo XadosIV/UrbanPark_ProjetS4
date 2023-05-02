@@ -100,7 +100,7 @@ export function ViewAgenda (props){
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
-	}, []);
+	}, [props.update]);
 
 	const messages = {
 		allDays: "Tous les jours",
