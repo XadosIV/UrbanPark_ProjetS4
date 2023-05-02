@@ -203,6 +203,22 @@ function GetUserFromToken(callback, infos){
 	}, callback);
 }
 
+const regexNomPrenom = new RegExp(/^[a-zéèêëçîïùüñöôõàâäãß]+(((['`-]?)( )?){1}[a-zéèêëçîïùüñöôõàâäãß])+$/, "gi");
+/**
+* isValideNom
+* Check if the string is a valid first name / last name
+* 
+* @param {string} email 
+* 
+* @return {boolean}
+*/
+function isValideNom(nom){
+    regexNomPrenom.lastIndex = 0;
+    let res = regexNomPrenom.test(nom);
+    regexNomPrenom.lastIndex = 0;
+	return res;
+}
+
 /**
 * IsValidEmail
 * Check if the string is a valid email
@@ -243,6 +259,10 @@ function PostUser(callback, infos){
 	}else if (!IsValidPassword(infos.password)){
 		return Errors.SendError(Errors.E_PASSWORD_FORMAT_INVALID,
 			"Le mot de passe doit contenir au moins 8 caractères dont une minuscule, une majuscule, un chiffre et un charactère spécial.",
+			callback);
+	}else if(!isValideNom(infos.first_name) || !isValideNom(infos.last_name)){
+		return Errors.SendError(Errors.E_NAME_FORMAT_INVALID,
+			"le format du Nom ou Prénom est invalide",
 			callback);
 	}else{
 		GetUsers((err, data) => {
