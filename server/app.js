@@ -23,6 +23,11 @@ app.use((req,res,next) => {
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'){
         req.token=req.headers.authorization.split(' ')[1];
 	}
+	Object.keys(req.query).forEach((key)=>{
+		if (req.query[key] == '\x00'){
+			req.query[key] = 'NULL';
+		}
+	});
 	next();
 });
 
