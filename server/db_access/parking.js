@@ -72,7 +72,7 @@ function PostParking(infos, callback){
  * @param {function(*,*)} callback
  */
 function PutParkings(infos, callback){
-	GetParkings((err,data)=>{
+	GetParkings({"id":infos.id},(err,data)=>{
 		if(err){
 			callback(err,data);
 		}else if(data.length != 1){
@@ -107,7 +107,7 @@ function PutParkings(infos, callback){
 				update(err,data);
 			}
 		}
-	},{"id":infos.id});
+	});
 }
 
 /**

@@ -84,8 +84,8 @@ function GetSpots(infos, callback){
  */
 function GetSpotsMultipleFloors(infos, callback, recData=[]){
 	poppedFloor = infos.floors.pop();
-	GetSpots((err,data)=>{
-		console.log(data);
+	GetSpots({"id_park":infos.id_park, "floor":poppedFloor}, (err,data)=>{
+		//console.log(data);
 		if(err){
 			callback(err,data);
 		}else if(infos.floors.length>0){
@@ -95,9 +95,6 @@ function GetSpotsMultipleFloors(infos, callback, recData=[]){
 			data= recData.concat(data);
 			callback(err,data);
 		}
-	},{
-		"id_park":infos.id_park,
-		"floor":poppedFloor
 	});
 }
 
