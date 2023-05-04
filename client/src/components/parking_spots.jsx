@@ -121,13 +121,16 @@ export function ParkingSpots(props) {
 
     const [spotTypes, setSpotTypes] = useState([]);
 
+    const [update, setUpdate] = useState(true);
+
     const [infos, setInfos] = useState({checkedsecondNumber:false, checkedsecondFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
     useEffect(() => {
 		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
         TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
         TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
-	}, []);
+        setUpdate(false)
+	}, [update]);
 
     var optionsFloor = []
     parkingsList.map((parking) => (
@@ -154,11 +157,15 @@ export function ParkingSpots(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+    function Callback(childData) {
+        setUpdate(childData)
+    }
+
     const addSpotSiAdmin = () => {
         if(admin){
             if(parkingsList){
                 if(parkingsList.length === 1){
-                    return <NewSpotForm floors={parkingsList[0].floors} name={parkingsList[0].name} options={{floor:optionsFloor, type:optionsType}} id={parkingsList[0].id}/>
+                    return <NewSpotForm floors={parkingsList[0].floors} name={parkingsList[0].name} options={{floor:optionsFloor, type:optionsType}} id={parkingsList[0].id} handleCallback={Callback}/>
                 }
             }
         }
@@ -168,7 +175,7 @@ export function ParkingSpots(props) {
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
                 parkingsList.map((parking, index) =>
-                    <ParkingList parking={parking} button={false} key={index} />
+                    <ParkingList parking={parking} button={false} key={index} admin={admin}/>
                 )
             }
         </div>

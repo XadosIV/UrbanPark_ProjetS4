@@ -19,6 +19,7 @@
 }
 
 .list-item {
+	min-width:500px;
 	display: flex;
 	flex-direction:row;
 	flex-basis: calc(42%);  
@@ -177,3 +178,14 @@
 	background-color: #3e8e41;
   }
 
+.popup-types-content {
+	display:flex;
+	flex-direction:row;
+	margin: auto;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	padding: 5px;
+	min-width:200px;
+	justify-content: center;
+	border-radius:10px;
+}

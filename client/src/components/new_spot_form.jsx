@@ -16,7 +16,7 @@ export function NewSpotForm(props) {
      */
     function ErrorOnSecondNumero(nb1, nb2) {
         var errorText;
-        if ((nb2 < nb1 || nb2 < 0) && (nb2 != 0 || nb2 != "")) {
+        if ((nb2 < nb1 || nb2 < 0) && (nb2 !== 0 || nb2 !== "")) {
             if (nb2 < nb1) {
                 errorText = "Chiffre supérieur au premier"
             } else {
@@ -56,7 +56,7 @@ export function NewSpotForm(props) {
      * @return { TextField }
      */
     function ErrorOnFirstNumero(nb1) {
-        if (nb1<0 && (nb1 != 0 || nb1 != "")) {
+        if (nb1<0 && (nb1 !== 0 || nb1 !== "")) {
             return <TextField
                 error
                 helperText="Chiffre négatif impossible"
@@ -129,15 +129,15 @@ export function NewSpotForm(props) {
 
 	const handlleSubmit = async (event) => {
         event.preventDefault()
-		console.log(infos);
         setWrongInput(false);
         if (infos.number >= 0) {
-            if (secondNumber == 0) {
+            if (secondNumber === 0) {
                 const res = await CreationSpot(infos); 
                 console.log(res);
                 if (res.status === 200) {
                     setWrongInput(true);
                     setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
+                    props.handleCallback(true)
                 } else {
                     setWrongInput(true);
                     setErrMessage(res.data.message);
@@ -157,10 +157,11 @@ export function NewSpotForm(props) {
                             break;
                         }
                     }
-                    if (infos.number-1 == secondNumber) {
+                    if (infos.number-1 === secondNumber) {
                         infos.number = stock;
                         setWrongInput(true);
                         setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
+                        props.handleCallback(true)
                     }
                 } else {
                     setWrongInput(true);

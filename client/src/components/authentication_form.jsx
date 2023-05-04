@@ -12,6 +12,7 @@ export function AuthenticationForm() {
 		console.log(mail);
 		const data = {identifier: mail, password: "a"};
 		const res = await authenticate(data);
+		console.log("authenticate", res);
 		if(res.data.code === "E_UNDEFINED_USER"){
 			navigate("/registration", {state: {mail: mail}});
 		}else if(res.data.code === "E_WRONG_PASSWORD"){
@@ -21,7 +22,7 @@ export function AuthenticationForm() {
 
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
-			<div className="inputs_divs">
+			<div className="inputs-divs">
 				<TextField
 					required
 					id="authentication"
