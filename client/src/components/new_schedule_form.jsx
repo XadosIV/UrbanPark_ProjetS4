@@ -171,7 +171,9 @@ export function NewScheduleForm() {
                 marginLeft: "42%",
                 height:"100px",
                 marginBottom:"100px"
-            }}>Ajouter des créneaux de travail</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+            }}>Ajouter des créneaux de travail</Button>}
+            position="right center" onClose={() => setWrongInput(false)}>
+                
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
                 <form onSubmit={handlleSubmit} className="form">   

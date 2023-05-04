@@ -53,7 +53,7 @@ export function ParkingList(parking) {
             },
         };
 
-        const {userToken, setUserToken, userId } = useContext(ContextUser);
+        const {userToken } = useContext(ContextUser);
         const [password, setPassword] = useState("")
 
         const [wrongInput, setWrongInput] = useState(false);

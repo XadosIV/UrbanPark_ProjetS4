@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
 import { ViewAgenda } from "./"
 
 export function StaffPreview(list) {
@@ -47,11 +46,11 @@ export function StaffPreview(list) {
                     </div>
 
                     <div className="button-schedule" style={{marginLeft:"30px"}}>
-                    <Button variant="contained" color="primary" onClick={()=>agenda == staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
+                    <Button variant="contained" color="primary" onClick={()=>agenda === staff.id ? SetAgenda(0): SetAgenda(staff.id)}>Voir l'emploi du temps</Button>
                     </div>
                 </div>
                 <div>
-                    {agenda == staff.id && <ViewAgenda props={{user:staff.id}}/>}
+                    {agenda === staff.id && <ViewAgenda props={{user:staff.id}}/>}
                 </div>
             </li>))
         }
