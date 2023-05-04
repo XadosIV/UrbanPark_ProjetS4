@@ -3,7 +3,7 @@ const Errors = require('../errors');
 
 /**
  * GetParkings
- * Return a JSON with every parking corresponding to paramaters
+ * Return a JSON with every parking corresponding to parameters
  * 
  * @param {object} infos {id}
  * @param {function(*,*)} callback (err, data)
@@ -18,26 +18,44 @@ function GetParkings(infos, callback){
 }
 
 /**
+ * GetParkingsByIdOrName
+ * Return a JSON with every parking corresponding to one parameter
+ * 
+ * @param {object} infos {id, name}
+ * @param {function(*,*)} callback (err, data)
+ */
+function GetParkingsByIdOrName(infos, callback){
+	sql = `SELECT * FROM Parking WHERE id LIKE :id OR name LIKE :name;`;
+    console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
+    dbConnection.query(sql, {
+        id:infos.id||'%',
+        name:infos.name||'%'
+    }, callback);
+}
+
+/**
  * PostParking
  * 
- * @param {object} infos {id, name, floor, address} 
+ * @param {object} infos {id, name, floors, address} 
  * @param {function(*,*)} callback 
  */
 function PostParking(infos, callback){
-    if ( !(infos.id && infos.name && infos.floor && infos.address) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, 
-        "Les champs suivants doivent être remplis : 'id', 'name', 'floor', 'address'", callback);
+    if ( !(infos.id && infos.name && infos.floors && infos.address) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, 
+        "Les champs suivants doivent être remplis : 'id', 'name', 'floors', 'address'", callback);
     
     if (infos.id.length != 1) return Errors.SendError(Errors.E_WRONG_ID_FORMAT, "L'id ne doit faire qu'un caractère.", callback);
-    if (isNaN(infos.floor)) return Errors.SendError(Errors.E_WRONG_FLOOR_FORMAT, "Le champ 'floor' doit être un nombre.", callback);
-    if (parseInt(infos.floor) <= 0) return Errors.SendError(Errors.E_WRONG_FLOOR, "Le nombre d'étage ne peut pas être inférieur ou égal à zéro.", callback);
+    if (isNaN(infos.floors)) return Errors.SendError(Errors.E_WRONG_FLOOR_FORMAT, "Le champ 'floors' doit être un nombre.", callback);
+    if (parseInt(infos.floors) <= 0) return Errors.SendError(Errors.E_WRONG_FLOOR, "Le nombre d'étage ne peut pas être inférieur ou égal à zéro.", callback);
 
-    GetParkings({id:infos.id}, (err, data) => {
+    GetParkingsByIdOrName({id:infos.id, name:infos.name}, (err, data) => {
         if (err) {
             callback(err, null);
         }else{
-            if (data.length >= 1) return Errors.SendError(Errors.E_PARKING_ALREADY_EXIST, "Le parking existe déjà.", callback)
+            console.log(data, infos)
+            if (data.length >= 1 && data[0].id == infos.id) return Errors.SendError(Errors.E_PARKING_ID_ALREADY_EXIST, "L'id de ce parking existe déjà.", callback)
+            if (data.length >= 1 && data[0].name == infos.name) return Errors.SendError(Errors.E_PARKING_NAME_ALREADY_EXIST, "Le nom de ce parking existe déjà'.", callback)
 
-            let sql = `INSERT INTO Parking (id, name, floors, address) VALUES (:id, :name, :floor, :address)`
+            let sql = `INSERT INTO Parking (id, name, floors, address) VALUES (:id, :name, :floors, :address)`
             
             dbConnection.query(sql, infos, callback);
         }
