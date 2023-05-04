@@ -5,11 +5,17 @@ import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
 import { UpdateScheduleForm } from "../components";
+import { sliderClasses } from "@mui/material";
 
 export function ViewAgenda (props){
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
+	const [update, setUpdate] = useState(true)
+
+	function Callback(childData) {
+        setUpdate(childData)
+    }
 
 	function FormatSchedule (list)
 	{
@@ -100,7 +106,7 @@ export function ViewAgenda (props){
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
-	}, [props.update]);
+	}, [props.update || update]);
 
 	const messages = {
 		allDays: "Tous les jours",
@@ -121,14 +127,7 @@ export function ViewAgenda (props){
 	const handleSelectedEvent = (event) => {
 		setSelectedEvent(event)
 		setModalState(!modalState)
-	}
-
-	const ButtonUpdateSchedule = () => {
-		return (
-		    <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
-				<UpdateScheduleForm event={selectedEvent}/>
-		    </div>
-		)
+		setUpdate(true)
 	}
 
 	return (
@@ -143,7 +142,10 @@ export function ViewAgenda (props){
 				culture="fr"
 				messages={messages}
 			/>
-			{selectedEvent && <ButtonUpdateSchedule />}
+			{selectedEvent && update &&
+			<div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback}/>
+		    </div>}
 		</div>
 	)
 }

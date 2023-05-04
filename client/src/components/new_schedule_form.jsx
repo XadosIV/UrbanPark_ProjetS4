@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField, TextareaAutosize } from "@mui/material";
+import { Button } from "@mui/material";
 import { CreationSchedule, placeFromId } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
@@ -10,6 +10,7 @@ import "../css/parking.css"
 import TAS from "../services/take_all_spots"
 import TP from "../services/take_parking";
 import TBR from "../services/take_by_role";
+import { NeedS } from "../interface"
 
 export function NewScheduleForm(props) {
 
@@ -95,37 +96,14 @@ export function NewScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
+        var isSubmit = false;
         if (infos.user.length == 0) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
-        }
-        else if (!Array.isArray(infos.user) || infos.user.length == 1) {
-            if (Array.isArray(infos.user)) {
-                infos.user = infos.user[0]
-            }
-            const res = await CreationSchedule(infos); 
-            console.log(res);
-            if (res.status === 200) {
-                setWrongInput(true);
-                if (infos.last_spot == infos.first_spot) {
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
-                        props.handleCallback(true);
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées  de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
-                            props.handleCallback(true);
-                        })
-                    })
-                }
-            } else {
-                setWrongInput(true);
-                setErrMessage(res.data.message);
-            }
         } else {
+            if (!Array.isArray(infos.user)) {
+                infos.user = [infos.user]
+            }
             var stock = infos.user;
             var scheduleAdded = 0;
             for (let user of stock) {
@@ -141,22 +119,32 @@ export function NewScheduleForm(props) {
                 }
             }
             if (scheduleAdded == stock.length) {
-                if (infos.last_spot == infos.first_spot) {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées");
-                        props.handleCallback(true);
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées");
-                            props.handleCallback(true);
+                infos.user = stock
+                if (optionsUsers == AllServices(serviceList)) {
+                    if (infos.last_spot == infos.first_spot) {
+                        placeFromId(infos.first_spot).then(res => {
+                            setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées");
+                            isSubmit = true;
                         })
+                    } else {
+                        placeFromId(infos.first_spot).then(res => {
+                            placeFromId(infos.last_spot).then(res2 => {
+                                setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées");
+                                isSubmit = true;
+                            })
+                        })
+                    }
+                } else {
+                    TP.TakeParking(infos.parking).then(res => {
+                        setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
                     })
+                    isSubmit = true;
                 }
             }
+        }
+        if (isSubmit) {
+            setWrongInput(true);
+            props.handleCallback(false)
         }
 	}
 

@@ -140,19 +140,13 @@ export function UpdateScheduleForm(props) {
 
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
-    const [baseValues, setBaseValues] = useState({id_schedule: props.event.id_schedule,
-                                                    parking: props.event.idparking, 
-                                                    user: props.event.user, 
-                                                    date_start: props.event.d_st, 
-                                                    date_end: props.event.d_en, 
-                                                    first_spot: props.event.first_spot, 
-                                                    last_spot:props.event.last_spot});
+    
 
     const [infos, setInfos] = useState({parking: props.event.idparking, 
                                         user: props.event.user, 
                                         date_start: props.event.d_st, 
-                                        date_end: props.event.d_en, 
-                                        first_spot: props.event.first_spot, 
+                                        date_end: props.event.d_en,
+                                        first_spot:props.event.first_spot,
                                         last_spot:props.event.last_spot});
 
 	const [wrongInput, setWrongInput] = useState(false);
@@ -162,6 +156,9 @@ export function UpdateScheduleForm(props) {
     const [serviceList, setServiceList] = useState([]);
     const [guardiansList, setGuardiansList] = useState([]);
     const [baseType, setBaseType] = useState("")
+    
+    const [disabled, setDisabled] = useState(false)
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
@@ -187,18 +184,19 @@ export function UpdateScheduleForm(props) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
         }
-        else if (!(infos.parking == baseValues.idparking && infos.user == baseValues.user && infos.date_start == baseValues.d_st && infos.date_end == baseValues.d_en && infos.first_spot == baseValues.first_spot && infos.last_spot == baseValues.last_spot)) {
+        else if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
             var scheduleAdded = 0;
+            var nbModif = 0;
             let stock = infos.user
-            for (let i=0; i<baseValues.user.length; i++) {
+            for (let i=0; i<props.event.user.length; i++) {
                 var fun;
-                infos.user = baseValues.user[i]
-                if (!stock.includes(infos.user)) {
-                    fun = DeleteSchedule(baseValues.id_schedule[i]);
+                infos.user = stock[i]
+                if (!(props.event.user.includes(infos.user))) {
+                    fun = DeleteSchedule(props.event.id_schedule[i]);
+                    nbModif++;
                 }
                 if (fun) {
                     const res = await fun
-                    console.log("b", res)
                     if (res.status === 200) {
                         scheduleAdded++;
                     } else {
@@ -211,15 +209,15 @@ export function UpdateScheduleForm(props) {
             for (let i=0; i<stock.length; i++) {
                 var fun;
                 infos.user = stock[i]
-                console.log(baseValues.user, infos.user)
-                if (baseValues.user.includes(infos.user)) {
-                    fun = UpdateSchedule(infos, baseValues.id_schedule[i]);
+                if (props.event.user.includes(infos.user)) {
+                    fun = UpdateSchedule(infos, props.event.id_schedule[i]);
+                    nbModif++;
                 } else {
                     fun = CreationSchedule(infos);
+                    nbModif++;
                 }
                 if (fun) {
                     const res = await fun
-                    console.log("a", res)
                     if (res.status === 200) {
                         scheduleAdded++;
                     } else {
@@ -229,31 +227,18 @@ export function UpdateScheduleForm(props) {
                     }
                 }
             }
-            if (scheduleAdded == baseValues.user.length) {
-                if (infos.last_spot == infos.first_spot) {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data.id_park + res.data.floor + "-" + res.data.number + " bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data.id_park + res.data.floor + "-" + res.data.number + " à " + res2.data.id_park + res2.data.floor + "-" + res2.data.number + " bloquées pour être nettoyées de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                        })
-                    })
-                }
+            if (scheduleAdded == nbModif) {
+                setWrongInput(true);
+                setErrMessage("Modification prise en compte.")
+                setDisabled(true)
+                await delay(2000);
+                props.handleCallback(false)
             }
             infos.user = stock
         } else {
             setWrongInput(true);
             setErrMessage("Vous n'avez rien modifié");
         }
-        let tmp = {
-            ...baseValues,
-            ...infos  
-        }
-        setBaseValues(tmp);
     }
 
     useEffect(() => {
@@ -263,7 +248,7 @@ export function UpdateScheduleForm(props) {
         });
         TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res));
         TBR.TakeByRole("Gardien").then(res => setGuardiansList(res));
-        TBI.TakeById(baseValues.user[0]).then(res => setBaseType(res.role));
+        TBI.TakeById(infos.user[0]).then(res => setBaseType(res.role));
     }, [])
 
     useEffect(() => {
@@ -271,8 +256,6 @@ export function UpdateScheduleForm(props) {
             setOptionsSpots({opts:AllSpots(res), change:false})
         })
     }, [optionsSpots.change])
-
-    console.log(baseValues)
 
     return (
         <Popup trigger={<Button variant="contained" color="primary" 
@@ -308,7 +291,7 @@ export function UpdateScheduleForm(props) {
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    <div className="numeros" style={{zIndex:1005}}>
+                    {baseType == "Agent d'entretien" && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
@@ -332,7 +315,7 @@ export function UpdateScheduleForm(props) {
                             className="search"
                             onChange={handleChangeSelect}
                         />
-                    </div>
+                    </div>}
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                         <DatePicker
                             name="date_start"
@@ -351,6 +334,7 @@ export function UpdateScheduleForm(props) {
                         />
                     </div>
                     <Button
+                        isDisabled={disabled}
                         className="submit_button" 
                         variant="contained" 
                         color="primary" 
