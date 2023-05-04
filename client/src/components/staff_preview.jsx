@@ -51,7 +51,7 @@ export function StaffPreview(list) {
                     </div>
                 </div>
                 <div>
-                    {agenda == staff.id && <ViewAgenda props={{user:staff.id}}/>}
+                    {agenda == staff.id && <ViewAgenda props={{user:staff.id}} update={list.update}/>}
                 </div>
             </li>))
         }
