@@ -3,9 +3,16 @@ import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken } from "../services";
+import { userFromToken, DeleteSpot } from "../services";
+import { AdminVerif } from "../components"
 
 export function Spot(props) {
+
+    async function Callback(childData) {
+        props.handleCallback(childData)
+        await DeleteSpot(props.spot.id);
+    }
+
     const { userToken } = useContext(ContextUser);
 	const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
@@ -96,6 +103,8 @@ export function Spot(props) {
                     float:"right",
                     height:"10%",
                 }}>Ajouter un type à cette place</Button>}
+                {admin && 
+                <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " !"} handleCallback={Callback}/>}
             </div>
         </div>
     </div>)

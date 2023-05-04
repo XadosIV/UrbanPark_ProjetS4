@@ -7,6 +7,10 @@ import { CreationParking } from "../services"
 
 export function ParkingsStaff({admin}) {
 
+	function Callback(childData) {
+		setUpdate(childData)
+	}
+
 	const [parkingsList, setParkingsList] = useState([]);
 
 	const [wrongInput, setWrongInput] = useState(false);
@@ -49,7 +53,7 @@ export function ParkingsStaff({admin}) {
 			<div className="parking-list">
 				{
 					parkingsList.map((parking, index) => (
-						<ParkingList key={index} parking={parking} button={true} admin={admin}/>
+						<ParkingList key={index} parking={parking} button={true} admin={admin} handleCallback={Callback} />
 					))
 				}
 			</div>

@@ -26,10 +26,10 @@ export function StaffList(props) {
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
-				id="searchbarStaff"
+				id="searchbarGuardians"
 				label="Rechercher..."
 				type="text"
-				name="searchbarStaff"
+				name="searchbarGuardians"
 				onChange={InputHandler(setInputTextGuardians)}
 			/>
 			<StaffPreview list={guardiansList} input={inputTextGuadrians} update={props.update}/>
@@ -37,10 +37,10 @@ export function StaffList(props) {
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
-				id="searchbarStaff"
+				id="searchbarService"
 				label="Rechercher..."
 				type="text"
-				name="searchbarStaff"
+				name="searchbarService"
 				onChange={InputHandler(setInputTextService)}
 			/>
 			<StaffPreview list={serviceList} input={inputTextService} update={props.update}/>
