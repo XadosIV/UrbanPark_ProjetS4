@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, placeFromId, DeleteSchedule, CreationSchedule } from "../services"
+import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -10,7 +10,6 @@ import "../css/parking.css"
 import TAS from "../services/take_all_spots"
 import TP from "../services/take_parking";
 import TBR from "../services/take_by_role";
-import TBI from "../services/take_by_id";
 
 export function UpdateScheduleForm(props) {
 
@@ -69,7 +68,7 @@ export function UpdateScheduleForm(props) {
      */
     function BaseParking(id_park, list) {
         for (let parking of list) {
-            if (parking.id == id_park) {      
+            if (parking.id === id_park) {      
                 return "Parking " + parking.name.toLowerCase();
             }
         }
@@ -127,7 +126,7 @@ export function UpdateScheduleForm(props) {
     function BaseSpot(spot, list) {
         var opts=[]
         for (let s of list) {
-            if (s.value == spot) {
+            if (s.value === spot) {
                 opts.push(s);
             }
         }
@@ -163,7 +162,7 @@ export function UpdateScheduleForm(props) {
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
-            if (name.name == "parking") {
+            if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => {
                     setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
                 })
@@ -248,7 +247,7 @@ export function UpdateScheduleForm(props) {
         });
         TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res));
         TBR.TakeByRole("Gardien").then(res => setGuardiansList(res));
-        TBI.TakeById(infos.user[0]).then(res => setBaseType(res.role));
+        takeById(infos.user[0]).then(res => setBaseType(res.role));
     }, [])
 
     useEffect(() => {

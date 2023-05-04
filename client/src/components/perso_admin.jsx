@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { AdminPage } from "../page";
 import { Button } from "@mui/material";
-import { ScheduleGuardian, ScheduleService } from "../components";
+import { ScheduleGuardian, ScheduleService, AdminPage } from "../components";
 
 export function PersoAdmin(){
     const [ affEdtGardien, setAffEdtGardien ] = useState(false);
@@ -31,7 +30,7 @@ export function PersoAdmin(){
                 variant="contained" 
                 color="primary" 
                 onClick={ toggleAffGardien }
-            > planning des gardien </Button>
+            > planning des gardiens </Button>
             <Button 
                 className="UI-Button" 
                 variant="contained" 

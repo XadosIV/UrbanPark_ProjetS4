@@ -77,7 +77,7 @@ export function NewScheduleForm(props) {
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
-            if (name.name == "parking") {
+            if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name == "type") {
@@ -123,7 +123,7 @@ export function NewScheduleForm(props) {
                 if (optionsUsers == AllServices(serviceList)) {
                     if (infos.last_spot == infos.first_spot) {
                         placeFromId(infos.first_spot).then(res => {
-                            setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées");
+                            setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée");
                             isSubmit = true;
                         })
                     } else {
