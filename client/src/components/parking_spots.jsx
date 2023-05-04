@@ -168,8 +168,15 @@ export function ParkingSpots(props) {
         if (name === "checkedsecondFloor") {
             newVal = baseValueFloorType
         }
+        var sub = name.substring(7)
+        console.log(sub, stockDisable[sub])
         setInfos(values => ({...values, [name]: value}))
-        setInfos(values => ({...values, [name.substring(7)]: newVal}))
+        if (infos[name]) {
+            setInfos(values => ({...values, [sub]: newVal}))
+            setStock(values => ({...values, [sub]: infos[sub]}))
+        } else if (stockDisable[sub] != baseValueFloorType && stockDisable[sub] != baseValueNumber) {
+            setInfos(values => ({...values, [sub]: stockDisable[sub]}))
+        }
     }
 
     const handleChangeSelects = (event, name) => {
@@ -191,6 +198,8 @@ export function ParkingSpots(props) {
         }
     }
 
+    const [stockDisable, setStock] = useState({secondFloor:baseValueFloorType, secondNumber:baseValueNumber})
+
 	return(<div>
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
@@ -200,11 +209,10 @@ export function ParkingSpots(props) {
             }
         </div>
         
-            <div style={{maxWidth:"500px", marginBottom:"10px"}}>
-                <input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
-                <input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
-            </div>
-           
+        <div style={{maxWidth:"500px", marginBottom:"10px"}}>
+            <input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
+            <input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
+        </div>
         
         <div style={{display:"flex", flexDirection:"row"}}>
             <form className="all-searchs">
