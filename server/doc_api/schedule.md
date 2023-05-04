@@ -45,7 +45,7 @@ X : Un paramètre parmis X peut être définit, les autres doivent ne pas être 
 | E_CONFLICTING_PARAMETERS | Un seul champs peut être définit parmis : role, user |
 * * *
 * * *
-# POST /api/schedules
+# POST /api/schedule
 > Permission requise : X
 
 > Description : Crée/Ajoute un créneau à la base de donnée.
@@ -80,7 +80,7 @@ Y : Si l'un des paramètres est définit, les autres doivent être définits aus
 | E_SPOTS_IN_DIFFERENT_FLOORS | Les places sont dans le même parking, mais pas au même étage |
 * * *
 * * *
-# GET /api/schedule/:schedule
+# GET /api/schedules/:schedule
 > Permission requise : X
 
 > Description : Renvoie un créneau.
@@ -95,7 +95,7 @@ Y : Si l'un des paramètres est définit, les autres doivent être définits aus
 
 * * *
 * * *
-# DELETE /api/schedule/:schedule
+# DELETE /api/schedules/:schedule
 > Permission requise : AUTH
 
 > Description : Supprime un créneau.
