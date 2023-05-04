@@ -5,7 +5,7 @@ import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
 import TBR from "../services/take_by_role"
 
-export function StaffList() {
+export function StaffList(props) {
 
 	const [guardiansList, setGuardiansList] = useState([]);
 	const [serviceList, setServiceList] = useState([]);
@@ -32,7 +32,7 @@ export function StaffList() {
 				name="searchbarStaff"
 				onChange={InputHandler(setInputTextGuardians)}
 			/>
-			<StaffPreview list={guardiansList} input={inputTextGuadrians}/>
+			<StaffPreview list={guardiansList} input={inputTextGuadrians} update={props.update}/>
 			<Separation value="Les agents d'entretien"/>
 			
 			<TextField
@@ -43,6 +43,6 @@ export function StaffList() {
 				name="searchbarStaff"
 				onChange={InputHandler(setInputTextService)}
 			/>
-			<StaffPreview list={serviceList} input={inputTextService}/>
+			<StaffPreview list={serviceList} input={inputTextService} update={props.update}/>
 		</div>)
 }

@@ -7,5 +7,5 @@
  */
 
 export function NeedS(item) {
-    if(item > 1) {return "s";}
+    if(item > 1) {return "s"};
 }

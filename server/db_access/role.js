@@ -7,11 +7,12 @@ const {dbConnection} = require('../database');
  * @param {object} infos {role}
  * @param {function(*,*)} callback (err, data)
  */
+
 function GetPermRole(infos, callback){
 	sql = `SELECT * FROM Role WHERE name=:role;`;
 	console.log("SQL at GetPermRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
-		role: infos.role
+		role: infos.role||'%'
 	}, callback);
 }
 

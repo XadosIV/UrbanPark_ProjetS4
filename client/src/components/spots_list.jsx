@@ -21,10 +21,10 @@ export function SpotsList(props) {
             return false
         }
 
-        var tabRight = [[props.infos.firstFloor === "%", el.floor, props.infos.firstFloor], 
-                        [props.infos.firstNumber === "" || props.infos.firstNumber === 0, el.number, props.infos.firstNumber]]
-        var secondTabRight = [[props.infos.secondFloor === "%", el.floor, props.infos.secondFloor], 
-                              [props.infos.secondNumber === "" || props.infos.secondNumber === 0, el.number, props.infos.secondNumber]]
+        var tabRight = [[props.infos.firstFloor === "%", el.floor, parseInt(props.infos.firstFloor)], 
+                        [props.infos.firstNumber === "", el.number, parseInt(props.infos.firstNumber)]]
+        var secondTabRight = [[props.infos.secondFloor === "%", el.floor, parseInt(props.infos.secondFloor)], 
+                              [props.infos.secondNumber === "", el.number, parseInt(props.infos.secondNumber)]]
 
         var res = true;
         //Test if type entered is the right one
@@ -33,7 +33,7 @@ export function SpotsList(props) {
         }
         if (res) {
             //Test if there is a second value entered
-            if (props.infos.secondFloor !== "%" || (props.infos.secondNumber !== "" && props.inputSecondNumber !== 0)) { 
+            if (props.infos.secondFloor !== "%" || props.inputSecondNumber !== 0) { 
                 for (let i=0; i<secondTabRight.length; i++) {
                     //If there is, check if element is between first and second value
                     if (!secondTabRight[i][0]) { 

@@ -288,7 +288,7 @@ app.post('/api/schedule', (req, res) => {
 			if (err){
 				Errors.HandleError(err, res);
 			}else{
-				res.status(200).json();
+				res.status(200).json(data);
 			}
 		});
 	}else{

@@ -10,8 +10,9 @@ import "../css/parking.css"
 import TAS from "../services/take_all_spots"
 import TP from "../services/take_parking";
 import TBR from "../services/take_by_role";
+import { NeedS } from "../interface"
 
-export function NewScheduleForm() {
+export function NewScheduleForm(props) {
 
     /**
      * AllSpots
@@ -59,8 +60,9 @@ export function NewScheduleForm() {
     }
 
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
+    const [optionsUsers, setOptionsUsers] = useState({opts:[], change:false})
 
-    const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19), first_spot: 0, last_spot:0});
+    const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)});
 
 	const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
@@ -68,6 +70,9 @@ export function NewScheduleForm() {
 
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
+    const [guardiansList, setGuardiansList] = useState([]);
+
+    const [editable, setEditable] = useState(true)
 
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
@@ -75,6 +80,9 @@ export function NewScheduleForm() {
             if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
+            } else if (name.name == "type") {
+                setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
+                setEditable(false)
             }
             value = selectedOptions.value
         } else {
@@ -88,31 +96,14 @@ export function NewScheduleForm() {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (!Array.isArray(infos.user) || infos.user.length === 1) {
-            if (Array.isArray(infos.user)) {
-                infos.user = infos.user[0]
-            }
-            const res = await CreationSchedule(infos); 
-            console.log(res);
-            if (res.status === 200) {
-                setWrongInput(true);
-                if (infos.last_spot === infos.first_spot) {
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées  de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '))
-                        })
-                    })
-                }
-            } else {
-                setWrongInput(true);
-                setErrMessage(res.data.message);
-            }
+        var isSubmit = false;
+        if (infos.user.length == 0) {
+            setWrongInput(true)
+            setErrMessage("Vous n'avez assigné ce créneau à personne")
         } else {
+            if (!Array.isArray(infos.user)) {
+                infos.user = [infos.user]
+            }
             var stock = infos.user;
             var scheduleAdded = 0;
             for (let user of stock) {
@@ -127,27 +118,38 @@ export function NewScheduleForm() {
                     break;
                 }
             }
-            if (scheduleAdded === stock.length) {
-                if (infos.last_spot === infos.first_spot) {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyées")
-                    })
-                } else {
-                    setWrongInput(true);
-                    placeFromId(infos.first_spot).then(res => {
-                        placeFromId(infos.last_spot).then(res2 => {
-                            setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées")
+            if (scheduleAdded == stock.length) {
+                infos.user = stock
+                if (optionsUsers == AllServices(serviceList)) {
+                    if (infos.last_spot == infos.first_spot) {
+                        placeFromId(infos.first_spot).then(res => {
+                            setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée");
+                            isSubmit = true;
                         })
+                    } else {
+                        placeFromId(infos.first_spot).then(res => {
+                            placeFromId(infos.last_spot).then(res2 => {
+                                setErrMessage("Places " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + " à " + res2.data[0].id_park + res2.data[0].floor + "-" + res2.data[0].number + "  bloquées pour être nettoyées");
+                                isSubmit = true;
+                            })
+                        })
+                    }
+                } else {
+                    TP.TakeParking(infos.parking).then(res => {
+                        setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
                     })
+                    isSubmit = true;
                 }
             }
-    
+        }
+        if (isSubmit) {
+            setWrongInput(true);
+            props.handleCallback(false)
         }
 	}
 
-    var optionsService = AllServices(serviceList)
     var optionsParking = AllParkings(parkingsList)
+    const newScheduleOptions = [{value:"guardiansList", label: "Gardien"}, {value:"serviceList", label:"Agent d'entretien"}]
 
     useEffect(() => {
         TP.TakeParking().then(res => {
@@ -155,6 +157,7 @@ export function NewScheduleForm() {
             TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
         });
         TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res))
     }, [])
 
     useEffect(() => {
@@ -171,10 +174,22 @@ export function NewScheduleForm() {
                 marginLeft: "42%",
                 height:"100px",
                 marginBottom:"100px"
-            }}>Ajouter des créneaux de travail</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+            }}>Ajouter des créneaux de travail</Button>} position="right center" onClose={() => {setWrongInput(false); setEditable(true); setInfos({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)}); setOptionsUsers({opts:[], change:false});}}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
-                <form onSubmit={handlleSubmit} className="form">   
+                <form onSubmit={handlleSubmit} className="form"> 
+                    <div style={{zIndex:1008}}>
+                        <Select 
+                            isDisabled={!editable}
+                            id="type"
+                            className="searchs-add"
+                            options={newScheduleOptions} 
+                            placeholder="Type de créneau..."
+                            name="type" 
+                            isSearchable={false}
+                            onChange={handleChangeSelect}
+                        />
+                    </div>  
                     <div style={{zIndex:1007}}>   
                         <Select 
                             id="parking"
@@ -191,12 +206,12 @@ export function NewScheduleForm() {
                             isMulti
                             name="user"
                             placeholder="Assigner à..."
-                            options={optionsService}
+                            options={optionsUsers.opts}
                             className="search-add-two "
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    <div className="numeros" style={{zIndex:1005}}>
+                    {JSON.stringify(optionsUsers.opts) == JSON.stringify(AllServices(serviceList)) && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
@@ -220,7 +235,7 @@ export function NewScheduleForm() {
                             className="search"
                             onChange={handleChangeSelect}
                         />
-                    </div>
+                    </div>}
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                         <DatePicker
                             name="date_start"
