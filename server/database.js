@@ -29,7 +29,6 @@ startDefaultQuery = startDefaultQuery.replaceAll("`DATABASE`", process.env.DATAB
  */
 function StartDatabase(dbConnection, query=startDefaultQuery) {
 	dbConnection.connect();
-	dbConnection.query(`USE ${process.env.DATABASE}`);
 	dbConnection.query(query);
 }
 
