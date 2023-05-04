@@ -129,7 +129,6 @@ export function NewSpotForm(props) {
 
 	const handlleSubmit = async (event) => {
         event.preventDefault()
-		console.log(infos);
         setWrongInput(false);
         if (infos.number >= 0) {
             if (secondNumber === 0) {
@@ -138,6 +137,7 @@ export function NewSpotForm(props) {
                 if (res.status === 200) {
                     setWrongInput(true);
                     setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
+                    props.handleCallback(true)
                 } else {
                     setWrongInput(true);
                     setErrMessage(res.data.message);
@@ -161,6 +161,7 @@ export function NewSpotForm(props) {
                         infos.number = stock;
                         setWrongInput(true);
                         setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
+                        props.handleCallback(true)
                     }
                 } else {
                     setWrongInput(true);

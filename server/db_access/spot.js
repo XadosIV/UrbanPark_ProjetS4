@@ -6,11 +6,11 @@ const Errors = require('../errors');
  * GetAllSpots
  * Return a JSON with every spots
  * 
- * @param {function(*,*)} callback (err, data)
  * @param {object} infos {id_park, floor, number, type}
+ * @param {function(*,*)} callback (err, data)
  */
 
-function GetAllSpots(callback, infos){
+function GetAllSpots(infos, callback){
 	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp 
 	FROM Spot s 
 	LEFT JOIN User u ON s.id = u.id_spot 
@@ -54,11 +54,11 @@ function GetAllSpots(callback, infos){
  * GetSpots
  * Return a JSON with every spots corresponding to paramaters
  * 
- * @param {function(*,*)} callback (err, data)
  * @param {object} infos {id_park, floor, number, type, id}
+ * @param {function(*,*)} callback (err, data)
  */
-function GetSpots(callback, infos){
-    GetAllSpots((err, spots) => {
+function GetSpots(infos, callback){
+    GetAllSpots(infos, (err, spots) => {
         if (err) {
             callback(err, []);
         }else{
@@ -72,7 +72,7 @@ function GetSpots(callback, infos){
             }
             callback(err, spots);
         }
-    }, infos)
+    })
 }
 
 /**
@@ -130,18 +130,17 @@ function InsertListTyped(id_spot, name_types, callback){
  * PostSpot
  * Create a new spot
  * 
- * @param {function(*,*)} callback (err, data)
  * @param {object} infos {number, floor, id_park, types}
+ * @param {function(*,*)} callback (err, data)
  */
-function PostSpot(callback, infos){
-	const { GetParkings } = require('./parking');
-	GetSpots((err, res) => {
+function PostSpot(infos, callback){
+	GetSpots({id_park:infos.id_park, floor:infos.floor, number:infos.number}, (err, res) => {
 		if (err){
 			callback(err, []);
 		}else if (res.length == 1){
 			Errors.SendError(Errors.E_SPOT_ALREADY_EXIST, "La place existe déjà.", callback);
 		}else{
-			GetParkings((err, parkings) => {
+			GetParkings({id:infos.id_park}, (err, parkings) => {
 				if (err){
 					callback(err, []);
 				}else if (parkings.length != 1){
@@ -155,42 +154,42 @@ function PostSpot(callback, infos){
 						if(err){
 							callback(err,data);
 						}else if(infos.types && infos.types.length>0) {
-							GetSpots((err,data) => {
+							GetSpots({id_park: infos.id_park, floor: infos.floor,	number: infos.number}, (err,data) => {
 								if(err){
 									callback(err,data);
 								}else{
 									InsertListTyped(data[0].id, infos.types, callback);
 								}
-							}, {id_park: infos.id_park, floor: infos.floor,	number: infos.number});
+							});
 						}else{
 							callback(err,data);
 						}
 					});
 				}
-			}, {id:infos.id_park})
+			})
 		}
-    }, {id_park:infos.id_park, floor:infos.floor, number:infos.number});
+    });
 }
 
 /**
  * UpdateSpot
  * Modify a spot with specified parameters
  * 
- * @param {function(*,*)} callback (err, data)
  * @param {object} infos {number, floor, id_park, toggle_type[]} 
+ * @param {function(*,*)} callback (err, data)
  * 
  * if toggle_type == [] then, delete all types
  */
-function UpdateSpot(callback, infos){
+function UpdateSpot(infos, callback){
 	if ( !(infos.number || infos.floor || infos.id_park || infos.toggle_type) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Au moins un des champs doit être remplis parmi : number, floor, id_park & toggle_type", callback)
 	// check if need update
 	if ( infos.number || infos.floor || infos.id_park ){
-		GetSpots( (err, currentSpot) => {
+		GetSpots({id:infos.id},  (err, currentSpot) => {
 			if (err) return callback(err, null)
 			if (currentSpot.length == 0) return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "La place est introuvable.", callback);
 			currentSpot = currentSpot[0]
 
-			console.log(currentSpot)
+			//console.log(currentSpot)
 			//check if schedule with spot
 			let sql = `SELECT * FROM Schedule sc
 			JOIN Spot s ON sc.first_spot = s.id
@@ -207,12 +206,12 @@ function UpdateSpot(callback, infos){
 					id_park: infos.id_park || currentSpot.id_park
 				}
 				// check si le parking + l'étage existe
-				GetParkings((err, data) => {
+				GetParkings({id:spot.id_park}, (err, data) => {
 					if (err) return callback(err, null)
 					if (data.length == 0) return Errors.SendError(Errors.E_UNDEFINED_PARKING, "Le parking demandé est introuvable.", callback);
 					if (spot.floor >= data[0].floors) return Errors.SendError(Errors.E_WRONG_FLOOR, "L'étage n'existe pas dans ce parking.", callback);
 					
-					GetSpots((err, data) => {
+					GetSpots(spot, (err, data) => {
 						if (err) return callback(err, null)
 						if (data.length != 0) return Errors.SendError(Errors.E_SPOT_ALREADY_EXIST, "La place existe déjà.", callback);
 
@@ -222,12 +221,12 @@ function UpdateSpot(callback, infos){
 							if (err) return callback(err, null)
 							CheckToggleTypes(infos.id, infos.toggle_type, callback);
 						})
-					}, spot)
+					})
 
-				}, {id:spot.id_park})
+				})
 			})
 
-		}, {id:infos.id})
+		})
 
 	}else{
 		CheckToggleTypes(infos.id, infos.toggle_type, callback);
@@ -331,27 +330,29 @@ function ToggleTypes(id, toggle, callback){
 	}
 }
 
- /* DeleteSpot
+ /** DeleteSpot
  * Delete a spot and all his references by id
  * 
- * @param {function (*,*)} callback (err, data)
  * @param {int} id
+ * @param {function (*,*)} callback (err, data)
  */
-function DeleteSpot(callback, id){
-	const {AdaptSchedule} = require("./schedule");
-	const {DeleteSpotType} = require("./spot_type");
-	const {RemoveSpotUsers} = require("./user");
-	AdaptSchedule((err, res) =>{
+function DeleteSpot(id, callback){
+	const {AdaptSchedule} = require("./schedule")
+	const {DeleteSpotType} = require("./spot_type")
+	const {RemoveSpotUsers} = require("./user")
+	// AdaptSchedule((err, res) => {
+	// 	callback(err, res);
+	// }, id)
+	AdaptSchedule(id, (err, res) =>{
 		if (err){
 			callback(err, res);
-		}
-		else{
-			DeleteSpotType((err, res) => {
+		}else{
+			DeleteSpotType(id, (err, res) => {
 				if (err){
 					callback(err, res);
 				}
 				else{
-					RemoveSpotUsers((err, res) => {
+					RemoveSpotUsers(id, (err, res) => {
 						if (err){
 							callback(err, res)
 						}
@@ -363,11 +364,11 @@ function DeleteSpot(callback, id){
 								callback(err, data)
 							});
 						}
-					}, id)
+					})
 				}
-			}, id);
+			});
 		};
-	}, id)
+	})
 }
 
 /**

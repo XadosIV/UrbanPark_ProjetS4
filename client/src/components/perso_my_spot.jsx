@@ -34,9 +34,9 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchParking() {
             if(maPlace){
-                console.log("idP", maPlace);
+                // console.log("idP", maPlace);
                 const resParking = await TP.TakeParking(maPlace.id_park);
-                console.log("parking", resParking)
+                // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
             }
         }
@@ -81,7 +81,7 @@ export function PersoMySpot(){
 
     const listeTypes = () => {
         if(maPlace.types.length !== 0){
-            return maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) 
+            return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
         }else{
             return <li> aucun types </li>
         }
