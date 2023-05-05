@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType, NewScheduleForm } from "../components";
 import { Button } from "@mui/material";
 import "../css/admin.css"
 
 export function AdminPage() {
+
+	const [update, setUpdate] = useState(true)
+
+	function Callback(childData) {
+		setUpdate(childData)
+	}
 
 	return(<div>
 		<div style={{minWidth:"50%"}}>
@@ -11,12 +17,12 @@ export function AdminPage() {
 			<CreateSpotType/>
 		</div>
 		<br/><br/><hr/><br/><br/>
-		<NewScheduleForm />
+		<NewScheduleForm handleCallback={Callback}/>
 		<br/><br/><hr/>
 		<div className="searchs">
-			<StaffList/>
+			<StaffList update={update}/>
 			<div style={{minWidth:"50%"}}>
-				<UserList/>
+				<UserList />
 				<Separation value="Ajouter un rôle"/>
 				<Button classvariant="contained" color="primary"
 				style={{

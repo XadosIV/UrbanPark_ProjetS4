@@ -1,5 +1,3 @@
-USE `DATABASE`;
-
 INSERT IGNORE INTO Parking (id, name, floors, address) VALUES
 	('H', 'Halles', 3, '1447 rue des halles 73000 Chambéry'),
 	('L', 'Lac', 2, '4 rue des bah 73470 Novalaise'),
@@ -64,8 +62,8 @@ INSERT IGNORE INTO User (id, first_name, last_name, email, password, role, token
 	(3, "Lautregardien", "Lui", "lautregardien.lui@mail.com", "1234aaA*", "Gardien", "2222222222222222", NULL, NULL),
 	(4, "Sébastien", "Neitsabés", "sebn@mail.com", "1234aaA*", "Agent d'entretien", "3333333333333333", NULL, NULL),
 	(5, "Honoré", "Eronoh", "hono@custom.fr", "1234aaA*", "Abonné", "4444444444444444", 3, 4),
-	(6, "Olivier", "Reivilo", "oli.reivi@mailbizarre.com", "1234aaA*", "Aboné", "5555555555555555", 5, NULL),
-	(7, "José", "Esoj", "jojo.eso@mail.com", "1234aaA*", "Aboné", "6666666666666666", NULL, NULL);
+	(6, "Olivier", "Reivilo", "oli.reivi@mailbizarre.com", "1234aaA*", "Abonné", "5555555555555555", 5, NULL),
+	(7, "José", "Esoj", "jojo.eso@mail.com", "1234aaA*", "Abonné", "6666666666666666", NULL, NULL);
 
 INSERT IGNORE INTO Schedule (id, id_user, id_parking, date_start, date_end) VALUES
 	(1, 2, 'H', '2023-04-14T08:00:00', '2023-04-14T16:00:00'),
