@@ -174,7 +174,7 @@ export function ParkingSpots(props) {
         if (infos[name]) {
             setInfos(values => ({...values, [sub]: newVal}))
             setStock(values => ({...values, [sub]: infos[sub]}))
-        } else if (stockDisable[sub] != baseValueFloorType && stockDisable[sub] != baseValueNumber) {
+        } else if (stockDisable[sub] !== baseValueFloorType && stockDisable[sub] !== baseValueNumber) {
             setInfos(values => ({...values, [sub]: stockDisable[sub]}))
         }
     }

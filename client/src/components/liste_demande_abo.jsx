@@ -20,7 +20,7 @@ export function ListeDemandeAbo(){
             return <li> aucune demande d'abonnement en attente </li>
         }else{
             return listeDemande.map((demande, index) => {
-                return <DemandeAbo infos={demande} index={index} />
+                return <DemandeAbo infos={demande} key={index} />
             })
         }
     }
