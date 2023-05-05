@@ -1,19 +1,32 @@
 body {
-	+margin: 0;
+	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: large;
-	background-color:#F0FFFF;
+	background-color:#F6F1F1;
+	display:flex;
+	flex-direction: column;
+}
+
+header a {
+	color: #0A2647;
+}
+
+footer {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
 }
 
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
 		monospace;
 }
-
 
 .carousel {
 	overflow: hidden;
@@ -37,7 +50,7 @@ code {
 }
 
 .slides-item {
-	background-color: aqua;
+	background-color: #19A7CE;
 	border-radius: 20px;
 	flex-shrink: 0;
 	height: 100%;

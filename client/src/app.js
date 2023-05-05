@@ -66,7 +66,7 @@ export function App() {
 	return (
 		<ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken, userRole, setUserRole, userPermissions, setUserPermissions }}>
 		<Box
-			sx={{ padding: 2, minHeight: "100%",
+			sx={{minHeight: "100%",
 				display: "grid",
 				gridTemplateRows: "auto 1fr auto",
 				 }}
@@ -74,7 +74,7 @@ export function App() {
 			<header>
 				<Stack
 					direction="flex"
-					justifyContent="space-around"
+					justifyContent="space-between"
 					alignItems="center"
 					spacing={2}
 
@@ -90,8 +90,12 @@ export function App() {
 					</Link>
 				</Stack>
 			</header>
-			<AppRoutes />
-			<EndPage/>
+			<main>
+				<AppRoutes />
+			</main>
+			<footer>
+				<EndPage/>
+			</footer>
 		</Box>
 		</ContextUser.Provider>
 	)
