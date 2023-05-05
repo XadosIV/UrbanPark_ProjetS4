@@ -43,7 +43,7 @@
 	list-style-position: inside;
 	margin:0;
 	padding:0;
-	max-height: 500px;
+	max-height: 800px;
 	overflow-y: auto;
 	scrollbar-width: thin;
 }
@@ -71,7 +71,7 @@
 	list-style-position: inside;
 	margin:0;
 	padding:0;
-	max-height: 500px;
+	max-height: 800px;
 	overflow-y: auto;
 	scrollbar-width: thin;
 }
@@ -185,6 +185,7 @@
 	background: rgb(255, 255, 255);
 	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
 	padding: 5px;
+	min-width:200px;
 	min-width:200px;
 	justify-content: center;
 	border-radius:10px;

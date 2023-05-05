@@ -83,7 +83,7 @@ function isMySelf(infos, callback){
 function UpdateUser(infos, callback){
 	//Verification param required
 	if(!(infos.id) || !(infos.token)){
-		return Errors.SendError(Errors.E_MISSING_PARAMETER, "Champs obligatoires : id, token", callback);
+		return Errors.SendError(Errors.E_EMAIL_FORMAT_INVALID, "baba", callback);
 	}
 	//Verification syntaxe
 	if (infos.email){

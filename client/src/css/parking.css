@@ -47,7 +47,9 @@
   
   /* Dropdown Content (Hidden by Default) */
 .dp-content {
-	display: none;
+	display: flex;
+	flex-direction:column;
+	justify-content:center;
 	position: absolute;
 	background-color: #f9f9f9;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -60,15 +62,7 @@
   /* Texts inside the dropdown */
 .dp-content a, .dp-content p {
 	color: black;
-	display: block;
-}
-  
-  /* Change color of dropdown links on hover */
-.dp-content a:hover {background-color: #f1f1f1}
-  
-  /* Show the dropdown menu on hover */
-.dp:hover .dp-content {
-	display: block;
+	justify-content:center;
 }
   
   /* Change the background color of the dropdown button when the dropdown content is shown */
@@ -156,6 +150,7 @@
 .numeros, .numeros-two {
 	display: flex;
 	flex-direction: row;
+	justify-content:center;
 }
 
 .numeros-two {
@@ -172,4 +167,15 @@
 
 .search-add-two {
 	z-index:1000;
+}
+
+.popup-spot-content {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	min-width:220px;
+	max-width:220px;
+	align-items:center;
 }
