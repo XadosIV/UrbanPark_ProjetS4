@@ -19,4 +19,5 @@ export * from "./delete_schedule"
 export * from "./update_info_perso"
 export * from "./creation_spot_type"
 export * from "./delete_parking"
-export * from './creation_parking'
+export * from "./creation_parking"
+export * from "./delete_spot"
