@@ -39,6 +39,16 @@ function GetSchedulesAvailable(infos, callback){
 	})
 }
 
+/**
+ * Invert Schedules
+ * 
+ * Take two dates and an array of schedule with the format : [date_start, date_end]
+ * Return an array of schedule with the same format, indicates all time where no schedules are found between the two dates.
+ * 
+ * @param {string} min starting date of inverting 
+ * @param {string} max ending date of inverting
+ * @param {*} schedules busy schedules to find not busy ones 
+ */
 function InvertSchedules(min, max, schedules){
 	//on trie schedules par ordre alphabétique des tailles du début
 	schedules.sort((a,b) => a[0]<b[0]?-1:1) // c'est pas une bidouille, c'est juste pour trier.
@@ -67,6 +77,14 @@ function InvertSchedules(min, max, schedules){
 	return i_schedules;
 }
 
+/**
+ * ArrayEquals
+ * 
+ * Check if two arrays are equals
+ * 
+ * @param {Array} a 
+ * @param {Array} b 
+ */
 function ArrayEquals(a, b) {
     return Array.isArray(a) &&
         Array.isArray(b) &&
@@ -74,6 +92,14 @@ function ArrayEquals(a, b) {
         a.every((val, index) => val === b[index]);
 }
 
+/**
+ * IncludeArray
+ * 
+ * Check if an array is includes in an array of array.
+ * 
+ * @param {Array} element 
+ * @param {Array[Array]} array 
+ */
 function IncludeArray(element, array){
 	for (let telement of array){
 		if (ArrayEquals(telement, element)){
@@ -83,6 +109,14 @@ function IncludeArray(element, array){
 	return true;
 }
 
+/**
+ * ReduceSchedules
+ * 
+ * Take an array of schedules with the format [date_start, date_end]
+ * Returns the array, fusing every schedules when it's possible.
+ * 
+ * @param {Array} schedules with the format [date_start, date_end] 
+ */
 function ReduceSchedules(schedules){
 	// Retire les doublons
 	var schedules_sans_doublons = [];
@@ -137,6 +171,18 @@ function ReduceSchedules(schedules){
 	return schedules;
 }
 
+/**
+ * FusingOverlappingSchedules
+ * 
+ * Take an array of schedules with the format [date_start, date_end]
+ * Returns an array with :
+ * 		[0] bool : Whether or not a fusing occured.
+ * 		[1] array: The new schedules array
+ * 
+ * Designed to be used in a loop, exiting when res[0] == false
+ * 
+ * @param {Array} schedules with the format [date_start, date_end]
+ */
 function FusingOverlappingSchedules(schedules){
 	res = []; // [bool working, schedules[]]
 
@@ -176,6 +222,18 @@ function FusingOverlappingSchedules(schedules){
 	return res;
 }
 
+/**
+ * GetAllSchedulesFromUserArray
+ * 
+ * Take an array of user_id, a minimum date and a maximum date
+ * Returns all the schedules for all the users in this date range
+ * 
+ * @param {Array} user_array 
+ * @param {string} min 
+ * @param {string} max 
+ * @param {function(*,*)} callback 
+ * @param {array} schedules 
+ */
 function GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules=[]){
 	if (user_array.length == 0){
 		callback(null, user_array);
@@ -194,6 +252,16 @@ function GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules=
 	}
 }
 
+/**
+ * GetUsersFromRoleArray
+ * 
+ * Takes a role array
+ * Returns an array of userId corresponding to all the users who had these roles.
+ * 
+ * @param {Array} role_array 
+ * @param {function(*,*)} callback 
+ * @param {Array} user_array 
+ */
 function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 	if (role_array.length == 0){
 		callback(null, user_array)
@@ -212,4 +280,4 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 	}
 }
 
-module.exports = {};
+module.exports = {GetSchedulesAvailable};
