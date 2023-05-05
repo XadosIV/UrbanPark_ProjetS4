@@ -9,7 +9,7 @@ const Errors = require('../errors');
  * @param {function(*,*)} callback (err, data)
  */
 function GetUsers(infos, callback){
-	sql = `SELECT id, first_name, last_name, email, id_spot, id_spot_temp, role FROM User WHERE id LIKE :id AND email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name AND (id_spot LIKE :id_spot OR '%' = :id_spot) AND (id_spot_temp LIKE :id_spot_temp OR '%' = :id_spot_temp);`;
+	sql = `SELECT id, first_name, last_name, email, id_spot, id_spot_temp, role FROM User WHERE id LIKE :id AND email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name AND (id_spot LIKE :id_spot OR '%' = :id_spot OR :id_spot = 'NULL' AND id_spot IS NULL) AND (id_spot_temp LIKE :id_spot_temp OR '%' = :id_spot_temp OR :id_spot_temp = 'NULL' AND id_spot_temp IS NULL);`;
 	//console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		id:infos.id||'%',
