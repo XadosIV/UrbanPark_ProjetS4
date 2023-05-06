@@ -5,7 +5,7 @@ import { Stack, Typography } from "@mui/material"
 
 export function Header () {
 	return(
-		<div class="container" style={{
+		<div className="container" style={{
 				display:"flex",
 				flexDirection:"row",
 				justifyContent:"space-around",

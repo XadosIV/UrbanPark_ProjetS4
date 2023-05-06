@@ -32,7 +32,7 @@ export function PersonalPage(){
 		}
 	};
 
-	return <div class="container" style={{
+	return <div className="container" style={{
 			display:"flex",
 			flexDirection:"column",
 			alignItems:"stretch"
