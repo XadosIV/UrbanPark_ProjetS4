@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot } from "../services";
-import { AdminVerif } from "../components"
+import TAST from "../services/take_all_spot_types"
+import { AdminVerif, UpdateSpot } from "../components"
 
 export function Spot(props) {
+	let typesPossibles;
+	TAST.TakeAllSpotTypes().then(res => {typesPossibles = res})
 
     async function Callback(childData) {
         props.handleCallback(childData)
@@ -57,6 +60,13 @@ export function Spot(props) {
         }  
     }
 
+	var modifiable = false;
+
+	function HandleAskChange () {
+		modifiable = modifiable ? false : true
+	}
+
+
     var infosSpot;
     if (props.spot.id_user_temp != null) {
         infosSpot = <Link to={`/users/${props.spot.id_user}/profile`} style={{textDecoration:"none", marginBottom:"10px"}}>
@@ -94,7 +104,7 @@ export function Spot(props) {
                 {typesSpot}
                 {HasSub(props.spot.types, props.spot.id_user)}
                 { admin &&
-                <Button variant="contained" color="primary" 
+                <Button variant="contained" color="primary" onClick={HandleAskChange()}
                 style={{
                     backgroundColor: "#FE434C",
                     borderColor: "transparent",
@@ -102,7 +112,9 @@ export function Spot(props) {
                     width: 160,
                     float:"right",
                     height:"10%",
-                }}>Ajouter un type à cette place</Button>}
+                }}>Modifier les types de cette place</Button>}
+				{modifiable && 
+				<UpdateSpot used={typesSpot} allTypes={typesPossibles}/>}
                 {admin && 
                 <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " !"} handleCallback={Callback}/>}
             </div>
