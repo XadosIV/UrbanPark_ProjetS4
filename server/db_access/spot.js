@@ -15,11 +15,12 @@ function GetAllSpots(infos, callback){
 	FROM Spot s 
 	LEFT JOIN User u ON s.id = u.id_spot 
 	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
-	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number
+	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number AND s.id LIKE :id
 	ORDER BY floor, number`;
     //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 
 		{
+			id:infos.id ||'%',
 			number:infos.number||'%',
 			floor:infos.floor||'%',
 			id_park:infos.id_park||'%'

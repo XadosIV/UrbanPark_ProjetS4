@@ -133,7 +133,6 @@ export function Spot(props) {
 
     const [noSubmit, setNoSubmit] = useState(true)
 
-    console.log(defaultValue)
     const [gender, setGender] = useState("definitive");
 
     const handleChangeSelect = (selectedOptions, name) => {

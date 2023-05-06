@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@mui/material";
-import { PlaceNumber } from "./place_number";
+import { User } from "../components"
+
 
 export function SearchUser(list) {
 
@@ -15,30 +15,10 @@ export function SearchUser(list) {
         }
     })
 
-    function hasPlace(user) {
-        if (user.id_spot != null) {
-            return (<p style={{display: "inline"}}>- <PlaceNumber user={user}/></p>)
-        } else {
-            return ""
-        }
-    }
-
 	return (
         <ul className="user-list">
             {filteredData.map((user, index) => (
-                <li key={index}>
-                    <div className="main-content">
-                        <div>
-                            <div>
-                                <h3>{user.first_name} {user.last_name} - {user.email}</h3>
-                                <p>{user.role} {hasPlace(user)} </p>
-                            </div>                       
-                        </div>
-                        <div>
-                            <Button variant="contained" color="primary">Voir les informations de l'utilisateur</Button>
-                        </div>
-                    </div>           
-                </li>))}
+                <User user={user} index={index}/>))}
 		</ul>
     )
 }
