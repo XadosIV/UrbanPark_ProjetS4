@@ -3,15 +3,37 @@ import { TextField } from "@mui/material";
 import TP from "../services/take_parking";
 import TAS from "../services/take_all_spots";
 import TAST from "../services/take_all_spot_types"
-import { SpotsList, ParkingList, NewSpotForm } from "../components";
-import { NbFloors } from "../interface"
+import { SpotsList, ParkingList, NewSpotForm, AdminVerif } from "../components";
+import { NbFloors, GetSpotsFromFilter } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
 import { useContext } from "react";
-import { userFromToken } from "../services";
+import { userFromToken, DeleteSpot } from "../services";
 import { ContextUser } from "../contexts/context_user";
 
 export function ParkingSpots(props) {
+
+    function Callback(childData) {
+        setUpdate(childData)
+    }
+
+    function CallbackDelete(childData) { 
+        var deleted = 0;
+        const forLoop = async _ => {
+            for (let spot of GetSpotsFromFilter(list, infos)) {
+                const res = await DeleteSpot(spot.id)
+                if (res.status === 200) {
+                    deleted++;
+                }
+            }
+        }
+        forLoop().then(() => {
+            if (deleted == GetSpotsFromFilter(list, infos).length) {
+                setUpdate(childData)
+            }
+        })
+    }
+
     const { userToken } = useContext(ContextUser);
 	const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
@@ -48,7 +70,7 @@ export function ParkingSpots(props) {
      * @return { TextField }
      */
     function ErrorOnSecondNumber(nb1, nb2) {
-        if (nb2 < nb1 && (nb2 !== 0 || nb2 !== "") && infos.checkedsecondNumber) {
+        if (nb2 < nb1 && nb2 !== 0 && nb2 !== "" && infos.checkedsecondNumber) {
             return <TextField
             error
             helperText="Chiffre supérieur au premier"
@@ -157,7 +179,10 @@ export function ParkingSpots(props) {
     
     const handleChangeTextField = (event) => {
         const name = event.target.name;
-        const value = event.target.value;
+        var value = event.target.value;
+        if (value !== "") {
+            value = parseInt(value)
+        }
         setInfos(values => ({...values, [name]: value}))
     }
 
@@ -180,12 +205,11 @@ export function ParkingSpots(props) {
     }
 
     const handleChangeSelects = (event, name) => {
-        const value = event.value;
+        var value = event.value;
+        if ((name === "firstFloor" || name === "secondFloor") && value !== "%") {
+            value = parseInt(value)
+        }
         setInfos(values => ({...values, [name]: value}))
-    }
-
-    function Callback(childData) {
-        setUpdate(childData)
     }
 
     const addSpotSiAdmin = () => {
@@ -197,6 +221,16 @@ export function ParkingSpots(props) {
             }
         }
     }
+    
+    const delSpotSiAdmin = () => {
+        if(admin){
+            if(parkingsList){
+                if(parkingsList.length === 1){
+                    return <AdminVerif title="Supprimer toutes les places sélectionnées" text="Vous êtes sur le point de supprimer toutes les places ci dessous !" handleCallback={CallbackDelete}/>
+                }
+            }
+        }
+    }
 
     const [stockDisable, setStock] = useState({secondFloor:baseValueFloorType, secondNumber:baseValueNumber})
 
@@ -204,7 +238,7 @@ export function ParkingSpots(props) {
         <div style={{marginTop:"30px", marginBottom:"30px"}}>
             {
                 parkingsList.map((parking, index) =>
-                    <ParkingList parking={parking} button={false} key={index} admin={admin}/>
+                    <ParkingList parking={parking} button={false} key={index} admin={admin} handleCallback={Callback}/>
                 )
             }
         </div>
@@ -214,7 +248,7 @@ export function ParkingSpots(props) {
             <input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
         </div>
         
-        <div style={{display:"flex", flexDirection:"row"}}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
             <form className="all-searchs">
                 <Select 
                     className="front-search"
@@ -247,11 +281,16 @@ export function ParkingSpots(props) {
                     {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
                 </div>
 		    </form> 
+            <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
             {
                 addSpotSiAdmin()
             }
+            {
+                delSpotSiAdmin()
+            }    
+            </div>
         </div>  
 
-        <SpotsList list={list} infos={infos}/>  
+        <SpotsList list={list} infos={infos} handleCallback={Callback}/>  
     </div>)
 }

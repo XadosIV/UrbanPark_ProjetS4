@@ -491,41 +491,40 @@ function AdaptScheduleStart(fdata, callback){
 		let id_schedule = info.id
 		let first_spot = info.first_spot
 		let last_spot = info.last_spot
-		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
-		dbConnection.query(sql, {id:first_spot}, (err, data) => {
-			if (err){
-				callback(err, {})
-			}
-			else{
-				// console.log(data)
-				let place_a_modifier = data.shift()
-				sql = `SELECT id FROM ${dbName}.Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
-				dbConnection.query(sql, {
-					prev_num:place_a_modifier.number,
-					prev_id_park:place_a_modifier.id_park,
-					prev_floor:place_a_modifier.floor
-				}, (err, data) => {
-					if (err){
-						callback(err, {})
-					}
-					else{
-						if (data[0].id == last_spot){
-							DeleteSchedule(id_schedule, (err, data) => {
-								if (err){
-									callback(err, data);
-								}
-								else if (fdata.length > 0){
-									AdaptScheduleStart(fdata, (err, data) => {
-										callback(err, data);
-									})
-								}
-								else {
-									callback(err, data)
-								}
-							})
+		if (first_spot == last_spot){
+			DeleteSchedule(id_schedule, (err, data) => {
+				if (err){
+					callback(err, data);
+				}
+				else if (fdata.length > 0){
+					AdaptScheduleStart(fdata, (err, data) => {
+						callback(err, data);
+					})
+				}
+				else {
+					callback(err, data)
+				}
+			})
+		} else {
+			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
+			dbConnection.query(sql, {id:first_spot}, (err, data) => {
+				if (err){
+					callback(err, {})
+				}
+				else{
+					// console.log(data)
+					let place_a_modifier = data.shift()
+					sql = `SELECT id FROM Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
+					dbConnection.query(sql, {
+						prev_num:place_a_modifier.number,
+						prev_id_park:place_a_modifier.id_park,
+						prev_floor:place_a_modifier.floor
+					}, (err, data) => {
+						if (err){
+							callback(err, {})
 						}
 						else{
-							sql = `UPDATE ${dbName}.Schedule SET first_spot=:new WHERE id=:id`;
+							sql = `UPDATE Schedule SET first_spot=:new WHERE id=:id`;
 							dbConnection.query(sql, {
 								id:id_schedule,
 								new:data[0].id
@@ -543,10 +542,10 @@ function AdaptScheduleStart(fdata, callback){
 								}
 							})
 						}
-					}
-				})
-			}
-		})
+					})
+				}
+			})
+		}
 	}
 }
 
@@ -566,36 +565,36 @@ function AdaptScheduleEnd(fdata, callback){
 		let id_schedule = info.id
 		let first_spot = info.first_spot
 		let last_spot = info.last_spot
-		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
-		dbConnection.query(sql, {id:last_spot}, (err, data) => {
-			if (err){
-				callback(err, {})
-			}else{
-				let place_a_modifier = data.shift()
-				sql = `SELECT id FROM ${dbName}.Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
-				dbConnection.query(sql, {
-					prev_num:place_a_modifier.number,
-					prev_id_park:place_a_modifier.id_park,
-					prev_floor:place_a_modifier.floor
-				}, (err, data) => {
-					if (err){
-						callback(err, {})
-					}
-					else{
-						if (data[0].id == first_spot){
-							DeleteSchedule(id_schedule, (err, data) => {
-								if (err){
-									callback(err, data);
-								} else if (fdata.length > 0){
-									AdaptScheduleEnd(fdata, (err, data) => {
-										callback(err, data);
-									})
-								} else {
-									callback(err, data)
-								}
-							})
-						} else{
-							sql = `UPDATE ${dbName}.Schedule SET last_spot=:new WHERE id=:id`;
+		if (data[0].id == first_spot){
+			DeleteSchedule(id_schedule, (err, data) => {
+				if (err){
+					callback(err, data);
+				} else if (fdata.length > 0){
+					AdaptScheduleEnd(fdata, (err, data) => {
+						callback(err, data);
+					})
+				} else {
+					callback(err, data)
+				}
+			})
+		} else {
+			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
+			dbConnection.query(sql, {id:last_spot}, (err, data) => {
+				if (err){
+					callback(err, {})
+				}else{
+					let place_a_modifier = data.shift()
+					sql = `SELECT id FROM Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
+					dbConnection.query(sql, {
+						prev_num:place_a_modifier.number,
+						prev_id_park:place_a_modifier.id_park,
+						prev_floor:place_a_modifier.floor
+					}, (err, data) => {
+						if (err){
+							callback(err, {})
+						}
+						else{
+							sql = `UPDATE Schedule SET last_spot=:new WHERE id=:id`;
 							dbConnection.query(sql, {
 								id:id_schedule,
 								new:data[0].id
@@ -612,10 +611,10 @@ function AdaptScheduleEnd(fdata, callback){
 								}
 							})
 						}
-					}
-				})
-			}
-		})
+					})
+				}
+			})
+		}
 	}
 }
 

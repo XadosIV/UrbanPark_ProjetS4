@@ -1,12 +1,24 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Button, TextField } from "@mui/material";
-import { ContextUser } from "../contexts/context_user";
+import React from "react";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { CutAddress, NeedS } from "../interface";
-import { DeleteParking, authenticate, userFromToken } from "../services"
-import ReactModal from 'react-modal';
+import { AdminVerif } from "../components"
+import { DeleteParking } from "../services"
+import { useLocation, useNavigate } from 'react-router-dom'
 
-export function ParkingList(parking) {
+export function ParkingList(props) {
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    async function Callback(childData) {
+        if (location.pathname.slice(0, -1) == "/parkings/") {
+            navigate("/perso");
+        }
+        await DeleteParking(props.parking.id);
+        props.handleCallback(childData)
+    }
+
     /**
      * PutButton
      * Returns a button if value = true
@@ -17,7 +29,7 @@ export function ParkingList(parking) {
     function PutButton(value) {
         if (value) {
             return (
-            <Link to={`/parkings/${parking.parking.id}`} style={{textDecoration:"none"}}>
+            <Link to={`/parkings/${props.parking.id}`} style={{textDecoration:"none"}}>
                 <Button variant="contained" color="primary">Voir les places</Button>
             </Link>)
         }
@@ -150,18 +162,16 @@ export function ParkingList(parking) {
         }
 
 	return (
-        <div>
-        {visible && (
         <div className="list-item">	 
             <div>
-                <h2>Parking {parking.parking.name} ({parking.parking.id})<br/>{parking.parking.floors} étage{NeedS(parking.parking.floors)}</h2>    
+                <h2>Parking {props.parking.name} ({props.parking.id})<br/>{props.parking.floors} étage{NeedS(props.parking.floors)}</h2>    
                 <p>{address[0]}</p>
                 <p>{address[1]}</p>
             </div>
             <div className="button-parking">               
-                <p>{parking.parking.nbPlaceLibre} places restantes / {parking.parking.nbPlaceTot}</p> 
-                {PutButton(parking.button)}
-                {parking.admin && <AdminVerif/>}
+                <p>{props.parking.nbPlaceLibre} places restantes / {props.parking.nbPlaceTot}</p> 
+                {PutButton(props.button)}
+                {props.admin && <AdminVerif title="Supprimer ce parking" text={"Vous êtes sur le point de supprimer le parking " + props.parking.name + " !"} handleCallback={Callback}/>}
             </div>
-        </div>)}</div>)
+        </div>)
 }

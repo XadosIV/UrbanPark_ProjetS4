@@ -107,17 +107,17 @@
 }
 
 .front-search-second {
-	z-index:1000;
+	z-index:10;
 }
 
 .front-search-second-add, .front-search-floor {
 	width:300px;
 	margin-bottom: 10px;
-	z-index:1000;
+	z-index:10;
 }
 
 .front-search, .front-search-floor {
-	z-index:1001;
+	z-index:11;
 }
 
 .popup-content {
