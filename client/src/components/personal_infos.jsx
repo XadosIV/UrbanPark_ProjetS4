@@ -217,6 +217,7 @@ export function PersonalInfos(){
                             variant="contained" 
                             color="primary" 
                             type="submit"
+							fullWidth="true"
                         >valider les changements</Button>
                     </div>
                 </form>
@@ -255,6 +256,7 @@ export function PersonalInfos(){
                             variant="contained" 
                             color="primary" 
                             type="submit"
+							fullWidth="true"
                         >modifier mon mot de passe</Button>
                     </div>
                 </form>
@@ -283,6 +285,7 @@ export function PersonalInfos(){
                             variant="contained" 
                             color="primary" 
                             type="submit"
+							fullWidth="true"
                         >modifier mon email</Button>
                     </div>
                 </form>
