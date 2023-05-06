@@ -81,10 +81,6 @@ function isMySelf(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function UpdateUser(infos, callback){
-	//Verification param required
-	if(!(infos.id) || !(infos.token)){
-		return Errors.SendError(Errors.E_MISSING_PARAMETER, "Champs obligatoires : id, token", callback);
-	}
 	//Verification syntaxe
 	if (infos.email){
 		if (!IsValidEmail(infos.email)){
@@ -128,46 +124,19 @@ function UpdateUser(infos, callback){
 		
 			sql = `UPDATE User SET ${parameters} WHERE id=:id`;
 		
-      // placeholders variables gave as the request
+      		// placeholders variables gave as the request
 			placeholders = {id:infos.id, parameters:parameters}
 			
 			console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
 			dbConnection.query(sql, placeholders, callback);
 		}
 
-		const updateUser = () => {
-			if 	(infos.email || infos.password){ // if a new token is needed
-				const {GenerateNewToken} = require('./auth');
-				GenerateNewToken(sqlRequest)
-			}else{
-				sqlRequest(null, null)
-			}
+		if 	(infos.email || infos.password){ // if a new token is needed
+			const {GenerateNewToken} = require('./auth');
+			GenerateNewToken(sqlRequest)
+		}else{
+			sqlRequest(null, null)
 		}
-
-		// fonction check if autorisé
-		isMySelf(infos, (err, data) => {
-			if (err){ 
-				callback(err, {});
-				return;
-			}else{
-				if(data){
-					updateUser();
-				}else{
-					const { HasPermission } = require("./auth");
-					HasPermission(infos.token, "modify_other_users", (err, data) => {
-						if(err){
-							callback(err, {});
-						}else{
-							if(data){
-								updateUser();
-							}else{
-								return Errors.SendError(Errors.E_FORBIDDEN, "manipulation interdite", callback);
-							}
-						}
-					})
-				}
-			}
-		})
 	}
 		
 	//Verification doublon
