@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Stack, Typography } from "@mui/material"
 import { AppRoutes } from "./app_routes"
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from "react-router-dom";
-import { EndPage } from "./components"
+import { Footer, Header } from "./components"
 import { ContextUser, initialState } from "./contexts/context_user"
 
 export function App() {
@@ -65,38 +62,15 @@ export function App() {
 
 	return (
 		<ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken, userRole, setUserRole, userPermissions, setUserPermissions }}>
-		<Box
-			sx={{minHeight: "100%",
-				display: "grid",
-				gridTemplateRows: "auto 1fr auto",
-				 }}
-		>
 			<header>
-				<Stack
-					direction="flex"
-					justifyContent="space-between"
-					alignItems="center"
-					spacing={2}
-
-					sx={{
-						marginBottom: 2,
-					}}
-				>
-					<Link to="/">
-						<Typography variant="h3">Logo</Typography>
-					</Link>
-					<Link to="/perso">
-						<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
-					</Link>
-				</Stack>
+				<Header/>
 			</header>
 			<main>
 				<AppRoutes />
 			</main>
 			<footer>
-				<EndPage/>
+				<Footer/>
 			</footer>
-		</Box>
 		</ContextUser.Provider>
 	)
 }

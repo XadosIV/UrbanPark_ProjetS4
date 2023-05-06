@@ -1,6 +1,6 @@
 import React from "react";
 
-export function EndPage () {
+export function Footer () {
 	return(
 		<div className="container" style={{
 				backgroundColor:"#205295",

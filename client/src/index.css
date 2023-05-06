@@ -6,7 +6,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: large;
-	background-color:#F6F1F1;
+	/* background-color:#F6F1F1; */
+	background-color: #dbe9f4;
 	display:flex;
 	flex-direction: column;
 }
@@ -53,10 +54,10 @@ code {
 	background-color: #19A7CE;
 	border-radius: 20px;
 	flex-shrink: 0;
-	height: 100%;
 	margin: 0 1rem;
 	scroll-snap-align: center;
-	width: 100%;
+	width: 90%;
+	padding: 5%;
 }
 
 .slides-item p {
