@@ -8,6 +8,7 @@ import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import TBR from "../services/take_by_role"
 import TBS from "../services/take_by_spot"
+import TBST from "../services/take_by_spot_temp"
 
 export function Spot(props) {
 
@@ -19,15 +20,20 @@ export function Spot(props) {
      * @return { Array }
      */
     function AllSubs(list) {
-        var opt = []
+        var opt = [{value:0, label:"Aucun abonné"}]
         for (let i=0; i<list.length; i++) {
             opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
         }
         return opt
     }
 
-    async function UserOfSpot(list, id_spot) {
-        var get = await TBS.TakeBySpot(id_spot).then((res) => res)
+    async function UserOfSpot(list, id_spot, isTemp) {
+        var get;
+        if (!isTemp) {
+            get = await TBS.TakeBySpot(id_spot).then((res) => res)
+        } else {
+            get = await TBST.TakeBySpotTemp(id_spot).then((res) => res)
+        }
         var result;
         if (get[0]) {
             for (let user of list) {  
@@ -70,6 +76,16 @@ export function Spot(props) {
         }  
     }
 
+    function HasSubDontDelete(spot) {
+        if (spot.id_user != null) {
+            return "Cette place est assignée à un utilisateur ! Vous devrez lui en réattribuer une."
+        } else if (spot.id_user_temp != null) {
+            return "Cette place est temporairement assignée à un utilisateur ! Vous devrez lui en réattribuer une."
+        } else {
+            return ""
+        }
+    }
+
     /**
      * ChangeUserSpot
      * Return a button to click on and something else if clicked
@@ -77,7 +93,7 @@ export function Spot(props) {
      * @param { String } title - The title of the buton
      * @returns { JSX }
      */
-    function ChangeUserSpot(title) {
+    function ChangeUserSpot(title, type="") {
         return (noSubmit && 
             <Button variant="contained" color="primary" onClick={handleSet}>
                 {title}
@@ -93,7 +109,7 @@ export function Spot(props) {
                 checked={gender === "temporary"}
                 onChange={() => setGender("temporary")}
             />Temporaire
-            <form onSubmit={(e) => handlleSubmit(e, "changeSpot")} className="form">
+            <form onSubmit={(e) => handlleSubmit(e, type)} className="form">
                 <Select 
                     id="user"
                     className="searchs-add"
@@ -124,7 +140,7 @@ export function Spot(props) {
 
     const [subs, setSubs] = useState([])
 
-    const [defaultValue, setDefault] = useState({})
+    const [defaultValue, setDefault] = useState({value:0, label:"Aucun abonné"})
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -150,13 +166,19 @@ export function Spot(props) {
     }, [userToken]);
 
     useEffect(() => {
+        var temp = false;
+        if (props.spot.id_user_temp != null) {
+            temp = true;
+        }
         TBR.TakeByRole("Abonné").then(res => {
-            setSubs(res);
-            UserOfSpot(res, props.spot.id).then((data) => {
-                if (data) {
-                    setDefault(data)
-                }
-            })
+            setSubs(res)
+            if (props.spot.id_user != null || props.spot.id_user_temp != null) {
+                UserOfSpot(res, props.spot.id, temp).then((data) => {
+                    if (data) {
+                        setDefault(data)
+                    }
+                })
+            }
         })
     }, [])
 
@@ -182,11 +204,13 @@ export function Spot(props) {
                 DSFU(res[0].id, {id_spot:null});
             })
         } else if (type === "changeSpotTemp") {
-            TBS.TakeBySpot(props.spot.id).then(res => {
+            TBST.TakeBySpotTemp(props.spot.id).then(res => {
                 DSFU(res[0].id, {id_spot_temp:null});
             })
         }
-        SSFU(infos.user, toModif);
+        if (infos.user != 0) {
+            SSFU(infos.user, toModif);
+        }
 
         setErrMessage("Modification prise en compte.")
         setWrongInput(true)
@@ -196,16 +220,16 @@ export function Spot(props) {
     }
 
     var infosSpot;
-    if (props.spot.id_user_temp != null) {
-        infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
-                        Place attribuée temporairement à : <br/> {props.spot.first_name_temp} {props.spot.last_name_temp}</p>
-                        {ChangeUserSpot("Changer")}
-                    </div>
-    } else if (props.spot.id_user != null) {
+    if (props.spot.id_user != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                         Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}</p>
-                        {ChangeUserSpot("Changer")}
+                        {ChangeUserSpot("Changer", "changeSpot")}
                     </div>
+    } else if (props.spot.id_user_temp != null) {
+        infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
+                    Place attribuée temporairement à : <br/> {props.spot.first_name_temp} {props.spot.last_name_temp}</p>
+                    {ChangeUserSpot("Changer", "changeSpotTemp")}
+                </div>
     } else {
         for (let type of props.spot.types) {
             if (type === "Abonné") {     
@@ -233,26 +257,23 @@ export function Spot(props) {
         <Popup className="popup-spot" trigger={<Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
                             Place {SpotName(props.spot)}
                         </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false);}}>
-                {infosSpot}
-                <hr/>
-                {typesSpot}
-                {HasSub(props.spot.types, props.spot.id_user)}
-                { admin &&
-                <Button variant="contained" color="primary" 
-                style={{
-                    backgroundColor: "#FE434C",
-                    borderColor: "transparent",
-                    borderRadius: 20,
-                    width: 160,
-                    float:"right",
-                    height:"10%",
-                    marginTop:"5px"
-                }}>Ajouter un type à cette place</Button>}
-                {admin && 
-                <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " !"} handleCallback={CallbackDelete}/>}
-
-            </Popup>
-
-
+            {infosSpot}
+            <hr/>
+            {typesSpot}
+            {HasSub(props.spot.types, props.spot.id_user)}
+            { admin &&
+            <Button variant="contained" color="primary" 
+            style={{
+                backgroundColor: "#FE434C",
+                borderColor: "transparent",
+                borderRadius: 20,
+                width: 160,
+                float:"right",
+                height:"10%",
+                marginTop:"5px"
+            }}>Ajouter un type à cette place</Button>}
+            {admin && 
+            <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}/>}
+        </Popup>
     </div>)
 }
