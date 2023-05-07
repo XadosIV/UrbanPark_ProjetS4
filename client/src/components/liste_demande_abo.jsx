@@ -5,6 +5,10 @@ import { DemandeAbo } from './demande_abo';
 export function ListeDemandeAbo(){
 
     const [ listeDemande, setListeDemande ] = useState(new Array(0));
+    const [ upListeAbo, setUpListeAbo ] = useState(false);
+    const updateDemande =  () => {
+        setUpListeAbo(!upListeAbo);
+    }
 
     useEffect(() => {
         async function fetchDemandeAbo(){
@@ -13,14 +17,14 @@ export function ListeDemandeAbo(){
             setListeDemande(resDemandeAbo.data);
         }
         fetchDemandeAbo();
-    }, [])
+    }, [upListeAbo])
 
     const affListeDemande = () => {
         if(listeDemande.length === 0){
             return <li> aucune demande d'abonnement en attente </li>
         }else{
             return listeDemande.map((demande, index) => {
-                return <DemandeAbo infos={demande} key={index} />
+                return <DemandeAbo infos={demande} key={index} up={updateDemande} />
             })
         }
     }

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { SpotName, NbFloors } from '../interface';
 import TP from "../services/take_parking";
-import { getAllSpotsFilter } from '../services';
+import { DeleteUser, getAllSpotsFilter } from '../services';
 
-export function DemandeAbo({ infos }){
+export function DemandeAbo({ infos, up }){
 
     const placeNull = {
         id_park: "",
@@ -70,6 +70,12 @@ export function DemandeAbo({ infos }){
         e.preventDefault();
         console.log("refuser", e);
         console.log("infos", infos);
+        async function deleteDemnade(){
+            let resDeleteDemande = await DeleteUser(infos.id);
+            console.log("resDelete", resDeleteDemande);
+        }
+        deleteDemnade();
+        up();
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
