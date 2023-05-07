@@ -85,7 +85,7 @@ export function Spot(props) {
 			</Button>)
 			|| (
 			modifiable && <div>
-				<UpdateSpot allTypes={spotTypes} used={used}/>
+				<UpdateSpot allTypes={spotTypes} used={used} id={props.id}/>
 			</div>)
 	}
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { Button } from "@mui/material";
+import { UpdateSpot } from "../services/update_spot";
 
 export function UpdateSpot (props) {
 	const base = props.used;
@@ -24,10 +25,6 @@ export function UpdateSpot (props) {
     }
 
 	const handleSubmit = (event) => {
-		console.log("b")
-		console.log(base)
-		console.log("l")
-		console.log(typeList)
 		let changes = [];
 		for (let typeL of typeList){
 			let trouve = false;
@@ -51,7 +48,7 @@ export function UpdateSpot (props) {
 				changes.push(typeB.name);
 			}
 		}
-		console.log(changes);
+		UpdateSpot(changes, props.id)
 	}
 
 	return (
