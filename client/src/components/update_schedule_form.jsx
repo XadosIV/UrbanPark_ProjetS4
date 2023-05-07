@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById } from "../services"
+import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById, TakeAllSpots, TakeParking, TakeByRole } from "../services"
 import { SpotName } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
-import TAS from "../services/take_all_spots"
-import TP from "../services/take_parking";
-import TBR from "../services/take_by_role";
 
 export function UpdateScheduleForm(props) {
 
@@ -163,7 +160,7 @@ export function UpdateScheduleForm(props) {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "parking") {
-                TAS.TakeAllSpots(selectedOptions.value).then(res => {
+                TakeAllSpots(selectedOptions.value).then(res => {
                     setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
                 })
             }
@@ -241,17 +238,17 @@ export function UpdateScheduleForm(props) {
     }
 
     useEffect(() => {
-        TP.TakeParking().then(res => setParkingsList(res));
-        TAS.TakeAllSpots(infos.parking).then(res => {
+        TakeParking().then(res => setParkingsList(res));
+        TakeAllSpots(infos.parking).then(res => {
             setOptionsSpots({opts:AllSpots(res), change:false});
         });
-        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res));
-        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res));
+        TakeByRole("Agent d'entretien").then(res => setServiceList(res));
+        TakeByRole("Gardien").then(res => setGuardiansList(res));
         takeById(infos.user[0]).then(res => setBaseType(res.role));
     }, [])
 
     useEffect(() => {
-        TAS.TakeAllSpots(infos.parking).then(res => {
+        TakeAllSpots(infos.parking).then(res => {
             setOptionsSpots({opts:AllSpots(res), change:false})
         })
     }, [optionsSpots.change])

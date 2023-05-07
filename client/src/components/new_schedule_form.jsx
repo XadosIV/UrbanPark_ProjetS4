@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { CreationSchedule, placeFromId } from "../services"
-import { SpotName } from "../interface"
+import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole } from "../services"
+import { SpotName, NeedS } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
-import TAS from "../services/take_all_spots"
-import TP from "../services/take_parking";
-import TBR from "../services/take_by_role";
-import { NeedS } from "../interface"
 
 export function NewScheduleForm(props) {
 
@@ -78,7 +74,7 @@ export function NewScheduleForm(props) {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "parking") {
-                TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
+                TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name === "type") {
                 setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
@@ -135,7 +131,7 @@ export function NewScheduleForm(props) {
                         })
                     }
                 } else {
-                    TP.TakeParking(infos.parking).then(res => {
+                    TakeParking(infos.parking).then(res => {
                         setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
                     })
                     isSubmit = true;
@@ -152,12 +148,12 @@ export function NewScheduleForm(props) {
     const newScheduleOptions = [{value:"guardiansList", label: "Gardien"}, {value:"serviceList", label:"Agent d'entretien"}]
 
     useEffect(() => {
-        TP.TakeParking().then(res => {
+        TakeParking().then(res => {
             setParkingsList(res);
-            TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
+            TakeAllSpots(res[0].id).then(res => setSpotsList(res))
         });
-        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
-        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res))
+        TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+        TakeByRole("Gardien").then(res => setGuardiansList(res))
     }, [])
 
     useEffect(() => {

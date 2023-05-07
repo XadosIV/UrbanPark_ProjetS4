@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { creationCompte, authenticate, userFromToken } from "../services";
+import { creationCompte, authenticate, userFromToken, TakeParking } from "../services";
 import { useUpdateContext, isValideNom } from "../interface";
-import Select from 'react-select';
-import TP from "../services/take_parking";
+import Select from 'react-select';;
 
 export function RegistrationForm(props) {
 	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: "", id_park_demande: ""});
@@ -15,7 +14,7 @@ export function RegistrationForm(props) {
 
 	useEffect(() => {
 		async function fetchParkings(){
-			let resParking = await TP.TakeParking();
+			let resParking = await TakeParking();
 			console.log("parkings", resParking);
 			setParkings(resParking);
 		}

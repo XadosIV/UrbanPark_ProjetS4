@@ -3,8 +3,7 @@ import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken, DeleteSpot } from "../services";
-import TAST from "../services/take_all_spot_types"
+import { userFromToken, DeleteSpot, TakeAllSpotTypes } from "../services";
 import { AdminVerif, UpdateSpot } from "../components"
 
 export function Spot(props) {
@@ -12,7 +11,7 @@ export function Spot(props) {
     const [spotTypes, setSpotTypes] = useState([]);
 
 	useEffect(() => {
-        TAST.TakeAllSpotTypes().then(res => {setSpotTypes(res);});
+        TakeAllSpotTypes().then(res => {setSpotTypes(res);});
     }, []);
 
 	async function Callback(childData) {
