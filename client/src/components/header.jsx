@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Stack, Typography } from "@mui/material"
+import { Typography } from "@mui/material";
+import { NotifBell } from "."
 
 export function Header () {
 	return(
@@ -14,6 +15,7 @@ export function Header () {
 			<Link to="/">
 				<Typography variant="h3">Logo</Typography>
 			</Link>
+			{ /*userToken*/ false && <NotifBell /> }
 			<Link to="/perso" style={{
 					display:"flex",
 					flexDirection:"row",

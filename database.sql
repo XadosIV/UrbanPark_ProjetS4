@@ -39,10 +39,12 @@ CREATE TABLE IF NOT EXISTS User (
 	token VARCHAR(20) NOT NULL,
 	id_spot INT DEFAULT NULL,
 	id_spot_temp INT DEFAULT NULL,
+	id_park_demande CHAR DEFAULT NULL,
 	CONSTRAINT pk_user PRIMARY KEY (id),
 	CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES Role (name),
 	CONSTRAINT fk_user_spot FOREIGN KEY (id_spot) REFERENCES Spot (id),
 	CONSTRAINT fk_user_spot_temp FOREIGN KEY (id_spot_temp) REFERENCES Spot (id),
+	CONSTRAINT fk_user_park_demande FOREIGN KEY (id_park_demande) REFERENCES Parking (id),
 	CONSTRAINT uc_user_email UNIQUE (email),
 	CONSTRAINT uc_user_token UNIQUE (token)
 );
