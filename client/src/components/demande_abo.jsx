@@ -6,6 +6,7 @@ import { NbFloors } from '../interface';
 import TP from "../services/take_parking";
 import { DeleteUser, getAllSpotsFilter, updateInfoPerso } from '../services';
 import { SpotInfos } from './spot_infos';
+import { SpotName } from "../interface";
 
 export function DemandeAbo({ infos, up }){
 
@@ -55,7 +56,7 @@ export function DemandeAbo({ infos, up }){
             setDataAllSpots(newSpots);
             let newNumOpt = [];
             newSpots.forEach(spot => {
-                newNumOpt.push({value:spot.number.toString(), label:"numéro " + spot.number.toString()});
+                newNumOpt.push({value:spot.number.toString(), label:"Numéro " + spot.number.toString()});
             });
             // console.log("newNumOpt", newNumOpt);
             setOptNum(newNumOpt);
@@ -162,7 +163,7 @@ export function DemandeAbo({ infos, up }){
                     <h3>{infos.first_name} {infos.last_name} - {infos.email}</h3>
                 </div>
                 <div className='spot-infos'>
-                    { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <SpotInfos spotInfos={dataNewSpot}/> : <p> place non-attribué </p> }
+                { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <p> Place {SpotName(place)} </p> : <p> Place non attribuée </p> }
                 </div>
                 <div>
                     <Button
@@ -171,6 +172,7 @@ export function DemandeAbo({ infos, up }){
                         color="primary"
                         onClick={() => togglePopupP()}
                     > donner une place </Button>
+                                  
                     <Popup
                         open={ popupP }
                         closeOnDocumentClick
@@ -211,7 +213,7 @@ export function DemandeAbo({ infos, up }){
                         onClose={() => togglePopupV()}
                     >
                         <div className='validation popup-div'>
-                            <h2> êtes vous sûre de vouloir accepter cette demande ? </h2>
+                            <h2> Êtes vous sûr de vouloir accepter cette demande ? </h2>
                             <div><Button
                                 className="validation-button" 
                                 variant="contained" 
@@ -234,8 +236,8 @@ export function DemandeAbo({ infos, up }){
                         onClose={() => togglePopupR()}
                     >
                         <div className='refusal popup-div'>
-                            <h2> êtes vous sûre de vouloir refuser cette demande ? </h2>
-                            <p> cela entrainera sa suppression </p>
+                            <h2> Êtes vous sûr de vouloir refuser cette demande ? </h2>
+                            <p> Cela entrainera sa suppression </p>
                             <div><Button
                                 className="refusal-button" 
                                 variant="contained" 

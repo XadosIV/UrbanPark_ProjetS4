@@ -22,7 +22,7 @@ export function ListeDemandeAbo(){
     const affListeDemande = () => {
         if(listeDemande.length === 0){
             return <li className='demande-abo-user'><div className="main-content">
-                    <h2>aucune demande d'abonnement en attente</h2>
+                    <h2>Aucune demande d'abonnement en attente</h2>
                 </div></li>
         }else{
             return listeDemande.map((demande, index) => {
@@ -33,7 +33,7 @@ export function ListeDemandeAbo(){
 
     return (
         <div className='div-liste-demande'>
-            <h1 className='title-demande'> Demandes d'Abonnement </h1>
+            <h1 className='title-demande'> Demandes d'abonnement </h1>
             <ul className='demande-liste'>
                 { affListeDemande() }
             </ul>

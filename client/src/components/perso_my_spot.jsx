@@ -75,7 +75,7 @@ export function PersoMySpot(){
         if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
             return SpotName(maPlace);
         }else{
-            return "Place non attribué, veuillez patienter.";
+            return "Place non attribuée, veuillez patienter.";
         }
     }
 
@@ -83,7 +83,7 @@ export function PersoMySpot(){
         if(maPlace.types.length !== 0){
             return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
         }else{
-            return <li> aucun types </li>
+            return <li> Place abonné simple </li>
         }
     }
             
@@ -91,7 +91,7 @@ export function PersoMySpot(){
         <div className="div-place">
             <div className="div-info-place">
                 <div>
-                    { isPlaceTemp && <p className="msg-place-temp"> /!\ vous avez été assigné une place temporaire </p> }
+                    { isPlaceTemp && <p className="msg-place-temp"> /!\ Une place temporaire vous a été assignée </p> }
                 </div>
                 <div className="aff-place">
                     <h2>
@@ -102,7 +102,7 @@ export function PersoMySpot(){
                         <li> { parkPlace.address } </li>
                     </ul>
                     <ul>
-                        { listeTypes() }
+                        {(maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined) && listeTypes() }
                     </ul>
                 </div>
             </div>
