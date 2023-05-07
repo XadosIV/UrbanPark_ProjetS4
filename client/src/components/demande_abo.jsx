@@ -20,6 +20,9 @@ export function DemandeAbo({ infos, up }){
     const [ affErrMessage, setAffErrMessage ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
     const [ changeFloor, setChangeFloor ] = useState(false);
+    const [ popupP, setPopupP ] = useState(false);
+    const [ popupV, setPopupV ] = useState(false);
+    const [ popupR, setPopupR ] = useState(false);
 
     useEffect(() => {
         async function fetchPark(parking_demende){
@@ -62,16 +65,21 @@ export function DemandeAbo({ infos, up }){
 
     const validerDemande = (e) => {
         e.preventDefault();
-        console.log("valider", e);
-        console.log("place", place);
+        // console.log("valider", e);
+        // console.log("place", place);
         async function promoteUser(){
             let params = [{floor: place.floor}, {number: place.number}, {id_park: place.id_park}];
             let myNewSpot = await getAllSpotsFilter(params);
-            console.log("myNewSpot", myNewSpot);
+            // console.log("myNewSpot", myNewSpot);
             if(myNewSpot.data.length === 1){
                 let resPromoteUser = await updateInfoPerso({id_spot: myNewSpot.data[0].id, id: infos.id});
-                console.log("promoteUser", resPromoteUser);
+                // console.log("promoteUser", resPromoteUser);
                 up();
+            }else{
+                setAffErrMessage(true);
+                setErrMessage("veuillez assigner une place")
+                setPopupV(false);
+                setPopupP(true);
             }
         }
         promoteUser();
@@ -106,6 +114,7 @@ export function DemandeAbo({ infos, up }){
     }
 
     const reset = () => {
+        setPopupP(false);
         // console.log("place", place);
         // console.log("optFloor", optFloors);
         // console.log("optNum", optNum);
@@ -127,14 +136,18 @@ export function DemandeAbo({ infos, up }){
                 </div>                   
                 <div>
                     <Popup
-                        trigger={
-                        <Button
-                            className="UI-Button" 
-                            variant="contained" 
-                            color="primary"
-                        > donner une place </Button>}
+                        open={ popupP }
+                        defaultOpen={ false }
                         position='left center'
                         onClose={ () => reset() }
+                        trigger={
+                            <Button
+                                className="UI-Button" 
+                                variant="contained" 
+                                color="primary"
+                                onClick={() => setPopupP(!popupP)}
+                            > donner une place </Button>
+                        }
                     >
                     <div className="div-attr-place">
                         <h3 style={{textAlign:"center"}}> Assignement d'une place à { infos.first_name } { infos.last_name } <br/> Dans le parking : { park.name } </h3>
@@ -159,15 +172,16 @@ export function DemandeAbo({ infos, up }){
                     </Popup>
                 </div>
                 <div>
+                    <Button
+                        className="validation-button" 
+                        variant="contained" 
+                        color="success"
+                        onClick={() => setPopupV(!popupV)}
+                    >Valider la demande</Button>
                     <Popup
-                        trigger={
-                            <Button
-                                className="validation-button" 
-                                variant="contained" 
-                                color="success"
-                            >Valider la demande</Button>
-                        }
-                        position='left center'
+                        open={ popupV }
+                        closeOnDocumentClick
+                        onClose={() => setPopupV(false)}
                     >
                         <div className='validation popup-div'>
                             <h2> êtes vous sûre de vouloir accepter cette demande ? </h2>
@@ -176,19 +190,21 @@ export function DemandeAbo({ infos, up }){
                                 variant="contained" 
                                 color="success"
                                 onClick={validerDemande}
+                                type='submit'
                             >Valider la demande</Button></div>
                         </div>
                     </Popup>
 
+                    <Button
+                        className="refusal-button" 
+                        variant="contained" 
+                        color="error"
+                        onClick={() => setPopupR(!popupR)}
+                    >refuser la demande</Button>
                     <Popup
-                        trigger={
-                            <Button
-                                className="refusal-button" 
-                                variant="contained" 
-                                color="error"
-                            >refuser la demande</Button>
-                        }
-                        position='left center'
+                        open={ popupR }
+                        closeOnDocumentClick
+                        onClose={() => setPopupR(false)}
                     >
                         <div className='refusal popup-div'>
                             <h2> êtes vous sûre de vouloir refuser cette demande ? </h2>
