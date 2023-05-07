@@ -7,10 +7,10 @@ export function SpotInfos({ spotInfos }) {
     const listeTypes = (arrTypes) => {
         let filteredArrTypes = arrTypes.filter(type => (type !== "Abonné"));
         if(filteredArrTypes.length < 1){
-            return <li>cette place n'a aucun type</li>
+            return <li>Cette place n'a aucun type</li>
         }else{
             return arrTypes.map((type, index) => {
-                return <li key={index}>{ type }</li>
+                return <li key={index}>Place { type }</li>
             })
         }
     }
