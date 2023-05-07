@@ -163,7 +163,7 @@ export function DemandeAbo({ infos, up }){
                     <h3>{infos.first_name} {infos.last_name} - {infos.email}</h3>
                 </div>
                 <div className='spot-infos'>
-                { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <p> Place {SpotName(place)} </p> : <p> Place non attribuée </p> }
+                { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <SpotInfos spotInfos={dataNewSpot}/> : <p> Place non attribuée </p> }
                 </div>
                 <div>
                     <Button
