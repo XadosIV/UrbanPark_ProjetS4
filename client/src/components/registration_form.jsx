@@ -1,13 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { creationCompte, authenticate, userFromToken } from "../services";
 import { useUpdateContext, isValideNom } from "../interface";
+import Select from 'react-select';
+import TP from "../services/take_parking";
 
 export function RegistrationForm(props) {
-	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
+	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: "", id_park_demande: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
+	const [ parkings, setParkings ] = useState([]);
+	const [ optParking, setOptParking ] = useState([]);
 	const updateContext = useUpdateContext();
+
+	useEffect(() => {
+		async function fetchParkings(){
+			let resParking = await TP.TakeParking();
+			console.log("parkings", resParking);
+			setParkings(resParking);
+		}
+		fetchParkings();
+	}, [])
+
+	useEffect(() => {
+		console.log("parkOpt", parkings);
+		if(parkings){
+			let newOptPark = [];
+			let newLabel = "";
+			parkings.forEach(park => {
+				newLabel = <div><p>{park.name}</p><h6>{park.address}</h6></div>;
+				newOptPark.push({value: park.id, label: newLabel});
+			});
+			console.log("newOptPark", newOptPark);
+			setOptParking(newOptPark);
+		}
+	}, [parkings])
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
@@ -57,6 +84,12 @@ export function RegistrationForm(props) {
         const value = event.target.value;
         setInfos(values => ({...values, [name]: value}))
     }
+
+	const handleChangeSelect = (selectedOptions, nom) => {
+		const name = nom.name;
+		const value = selectedOptions.value;
+		setInfos(values => ({...values, [name]: value}));
+	}
 
 	const noPaste = (e) => {
 		e.preventDefault();
@@ -108,6 +141,14 @@ export function RegistrationForm(props) {
 					name="password_conf"
 					onChange={handleChange}
 					onPaste={ noPaste }
+				/></div>
+				<div><Select 
+					required
+					name="id_park_demande"
+					className="select-park-abo"
+					placeholder="parking demandé"
+					options={ optParking }
+					onChange={handleChangeSelect}
 				/></div>
 			</div>
 			<Button 

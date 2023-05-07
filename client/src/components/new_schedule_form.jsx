@@ -80,7 +80,7 @@ export function NewScheduleForm(props) {
             if (name.name === "parking") {
                 TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
-            } else if (name.name == "type") {
+            } else if (name.name === "type") {
                 setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
                 setEditable(false)
             }
@@ -97,7 +97,7 @@ export function NewScheduleForm(props) {
         event.preventDefault()
         setWrongInput(false);
         var isSubmit = false;
-        if (infos.user.length == 0) {
+        if (infos.user.length === 0) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
         } else {
@@ -118,10 +118,10 @@ export function NewScheduleForm(props) {
                     break;
                 }
             }
-            if (scheduleAdded == stock.length) {
+            if (scheduleAdded === stock.length) {
                 infos.user = stock
-                if (optionsUsers == AllServices(serviceList)) {
-                    if (infos.last_spot == infos.first_spot) {
+                if (optionsUsers === AllServices(serviceList)) {
+                    if (infos.last_spot === infos.first_spot) {
                         placeFromId(infos.first_spot).then(res => {
                             setErrMessage("Place " + res.data[0].id_park + res.data[0].floor + "-" + res.data[0].number + "  bloquée pour être nettoyée");
                             isSubmit = true;
@@ -211,7 +211,7 @@ export function NewScheduleForm(props) {
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    {JSON.stringify(optionsUsers.opts) == JSON.stringify(AllServices(serviceList)) && <div className="numeros" style={{zIndex:1005}}>
+                    {JSON.stringify(optionsUsers.opts) === JSON.stringify(AllServices(serviceList)) && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
