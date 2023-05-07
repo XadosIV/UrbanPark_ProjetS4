@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken, placeFromId } from "../services";
-import TP from "../services/take_parking";
+import { userFromToken, placeFromId, TakeParking } from "../services";
 import { SpotName } from "../interface/spot_name";
 
 export function PersoMySpot(){
@@ -35,7 +34,7 @@ export function PersoMySpot(){
         async function fetchParking() {
             if(maPlace){
                 // console.log("idP", maPlace);
-                const resParking = await TP.TakeParking(maPlace.id_park);
+                const resParking = await TakeParking(maPlace.id_park);
                 // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
             }
@@ -75,7 +74,7 @@ export function PersoMySpot(){
         if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
             return SpotName(maPlace);
         }else{
-            return "Place Indisponible";
+            return "Place non attribuée, veuillez patienter.";
         }
     }
 
@@ -83,7 +82,7 @@ export function PersoMySpot(){
         if(maPlace.types.length !== 0){
             return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
         }else{
-            return <li> aucun types </li>
+            return <li> Place abonné simple </li>
         }
     }
             
@@ -91,7 +90,7 @@ export function PersoMySpot(){
         <div className="div-place">
             <div className="div-info-place">
                 <div>
-                    { isPlaceTemp && <p className="msg-place-temp"> /!\ vous avez été assigné une place temporaire </p> }
+                    { isPlaceTemp && <p className="msg-place-temp"> /!\ Une place temporaire vous a été assignée </p> }
                 </div>
                 <div className="aff-place">
                     <h2>
@@ -102,7 +101,7 @@ export function PersoMySpot(){
                         <li> { parkPlace.address } </li>
                     </ul>
                     <ul>
-                        { listeTypes() }
+                        {(maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined) && listeTypes() }
                     </ul>
                 </div>
             </div>

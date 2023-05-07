@@ -16,4 +16,4 @@ async function TakeByRole(role=""){
 	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeByRole };
+export { TakeByRole };

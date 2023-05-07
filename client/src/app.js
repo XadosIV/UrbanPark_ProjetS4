@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from "@mui/material"
 import { AppRoutes } from "./app_routes"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
-import { EndPage } from "./components"
+import { EndPage, NotifBell } from "./components"
 import { ContextUser, initialState } from "./contexts/context_user"
 
 export function App() {
@@ -85,6 +85,7 @@ export function App() {
 					<Link to="/">
 						<Typography variant="h3">Logo</Typography>
 					</Link>
+					{ /*userToken*/ false && <NotifBell /> }
 					<Link to="/perso">
 						<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
 					</Link>

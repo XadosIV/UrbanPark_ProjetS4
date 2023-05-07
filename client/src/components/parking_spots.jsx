@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
-import TP from "../services/take_parking";
-import TAS from "../services/take_all_spots";
-import TAST from "../services/take_all_spot_types"
 import { SpotsList, ParkingList, NewSpotForm, AdminVerif } from "../components";
 import { NbFloors, GetSpotsFromFilter } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
 import { useContext } from "react";
-import { userFromToken, DeleteSpot } from "../services";
+import { userFromToken, DeleteSpot, TakeParking, TakeAllSpots, TakeAllSpotTypes } from "../services";
 import { ContextUser } from "../contexts/context_user";
 
 export function ParkingSpots(props) {
@@ -28,7 +25,7 @@ export function ParkingSpots(props) {
             }
         }
         forLoop().then(() => {
-            if (deleted == GetSpotsFromFilter(list, infos).length) {
+            if (deleted === GetSpotsFromFilter(list, infos).length) {
                 setUpdate(childData)
             }
         })
@@ -164,9 +161,9 @@ export function ParkingSpots(props) {
     const [infos, setInfos] = useState({checkedsecondNumber:false, checkedsecondFloor:false, type:baseValueFloorType, firstFloor: baseValueFloorType, secondFloor: baseValueFloorType, firstNumber: baseValueNumber, secondNumber: baseValueNumber})
 
     useEffect(() => {
-		TP.TakeParking(props.id.parking).then(res => setParkingsList(res));
-        TAS.TakeAllSpots(props.id.parking).then(res => setList(res));
-        TAST.TakeAllSpotTypes().then(res => setSpotTypes(res));
+		TakeParking(props.id.parking).then(res => setParkingsList(res));
+        TakeAllSpots(props.id.parking).then(res => setList(res));
+        TakeAllSpotTypes().then(res => setSpotTypes(res));
         setUpdate(false)
 	}, [update]);
 
@@ -199,7 +196,7 @@ export function ParkingSpots(props) {
         if (infos[name]) {
             setInfos(values => ({...values, [sub]: newVal}))
             setStock(values => ({...values, [sub]: infos[sub]}))
-        } else if (stockDisable[sub] != baseValueFloorType && stockDisable[sub] != baseValueNumber) {
+        } else if (stockDisable[sub] !== baseValueFloorType && stockDisable[sub] !== baseValueNumber) {
             setInfos(values => ({...values, [sub]: stockDisable[sub]}))
         }
     }
@@ -280,7 +277,7 @@ export function ParkingSpots(props) {
                 <div className="search"> 
                     {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
                 </div>
-		    </form> 
+		    </form>
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
             {
                 addSpotSiAdmin()

@@ -3,7 +3,7 @@ import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
-import TBR from "../services/take_by_role"
+import { TakeByRole } from "../services"
 
 export function StaffList(props) {
 
@@ -11,11 +11,8 @@ export function StaffList(props) {
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		TBR.TakeByRole("Gardien").then(res => {setGuardiansList(res);})
-	}, []);
-
-	useEffect(() => {
-		TBR.TakeByRole("Agent d'entretien").then(res => {setServiceList(res);})
+		TakeByRole("Gardien").then(res => {setGuardiansList(res);})
+		TakeByRole("Agent d'entretien").then(res => {setServiceList(res);})
 	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");

@@ -12,4 +12,4 @@ async function TakeBySpotTemp(id_spot_temp){
 	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeBySpotTemp };
+export { TakeBySpotTemp };

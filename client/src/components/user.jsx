@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import TAS from "../services/take_all_spots"
+import { TakeAllSpots } from "../services"
 import { SpotName } from "../interface"
 
 /**
@@ -11,7 +11,7 @@ import { SpotName } from "../interface"
 export function User(props){
 
 	async function hasPlace(spot) {
-        var get = await TAS.TakeAllSpots(0, spot).then((res) => res)
+        var get = await TakeAllSpots(0, spot).then((res) => res)
         var result;
         if (get[0]) {
             result = SpotName(get[0])
