@@ -140,8 +140,6 @@
 	list-style-position: inside;
 	margin:0;
 	padding:0;
-	overflow-y: auto;
-	scrollbar-width: thin;
 	width: 100%;
 }
 
@@ -163,4 +161,23 @@
 	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
+}
+
+.spot-infos{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.ul-types-place{
+	list-style: none;
+	list-style-position: inside;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	padding: 0;
+}
+
+.ul-types-place>li{
+	text-align: center;
+	margin: 2%;
 }

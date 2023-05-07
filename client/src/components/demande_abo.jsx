@@ -2,9 +2,10 @@ import { Button } from '@mui/material';
 import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { SpotName, NbFloors } from '../interface';
+import { NbFloors } from '../interface';
 import TP from "../services/take_parking";
 import { DeleteUser, getAllSpotsFilter, updateInfoPerso } from '../services';
+import { SpotInfos } from './spot_infos';
 
 export function DemandeAbo({ infos, up }){
 
@@ -15,6 +16,8 @@ export function DemandeAbo({ infos, up }){
     };
     const [ place, setPlace ] = useState(placeNull);
     const [ park, setPark ] = useState({});
+    const [ dataAllSpots, setDataAllSpots ] = useState([]);
+    const [ dataNewSpot, setDataNewSpot ] = useState({});
     const [ optFloors, setOptFloors ] = useState([]);
     const [ optNum, setOptNum ] = useState([]);
     const [ affErrMessage, setAffErrMessage ] = useState(false);
@@ -49,6 +52,7 @@ export function DemandeAbo({ infos, up }){
             // console.log("spots", resGetSpot);
             let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
             // console.log("filter spot", newSpots);
+            setDataAllSpots(newSpots);
             let newNumOpt = [];
             newSpots.forEach(spot => {
                 newNumOpt.push({value:spot.number.toString(), label:"numéro " + spot.number.toString()});
@@ -78,8 +82,7 @@ export function DemandeAbo({ infos, up }){
             }else{
                 setAffErrMessage(true);
                 setErrMessage("veuillez assigner une place")
-                setPopupV(false);
-                setPopupP(true);
+                togglePopupP()
             }
         }
         promoteUser();
@@ -110,12 +113,38 @@ export function DemandeAbo({ infos, up }){
             const name = "number";
             const value = selectedOptions.value;
             setPlace(values => ({...values, [name]: value}));
-            setPopupP(false);
+            // console.log("dataAllSpot", dataAllSpots);
+            let setNewSpot = dataAllSpots.filter(spot => {
+                return (spot.number === parseInt(selectedOptions.value)) && (spot.id_park === infos.id_park_demande) && (spot.floor === parseInt(place.floor))});
+            // console.log("setNewSpot", setNewSpot);
+            if(setNewSpot.length !== 1){
+                setErrMessage("une erreure est survenue");
+                setAffErrMessage(true);
+            }else{
+                setDataNewSpot(setNewSpot[0]);
+                togglePopupP()
+            }
         }
     }
 
-    const reset = () => {
+    const togglePopupP = () => {
+        setPopupR(false);
+        setPopupV(false);
+        setPopupP(!popupP);
+    }
+    const togglePopupR = () => {
         setPopupP(false);
+        setPopupV(false);
+        setPopupR(!popupR);
+    }
+    const togglePopupV = () => {
+        setPopupR(false);
+        setPopupP(false);
+        setPopupV(!popupV);
+    }
+
+    const reset = () => {
+        togglePopupP();
         // console.log("place", place);
         // console.log("optFloor", optFloors);
         // console.log("optNum", optNum);
@@ -132,15 +161,15 @@ export function DemandeAbo({ infos, up }){
                 <div>
                     <h3>{infos.first_name} {infos.last_name} - {infos.email}</h3>
                 </div>
-                <div>
-                    { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? SpotName(place) : <p> place non-attribué </p> }
-                </div>                   
+                <div className='spot-infos'>
+                    { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <SpotInfos spotInfos={dataNewSpot}/> : <p> place non-attribué </p> }
+                </div>
                 <div>
                     <Button
                         className="UI-Button" 
                         variant="contained" 
                         color="primary"
-                        onClick={() => setPopupP(!popupP)}
+                        onClick={() => togglePopupP()}
                     > donner une place </Button>
                     <Popup
                         open={ popupP }
@@ -174,12 +203,12 @@ export function DemandeAbo({ infos, up }){
                         className="validation-button" 
                         variant="contained" 
                         color="success"
-                        onClick={() => setPopupV(!popupV)}
+                        onClick={() => togglePopupV()}
                     >Valider la demande</Button>
                     <Popup
                         open={ popupV }
                         closeOnDocumentClick
-                        onClose={() => setPopupV(false)}
+                        onClose={() => togglePopupV()}
                     >
                         <div className='validation popup-div'>
                             <h2> êtes vous sûre de vouloir accepter cette demande ? </h2>
@@ -197,12 +226,12 @@ export function DemandeAbo({ infos, up }){
                         className="refusal-button" 
                         variant="contained" 
                         color="error"
-                        onClick={() => setPopupR(!popupR)}
+                        onClick={() => togglePopupR()}
                     >refuser la demande</Button>
                     <Popup
                         open={ popupR }
                         closeOnDocumentClick
-                        onClose={() => setPopupR(false)}
+                        onClose={() => togglePopupR()}
                     >
                         <div className='refusal popup-div'>
                             <h2> êtes vous sûre de vouloir refuser cette demande ? </h2>
