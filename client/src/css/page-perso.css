@@ -128,3 +128,56 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.div-liste-demande{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.demande-liste {
+	list-style-type:none;
+	list-style-position: inside;
+	margin:0;
+	padding:0;
+	width: 100%;
+}
+
+.title-demande{
+	color:red;
+	text-decoration: underline;
+	text-align:center;
+}
+
+.main-content {
+	display: flex;
+	flex-direction:row;
+	flex: auto;
+	border:solid;
+	border-radius: 20px;
+	margin: 0 1rem 1rem;
+	padding: 0 1rem 1rem;
+	box-shadow:10px 10px 10px gray;
+	justify-content:space-around;	
+	align-items:center;
+	background-color: white;
+}
+
+.spot-infos{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.ul-types-place{
+	list-style: none;
+	list-style-position: inside;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	padding: 0;
+}
+
+.ul-types-place>li{
+	text-align: center;
+	margin: 2%;
+}
