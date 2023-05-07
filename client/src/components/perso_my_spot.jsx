@@ -75,7 +75,7 @@ export function PersoMySpot(){
         if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
             return SpotName(maPlace);
         }else{
-            return "Place Indisponible";
+            return "Place non attribué, veuillez patienter.";
         }
     }
 
