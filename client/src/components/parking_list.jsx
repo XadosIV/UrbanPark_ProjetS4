@@ -1,10 +1,11 @@
-import React from "react";
-import { Button } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { CutAddress, NeedS } from "../interface";
-import { AdminVerif } from "../components"
-import { DeleteParking } from "../services"
+import { DeleteParking, authenticate, userFromToken } from "../services"
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ContextUser } from "../contexts/context_user";
+import ReactModal from 'react-modal';
 
 export function ParkingList(props) {
 
@@ -12,7 +13,7 @@ export function ParkingList(props) {
     const location = useLocation();
 
     async function Callback(childData) {
-        if (location.pathname.slice(0, -1) == "/parkings/") {
+        if (location.pathname.slice(0, -1) === "/parkings/") {
             navigate("/perso");
         }
         await DeleteParking(props.parking.id);
@@ -40,7 +41,7 @@ export function ParkingList(props) {
 		return false;
 	}
 
-    var address = CutAddress(parking.parking.address);
+    var address = CutAddress(props.parking.address);
     const [visible, setVisible] = useState(true);
 
     function AdminVerif() {
@@ -119,7 +120,7 @@ export function ParkingList(props) {
             let fetchT = await fetchToken(infosUser.email, password);
             if(password){
                 if(userToken === fetchT){
-                    await DeleteParking(parking.parking.id)
+                    await DeleteParking(props.parking.id)
                     setVisible((prev) => !prev)
                 }
             }
@@ -134,7 +135,7 @@ export function ParkingList(props) {
                     onRequestClose={() => setIsOpen(false)}
                     style={customStyles}>
                     <p style={{color:"red", alignText:"center"}}>
-                        ATTENTION !</p>Vous êtes sur le point de supprimer le parking {parking.parking.name} ! 
+                        ATTENTION !</p>Vous êtes sur le point de supprimer le parking {props.parking.name} ! 
                         <br/> Veuillez entrer votre mot de passe afin de valider cette action.
                         <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                         <div className="input-div">

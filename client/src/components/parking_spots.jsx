@@ -28,7 +28,7 @@ export function ParkingSpots(props) {
             }
         }
         forLoop().then(() => {
-            if (deleted == GetSpotsFromFilter(list, infos).length) {
+            if (deleted === GetSpotsFromFilter(list, infos).length) {
                 setUpdate(childData)
             }
         })
