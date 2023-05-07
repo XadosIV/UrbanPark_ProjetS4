@@ -280,7 +280,7 @@ export function ParkingSpots(props) {
                 <div className="search"> 
                     {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
                 </div>
-		    </form> 
+		    </form>
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
             {
                 addSpotSiAdmin()
