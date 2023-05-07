@@ -21,7 +21,9 @@ export function ListeDemandeAbo(){
 
     const affListeDemande = () => {
         if(listeDemande.length === 0){
-            return <li> aucune demande d'abonnement en attente </li>
+            return <li className='demande-abo-user'><div className="main-content">
+                    <h2>aucune demande d'abonnement en attente</h2>
+                </div></li>
         }else{
             return listeDemande.map((demande, index) => {
                 return <DemandeAbo infos={demande} key={index} up={updateDemande} />

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { SpotName, NbFloors } from '../interface';
 import TP from "../services/take_parking";
-import { DeleteUser, getAllSpotsFilter } from '../services';
+import { DeleteUser, getAllSpotsFilter, updateInfoPerso } from '../services';
 
 export function DemandeAbo({ infos, up }){
 
@@ -41,8 +41,8 @@ export function DemandeAbo({ infos, up }){
 
     useEffect(() => {
         async function fetchNewSpots(parking_id, etage){
-            let params = [{type: "Abonné"}, {floor: etage}];
-            let resGetSpot = await getAllSpotsFilter(parking_id, params);
+            let params = [{type: "Abonné"}, {floor: etage}, {id_park: parking_id}];
+            let resGetSpot = await getAllSpotsFilter(params);
             // console.log("spots", resGetSpot);
             let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
             // console.log("filter spot", newSpots);
@@ -64,15 +64,26 @@ export function DemandeAbo({ infos, up }){
         e.preventDefault();
         console.log("valider", e);
         console.log("place", place);
+        async function promoteUser(){
+            let params = [{floor: place.floor}, {number: place.number}, {id_park: place.id_park}];
+            let myNewSpot = await getAllSpotsFilter(params);
+            console.log("myNewSpot", myNewSpot);
+            if(myNewSpot.data.length === 1){
+                let resPromoteUser = await updateInfoPerso({id_spot: myNewSpot.data[0].id, id: infos.id});
+                console.log("promoteUser", resPromoteUser);
+                up();
+            }
+        }
+        promoteUser();
     }
 
     const refuserDemande = (e) => {
         e.preventDefault();
-        console.log("refuser", e);
-        console.log("infos", infos);
+        // console.log("refuser", e);
+        // console.log("infos", infos);
         async function deleteDemnade(){
             let resDeleteDemande = await DeleteUser(infos.id);
-            console.log("resDelete", resDeleteDemande);
+            // console.log("resDelete", resDeleteDemande);
         }
         deleteDemnade();
         up();
