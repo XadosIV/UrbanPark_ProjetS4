@@ -8,12 +8,16 @@ export function SpotsList(props) {
         props.handleCallback(childData)
     }
 
+    function toggleSpotArr(spotData){
+        props.checkBoxCallback(spotData)
+    }
+
     const filteredData = GetSpotsFromFilter(props.list, props.infos)
 
 	return (<div className="all-spots">
             	{
                     filteredData.map((spot, index) => (
-                        <Spot spot={spot} key={index} handleCallback={Callback} />
+                        <Spot spot={spot} key={index} handleCallback={Callback} checkBoxCallback={toggleSpotArr}/>
                     ))
                 }
 		</div>)

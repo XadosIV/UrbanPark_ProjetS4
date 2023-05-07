@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot } from "../services";
 import { AdminVerif } from "../components"
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material"
 
 export function Spot(props) {
 
@@ -13,6 +14,7 @@ export function Spot(props) {
         await DeleteSpot(props.spot.id);
     }
 
+    const [ checkbox, setCheckbox ] = useState(false);
     const { userToken } = useContext(ContextUser);
 	const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
@@ -25,6 +27,19 @@ export function Spot(props) {
         }
         fetchUserInfos();
     }, [userToken]);
+
+    const checkboxIcon = () => {
+        return checkbox ? <CheckBox /> : <CheckBoxOutlineBlank />;
+    }
+
+    function toggleSpotArr(spotData){
+        props.checkBoxCallback(spotData)
+    }
+
+    const toggleCheckbox = () => {
+        toggleSpotArr(props.spot.id);
+        setCheckbox(!checkbox);
+    }
 
     /**
      * HasSub
@@ -87,6 +102,11 @@ export function Spot(props) {
 	return (<div className="spot">
         <div className="dp">
             <Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
+                <Checkbox 
+                    icon={checkboxIcon()}
+                    checked={checkbox}
+                    onChange={toggleCheckbox}
+                />
                 Place {SpotName(props.spot)}
             </Button>
             <div className="dp-content">

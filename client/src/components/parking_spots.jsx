@@ -17,6 +17,22 @@ export function ParkingSpots(props) {
         setUpdate(childData)
     }
 
+    const [ arrSpotCheckbox, setArrSpotCheckbox ] = useState([]);
+
+    const toggleSpotArr = (spotData) => {
+        let index = arrSpotCheckbox.indexOf(spotData);
+        console.log("index", index);
+        let nouv = arrSpotCheckbox;
+        console.log("old", nouv);
+        if(index === -1){
+            nouv.push(spotData);
+        }else{
+            nouv.splice(index, 1);
+        }
+        console.log("new", nouv);
+        setArrSpotCheckbox(nouv);
+    }
+
     function CallbackDelete(childData) { 
         var deleted = 0;
         const forLoop = async _ => {
@@ -291,6 +307,6 @@ export function ParkingSpots(props) {
             </div>
         </div>  
 
-        <SpotsList list={list} infos={infos} handleCallback={Callback}/>  
+        <SpotsList list={list} infos={infos} handleCallback={Callback} checkBoxCallback={toggleSpotArr}/>  
     </div>)
 }
