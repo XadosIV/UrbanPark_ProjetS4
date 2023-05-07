@@ -10,7 +10,9 @@ export function SpotInfos({ spotInfos }) {
             return <li>Cette place n'a aucun type</li>
         }else{
             return arrTypes.map((type, index) => {
-                return <li key={index}>Place { type }</li>
+                if (type !== "Abonné") {
+                    return <li key={index}>Place { type.toLowerCase() }</li>
+                }
             })
         }
     }
