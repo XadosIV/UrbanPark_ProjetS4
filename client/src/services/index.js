@@ -21,6 +21,5 @@ export * from "./creation_spot_type"
 export * from "./delete_parking"
 export * from "./creation_parking"
 export * from "./delete_spot"
-
 export * from "./get_demande_abo"
-export *  from "./get_spots_typed"
+export *  from "./get_spots_filter"

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { SpotName, NbFloors } from '../interface';
 import TP from "../services/take_parking";
-import { getAllSpotsTyped } from '../services';
+import { getAllSpotsFilter } from '../services';
 
 export function DemandeAbo({ infos }){
 
@@ -17,7 +17,6 @@ export function DemandeAbo({ infos }){
     const [ park, setPark ] = useState({});
     const [ optFloors, setOptFloors ] = useState([]);
     const [ optNum, setOptNum ] = useState([]);
-    const [ dataSpot, setDataSpot ] = useState([]);
     const [ affErrMessage, setAffErrMessage ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
     const [ changeFloor, setChangeFloor ] = useState(false);
@@ -25,7 +24,7 @@ export function DemandeAbo({ infos }){
     useEffect(() => {
         async function fetchPark(parking_demende){
             let resPark = await TP.TakeParking(parking_demende);
-            console.log("resPark", resPark);
+            // console.log("resPark", resPark);
             setPark(resPark[0]);
             const name = "id_park";
             const value = resPark[0].id;
@@ -42,11 +41,11 @@ export function DemandeAbo({ infos }){
 
     useEffect(() => {
         async function fetchNewSpots(parking_id, etage){
-            let resGetSpot = await getAllSpotsTyped(parking_id, "Abonné", etage);
+            let params = [{type: "Abonné"}, {floor: etage}];
+            let resGetSpot = await getAllSpotsFilter(parking_id, params);
             // console.log("spots", resGetSpot);
             let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
             // console.log("filter spot", newSpots);
-            setDataSpot(newSpots);
             let newNumOpt = [];
             newSpots.forEach(spot => {
                 newNumOpt.push({value:spot.number.toString(), label:"numéro " + spot.number.toString()});
@@ -64,16 +63,18 @@ export function DemandeAbo({ infos }){
     const validerDemande = (e) => {
         e.preventDefault();
         console.log("valider", e);
+        console.log("place", place);
     }
 
     const refuserDemande = (e) => {
         e.preventDefault();
-        console.log("refuser", e)
+        console.log("refuser", e);
+        console.log("infos", infos);
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
-        console.log("selectedOptions", selectedOptions);
-        console.log("name", name);
+        // console.log("selectedOptions", selectedOptions);
+        // console.log("name", name);
         if(name.name === "floor"){
             const name = "floor";
             const value = selectedOptions.value;
