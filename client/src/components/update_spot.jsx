@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { Button } from "@mui/material";
-import { UpdateSpot } from "../services/update_spot";
+import { ServiceUpdateSpot } from "../services/update_spot";
 
 export function UpdateSpot (props) {
 	const base = props.used;
@@ -48,7 +48,9 @@ export function UpdateSpot (props) {
 				changes.push(typeB.name);
 			}
 		}
-		UpdateSpot(changes, props.id)
+		ServiceUpdateSpot(changes, props.id);
+		props.handleCallback(true);
+		props.handleChangeView()
 	}
 
 	return (

@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
 import { Link } from "react-router-dom";
-import { Button, Select } from "@mui/material";
+import { Button } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot } from "../services";
 import TAST from "../services/take_all_spot_types"
 import { AdminVerif, UpdateSpot } from "../components"
 
 export function Spot(props) {
+
     const [spotTypes, setSpotTypes] = useState([]);
+
 	useEffect(() => {
         TAST.TakeAllSpotTypes().then(res => {setSpotTypes(res);});
     }, []);
@@ -16,6 +18,10 @@ export function Spot(props) {
 	async function Callback(childData) {
 		props.handleCallback(childData)
 		await DeleteSpot(props.spot.id);
+	}
+
+	function CallBackUpdate(childData) {
+		props.handleCallback(childData)
 	}
 
 	const { userToken } = useContext(ContextUser);
@@ -85,12 +91,8 @@ export function Spot(props) {
 			</Button>)
 			|| (
 			modifiable && <div>
-				<UpdateSpot allTypes={spotTypes} used={used} id={props.id}/>
+				<UpdateSpot allTypes={spotTypes} used={used} id={props.spot.id} handleCallback={CallBackUpdate} handleChangeView={HandleAskChange}/>
 			</div>)
-	}
-
-	function handleSubmit() {
-		console.log("test")
 	}
 
 	var infosSpot;
