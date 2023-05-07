@@ -110,6 +110,7 @@ export function DemandeAbo({ infos, up }){
             const name = "number";
             const value = selectedOptions.value;
             setPlace(values => ({...values, [name]: value}));
+            setPopupP(false);
         }
     }
 
@@ -135,19 +136,16 @@ export function DemandeAbo({ infos, up }){
                     { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? SpotName(place) : <p> place non-attribué </p> }
                 </div>                   
                 <div>
+                    <Button
+                        className="UI-Button" 
+                        variant="contained" 
+                        color="primary"
+                        onClick={() => setPopupP(!popupP)}
+                    > donner une place </Button>
                     <Popup
                         open={ popupP }
-                        defaultOpen={ false }
-                        position='left center'
+                        closeOnDocumentClick
                         onClose={ () => reset() }
-                        trigger={
-                            <Button
-                                className="UI-Button" 
-                                variant="contained" 
-                                color="primary"
-                                onClick={() => setPopupP(!popupP)}
-                            > donner une place </Button>
-                        }
                     >
                     <div className="div-attr-place">
                         <h3 style={{textAlign:"center"}}> Assignement d'une place à { infos.first_name } { infos.last_name } <br/> Dans le parking : { park.name } </h3>
