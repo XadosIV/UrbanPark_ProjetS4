@@ -189,6 +189,7 @@ export function NewSpotForm(props) {
                 backgroundColor: "#32CD32",
                 borderColor: "transparent",
                 height:"36px",
+                width: "100%"
             }}>Ajouter des places</Button>} position="left center" onClose={() => {setWrongInput(false); setOpen(false);}}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>

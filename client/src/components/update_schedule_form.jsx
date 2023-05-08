@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById, TakeAllSpots, TakeParking, TakeByRole } from "../services"
+import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
 import { AllSpots, BaseSpot } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -9,6 +9,21 @@ import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
 
 export function UpdateScheduleForm(props) {
+
+    /**
+     * DeOrDu
+     * Returns a string which is de or du depending of the type of the schedule
+     *
+     * @param { String } type - The type of schedule
+     * @return { Array }
+     */
+    function DeOrDu(type) {
+        if(type == "Réunion") {
+            return "de"
+        } else {
+            return "du"
+        }
+    }
 
     /**
      * AllParkings
@@ -64,9 +79,9 @@ export function UpdateScheduleForm(props) {
      * @return { Array }
      */
     function BaseListType(type) {
-        if (type == "Gardien") {
+        if (type == "Gardiennage") {
             return AllServices(guardiansList)
-        } else if (type == "Agent d'entretien") {
+        } else if (type == "Nettoyage") {
             return AllServices(serviceList)
         }
     }
@@ -88,12 +103,34 @@ export function UpdateScheduleForm(props) {
         if (list) {
             for (let user of list) {
                 for (let id of id_user) {
-                    if (user.value == id) {
+                    if (user.value === id) {
                         opts.push(user);
                     }       
                 }
             }
             return opts
+        }
+    }
+
+    /**
+     * BaseSpot
+     * Returns a array corresponding to the base spot being passed in a react select defaultValue
+     *
+     * @param { integer } spot - id of the spot
+     * @param { Array } list - List of options being passed in a react select
+     * @return { Array }
+     */
+    function BaseSpot(spot, list) {
+        var opts=[]
+        for (let s of list) {
+            if (s.value === spot) {
+                opts.push(s);
+            }
+        }
+        if (opts.length !== 0) {
+            return opts[0].label
+        } else {
+            return ""
         }
     }
 
@@ -114,7 +151,7 @@ export function UpdateScheduleForm(props) {
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
     const [guardiansList, setGuardiansList] = useState([]);
-    const [baseType, setBaseType] = useState("")
+    const [baseType, setBaseType] = useState(props.event.type)
     
     const [disabled, setDisabled] = useState(false)
     const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -139,16 +176,16 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infos.user.length == 0) {
+        if (infos.user.length === 0) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
         }
-        else if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
+        else if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
             var scheduleAdded = 0;
             var nbModif = 0;
             let stock = infos.user
+            var fun;
             for (let i=0; i<props.event.user.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (!(props.event.user.includes(infos.user))) {
                     fun = DeleteSchedule(props.event.id_schedule[i]);
@@ -166,7 +203,6 @@ export function UpdateScheduleForm(props) {
                 }
             }
             for (let i=0; i<stock.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (props.event.user.includes(infos.user)) {
                     fun = UpdateSchedule(infos, props.event.id_schedule[i]);
@@ -186,7 +222,7 @@ export function UpdateScheduleForm(props) {
                     }
                 }
             }
-            if (scheduleAdded == nbModif) {
+            if (scheduleAdded === nbModif) {
                 setWrongInput(true);
                 setErrMessage("Modification prise en compte.")
                 setDisabled(true)
@@ -207,7 +243,6 @@ export function UpdateScheduleForm(props) {
         });
         TakeByRole("Agent d'entretien").then(res => setServiceList(res));
         TakeByRole("Gardien").then(res => setGuardiansList(res));
-        takeById(infos.user[0]).then(res => setBaseType(res.role));
     }, [])
 
     useEffect(() => {
@@ -217,20 +252,24 @@ export function UpdateScheduleForm(props) {
     }, [optionsSpots.change])
 
     return (
-        <Popup trigger={<Button variant="contained" color="primary" 
-            style={{
-                backgroundColor: "#FE434C",
-                borderColor: "transparent",
-                borderRadius: 20,
-                width:"150px",
-                height:"75px",
-                margin:"10px 0 10px 245px"
-            }}>Modifier :</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+        <Popup trigger={open =>(
+			<Button variant="contained" color="primary" 
+				style={{
+					backgroundColor: "#FE434C",
+					borderColor: "transparent",
+					borderRadius: 20,
+					width:"150px",
+					height:"75px",
+					margin:"10px 0"
+				}}> {props.setPopupOpened(open)}
+					Modifier
+				</Button>)}
+				position="right center" onClose={() => {setWrongInput(false)}}>
             <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Modification du créneau<br/> {baseType.toLowerCase()} :</h3>
+                <h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
                 <form onSubmit={handlleSubmit} className="form">   
-                    <div style={{zIndex:1007}}>   
-                        <Select 
+                    <div style={{zIndex:1007}}>
+                        <Select
                             id="parking"
                             className="searchs-add"
                             options={AllParkings(parkingsList)} 
@@ -250,7 +289,7 @@ export function UpdateScheduleForm(props) {
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    {baseType == "Agent d'entretien" && <div className="numeros" style={{zIndex:1005}}>
+                    {baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
@@ -293,7 +332,7 @@ export function UpdateScheduleForm(props) {
                         />
                     </div>
                     <Button
-                        isDisabled={disabled}
+                        disabled={disabled}
                         className="submit_button" 
                         variant="contained" 
                         color="primary" 

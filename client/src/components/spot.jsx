@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
-import { Button } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot, DeleteSpotFromUser, SetSpotFromUser, TakeAllSpotTypes, TakeBySpot, TakeBySpotTemp, TakeByRole } from "../services";
-import { AdminVerif, User, UpdateSpot } from "../components"
+import { AdminVerif, User, UpdateSpot } from "../components";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
-
 
 export function Spot(props) {
 
@@ -123,9 +123,22 @@ export function Spot(props) {
 				<UpdateSpot allTypes={spotTypes} used={used} id={props.spot.id} handleCallback={CallBackUpdate} handleChangeView={HandleAskChange}/>
 			</div>)
 	}
+    const checkboxIcon = () => {
+        return checkbox ? <CheckBox /> : <CheckBoxOutlineBlank />;
+    }
+
+    function toggleSpotArr(spotData){
+		console.log(spotData)
+        props.checkBoxCallback(spotData)
+    }
+
+    const toggleCheckbox = () => {
+        toggleSpotArr(props.spot);
+        setCheckbox(!checkbox);
+    }
 
     const { userToken } = useContext(ContextUser);
-	const [ roleUser, setRoleUser ] = useState("");
+		const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
 
     const [infos, setInfos] = useState({user:[]})
@@ -146,6 +159,21 @@ export function Spot(props) {
     const [spotTypes, setSpotTypes] = useState([]);
 
     const [ modifiable, setModifiable ] = useState(false);
+    
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot));
+
+    useEffect(() => {
+        setCheckbox(props.toCheck(props.spot));
+    }, [props.up])
+
+	useEffect(() => {
+		async function fetchUserInfos() {
+			const resUserToken = await userFromToken(userToken);
+			setRoleUser(resUserToken.data[0].role);
+			//console.log("token", resUserToken.data[0])
+		}
+		fetchUserInfos();
+	}, [userToken, props.up]);
 
 	const HandleAskChange = () => {
 		setModifiable(!modifiable);
@@ -163,7 +191,7 @@ export function Spot(props) {
 			//console.log("token", resUserToken.data[0])
 		}
 		fetchUserInfos();
-	}, [userToken]);
+	}, [userToken, props.up]);
 
     useEffect(() => {
         TakeAllSpotTypes().then(res => {setSpotTypes(res);});
@@ -181,7 +209,7 @@ export function Spot(props) {
                 })
             }
         })
-    }, [])
+    }, [props])
 
     const handleSet = () => {
         setNoSubmit(false)
@@ -248,14 +276,22 @@ export function Spot(props) {
 
     var typesSpot = [];
     if (props.spot.types.length !== 0) {
+        let i = -1;
         for (let type of props.spot.types) {
-            typesSpot.push(<p><strong>-</strong> Place {type}</p>)
+            typesSpot.push(<p key={i}><strong>-</strong> Place {type}</p>);
+            i--;
         }
     }
 
 	return (<div className="spot">
 
         <Popup className="popup-spot" trigger={<Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
+                            <Checkbox 
+								style={{color:"white"}}
+                                icon={checkboxIcon()}
+                                checked={checkbox}
+                                onChange={toggleCheckbox}
+                            />
                             Place {SpotName(props.spot)}
                         </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false);}}>
             {infosSpot}

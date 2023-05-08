@@ -31,18 +31,22 @@ export function User(props){
 		return ""
 	}
 
-	function Spots(spot, spotTemp) {
-        console.log(typeof spot == "undefined", spot, typeof spotTemp == "undefined", spotTemp)
-        if (typeof spot != "undefined" && spot.length != 0) {
-            if (typeof spotTemp != "undefined" && spotTemp.length != 0) {
-                return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+	function spots(spot, spotTemp) {
+        if (spot) {
+            if (spot.length != 0) {
+                if (spotTemp) {
+                    if (spotTemp.length != 0) {
+                        return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+                    } else {
+                        return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+                    }
+                }
             } else {
-                return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+                return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
             }
-        } else {
-            return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
         }
     }
+
 
     const [spotWithUser, setSpotWithUser] = useState([])
 	const [spotTempWithUser, setSpotTempWithUser] = useState([])
@@ -72,15 +76,28 @@ export function User(props){
 		}
 
 		if (props.user.id_spot != null) {
-			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
-				setSpotWithUser(SpotName(res[0]))
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {	
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+						setSpotWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotWithUser(SpotName(res[0]))
+				}
 			})
 		}
 		if (props.user.id_spot_temp != null) {
 			TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
-				setSpotTempWithUser(SpotName(res[0]))
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+						setSpotTempWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotTempWithUser(SpotName(res[0]))
+				}
 			})
 		}
+		
 		TakeAllSpots(props.user.id_park_demande).then(res => {
 			setAllSpots(res)
 		})
@@ -139,12 +156,12 @@ export function User(props){
     };
 
 	return (
-		<li key={props.index}>
+		<li>
 			<div className="main-content">
 				<div>
 					<div>
 						<h3>{props.user.first_name} {props.user.last_name} - {props.user.email}</h3>
-						<p>{props.user.role} {Spots(spotWithUser, spotTempWithUser)} </p>
+						<span>{spots(spotWithUser, spotTempWithUser, props.user.role)}</span>
 					</div>                       
 				</div>
 				<div>
