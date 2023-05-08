@@ -169,17 +169,6 @@ export function ParkingList(props) {
 		setModifiable(!modifiable);
 	}
 
-	function HandleModification() {
-		return (
-			!modifiable && <Button variant="contained" color="primary" onClick={HandleAskChange}>
-				Modifier le parking
-			</Button>)
-			|| (
-			modifiable && <div>
-				<UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={Callback} handleChangeView={HandleAskChange} id={props.parking.id}/>
-			</div>) 
-	}
-
 	return (
         <div className="list-item">	 
             <div>
@@ -188,9 +177,9 @@ export function ParkingList(props) {
                 <p>{address[1]}</p>
             </div>
             <div className="button-parking">
-				{props.admin && HandleModification()}
                 <p>{props.parking.nbPlaceLibre} places restantes / {props.parking.nbPlaceTot}</p> 
                 {PutButton(props.button)}
+				{props.admin && <UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={Callback} handleChangeView={HandleAskChange} id={props.parking.id} askChange={HandleAskChange}/>}
                 {props.admin && <AdminVerif title="Supprimer ce parking" text={"Vous êtes sur le point de supprimer le parking " + props.parking.name + " !"} handleCallback={Callback}/>}
             </div>
         </div>)
