@@ -77,7 +77,8 @@ export function NewScheduleForm(props) {
                 TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name === "type") {
-                setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
+                var liste = selectedOptions.value == "guardiansList" ? guardiansList : serviceList
+                setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
                 setEditable(false)
             }
             value = selectedOptions.value
