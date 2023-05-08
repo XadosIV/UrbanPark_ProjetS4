@@ -41,9 +41,9 @@ export function User(props){
 				} else {
 					return <p style={{display: "inline"}}><br/>- Place {spot}</p>
 				}
-			} else {
-				return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
 			}
+		} else {
+			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
 		}
 	}
 
