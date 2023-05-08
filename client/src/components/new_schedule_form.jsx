@@ -77,7 +77,12 @@ export function NewScheduleForm(props) {
                 TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name == "type") {
-                let liste = selectedOptions.value == "Gardiennage" ? guardiansList : serviceList
+                let liste = [];
+                if (selectedOptions.value == "Gardiennage") {
+                    liste = guardiansList
+                } else if (selectedOptions.value == "Nettoyage") {
+                    liste = serviceList
+                }
                 setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
                 setEditable(false)
             }
@@ -148,7 +153,7 @@ export function NewScheduleForm(props) {
 	}
 
     var optionsParking = AllParkings(parkingsList)
-    const newScheduleOptions = [{value:"Gardiennage", label: "Gardiennage"}, {value:"Nettoyage", label:"Nettoyage"}]
+    const newScheduleOptions = [{value:"Gardiennage", label: "Gardiennage"}, {value:"Nettoyage", label:"Nettoyage"}, {value:"Réunion", label:"Réunion"}]
 
     useEffect(() => {
         TakeParking().then(res => {
