@@ -3,6 +3,7 @@ import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { CutAddress, NeedS } from "../interface";
 import { DeleteParking, authenticate, userFromToken } from "../services"
+import { UpdateParking } from "./";
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ContextUser } from "../contexts/context_user";
 import ReactModal from 'react-modal';
@@ -162,6 +163,23 @@ export function ParkingList(props) {
             );
         }
 
+	const [ modifiable, setModifiable ] = useState(false);
+
+	const HandleAskChange = () => {
+		setModifiable(!modifiable);
+	}
+
+	function HandleModification() {
+		return (
+			!modifiable && <Button variant="contained" color="primary" onClick={HandleAskChange}>
+				Modifier le parking
+			</Button>)
+			|| (
+			modifiable && <div>
+				<UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={Callback} handleChangeView={HandleAskChange} id={props.parking.id}/>
+			</div>) 
+	}
+
 	return (
         <div className="list-item">	 
             <div>
@@ -169,7 +187,8 @@ export function ParkingList(props) {
                 <p>{address[0]}</p>
                 <p>{address[1]}</p>
             </div>
-            <div className="button-parking">               
+            <div className="button-parking">
+				{props.admin && HandleModification()}
                 <p>{props.parking.nbPlaceLibre} places restantes / {props.parking.nbPlaceTot}</p> 
                 {PutButton(props.button)}
                 {props.admin && <AdminVerif title="Supprimer ce parking" text={"Vous êtes sur le point de supprimer le parking " + props.parking.name + " !"} handleCallback={Callback}/>}

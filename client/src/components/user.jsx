@@ -32,16 +32,17 @@ export function User(props){
 	}
 
 	function Spots(spot, spotTemp) {
-		if (spot.length != 0) {
-			if (spotTemp.length != 0) {
-				return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
-			} else {
-				return <p style={{display: "inline"}}><br/>- Place {spot}</p>
-			}
-		} else {
-			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
-		}
-	}
+        console.log(typeof spot == "undefined", spot, typeof spotTemp == "undefined", spotTemp)
+        if (typeof spot != "undefined" && spot.length != 0) {
+            if (typeof spotTemp != "undefined" && spotTemp.length != 0) {
+                return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+            } else {
+                return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+            }
+        } else {
+            return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+        }
+    }
 
     const [spotWithUser, setSpotWithUser] = useState([])
 	const [spotTempWithUser, setSpotTempWithUser] = useState([])
