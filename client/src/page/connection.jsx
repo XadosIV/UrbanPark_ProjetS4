@@ -7,8 +7,8 @@ export function Connection() {
 	const { state } = useLocation();
 
 	return(<div className="main">
-		<GoBack />
 		<h1 className="form_title">Connexion</h1>
         <ConnectionForm mail={state.mail}/>
+		<GoBack />
 	</div>)
 }
