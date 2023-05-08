@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { CreationSchedule, placeFromId } from "../services"
-import { SpotName } from "../interface"
+import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole } from "../services"
+import { SpotName, NeedS } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
-import TAS from "../services/take_all_spots"
-import TP from "../services/take_parking";
-import TBR from "../services/take_by_role";
-import { NeedS } from "../interface"
 
 export function NewScheduleForm(props) {
 
@@ -62,7 +58,7 @@ export function NewScheduleForm(props) {
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
     const [optionsUsers, setOptionsUsers] = useState({opts:[], change:false})
 
-    const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)});
+    const [infos, setInfos] = useState({parking: "", type:null, user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)});
 
 	const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
@@ -78,10 +74,16 @@ export function NewScheduleForm(props) {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "parking") {
-                TAS.TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
+                TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
-            } else if (name.name === "type") {
-                setOptionsUsers(values => ({...values, opts:AllServices(eval(selectedOptions.value)), change: true}))
+            } else if (name.name == "type") {
+                let liste = [];
+                if (selectedOptions.value == "Gardiennage") {
+                    liste = guardiansList
+                } else if (selectedOptions.value == "Nettoyage") {
+                    liste = serviceList
+                }
+                setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
                 setEditable(false)
             }
             value = selectedOptions.value
@@ -92,6 +94,8 @@ export function NewScheduleForm(props) {
         }
         setInfos(values => ({...values, [name.name]: value}))
     }
+
+    console.log(infos)
 
 	const handlleSubmit = async (event) => {
         event.preventDefault()
@@ -135,7 +139,7 @@ export function NewScheduleForm(props) {
                         })
                     }
                 } else {
-                    TP.TakeParking(infos.parking).then(res => {
+                    TakeParking(infos.parking).then(res => {
                         setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
                     })
                     isSubmit = true;
@@ -149,15 +153,15 @@ export function NewScheduleForm(props) {
 	}
 
     var optionsParking = AllParkings(parkingsList)
-    const newScheduleOptions = [{value:"guardiansList", label: "Gardien"}, {value:"serviceList", label:"Agent d'entretien"}]
+    const newScheduleOptions = [{value:"Gardiennage", label: "Gardiennage"}, {value:"Nettoyage", label:"Nettoyage"}, {value:"Réunion", label:"Réunion"}]
 
     useEffect(() => {
-        TP.TakeParking().then(res => {
+        TakeParking().then(res => {
             setParkingsList(res);
-            TAS.TakeAllSpots(res[0].id).then(res => setSpotsList(res))
+            TakeAllSpots(res[0].id).then(res => setSpotsList(res))
         });
-        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res))
-        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res))
+        TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+        TakeByRole("Gardien").then(res => setGuardiansList(res))
     }, [])
 
     useEffect(() => {
@@ -265,4 +269,3 @@ export function NewScheduleForm(props) {
         </Popup>
     )
 }
-

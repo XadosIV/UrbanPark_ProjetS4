@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById } from "../services"
-import { SpotName } from "../interface"
+import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
+import { AllSpots, BaseSpot } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
-import TAS from "../services/take_all_spots"
-import TP from "../services/take_parking";
-import TBR from "../services/take_by_role";
 
 export function UpdateScheduleForm(props) {
 
     /**
-     * AllSpots
-     * Returns a lists of options for a Select React component composed of every type 
+     * DeOrDu
+     * Returns a string which is de or du depending of the type of the schedule
      *
-     * @param { Array } list - List of spots in the parking
+     * @param { String } type - The type of schedule
      * @return { Array }
      */
-    function AllSpots(list) {
-        var opt = []
-        for (let i=0; i<list.length; i++) {
-            opt.push({value:list[i].id, label:"Place " + SpotName(list[i])})
+    function DeOrDu(type) {
+        if(type == "Réunion") {
+            return "de"
+        } else {
+            return "du"
         }
-        return opt
     }
 
     /**
@@ -82,9 +79,9 @@ export function UpdateScheduleForm(props) {
      * @return { Array }
      */
     function BaseListType(type) {
-        if (type == "Gardien") {
+        if (type == "Gardiennage") {
             return AllServices(guardiansList)
-        } else if (type == "Agent d'entretien") {
+        } else if (type == "Nettoyage") {
             return AllServices(serviceList)
         }
     }
@@ -106,7 +103,7 @@ export function UpdateScheduleForm(props) {
         if (list) {
             for (let user of list) {
                 for (let id of id_user) {
-                    if (user.value == id) {
+                    if (user.value === id) {
                         opts.push(user);
                     }       
                 }
@@ -130,7 +127,7 @@ export function UpdateScheduleForm(props) {
                 opts.push(s);
             }
         }
-        if (opts.length != 0) {
+        if (opts.length !== 0) {
             return opts[0].label
         } else {
             return ""
@@ -154,7 +151,7 @@ export function UpdateScheduleForm(props) {
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
     const [guardiansList, setGuardiansList] = useState([]);
-    const [baseType, setBaseType] = useState("")
+    const [baseType, setBaseType] = useState(props.event.type)
     
     const [disabled, setDisabled] = useState(false)
     const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -163,7 +160,7 @@ export function UpdateScheduleForm(props) {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "parking") {
-                TAS.TakeAllSpots(selectedOptions.value).then(res => {
+                TakeAllSpots(selectedOptions.value).then(res => {
                     setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
                 })
             }
@@ -179,16 +176,16 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infos.user.length == 0) {
+        if (infos.user.length === 0) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
         }
-        else if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
+        else if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
             var scheduleAdded = 0;
             var nbModif = 0;
             let stock = infos.user
+            var fun;
             for (let i=0; i<props.event.user.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (!(props.event.user.includes(infos.user))) {
                     fun = DeleteSchedule(props.event.id_schedule[i]);
@@ -206,7 +203,6 @@ export function UpdateScheduleForm(props) {
                 }
             }
             for (let i=0; i<stock.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (props.event.user.includes(infos.user)) {
                     fun = UpdateSchedule(infos, props.event.id_schedule[i]);
@@ -226,7 +222,7 @@ export function UpdateScheduleForm(props) {
                     }
                 }
             }
-            if (scheduleAdded == nbModif) {
+            if (scheduleAdded === nbModif) {
                 setWrongInput(true);
                 setErrMessage("Modification prise en compte.")
                 setDisabled(true)
@@ -241,17 +237,16 @@ export function UpdateScheduleForm(props) {
     }
 
     useEffect(() => {
-        TP.TakeParking().then(res => setParkingsList(res));
-        TAS.TakeAllSpots(infos.parking).then(res => {
+        TakeParking().then(res => setParkingsList(res));
+        TakeAllSpots(infos.parking).then(res => {
             setOptionsSpots({opts:AllSpots(res), change:false});
         });
-        TBR.TakeByRole("Agent d'entretien").then(res => setServiceList(res));
-        TBR.TakeByRole("Gardien").then(res => setGuardiansList(res));
-        takeById(infos.user[0]).then(res => setBaseType(res.role));
+        TakeByRole("Agent d'entretien").then(res => setServiceList(res));
+        TakeByRole("Gardien").then(res => setGuardiansList(res));
     }, [])
 
     useEffect(() => {
-        TAS.TakeAllSpots(infos.parking).then(res => {
+        TakeAllSpots(infos.parking).then(res => {
             setOptionsSpots({opts:AllSpots(res), change:false})
         })
     }, [optionsSpots.change])
@@ -271,7 +266,7 @@ export function UpdateScheduleForm(props) {
 				</Button>)}
 				position="right center" onClose={() => {setWrongInput(false)}}>
             <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Modification du créneau<br/> {baseType.toLowerCase()} :</h3>
+                <h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
                 <form onSubmit={handlleSubmit} className="form">   
                     <div style={{zIndex:1007}}>
                         <Select
@@ -294,7 +289,7 @@ export function UpdateScheduleForm(props) {
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    {baseType == "Agent d'entretien" && <div className="numeros" style={{zIndex:1005}}>
+                    {baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken, placeFromId } from "../services";
-import TP from "../services/take_parking";
+import { userFromToken, placeFromId, TakeParking } from "../services";
 import { SpotName } from "../interface/spot_name";
 
 export function PersoMySpot(){
@@ -35,7 +34,7 @@ export function PersoMySpot(){
         async function fetchParking() {
             if(maPlace){
                 // console.log("idP", maPlace);
-                const resParking = await TP.TakeParking(maPlace.id_park);
+                const resParking = await TakeParking(maPlace.id_park);
                 // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
             }
