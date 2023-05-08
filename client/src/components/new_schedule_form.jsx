@@ -58,7 +58,7 @@ export function NewScheduleForm(props) {
     const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
     const [optionsUsers, setOptionsUsers] = useState({opts:[], change:false})
 
-    const [infos, setInfos] = useState({parking: "", user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)});
+    const [infos, setInfos] = useState({parking: "", type:null, user: [], date_start: new Date().toISOString().slice(0, 19), date_end: new Date().toISOString().slice(0, 19)});
 
 	const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
@@ -76,8 +76,13 @@ export function NewScheduleForm(props) {
             if (name.name === "parking") {
                 TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
-            } else if (name.name === "type") {
-                var liste = selectedOptions.value == "guardiansList" ? guardiansList : serviceList
+            } else if (name.name == "type") {
+                let liste = [];
+                if (selectedOptions.value == "Gardiennage") {
+                    liste = guardiansList
+                } else if (selectedOptions.value == "Nettoyage") {
+                    liste = serviceList
+                }
                 setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
                 setEditable(false)
             }
@@ -89,6 +94,8 @@ export function NewScheduleForm(props) {
         }
         setInfos(values => ({...values, [name.name]: value}))
     }
+
+    console.log(infos)
 
 	const handlleSubmit = async (event) => {
         event.preventDefault()
@@ -146,7 +153,7 @@ export function NewScheduleForm(props) {
 	}
 
     var optionsParking = AllParkings(parkingsList)
-    const newScheduleOptions = [{value:"guardiansList", label: "Gardien"}, {value:"serviceList", label:"Agent d'entretien"}]
+    const newScheduleOptions = [{value:"Gardiennage", label: "Gardiennage"}, {value:"Nettoyage", label:"Nettoyage"}, {value:"Réunion", label:"Réunion"}]
 
     useEffect(() => {
         TakeParking().then(res => {
@@ -262,4 +269,3 @@ export function NewScheduleForm(props) {
         </Popup>
     )
 }
-
