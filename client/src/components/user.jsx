@@ -187,7 +187,7 @@ export function User(props){
 				<div>
 					<div>
 						<h3>{props.user.first_name} {props.user.last_name} - {props.user.email}</h3>
-
+						{props.user.role}
 						<span>{spots(spotWithUser, spotTempWithUser, props.user.role)}</span>
 					</div>                       
 				</div>
