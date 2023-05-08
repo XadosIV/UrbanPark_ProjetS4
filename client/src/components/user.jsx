@@ -83,7 +83,13 @@ export function User(props){
 		}
 		if (props.user.id_spot_temp != null) {
 			TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
-				setSpotTempWithUser(SpotName(res[0]))
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+						setSpotTempWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotTempWithUser(SpotName(res[0]))
+				}
 			})
 		}
 		
