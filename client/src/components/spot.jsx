@@ -165,7 +165,7 @@ export function Spot(props) {
 
     useEffect(() => {
         setCheckbox(props.toCheck(props.spot.id));
-    }, [props.up])
+    }, [props])
 
 	useEffect(() => {
 		async function fetchUserInfos() {
@@ -277,8 +277,10 @@ export function Spot(props) {
 
     var typesSpot = [];
     if (props.spot.types.length !== 0) {
+        let i = -1;
         for (let type of props.spot.types) {
-            typesSpot.push(<p><strong>-</strong> Place {type}</p>)
+            typesSpot.push(<p key={i}><strong>-</strong> Place {type}</p>);
+            i--;
         }
     }
 

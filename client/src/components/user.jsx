@@ -31,15 +31,15 @@ export function User(props){
 		return ""
 	}
 
-	function Spots(spot, spotTemp) {
+	function spots(spot, spotTemp, role) {
 		if (spot.length != 0) {
 			if (spotTemp.length != 0) {
-				return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+				return <p style={{display: "inline"}}> {role} <br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
 			} else {
-				return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+				return <p style={{display: "inline"}}> {role} <br/>- Place {spot}</p>
 			}
 		} else {
-			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+			return <p style={{display: "inline"}}> {role} <br/>- Pas de place attitrée</p>
 		}
 	}
 
@@ -151,12 +151,12 @@ export function User(props){
     };
 
 	return (
-		<li key={props.index}>
+		<li>
 			<div className="main-content">
 				<div>
 					<div>
 						<h3>{props.user.first_name} {props.user.last_name} - {props.user.email}</h3>
-						<p>{props.user.role} {Spots(spotWithUser, spotTempWithUser)} </p>
+						<span>{spots(spotWithUser, spotTempWithUser, props.user.role)}</span>
 					</div>                       
 				</div>
 				<div>

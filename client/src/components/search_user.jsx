@@ -22,7 +22,7 @@ export function SearchUser(props) {
 	return (
         <ul className="user-list">
             {filteredData.map((user, index) => (
-                <User user={user} index={index} handleCallback={Callback}/>))}
+                <User user={user} key={index} handleCallback={Callback}/>))}
 		</ul>
     )
 }

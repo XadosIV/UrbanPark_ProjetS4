@@ -95,7 +95,7 @@ export function NewScheduleForm(props) {
         setInfos(values => ({...values, [name.name]: value}))
     }
 
-    console.log(infos)
+    // console.log(infos)
 
 	const handlleSubmit = async (event) => {
         event.preventDefault()
@@ -113,7 +113,7 @@ export function NewScheduleForm(props) {
             for (let user of stock) {
                 infos.user = user;
                 const res = await CreationSchedule(infos); 
-                console.log(res);
+                // console.log(res);
                 if (res.status === 200) {
                     scheduleAdded++;
                 } else {

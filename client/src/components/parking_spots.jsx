@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
-import { SpotsList, ParkingList, NewSpotForm, AdminVerif } from "../components";
+import { SpotsList, ParkingList, NewSpotForm, AdminVerif, ModifMultSpot } from "../components";
 import { NbFloors, GetSpotsFromFilter } from "../interface"
 import Select from 'react-select';
 import "../css/parking.css"
 import { useContext } from "react";
-import { userFromToken, DeleteSpot, TakeParking, TakeAllSpots, TakeAllSpotTypes } from "../services";
+import { userFromToken, DeleteSpot, TakeParking, TakeAllSpots, TakeAllSpotTypes, ServiceUpdateSpot } from "../services";
 import { ContextUser } from "../contexts/context_user";
 import { Check, Clear } from "@mui/icons-material";
 
@@ -16,18 +16,24 @@ export function ParkingSpots(props) {
     }
 
     const [ arrSpotCheckbox, setArrSpotCheckbox ] = useState([]);
+    const [ typesModif, setTypesModif ] = useState([]);
+
+    const callbackTypeModif = (types) => {
+        setTypesModif(types);
+        // console.log("typeModif", typesModif);
+    }
 
     const toggleSpotArr = (spotData) => {
         let index = arrSpotCheckbox.indexOf(spotData);
-        console.log("index", index);
+        // console.log("index", index);
         let nouv = arrSpotCheckbox;
-        console.log("old", nouv);
+        // console.log("old", nouv);
         if(index === -1){
             nouv.push(spotData);
         }else{
             nouv.splice(index, 1);
         }
-        console.log("new", nouv);
+        // console.log("new", nouv);
         setArrSpotCheckbox(nouv);
     }
 
@@ -59,20 +65,33 @@ export function ParkingSpots(props) {
     }
 
     function CallbackDelete(childData) { 
-        var deleted = 0;
+        // console.log("childData", childData);
         const forLoop = async _ => {
             for (let idSpot of arrSpotCheckbox) {
-                const res = await DeleteSpot(idSpot)
-                if (res.status === 200) {
-                    deleted++;
-                }
+                let res = await DeleteSpot(idSpot);
+                // console.log("resDelete", idSpot, res);
             }
         }
-        forLoop().then(() => {
-            if (deleted === GetSpotsFromFilter(list, infos).length) {
-                setUpdate(childData)
+        forLoop();
+        setArrSpotCheckbox([]);
+        setUpdate(!update);
+    }
+
+    function callbackModif(childData){
+        // console.log("childData", childData);
+        const forloop = async _ => {
+            for (let idSpot of arrSpotCheckbox){
+                let res;
+                if(childData){
+                    res = await ServiceUpdateSpot([], idSpot);
+                }else if(typesModif.length !== 0){
+                    res = await ServiceUpdateSpot(typesModif, idSpot);
+                }
+                console.log("resModif", idSpot, res);
             }
-        })
+        }
+        forloop();
+        setArrSpotCheckbox([]);
         setUpdate(!update);
     }
 
@@ -274,6 +293,16 @@ export function ParkingSpots(props) {
         }
     }
 
+    const modifSpotSiAdmin = () => {
+        if(admin){
+            if(parkingsList){
+                if(parkingsList.length === 1){
+                    return <ModifMultSpot callbackSetTypes={callbackTypeModif}  callbackHandleSubmit={callbackModif}/>
+                }
+            }
+        }
+    }
+
     const [stockDisable, setStock] = useState({secondFloor:baseValueFloorType, secondNumber:baseValueNumber})
 
 	return(<div>
@@ -329,6 +358,9 @@ export function ParkingSpots(props) {
                 }
                 {
                     delSpotSiAdmin()
+                }
+                {
+                    modifSpotSiAdmin()
                 }
                 <div>
                     <Button 
