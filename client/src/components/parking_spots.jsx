@@ -33,7 +33,7 @@ export function ParkingSpots(props) {
 		}else{
 			nouv.splice(index, 1);
 		}
-		// console.log("new", nouv);
+		console.log("new", nouv);
 		setArrSpotCheckbox(nouv);
 		console.log(arrSpotCheckbox)
 	}
@@ -48,8 +48,8 @@ export function ParkingSpots(props) {
 		setCheckAll(!checkAll);
 		let visibleSpot = GetSpotsFromFilter(list, infos);
 		for (let i = 0; i < visibleSpot.length; i++) {
-			if(!arrSpotCheckbox.includes(visibleSpot[i].id)){
-				toggleSpotArr(visibleSpot[i].id)
+			if(!arrSpotCheckbox.includes(visibleSpot[i])){
+				toggleSpotArr(visibleSpot[i])
 			}
 		}
 		setUp(!up);
@@ -58,8 +58,8 @@ export function ParkingSpots(props) {
 		setCheckAll(!checkAll);
 		let visibleSpot = GetSpotsFromFilter(list, infos);
 		for (let i = 0; i < visibleSpot.length; i++) {
-			if(arrSpotCheckbox.includes(visibleSpot[i].id)){
-				toggleSpotArr(visibleSpot[i].id)
+			if(arrSpotCheckbox.includes(visibleSpot[i])){
+				toggleSpotArr(visibleSpot[i])
 			}
 		}
 		setUp(!up);
@@ -83,6 +83,7 @@ export function ParkingSpots(props) {
 		// console.log("childData", childData);
 		const forloop = async _ => {
 			for (let idSpot of arrSpotCheckbox){
+				console.log("arrSpotCheckbox", arrSpotCheckbox)
 				let res;
 				if(childData){
 					res = await ServiceUpdateSpot([], idSpot.id);
@@ -243,7 +244,7 @@ export function ParkingSpots(props) {
 		TakeAllSpots(props.id.parking).then(res => setList(res));
 		TakeAllSpotTypes().then(res => setSpotTypes(res));
 		setUpdate(false)
-	}, [update]);
+	}, [update, up]);
 
 	var optionsFloor = []
 	parkingsList.map((parking) => (

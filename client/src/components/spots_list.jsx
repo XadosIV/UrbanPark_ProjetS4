@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Spot } from "../components"
 import { GetSpotsFromFilter } from "../interface";
 
-export function SpotsList(props) {
-	const [test, setTest] = useState(rendu())
-		
+export function SpotsList(props) {		
 	function Callback(childData) {
 		props.handleCallback(childData)
 	}
@@ -18,24 +16,30 @@ export function SpotsList(props) {
 	}
 
 	const filteredData = GetSpotsFromFilter(props.list, props.infos)
+	console.log(props.list)
+	console.log(props.infos)
 
 	const generateKey = (index, spot) => {
 		let id = ""+ index + spot.floor + spot.number;
 		return id;
 	}
 
-	const rendu = () => {
+	let rendu = () => {
 		return (
 			filteredData.map((spot, index) => (
 			<Spot spot={spot} key={generateKey(index, spot)} handleCallback={Callback} checkBoxCallback={toggleSpotArr} toCheck={isChecked} up={props.up}/>
 		)))
 	}
 
-	useEffect(() => {setTest(rendu())}, [props.up])
+	useEffect(() => {setTest(rendu())}, [props])
 
-	return (<div className="all-spots">
-				{
-					test
-				}
+	const [test, setTest] = useState(rendu())
+
+
+	return (
+	<div className="all-spots">
+			{
+				test
+			}
 		</div>)
 }

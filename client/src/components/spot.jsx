@@ -161,10 +161,10 @@ export function Spot(props) {
 
     const [ modifiable, setModifiable ] = useState(false);
     
-    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot.id));
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot));
 
     useEffect(() => {
-        setCheckbox(props.toCheck(props.spot.id));
+        setCheckbox(props.toCheck(props.spot));
     }, [props.up])
 
 	useEffect(() => {
@@ -210,7 +210,7 @@ export function Spot(props) {
                 })
             }
         })
-    }, [props.up])
+    }, [props])
 
     const handleSet = () => {
         setNoSubmit(false)
