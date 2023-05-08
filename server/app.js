@@ -7,6 +7,7 @@ const {GetParkings, PostParking, PutParkings, DeleteParking} = require('./db_acc
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
 
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
+const {GetSchedulesAvailable} = require('./db_access/reunion');
 const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
 
 const {GetPermRole} = require('./db_access/role');
@@ -366,5 +367,18 @@ app.delete('/api/schedule/:id', (req, res) => {
 		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
 	}
 });
+
+app.get('/api/reunion', (req, res) => {
+	// req.body
+	GetSchedulesAvailable(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			console.log(data)
+			res.status(200).json(data);
+		}
+	})
+
+})
 
 module.exports = app;
