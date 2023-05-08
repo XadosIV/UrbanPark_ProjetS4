@@ -286,6 +286,7 @@ export function Spot(props) {
 
         <Popup className="popup-spot" trigger={<Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
                             <Checkbox 
+								style={{color:"white"}}
                                 icon={checkboxIcon()}
                                 checked={checkbox}
                                 onChange={toggleCheckbox}
