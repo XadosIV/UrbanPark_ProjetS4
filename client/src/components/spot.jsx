@@ -128,17 +128,19 @@ export function Spot(props) {
     }
 
     function toggleSpotArr(spotData){
+		console.log(spotData)
         props.checkBoxCallback(spotData)
     }
 
     const toggleCheckbox = () => {
-        toggleSpotArr(props.spot.id);
+        toggleSpotArr(props.spot);
         setCheckbox(!checkbox);
     }
 
-
     const { userToken } = useContext(ContextUser);
+
     const [ roleUser, setRoleUser ] = useState("");
+
     const admin = roleUser === "Gérant";
 
     const [infos, setInfos] = useState({user:[]})
@@ -160,10 +162,10 @@ export function Spot(props) {
 
     const [ modifiable, setModifiable ] = useState(false);
     
-    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot.id));
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot));
 
     useEffect(() => {
-        setCheckbox(props.toCheck(props.spot.id));
+        setCheckbox(props.toCheck(props.spot));
     }, [props.up])
 
 	useEffect(() => {
@@ -173,7 +175,7 @@ export function Spot(props) {
 			//console.log("token", resUserToken.data[0])
 		}
 		fetchUserInfos();
-	}, [userToken]);
+	}, [userToken, props.up]);
 
 	const HandleAskChange = () => {
 		setModifiable(!modifiable);
@@ -191,7 +193,7 @@ export function Spot(props) {
 			//console.log("token", resUserToken.data[0])
 		}
 		fetchUserInfos();
-	}, [userToken]);
+	}, [userToken, props.up]);
 
     useEffect(() => {
         TakeAllSpotTypes().then(res => {setSpotTypes(res);});
@@ -209,7 +211,7 @@ export function Spot(props) {
                 })
             }
         })
-    }, [])
+    }, [props])
 
     const handleSet = () => {
         setNoSubmit(false)
@@ -276,8 +278,10 @@ export function Spot(props) {
 
     var typesSpot = [];
     if (props.spot.types.length !== 0) {
+        let i = -1;
         for (let type of props.spot.types) {
-            typesSpot.push(<p><strong>-</strong> Place {type}</p>)
+            typesSpot.push(<p key={i}><strong>-</strong> Place {type}</p>);
+            i--;
         }
     }
 

@@ -251,6 +251,7 @@ export function NewScheduleForm(props) {
                 infosReunions.user = user;
                 const res = await CreationSchedule(infosReunions); 
                 console.log(res);
+
                 if (res.status === 200) {
                     scheduleAdded++;
                 } else {
