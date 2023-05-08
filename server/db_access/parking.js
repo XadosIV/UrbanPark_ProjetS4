@@ -81,7 +81,7 @@ function PutParkings(infos, callback){
 			let oldParking = data[0];
 			let update = (err,data)=>{
 				sql = `UPDATE Parking SET name=:name, floors=:floors, address=:address WHERE id=:id;`;
-				//console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
+				console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, {
 					"name":infos.name||oldParking.name,
 					"floors":infos.floors||oldParking.floors,
