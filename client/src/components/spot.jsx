@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
-import { Link } from "react-router-dom";
 import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot, DeleteSpotFromUser, SetSpotFromUser, TakeAllSpotTypes, TakeBySpot, TakeBySpotTemp, TakeByRole } from "../services";

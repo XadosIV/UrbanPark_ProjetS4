@@ -74,10 +74,10 @@ export function ModifMultSpot (props) {
             style={customStyles}
         >
             <p>
-                Les places selectionnées aurons les types indiqués ajouté ou retiré selon si elles le possédaient déjà ou non.
+                Les places selectionnées auront les types indiqués ajoutés ou retirés selon si elles le possédaient déjà ou non.
             </p>
             <p>
-                Attention il n'est pas possible de retirer le type 'Abonné' à une place attitré même temporairement
+                Attention ! Il n'est pas possible de retirer le type 'Abonné' à une place attitré à un abonné, même temporairement
             </p>
             <form style={{
 				display: "flex",
@@ -102,7 +102,7 @@ export function ModifMultSpot (props) {
                     variant="contained" 
                     color="primary" 
                     id="toggle"
-                    style={{marginTop:"20px", backgroundColor:"red", width: "100%"}} 
+                    style={{marginTop:"20px", backgroundColor:"#32CD32", width: "100%"}} 
                     type="submit"
                 >
                     confirmer
@@ -114,7 +114,7 @@ export function ModifMultSpot (props) {
                     style={{marginTop:"20px", backgroundColor:"red", width: "100%"}} 
                     type="submit"
                 >
-                    supprimmer tous les types
+                    supprimer tous les types
                 </Button>
             </form>
         </ReactModal>
