@@ -374,6 +374,7 @@ app.get('/api/reunion', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
+			console.log(data)
 			res.status(200).json(data);
 		}
 	})

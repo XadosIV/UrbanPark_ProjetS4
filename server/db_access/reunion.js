@@ -54,13 +54,15 @@ function GetSchedulesAvailable(infos, callback){
  */
 function InvertSchedules(min, max, schedules){
 	//on trie schedules par ordre alphabétique des tailles du début
+	if (schedules.length == 0) return [min, max];
+	
 	schedules.sort((a,b) => a[0]<b[0]?-1:1) // c'est pas une bidouille, c'est juste pour trier.
 
 	var i_schedules = [];
 	if (schedules[0][0] <= min){ // si le tout premier schedule commence avant le début du min
 		min = schedules[0][1]; // le min devient la date de fin du premier
 	}else {
-		i_schedules.push(min, schedules[0][0]); // si il commence après, on ajoute un schedule entre les deux.
+		i_schedules.push([min, schedules[0][0]]); // si il commence après, on ajoute un schedule entre les deux.
 	}
 
 	for (let i = 0; i < schedules.length - 1; i++){
@@ -69,7 +71,6 @@ function InvertSchedules(min, max, schedules){
 
 	//Pour le dernier, on vérifie son état par rapport à max
 	let last_schedule = schedules[schedules.length-1];
-	console.log(last_schedule)
 	if (last_schedule[0] < max){ // s'il commence avant la date de fin, on doit vérifier s'il finit après ou non
 		// pour savoir si on doit rajouter un schedule de fin_last_schedule à fin_range
 		if (last_schedule[1] < max){ //s'il finit avant
