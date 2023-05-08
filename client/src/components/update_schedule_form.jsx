@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { SpotName } from "../interface"
+import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
+import { AllSpots, BaseSpot } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
@@ -11,18 +11,18 @@ import "../css/parking.css"
 export function UpdateScheduleForm(props) {
 
     /**
-     * AllSpots
-     * Returns a lists of options for a Select React component composed of every type 
+     * DeOrDu
+     * Returns a string which is de or du depending of the type of the schedule
      *
-     * @param { Array } list - List of spots in the parking
+     * @param { String } type - The type of schedule
      * @return { Array }
      */
-    function AllSpots(list) {
-        var opt = []
-        for (let i=0; i<list.length; i++) {
-            opt.push({value:list[i].id, label:"Place " + SpotName(list[i])})
+    function DeOrDu(type) {
+        if(type == "Réunion") {
+            return "de"
+        } else {
+            return "du"
         }
-        return opt
     }
 
     /**
@@ -79,9 +79,9 @@ export function UpdateScheduleForm(props) {
      * @return { Array }
      */
     function BaseListType(type) {
-        if (type === "Gardien") {
+        if (type == "Gardiennage") {
             return AllServices(guardiansList)
-        } else if (type === "Agent d'entretien") {
+        } else if (type == "Nettoyage") {
             return AllServices(serviceList)
         }
     }
@@ -151,7 +151,7 @@ export function UpdateScheduleForm(props) {
     const [parkingsList, setParkingsList] = useState([]);
     const [serviceList, setServiceList] = useState([]);
     const [guardiansList, setGuardiansList] = useState([]);
-    const [baseType, setBaseType] = useState("")
+    const [baseType, setBaseType] = useState(props.event.type)
     
     const [disabled, setDisabled] = useState(false)
     const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -243,7 +243,6 @@ export function UpdateScheduleForm(props) {
         });
         TakeByRole("Agent d'entretien").then(res => setServiceList(res));
         TakeByRole("Gardien").then(res => setGuardiansList(res));
-        takeById(infos.user[0]).then(res => setBaseType(res.role));
     }, [])
 
     useEffect(() => {
@@ -263,7 +262,7 @@ export function UpdateScheduleForm(props) {
                 margin:"10px 0 10px 245px"
             }}>Modifier :</Button>} position="right center" onClose={() => setWrongInput(false)}> 
             <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Modification du créneau<br/> {baseType.toLowerCase()} :</h3>
+                <h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
                 <form onSubmit={handlleSubmit} className="form">   
                     <div style={{zIndex:1007}}>   
                         <Select 
@@ -286,7 +285,7 @@ export function UpdateScheduleForm(props) {
                             onChange={handleChangeSelect}
                         />
                     </div>
-                    {baseType === "Agent d'entretien" && <div className="numeros" style={{zIndex:1005}}>
+                    {baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
                         <Select
                             options={optionsSpots.opts}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}

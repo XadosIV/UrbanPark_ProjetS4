@@ -156,6 +156,7 @@
 .numeros, .numeros-two {
 	display: flex;
 	flex-direction: row;
+	justify-content:center;
 }
 
 .numeros-two {
@@ -172,4 +173,15 @@
 
 .search-add-two {
 	z-index:1000;
+}
+
+.popup-spot-content {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	min-width:220px;
+	max-width:220px;
+	align-items:center;
 }

@@ -52,6 +52,11 @@ export function AdminVerif(props) {
         fetchUserInfos();
     }, [userToken]);
 
+    useEffect(() => {
+		const body = document.querySelector('body');
+		body.style.overflow = isOpen ? 'hidden' : 'auto';
+	}, [isOpen])
+
     const handleChangePass = (event) => {
         setPassword(event.target.value)
     }
