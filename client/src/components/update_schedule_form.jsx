@@ -252,20 +252,24 @@ export function UpdateScheduleForm(props) {
     }, [optionsSpots.change])
 
     return (
-        <Popup trigger={<Button variant="contained" color="primary" 
-            style={{
-                backgroundColor: "#FE434C",
-                borderColor: "transparent",
-                borderRadius: 20,
-                width:"150px",
-                height:"75px",
-                margin:"10px 0 10px 245px"
-            }}>Modifier :</Button>} position="right center" onClose={() => setWrongInput(false)}> 
+        <Popup trigger={open =>(
+			<Button variant="contained" color="primary" 
+				style={{
+					backgroundColor: "#FE434C",
+					borderColor: "transparent",
+					borderRadius: 20,
+					width:"150px",
+					height:"75px",
+					margin:"10px 0"
+				}}> {props.setPopupOpened(open)}
+					Modifier
+				</Button>)}
+				position="right center" onClose={() => {setWrongInput(false)}}>
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
                 <form onSubmit={handlleSubmit} className="form">   
-                    <div style={{zIndex:1007}}>   
-                        <Select 
+                    <div style={{zIndex:1007}}>
+                        <Select
                             id="parking"
                             className="searchs-add"
                             options={AllParkings(parkingsList)} 
@@ -328,7 +332,7 @@ export function UpdateScheduleForm(props) {
                         />
                     </div>
                     <Button
-                        isDisabled={disabled}
+                        disabled={disabled}
                         className="submit_button" 
                         variant="contained" 
                         color="primary" 

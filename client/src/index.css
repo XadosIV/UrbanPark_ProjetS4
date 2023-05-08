@@ -1,12 +1,29 @@
 body {
-	+margin: 0;
+	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: large;
-	background-color:#F0FFFF;
+	/* background-color:#F6F1F1; */
+	background-color: #dbe9f4;
+	display:flex;
+	flex-direction: column;
+	padding-bottom: 4rem;
+}
+
+header a {
+	color: #0A2647;
+}
+
+footer {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	z-index: 9999;
 }
 
 code {
@@ -14,6 +31,9 @@ code {
 		monospace;
 }
 
+#popup-root {
+	margin-bottom:5rem;
+}
 
 .carousel {
 	overflow: hidden;
@@ -37,13 +57,13 @@ code {
 }
 
 .slides-item {
-	background-color: aqua;
+	background-color: #19A7CE;
 	border-radius: 20px;
 	flex-shrink: 0;
-	height: 100%;
 	margin: 0 1rem;
 	scroll-snap-align: center;
-	width: 100%;
+	width: 90%;
+	padding: 5%;
 }
 
 .slides-item p {
