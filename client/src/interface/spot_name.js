@@ -7,5 +7,7 @@
  */
 
 export function SpotName(spot) {
-    return ""+spot.id_park+spot.floor+"-"+spot.number;
+    if (spot) {
+        return ""+spot.id_park+spot.floor+"-"+spot.number;
+    }
 }

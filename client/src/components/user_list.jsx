@@ -7,11 +7,17 @@ import { TakeByRole } from "../services"
 
 export function UserList() {
 
+	function Callback(childData) {
+		setUpdate(childData)
+	}
+
 	const [usersList, setUsersList] = useState([]);
+	const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
 		TakeByRole("Abonné").then(res => {setUsersList(res);})
-	}, []);
+		setUpdate(false)
+	}, [update]);
 
 	const [inputTextUsers, setInputTextUsers] = useState("");
 
@@ -26,6 +32,6 @@ export function UserList() {
 				name="searchbarUser"
 				onChange={InputHandler(setInputTextUsers)}
 			/>
-			<SearchUser list={usersList} input={inputTextUsers}/>
+			<SearchUser list={usersList} input={inputTextUsers} handleCallback={Callback}/>
 		</div>)
 }

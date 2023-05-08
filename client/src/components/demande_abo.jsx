@@ -1,10 +1,10 @@
 import { Button } from '@mui/material';
 import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
-import Popup from 'reactjs-popup';
 import { DeleteUser, getAllSpotsFilter, updateInfoPerso, TakeParking } from '../services';
 import { NbFloors } from "../interface";
 import { SpotInfos } from "../components"
+import ReactModal from 'react-modal';
 
 export function DemandeAbo({ infos, up }){
 
@@ -66,6 +66,11 @@ export function DemandeAbo({ infos, up }){
         }
     }, [changeFloor])
 
+    useEffect(() => {
+		const body = document.querySelector('body');
+		body.style.overflow = popupP || popupR || popupV ? 'hidden' : 'auto';
+	}, [popupP || popupR || popupV])
+
     const validerDemande = (e) => {
         e.preventDefault();
         // console.log("valider", e);
@@ -80,7 +85,7 @@ export function DemandeAbo({ infos, up }){
                 up();
             }else{
                 setAffErrMessage(true);
-                setErrMessage("veuillez assigner une place")
+                setErrMessage("Veuillez assigner une place")
                 togglePopupP()
             }
         }
@@ -117,7 +122,7 @@ export function DemandeAbo({ infos, up }){
                 return (spot.number === parseInt(selectedOptions.value)) && (spot.id_park === infos.id_park_demande) && (spot.floor === parseInt(place.floor))});
             // console.log("setNewSpot", setNewSpot);
             if(setNewSpot.length !== 1){
-                setErrMessage("une erreure est survenue");
+                setErrMessage("Une erreur est survenue");
                 setAffErrMessage(true);
             }else{
                 setDataNewSpot(setNewSpot[0]);
@@ -154,13 +159,34 @@ export function DemandeAbo({ infos, up }){
         setErrMessage("");
     }
 
+    const customStyles = (color) => ({
+        overlay: {
+            zIndex : 100000
+        },
+        content: {
+            top: '35%',
+            left: '50%',
+            right: 'auto',
+            bottom: '15%',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexDirection:"column",
+            marginRight: '-50%',
+            width: '25%',
+            heigth: '75%',
+            transform: 'translate(-40%, -10%)',
+            border: color
+        },
+    });
+
     return (
         <li className='demande-abo-user'>
             <div className="main-content">
                 <div>
                     <h3>{infos.first_name} {infos.last_name} - {infos.email}</h3>
                 </div>
-                <div className='spot-infos'>
+                <div>
                 { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <SpotInfos spotInfos={dataNewSpot}/> : <p> Place non attribuée </p> }
                 </div>
                 <div>
@@ -170,13 +196,14 @@ export function DemandeAbo({ infos, up }){
                         color="primary"
                         onClick={() => togglePopupP()}
                     > donner une place </Button>
-                                  
-                    <Popup
-                        open={ popupP }
-                        closeOnDocumentClick
-                        onClose={ () => reset() }
-                    >
-                    <div className="div-attr-place">
+
+                    <ReactModal
+                        ariaHideApp={false}
+                        isOpen={popupP}
+                        onRequestClose={ () => reset() }
+                        style={customStyles('solid rgb(20, 94, 168)')}
+                    >              
+                    <div>
                         <h3 style={{textAlign:"center"}}> Assignement d'une place à { infos.first_name } { infos.last_name } <br/> Dans le parking : { park.name } </h3>
                         { affErrMessage && <p className='err-message'> { errMessage } </p> }
                         <div className="form">
@@ -186,6 +213,7 @@ export function DemandeAbo({ infos, up }){
                                     placeholder="Étage"
                                     options= { optFloors }
                                     onChange={handleChangeSelect}
+                                    maxMenuHeight={220}
                                 />
                                 <Select
                                     name="number"
@@ -193,10 +221,11 @@ export function DemandeAbo({ infos, up }){
                                     placeholder="Numéro"
                                     options={ optNum }
                                     onChange={handleChangeSelect}
+                                    maxMenuHeight={220}
                                 />
                         </div>
                     </div>
-                    </Popup>
+                    </ReactModal>
                 </div>
                 <div>
                     <Button
@@ -205,11 +234,12 @@ export function DemandeAbo({ infos, up }){
                         color="success"
                         onClick={() => togglePopupV()}
                     >Valider la demande</Button>
-                    <Popup
-                        open={ popupV }
-                        closeOnDocumentClick
-                        onClose={() => togglePopupV()}
-                    >
+                    <ReactModal
+                        ariaHideApp={false}
+                        isOpen={popupV}
+                        onRequestClose={ () => togglePopupV() }
+                        style={customStyles('solid rgb(37, 100, 40)')}
+                    >     
                         <div className='validation popup-div'>
                             <h2> Êtes vous sûr de vouloir accepter cette demande ? </h2>
                             <div><Button
@@ -220,7 +250,7 @@ export function DemandeAbo({ infos, up }){
                                 type='submit'
                             >Valider la demande</Button></div>
                         </div>
-                    </Popup>
+                    </ReactModal>
 
                     <Button
                         className="refusal-button" 
@@ -228,11 +258,12 @@ export function DemandeAbo({ infos, up }){
                         color="error"
                         onClick={() => togglePopupR()}
                     >refuser la demande</Button>
-                    <Popup
-                        open={ popupR }
-                        closeOnDocumentClick
-                        onClose={() => togglePopupR()}
-                    >
+                    <ReactModal
+                        ariaHideApp={false}
+                        isOpen={popupR}
+                        onRequestClose={ () => togglePopupR() }
+                        style={customStyles('solid rgb(167, 35, 35)')}
+                    >     
                         <div className='refusal popup-div'>
                             <h2> Êtes vous sûr de vouloir refuser cette demande ? </h2>
                             <p> Cela entrainera sa suppression </p>
@@ -243,7 +274,7 @@ export function DemandeAbo({ infos, up }){
                                 onClick={refuserDemande}
                             >refuser la demande</Button></div>
                         </div>
-                    </Popup>
+                    </ReactModal>
                 </div>
             </div> 
         </li>

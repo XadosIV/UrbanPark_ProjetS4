@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { SpotName } from "../interface"
+import { AllSpots } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
@@ -9,21 +9,6 @@ import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
 
 export function UpdateScheduleForm(props) {
-
-    /**
-     * AllSpots
-     * Returns a lists of options for a Select React component composed of every type 
-     *
-     * @param { Array } list - List of spots in the parking
-     * @return { Array }
-     */
-    function AllSpots(list) {
-        var opt = []
-        for (let i=0; i<list.length; i++) {
-            opt.push({value:list[i].id, label:"Place " + SpotName(list[i])})
-        }
-        return opt
-    }
 
     /**
      * AllParkings

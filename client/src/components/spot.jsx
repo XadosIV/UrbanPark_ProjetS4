@@ -165,15 +165,6 @@ export function Spot(props) {
 		fetchUserInfos();
 	}, [userToken]);
 
-	useEffect(() => {
-        async function fetchUserInfos() {
-            const resUserToken = await userFromToken(userToken);
-            setRoleUser(resUserToken.data[0].role);
-            //console.log("token", resUserToken.data[0])
-        }
-        fetchUserInfos();
-    }, [userToken]);
-
     useEffect(() => {
         TakeAllSpotTypes().then(res => {setSpotTypes(res);});
         var temp = false;

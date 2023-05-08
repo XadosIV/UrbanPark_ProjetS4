@@ -47,9 +47,7 @@
   
   /* Dropdown Content (Hidden by Default) */
 .dp-content {
-	display: flex;
-	flex-direction:column;
-	justify-content:center;
+	display: none;
 	position: absolute;
 	background-color: #f9f9f9;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -62,7 +60,15 @@
   /* Texts inside the dropdown */
 .dp-content a, .dp-content p {
 	color: black;
-	justify-content:center;
+	display: block;
+}
+  
+  /* Change color of dropdown links on hover */
+.dp-content a:hover {background-color: #f1f1f1}
+  
+  /* Show the dropdown menu on hover */
+.dp:hover .dp-content {
+	display: block;
 }
   
   /* Change the background color of the dropdown button when the dropdown content is shown */
