@@ -3,19 +3,16 @@ import { StaffPreview } from "./staff_preview";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
-import TBR from "../services/take_by_role"
+import { TakeByRole } from "../services"
 
-export function StaffList() {
+export function StaffList(props) {
 
 	const [guardiansList, setGuardiansList] = useState([]);
 	const [serviceList, setServiceList] = useState([]);
 
 	useEffect(() => {
-		TBR.TakeByRole("Gardien").then(res => {setGuardiansList(res);})
-	}, []);
-
-	useEffect(() => {
-		TBR.TakeByRole("Agent d'entretien").then(res => {setServiceList(res);})
+		TakeByRole("Gardien").then(res => {setGuardiansList(res);})
+		TakeByRole("Agent d'entretien").then(res => {setServiceList(res);})
 	}, []);
 
 	const [inputTextGuadrians, setInputTextGuardians] = useState("");
@@ -26,23 +23,23 @@ export function StaffList() {
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
-				id="searchbarStaff"
+				id="searchbarGuardians"
 				label="Rechercher..."
 				type="text"
-				name="searchbarStaff"
+				name="searchbarGuardians"
 				onChange={InputHandler(setInputTextGuardians)}
 			/>
-			<StaffPreview list={guardiansList} input={inputTextGuadrians}/>
+			<StaffPreview list={guardiansList} input={inputTextGuadrians} update={props.update}/>
 			<Separation value="Les agents d'entretien"/>
 			
 			<TextField
 				style = {{"marginBottom":"20px", width:"200px", alignSelf:"center"}}
-				id="searchbarStaff"
+				id="searchbarService"
 				label="Rechercher..."
 				type="text"
-				name="searchbarStaff"
+				name="searchbarService"
 				onChange={InputHandler(setInputTextService)}
 			/>
-			<StaffPreview list={serviceList} input={inputTextService}/>
+			<StaffPreview list={serviceList} input={inputTextService} update={props.update}/>
 		</div>)
 }

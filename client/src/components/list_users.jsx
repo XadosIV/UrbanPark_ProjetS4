@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import { List, User } from ".";
-import TBR from "../services/take_by_role"
+import { TakeByRole } from "../services"
 
 /**
  * Use the component List to create a liste of person according to the name of their role
@@ -9,7 +9,7 @@ import TBR from "../services/take_by_role"
  * @return { Promise React.Component }
  */
 export function ListUsers(nom) {
-	const data = TBR.TakeByRole(nom)
+	const data = TakeByRole(nom)
 		.catch(console.error);
 
 	const list = [

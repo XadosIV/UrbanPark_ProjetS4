@@ -1,4 +1,6 @@
 const {dbConnection} = require('../database');
+const {GetSpotsMultipleFloors, DeleteSpots} = require('./spot.js');
+const {Range} = require('../utils.js');
 const Errors = require('../errors');
 
 /**
@@ -11,7 +13,7 @@ const Errors = require('../errors');
 
 function GetParkings(infos, callback){
 	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
-    console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
+    //console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%'
     }, callback);
@@ -60,6 +62,52 @@ function PostParking(infos, callback){
             dbConnection.query(sql, infos, callback);
         }
     })
+}
+
+/**
+ * PutParkings
+ * Modify selected parking
+ * 
+ * @param {object} infos {id, name, floors, address}
+ * @param {function(*,*)} callback
+ */
+function PutParkings(infos, callback){
+	GetParkings({"id":infos.id},(err,data)=>{
+		if(err){
+			callback(err,data);
+		}else if(data.length != 1){
+			return Errors.SendError(Errors.E_UNDEFINED_PARKING, "Ce parking n'existe pas", callback);
+		}else{
+			let oldParking = data[0];
+			let update = (err,data)=>{
+				sql = `UPDATE Parking SET name=:name, floors=:floors, address=:address WHERE id=:id;`;
+				console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
+				dbConnection.query(sql, {
+					"name":infos.name||oldParking.name,
+					"floors":infos.floors||oldParking.floors,
+					"address":infos.address||oldParking.address,
+					"id":infos.id
+				}, callback);
+			};
+
+			if (infos.floors && infos.floors < oldParking.floors){
+				GetSpotsMultipleFloors({
+					"id_park":infos.id,
+					"floors":Range(infos.floors, oldParking.floors-1)
+				}, (err,spotsToDelete)=>{
+					if(err){
+						callback(err, spotsToDelete);
+					}else if(spotsToDelete.length>0){
+						DeleteSpots(spotsToDelete.map(i => i.id), update);
+					}else{
+						update(err,spotsToDelete);
+					}
+				});
+			}else{
+				update(err,data);
+			}
+		}
+	});
 }
 
 /**
@@ -132,4 +180,5 @@ function DeleteParking(infos, callback){
     })
 }
 
-module.exports = {GetParkings, PostParking, DeleteParking};
+module.exports = {GetParkings, PostParking, PutParkings, DeleteParking};
+

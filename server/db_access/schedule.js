@@ -42,8 +42,11 @@ function GetSchedules(infos, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedulesRole(infos, callback) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE u.role LIKE :role AND s.id_parking LIKE :parking AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
+	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot 
+	FROM Schedule s JOIN User u ON s.id_user = u.id 
+	JOIN Parking p ON s.id_parking = p.id OR s.id_parking IS NULL
+	WHERE u.role LIKE :role AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
+	//console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
 		parking: infos.parking || '%',
@@ -62,8 +65,15 @@ function GetSchedulesRole(infos, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedulesUser(infos, callback) {
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE id_user LIKE :user AND id_parking LIKE :parking AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
+	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking,
+	 DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start,
+	  DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end,
+	  s.first_spot, s.last_spot FROM Schedule s
+	  JOIN User u ON s.id_user = u.id
+	  JOIN Parking p ON s.id_parking = p.id OR s.id_parking IS NULLOR s.id_parking IS NULL
+	  WHERE id_user LIKE :user AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL)
+	  AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot)
+	  AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot)`;
 	dbConnection.query(sql, {
 		user: infos.user || '%',
 		parking: infos.parking || '%',
@@ -71,7 +81,7 @@ function GetSchedulesUser(infos, callback) {
 		date_end: infos.date_end || '%',
 		first_spot: infos.first_spot || '%',
 		last_spot: infos.last_spot || '%'
-	}, callback);
+	}, callback)
 }
 
 /**
@@ -150,7 +160,7 @@ function PostScheduleRole(infos, callback) {
 			Errors.SendError(Errors.E_ROLE_NOT_FOUND, "Ce rôle n'existe pas.", callback);
 		} else {
 			sql = `SELECT id FROM User WHERE role LIKE :role`;
-			console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
+			 console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, {
 				role: infos.role || '%'
 			}, (err, data) => {
@@ -192,10 +202,11 @@ function PostScheduleUser(infos, callback) {
 				} else if (!isntOverlapping) {
 					Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
 				} else {
-					sql = `INSERT INTO Schedule (id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
-					//console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
+					sql = `INSERT INTO Schedule (id_user, type, id_parking, date_start, date_end, first_spot, last_spot) VALUES (:user, :type, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
+					 console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, {
 						user:infos.user,
+						type:infos.type,
 						parking:infos.parking,
 						date_start:infos.date_start,
 						date_end:infos.date_end,
@@ -234,7 +245,7 @@ function PostScheduleUsers(infos, ids, callback) {
 }
 
 function GetScheduleById(id, callback){
-	sql = `SELECT s.id, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
+	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot FROM Schedule s JOIN User u ON s.id_user = u.id JOIN Parking p ON s.id_parking = p.id WHERE s.id=:id;`;
 	dbConnection.query(sql, {id:id}, callback);
 }
 
@@ -444,9 +455,9 @@ function DeleteSchedule(id, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function AdaptSchedule(id, callback){
-	sql = `SELECT id, first_spot, last_spot FROM ${dbName}.Schedule WHERE first_spot=:id`;
+	sql = `SELECT id, first_spot, last_spot FROM Schedule WHERE first_spot=:id`;
 	dbConnection.query(sql, {
-		id:id
+		"id":id
 	}, (err, data) => {
 		if (err){
 			callback(err, {})
@@ -458,7 +469,7 @@ function AdaptSchedule(id, callback){
 					callback(err, res);
 				}
 				else {
-					sql = `SELECT id, first_spot, last_spot FROM ${dbName}.Schedule WHERE last_spot=:id`;
+					sql = `SELECT id, first_spot, last_spot FROM Schedule WHERE last_spot=:id`;
 					dbConnection.query(sql, {id:id}, (err, data) => {
 						if (err){
 							callback(err, res);
@@ -491,41 +502,40 @@ function AdaptScheduleStart(fdata, callback){
 		let id_schedule = info.id
 		let first_spot = info.first_spot
 		let last_spot = info.last_spot
-		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
-		dbConnection.query(sql, {id:first_spot}, (err, data) => {
-			if (err){
-				callback(err, {})
-			}
-			else{
-				console.log(data)
-				let place_a_modifier = data.shift()
-				sql = `SELECT id FROM ${dbName}.Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
-				dbConnection.query(sql, {
-					prev_num:place_a_modifier.number,
-					prev_id_park:place_a_modifier.id_park,
-					prev_floor:place_a_modifier.floor
-				}, (err, data) => {
-					if (err){
-						callback(err, {})
-					}
-					else{
-						if (data[0].id == last_spot){
-							DeleteSchedule(id_schedule, (err, data) => {
-								if (err){
-									callback(err, data);
-								}
-								else if (fdata.length > 0){
-									AdaptScheduleStart(fdata, (err, data) => {
-										callback(err, data);
-									})
-								}
-								else {
-									callback(err, data)
-								}
-							})
+		if (first_spot == last_spot){
+			DeleteSchedule(id_schedule, (err, data) => {
+				if (err){
+					callback(err, data);
+				}
+				else if (fdata.length > 0){
+					AdaptScheduleStart(fdata, (err, data) => {
+						callback(err, data);
+					})
+				}
+				else {
+					callback(err, data)
+				}
+			})
+		} else {
+			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
+			dbConnection.query(sql, {id:first_spot}, (err, data) => {
+				if (err){
+					callback(err, {})
+				}
+				else{
+					// console.log(data)
+					let place_a_modifier = data.shift()
+					sql = `SELECT id FROM Spot WHERE number > :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number LIMIT 1`;
+					dbConnection.query(sql, {
+						prev_num:place_a_modifier.number,
+						prev_id_park:place_a_modifier.id_park,
+						prev_floor:place_a_modifier.floor
+					}, (err, data) => {
+						if (err){
+							callback(err, {})
 						}
 						else{
-							sql = `UPDATE ${dbName}.Schedule SET first_spot=:new WHERE id=:id`;
+							sql = `UPDATE Schedule SET first_spot=:new WHERE id=:id`;
 							dbConnection.query(sql, {
 								id:id_schedule,
 								new:data[0].id
@@ -543,10 +553,10 @@ function AdaptScheduleStart(fdata, callback){
 								}
 							})
 						}
-					}
-				})
-			}
-		})
+					})
+				}
+			})
+		}
 	}
 }
 
@@ -566,36 +576,36 @@ function AdaptScheduleEnd(fdata, callback){
 		let id_schedule = info.id
 		let first_spot = info.first_spot
 		let last_spot = info.last_spot
-		sql = `SELECT number, floor, id_park FROM ${dbName}.Spot WHERE id=:id`;
-		dbConnection.query(sql, {id:last_spot}, (err, data) => {
-			if (err){
-				callback(err, {})
-			}else{
-				let place_a_modifier = data.shift()
-				sql = `SELECT id FROM ${dbName}.Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
-				dbConnection.query(sql, {
-					prev_num:place_a_modifier.number,
-					prev_id_park:place_a_modifier.id_park,
-					prev_floor:place_a_modifier.floor
-				}, (err, data) => {
-					if (err){
-						callback(err, {})
-					}
-					else{
-						if (data[0].id == first_spot){
-							DeleteSchedule(id_schedule, (err, data) => {
-								if (err){
-									callback(err, data);
-								} else if (fdata.length > 0){
-									AdaptScheduleEnd(fdata, (err, data) => {
-										callback(err, data);
-									})
-								} else {
-									callback(err, data)
-								}
-							})
-						} else{
-							sql = `UPDATE ${dbName}.Schedule SET last_spot=:new WHERE id=:id`;
+		if (data[0].id == first_spot){
+			DeleteSchedule(id_schedule, (err, data) => {
+				if (err){
+					callback(err, data);
+				} else if (fdata.length > 0){
+					AdaptScheduleEnd(fdata, (err, data) => {
+						callback(err, data);
+					})
+				} else {
+					callback(err, data)
+				}
+			})
+		} else {
+			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
+			dbConnection.query(sql, {id:last_spot}, (err, data) => {
+				if (err){
+					callback(err, {})
+				}else{
+					let place_a_modifier = data.shift()
+					sql = `SELECT id FROM Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
+					dbConnection.query(sql, {
+						prev_num:place_a_modifier.number,
+						prev_id_park:place_a_modifier.id_park,
+						prev_floor:place_a_modifier.floor
+					}, (err, data) => {
+						if (err){
+							callback(err, {})
+						}
+						else{
+							sql = `UPDATE Schedule SET last_spot=:new WHERE id=:id`;
 							dbConnection.query(sql, {
 								id:id_schedule,
 								new:data[0].id
@@ -612,10 +622,10 @@ function AdaptScheduleEnd(fdata, callback){
 								}
 							})
 						}
-					}
-				})
-			}
-		})
+					})
+				}
+			})
+		}
 	}
 }
 

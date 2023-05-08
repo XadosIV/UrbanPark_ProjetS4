@@ -3,20 +3,26 @@ import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
-import TBR from "../services/take_by_role"
+import { TakeByRole } from "../services"
 
 export function UserList() {
 
+	function Callback(childData) {
+		setUpdate(childData)
+	}
+
 	const [usersList, setUsersList] = useState([]);
+	const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
-		TBR.TakeByRole().then(res => {setUsersList(res);})
-	}, []);
+		TakeByRole("Abonné").then(res => {setUsersList(res);})
+		setUpdate(false)
+	}, [update]);
 
 	const [inputTextUsers, setInputTextUsers] = useState("");
 
 	return (<div className="UserList">
-			<Separation value=" Tous les utilisateurs"/>
+			<Separation value=" Tous les abonnés"/>
 			
 			<TextField
 				style = {{marginBottom:"20px", width:"200px", alignSelf:"center"}}
@@ -26,6 +32,6 @@ export function UserList() {
 				name="searchbarUser"
 				onChange={InputHandler(setInputTextUsers)}
 			/>
-			<SearchUser list={usersList} input={inputTextUsers}/>
+			<SearchUser list={usersList} input={inputTextUsers} handleCallback={Callback}/>
 		</div>)
 }

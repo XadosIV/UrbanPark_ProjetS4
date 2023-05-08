@@ -107,17 +107,17 @@
 }
 
 .front-search-second {
-	z-index:1000;
+	z-index:10;
 }
 
 .front-search-second-add, .front-search-floor {
 	width:300px;
 	margin-bottom: 10px;
-	z-index:1000;
+	z-index:10;
 }
 
 .front-search, .front-search-floor {
-	z-index:1001;
+	z-index:11;
 }
 
 .popup-content {
@@ -128,6 +128,7 @@
 	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
 	padding: 5px;
 	min-width:450px;
+	max-width:450px;
 	justify-content: center;
 	border-radius:10px;
 }
@@ -155,6 +156,7 @@
 .numeros, .numeros-two {
 	display: flex;
 	flex-direction: row;
+	justify-content:center;
 }
 
 .numeros-two {
@@ -171,4 +173,15 @@
 
 .search-add-two {
 	z-index:1000;
+}
+
+.popup-spot-content {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	min-width:220px;
+	max-width:220px;
+	align-items:center;
 }

@@ -9,4 +9,12 @@ const useIsConnected = () => {
     return isConn;
 }
 
-export { useIsConnected }
+const useIsGerantOuGardien = () => {
+    const { userRole } = useContext(ContextUser);
+    function isConn(){
+        return userRole === "Gérant" || userRole === "Gardien";
+    }
+    return isConn;
+}
+
+export { useIsConnected, useIsGerantOuGardien }

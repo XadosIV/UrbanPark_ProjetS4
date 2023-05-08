@@ -1,12 +1,30 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { ContextUser } from "../contexts/context_user";
 import { Link } from "react-router-dom";
 import { CutAddress, NeedS } from "../interface";
 import { DeleteParking, authenticate, userFromToken } from "../services"
+import { UpdateParking } from "./";
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ContextUser } from "../contexts/context_user";
 import ReactModal from 'react-modal';
 
-export function ParkingList(parking) {
+export function ParkingList(props) {
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    async function Callback(childData) {
+        if (location.pathname.slice(0, -1) === "/parkings/") {
+            navigate("/perso");
+        }
+        await DeleteParking(props.parking.id);
+        props.handleCallback(childData)
+    }
+
+    function CallbackUpdate(childData) {
+        props.handleCallback(childData)
+    }
+
     /**
      * PutButton
      * Returns a button if value = true
@@ -17,7 +35,7 @@ export function ParkingList(parking) {
     function PutButton(value) {
         if (value) {
             return (
-            <Link to={`/parkings/${parking.parking.id}`} style={{textDecoration:"none"}}>
+            <Link to={`/parkings/${props.parking.id}`} style={{textDecoration:"none"}}>
                 <Button variant="contained" color="primary">Voir les places</Button>
             </Link>)
         }
@@ -28,7 +46,7 @@ export function ParkingList(parking) {
 		return false;
 	}
 
-    var address = CutAddress(parking.parking.address);
+    var address = CutAddress(props.parking.address);
     const [visible, setVisible] = useState(true);
 
     function AdminVerif() {
@@ -53,7 +71,7 @@ export function ParkingList(parking) {
             },
         };
 
-        const {userToken, setUserToken, userId } = useContext(ContextUser);
+        const {userToken } = useContext(ContextUser);
         const [password, setPassword] = useState("")
 
         const [wrongInput, setWrongInput] = useState(false);
@@ -107,7 +125,7 @@ export function ParkingList(parking) {
             let fetchT = await fetchToken(infosUser.email, password);
             if(password){
                 if(userToken === fetchT){
-                    await DeleteParking(parking.parking.id)
+                    await DeleteParking(props.parking.id)
                     setVisible((prev) => !prev)
                 }
             }
@@ -122,7 +140,7 @@ export function ParkingList(parking) {
                     onRequestClose={() => setIsOpen(false)}
                     style={customStyles}>
                     <p style={{color:"red", alignText:"center"}}>
-                        ATTENTION !</p>Vous êtes sur le point de supprimer le parking {parking.parking.name} ! 
+                        ATTENTION !</p>Vous êtes sur le point de supprimer le parking {props.parking.name} ! 
                         <br/> Veuillez entrer votre mot de passe afin de valider cette action.
                         <form onSubmit={ handlleSubmit } name="form-modif-mdp">
                         <div className="input-div">
@@ -149,19 +167,24 @@ export function ParkingList(parking) {
             );
         }
 
+	const [ modifiable, setModifiable ] = useState(false);
+
+	const HandleAskChange = () => {
+		setModifiable(!modifiable);
+	}
+
 	return (
-        <div>
-        {visible && (
         <div className="list-item">	 
             <div>
-                <h2>Parking {parking.parking.name} ({parking.parking.id})<br/>{parking.parking.floors} étage{NeedS(parking.parking.floors)}</h2>    
+                <h2>Parking {props.parking.name} ({props.parking.id})<br/>{props.parking.floors} étage{NeedS(props.parking.floors)}</h2>    
                 <p>{address[0]}</p>
                 <p>{address[1]}</p>
             </div>
-            <div className="button-parking">               
-                <p>{parking.parking.nbPlaceLibre} places restantes / {parking.parking.nbPlaceTot}</p> 
-                {PutButton(parking.button)}
-                {parking.admin && <AdminVerif/>}
+            <div className="button-parking">
+                <p>{props.parking.nbPlaceLibre} places restantes / {props.parking.nbPlaceTot}</p> 
+                {PutButton(props.button)}
+				{props.admin && <UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={CallbackUpdate} handleChangeView={HandleAskChange} id={props.parking.id} askChange={HandleAskChange}/>}
+                {props.admin && <AdminVerif title="Supprimer ce parking" text={"Vous êtes sur le point de supprimer le parking " + props.parking.name + " !"} handleCallback={Callback}/>}
             </div>
-        </div>)}</div>)
+        </div>)
 }

@@ -1,5 +1,4 @@
 const {dbConnection} = require('../database');
-const { GetParkings } = require('./parking');
 const {SpotTypeExists} = require('./spot_type');
 const Errors = require('../errors');
 
@@ -16,11 +15,12 @@ function GetAllSpots(infos, callback){
 	FROM Spot s 
 	LEFT JOIN User u ON s.id = u.id_spot 
 	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
-	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number
+	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number AND s.id LIKE :id
 	ORDER BY floor, number`;
     //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 
 		{
+			id:infos.id ||'%',
 			number:infos.number||'%',
 			floor:infos.floor||'%',
 			id_park:infos.id_park||'%'
@@ -74,6 +74,29 @@ function GetSpots(infos, callback){
             callback(err, spots);
         }
     })
+}
+
+/**
+ * GetSpotsMultipleFloors
+ * Return a JSON with every spots corresponding to paramaters
+ * 
+ * @param {*} infos {id_park, floors, number, type, id}
+ * @param {*} callback 
+ */
+function GetSpotsMultipleFloors(infos, callback, recData=[]){
+	poppedFloor = infos.floors.pop();
+	GetSpots({"id_park":infos.id_park, "floor":poppedFloor}, (err,data)=>{
+		//console.log(data);
+		if(err){
+			callback(err,data);
+		}else if(infos.floors.length>0){
+			data= recData.concat(data);
+			GetSpotsMultipleFloors(infos,callback,data);
+		}else{
+			data= recData.concat(data);
+			callback(err,data);
+		}
+	});
 }
 
 /**
@@ -332,7 +355,7 @@ function DeleteSpot(id, callback){
 							callback(err, res)
 						}
 						else {
-							sql = `DELETE FROM ${dbName}.Spot WHERE id=:id`;
+							sql = `DELETE FROM Spot WHERE id=:id`;
 							dbConnection.query(sql,{
 								id:id
 							}, (err, data) => {
@@ -346,4 +369,23 @@ function DeleteSpot(id, callback){
 	})
 }
 
-module.exports = {GetAllSpots, GetSpots, PostSpot, DeleteSpot, UpdateSpot};
+/**
+ * DeleteSpots
+ * Delete a list of spots
+ * 
+ * @param {Array<int>} ids 
+ * @param {function(*,*)} callback (err, data)
+ */
+function DeleteSpots(ids, callback){
+	DeleteSpot((err, data) => {
+		if(err){
+			callback(err,data);
+		}else if(ids.length>0){
+			DeleteSpots(ids,callback);
+		}else{
+			callback(err,data);
+		}
+	},ids.pop());
+}
+
+module.exports = {GetAllSpots, GetSpots, GetSpotsMultipleFloors, PostSpot, DeleteSpots, DeleteSpot, UpdateSpot};

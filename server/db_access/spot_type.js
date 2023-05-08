@@ -16,7 +16,7 @@ function GetSpotTypes(infos, callback){
 		WHERE t.name LIKE :name
 		GROUP BY t.Name
 		HAVING MAX(case when y.id_spot LIKE :id_spot OR "%" = :id_spot then 1 else 0 end);`;
-	console.log("SQL at GetSpotTypes : " + sql);
+	// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         id_spot:infos.id_spot||'%',
 		name:infos.name||'%'
@@ -32,7 +32,7 @@ function GetSpotTypes(infos, callback){
  */
 function SpotTypeExists(name, callback) {
 	let sql = `SELECT name FROM Type WHERE name LIKE :name;`;
-	console.log("SQL at GetSpotTypes : " + sql);
+	// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         name:name
     },(err, data) => {
@@ -90,7 +90,7 @@ function PostSpotType(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteSpotType (id, callback){
-	let sql = `DELETE FROM ${dbName}.Typed WHERE id_spot=:id`
+	let sql = `DELETE FROM Typed WHERE id_spot=:id`
 	dbConnection.query(sql,{
 		id:id
 	}, (err, data) => {

@@ -16,7 +16,7 @@ export function NewSpotForm(props) {
      */
     function ErrorOnSecondNumero(nb1, nb2) {
         var errorText;
-        if ((nb2 < nb1 || nb2 < 0) && (nb2 !== 0 || nb2 !== "")) {
+        if (nb2 < nb1 && nb2 < 0 && nb2 !== 0 && nb2 !== "") {
             if (nb2 < nb1) {
                 errorText = "Chiffre supérieur au premier"
             } else {
@@ -92,6 +92,8 @@ export function NewSpotForm(props) {
 	const [wrongInput, setWrongInput] = useState(false);
     const [check, setCheck] = useState(false);
     const [errMessage, setErrMessage] = useState("");
+    
+    const [open, setOpen] = useState(false)
 
     const handleChangeCheck = () => {
         setCheck(!check)
@@ -127,11 +129,16 @@ export function NewSpotForm(props) {
         setInfos(values => ({...values, [name.name]: value}))
     }
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    const handleOpen = () => {
+        setOpen(true)
+    }
+
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
         if (infos.number >= 0) {
-            if (secondNumber === 0) {
+            if (parseInt(secondNumber) === 0) {
                 const res = await CreationSpot(infos); 
                 console.log(res);
                 if (res.status === 200) {
@@ -144,8 +151,8 @@ export function NewSpotForm(props) {
                 }
             } else {
                 let stock = infos.number
-                if (infos.number<secondNumber) {
-                    while (infos.number<=secondNumber && !wrongInput) {
+                if (infos.number<parseInt(secondNumber)) {
+                    while (infos.number<=parseInt(secondNumber) && !wrongInput) {
                         const res = await CreationSpot(infos); 
                         console.log(res);
                         if (res.status === 200) {
@@ -157,7 +164,7 @@ export function NewSpotForm(props) {
                             break;
                         }
                     }
-                    if (infos.number-1 === secondNumber) {
+                    if (infos.number-1 === parseInt(secondNumber)) {
                         infos.number = stock;
                         setWrongInput(true);
                         setErrMessage("Places " + infos.id_park + infos.floor + "-" + infos.number + " à " + infos.id_park + infos.floor + "-" + secondNumber + " créées");
@@ -172,19 +179,18 @@ export function NewSpotForm(props) {
             setWrongInput(true);
             setErrMessage("La place créée ne peut pas être négative");
         }
+        await delay(2000);
+        setOpen(false)
 	}
 
     return (
-        <Popup trigger={<Button variant="contained" color="primary" 
+        <Popup open={open} onOpen={handleOpen} trigger={<Button variant="contained" color="primary" 
             style={{
-                backgroundColor: "#FE434C",
+                backgroundColor: "#32CD32",
                 borderColor: "transparent",
-                borderRadius: 20,
-                width: "16%",
-                marginLeft: "42%",
-                height:"100px",
-                marginBottom:"100px"
-            }}>Ajouter des places</Button>} position="left center" onClose={() => setWrongInput(false)}> 
+                height:"36px",
+                width: "100%"
+            }}>Ajouter des places</Button>} position="left center" onClose={() => {setWrongInput(false); setOpen(false);}}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>
                 <form onSubmit={handlleSubmit} className="form">

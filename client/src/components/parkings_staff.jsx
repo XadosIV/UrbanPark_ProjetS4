@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { ParkingList } from "./parking_list";
 import { Button, TextField } from "@mui/material";
-import TP from "../services/take_parking"
 import Popup from 'reactjs-popup';
-import { CreationParking } from "../services"
+import { CreationParking, TakeParking } from "../services"
 
 export function ParkingsStaff({admin}) {
+
+	function Callback(childData) {
+		setUpdate(childData)
+	}
 
 	const [parkingsList, setParkingsList] = useState([]);
 
@@ -17,7 +20,7 @@ export function ParkingsStaff({admin}) {
 	const [infos, setInfos] = useState({id:"", name:"", floors:0, address:""})
 
 	useEffect(() => {
-		TP.TakeParking().then(res => {setParkingsList(res);})
+		TakeParking().then(res => {setParkingsList(res);})
 		setUpdate(false)
 	}, [update]);
 
@@ -49,7 +52,7 @@ export function ParkingsStaff({admin}) {
 			<div className="parking-list">
 				{
 					parkingsList.map((parking, index) => (
-						<ParkingList key={index} parking={parking} button={true} admin={admin}/>
+						<ParkingList key={index} parking={parking} button={true} admin={admin} handleCallback={Callback} />
 					))
 				}
 			</div>
