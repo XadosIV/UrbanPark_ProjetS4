@@ -48,7 +48,7 @@ INSERT IGNORE INTO Spot (id, number, floor, id_park) VALUES
 	(35, 5, 2, 'J'),
 	(36, 6, 2, 'J');
 
-INSERT IGNORE INTO `DATABASE`.Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user, modify_other_users) VALUES
+INSERT IGNORE INTO Role (name, see_other_users, modify_spot_users, modify_role_users, delete_other_user, modify_other_users) VALUES
 	("Gérant", 1, 1, 1, 1, 1),
 	("Gardien", 1, 1, 1, 1, 1);
 
@@ -76,7 +76,12 @@ INSERT IGNORE INTO Schedule (id, type, id_user, id_parking, date_start, date_end
 	(7, "Gardiennage", 3, 'H', '2023-04-17T08:00:00', '2023-04-17T16:00:00'),
 	(8, "Gardiennage", 3, 'H', '2023-04-18T08:00:00', '2023-04-18T16:00:00'),
 	(9, "Gardiennage", 3, 'L', '2023-04-19T08:00:00', '2023-04-19T16:00:00'),
-	(10, "Gardiennage", 3, 'L', '2023-04-20T08:00:00', '2023-04-20T16:00:00');
+	(10, "Gardiennage", 3, 'L', '2023-04-20T08:00:00', '2023-04-20T16:00:00'),
+
+	(15, "Réunion", 1, NULL, '2023-05-19T08:00:00', '2023-05-19T16:00:00'),
+	(16, "Réunion", 2, NULL, '2023-05-19T08:00:00', '2023-05-19T16:00:00'),
+	(17, "Réunion", 3, NULL, '2023-05-19T08:00:00', '2023-05-19T16:00:00'),
+	(18, "Réunion", 4, NULL, '2023-05-19T08:00:00', '2023-05-19T16:00:00');
 
 INSERT IGNORE INTO Schedule (id, type, id_user, id_parking, date_start, date_end, first_spot, last_spot) VALUES
 	(11, "Nettoyage", 4, 'H', '2023-04-16T08:00:00', '2023-04-16T16:00:00',1,4),

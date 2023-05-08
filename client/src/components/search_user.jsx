@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { User } from "../components"
+import { useState } from "react";
+import { TakeAllSpots } from "../services";
 
 
 export function SearchUser(props) {
@@ -19,10 +21,19 @@ export function SearchUser(props) {
         }
     })
 
+    const [ allSpots, setAllSpots ] = useState([]);
+    useEffect(() => {
+		TakeAllSpots().then(res => {
+			console.log("blip", res);
+			setAllSpots(res);
+		})
+	}, [])
+
 	return (
         <ul className="user-list">
             {filteredData.map((user, index) => (
-                <User user={user} key={index} handleCallback={Callback}/>))}
+                <User user={user} index={index} handleCallback={Callback}  allSpots={allSpots}/>))}
+
 		</ul>
     )
 }

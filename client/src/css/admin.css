@@ -105,10 +105,11 @@
     flex-direction:column;
 	min-width:50%;
 	margin-right: 30px;
+	margin-left:30px;
 }
 
 .UserList {
-	min-width:100%;
+	width:90%;
 }
 
 .divider {
@@ -210,4 +211,12 @@
 
 .popup-div>*{
 	margin: 2%;
+}
+
+.all-schedules {
+	margin-bottom:10px;
+}
+
+.all-schedules:hover {
+	background-color:#F2F3F5;
 }
