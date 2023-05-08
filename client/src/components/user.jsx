@@ -31,15 +31,17 @@ export function User(props){
 		return ""
 	}
 
-	function Spots(spot, spotTemp) {
+	function spots(spot, spotTemp) {
+		console.log("spot de ", props.user.id, spot, spotWithUser);
+		console.log("spotTemp de ", props.user.id, spotTemp, spotTempWithUser);
 		if (spot) {
-			if (spot.length != 0) {
+			if (spot.length !== 0) {
 				if (spotTemp) {
-					if (spotTemp.length != 0) {
+					if (spotTemp.length !== 0) {
 						return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
-					} else {
-						return <p style={{display: "inline"}}><br/>- Place {spot}</p>
 					}
+				} else {
+					return <p style={{display: "inline"}}><br/>- Place {spot}</p>
 				}
 			} else {
 				return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
@@ -58,29 +60,54 @@ export function User(props){
 	const [ park, setPark ] = useState({});
 	const [ affErrMessage, setAffErrMessage ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
-	const [ optSpot, setOptSpot ] = useState([])
-	const [ update, setUpdate ] = useState(true)
-	const [ allSpots, setAllSpots ] = useState([])
-	const [ fetchingSpot, setFetchingSpot ] = useState([])
-	const [ fetchingSpotTemp, setFetchingSpotTemp ] = useState([])
+	const [ optSpot, setOptSpot ] = useState([]);
+	const [ update, setUpdate ] = useState(true);
+	const [ allSpots, setAllSpots ] = useState([]);
+	const [ fetchingSpot, setFetchingSpot ] = useState([]);
+	const [ fetchingSpotTemp, setFetchingSpotTemp ] = useState([]);
 
 	useEffect(() => {
+		setAllSpots(props.allSpots);
+	}, [update, props])
 
+	useEffect(() => {
 		async function fetchPark(parking_asked){
 			let resPark = await TakeParking(parking_asked);
 			setPark(resPark[0]);
 		}
+		fetchPark(props.user.id_park_demande);
+	}, [props, update])
+
+	useEffect(() => {
 		async function fetchNewSpots() {
-			let params = [{type: "Abonné"}, {id_park: props.user.id_park_demande}];
-			let resGetSpot = await getAllSpotsFilter(params)
-			let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
+			let resGetSpot = allSpots.filter(spot => ((spot.id_park === props.user.id_park_demande) && (spot.types.includes("Abonné"))));
+			// console.log("resGetSpot", props.user.id, resGetSpot);
+			let newSpots = resGetSpot.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
 			setOptSpot(newSpots) 
 		}
+		fetchNewSpots()
+	}, [props, allSpots, update])
+
+	useEffect(() => {
+		async function fetchBothSpot(){
+			// console.log("res spot", props.user.id_park_demande, allSpots);
+			let mainSpot = allSpots.find(spot => spot.id_user === props.user.id);
+			let tempSpot = allSpots.find(spot => spot.id_user_temp === props.user.id);
+			console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
+			setSpotWithUser(SpotName(mainSpot));
+			setSpotTempWithUser(SpotName(tempSpot));
+		}
+		fetchBothSpot();
+	}, [props, allSpots, update])
+
+
+/*
+	useEffect(() => {
 		async function fetchAllSpots(id_park, id, set){
 			const data = await TakeAllSpots(id_park, id);
 			set(data);
 		}
-
+		
 		if (props.user.id_spot != null) {
 			do {
 				fetchAllSpots(props.user.id_park_demande, props.user.id_spot, setFetchingSpot)
@@ -97,16 +124,10 @@ export function User(props){
 			console.log("RESSPOTTEMP FINAL :", fetchingSpotTemp, "FOR", props.user.first_name)
 			setSpotTempWithUser(SpotName(fetchingSpotTemp[0]))
 		}
-		
-		TakeAllSpots(props.user.id_park_demande).then(res => {
-			setAllSpots(res)
-		})
-		fetchNewSpots()
-		fetchPark(props.user.id_park_demande);
 		setUpdate(false)
-    }, [update])
+    }, [props, update])*/
 
-	console.log(spotWithUser, spotTempWithUser)
+	// console.log(spotWithUser, spotTempWithUser)
 
 	useEffect(() => {
 		const body = document.querySelector('body');
@@ -128,7 +149,7 @@ export function User(props){
 			setAffErrMessage(true)
 			props.handleCallback(true)
 			await delay(2000);
-			setUpdate(true)
+			setUpdate(!update)
 			setIsOpen(false)
 		} else {
 			setErrMessage("Vous n'avez pas modifié la place.")
@@ -163,7 +184,7 @@ export function User(props){
 				<div>
 					<div>
 						<h3>{props.user.first_name} {props.user.last_name} - {props.user.email}</h3>
-						<p>{props.user.role} {Spots(spotWithUser, spotTempWithUser)} </p>
+						<p>{props.user.role} {spots(spotWithUser, spotTempWithUser)} </p>
 					</div>                       
 				</div>
 				<div>
