@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot } from "../services";
-import { AdminVerif } from "../components"
-import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material"
+import { AdminVerif } from "../components";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 
 export function Spot(props) {
 
@@ -14,10 +14,14 @@ export function Spot(props) {
         await DeleteSpot(props.spot.id);
     }
 
-    const [ checkbox, setCheckbox ] = useState(false);
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot.id));
     const { userToken } = useContext(ContextUser);
 	const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
+
+    useEffect(() => {
+        setCheckbox(props.toCheck(props.spot.id));
+    }, [props.up])
 
 	useEffect(() => {
         async function fetchUserInfos() {
