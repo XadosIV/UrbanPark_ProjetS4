@@ -46,7 +46,7 @@ function GetSchedulesRole(infos, callback) {
 	FROM Schedule s JOIN User u ON s.id_user = u.id 
 	JOIN Parking p ON s.id_parking = p.id OR s.id_parking IS NULL
 	WHERE u.role LIKE :role AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
+	//console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
 		parking: infos.parking || '%',
@@ -65,7 +65,6 @@ function GetSchedulesRole(infos, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedulesUser(infos, callback) {
-
 	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking,
 	 DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start,
 	  DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end,

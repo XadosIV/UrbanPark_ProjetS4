@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ChangeDate } from "../interface"
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
 
@@ -8,6 +9,6 @@ export function AllSchedulesAvailable(props) {
         props.handleCallback({update:true, schedule:props.schedule})
     }
 
-    return (<div className="all-schedules" onClick={PassToBig}>Du {props.schedule[0].replace('T', ' ').slice(0,10)} à {props.schedule[0].replace('T', ' ').slice(11,19)}  au  {props.schedule[1].replace('T', ' ').slice(0,10)} à {props.schedule[1].replace('T', ' ').slice(11,19)}</div>
+    return (<div className="all-schedules" onClick={PassToBig}>Du {ChangeDate(props.schedule[0].slice(0,10))} à {props.schedule[0].slice(11,19)}  au  {ChangeDate(props.schedule[1].slice(0,10))} à {props.schedule[1].slice(11,19)}</div>
     );
 }
