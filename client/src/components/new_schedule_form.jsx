@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole, TakeAllRoles, TakeAllSchedulesAvailable } from "../services"
 import { AllSchedulesAvailable } from "../components";
-import { SpotName, NeedS } from "../interface"
+import { SpotName, NeedS, ChangeDate } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
@@ -11,7 +11,6 @@ import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import ReactModal from 'react-modal';
 import "../css/parking.css"
-import { NearMe } from "@mui/icons-material";
 
 export function NewScheduleForm(props) {
 
@@ -229,7 +228,7 @@ export function NewScheduleForm(props) {
                         }
                     } else {
                         TakeParking(infos.parking).then(res => {
-                            setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " de " + infos.date_start.replace('T', ' ') + " à " + infos.date_end.replace('T', ' '));
+                            setErrMessage("Parking " + res[0].name + " supervisé par " + infos.user.length + " gardien" + NeedS(infos.user.length) + " du " + ChangeDate(infos.date_start.slice(0,10)) + " à " + infos.date_start.slice(11,19) + " au " +  ChangeDate(infos.date_end.slice(0,10)) + " à " + infos.date_end.slice(11,19));
                         })
                         isSubmit = true;
                     }
@@ -252,6 +251,7 @@ export function NewScheduleForm(props) {
                 infosReunions.user = user;
                 const res = await CreationSchedule(infosReunions); 
                 console.log(res);
+
                 if (res.status === 200) {
                     scheduleAdded++;
                 } else {
@@ -263,7 +263,7 @@ export function NewScheduleForm(props) {
             if (scheduleAdded === stock.length) {
                 infosReunions.user = stock
                 setWrongInput(true);
-                setErrMessage("Réunion placée de " + infosReunions.date_start.replace('T', ' ') + " à " + infosReunions.date_end.replace('T', ' '));
+                setErrMessage("Réunion placée du " + ChangeDate(infosReunions.date_start.slice(0,10)) + " à " + infosReunions.date_start.slice(11,19) + " au " + ChangeDate(infosReunions.date_end.slice(0,10)) + " à " + infosReunions.date_end.slice(11,19));
             }
         } else {
             setWrongInput(true);
@@ -479,7 +479,7 @@ export function NewScheduleForm(props) {
                 <AllSchedulesAvailable schedule={schedule} handleCallback={CallbackSetOne}/>
             ))}</div>
             {onlyOne && <div>
-                <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Choisir entre {onlyOneInfo[0].replace('T', ' ').slice(0,10)} à {onlyOneInfo[0].replace('T', ' ').slice(11,19)} et {onlyOneInfo[1].replace('T', ' ').slice(0,10)} à {onlyOneInfo[1].replace('T', ' ').slice(11,19)} : </div><br/>  
+                <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Choisir une date entre le {ChangeDate(onlyOneInfo[0].slice(0,10))} à {onlyOneInfo[0].slice(11,19)} et le {ChangeDate(onlyOneInfo[1].slice(0,10))} à {onlyOneInfo[1].slice(11,19)} : </div><br/>  
                 <form onSubmit={ handlleSubmitNewReunion } name="form-modif-mdp">
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
@@ -493,7 +493,7 @@ export function NewScheduleForm(props) {
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
-                        <p style={{margin:"0 20px 7px 0"}}>et</p>
+                        <p style={{margin:"0 60px 7px 0"}}>et</p>
                         <DatePicker
                             name="date_end"
                             selected={new Date(infosReunions.date_end)}

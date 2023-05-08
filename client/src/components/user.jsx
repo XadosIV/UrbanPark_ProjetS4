@@ -47,6 +47,7 @@ export function User(props){
 		}
 	}
 
+
     const [spotWithUser, setSpotWithUser] = useState([])
 	const [spotTempWithUser, setSpotTempWithUser] = useState([])
 
@@ -181,12 +182,13 @@ export function User(props){
     };
 
 	return (
-		<li key={props.index}>
+		<li>
 			<div className="main-content">
 				<div>
 					<div>
 						<h3>{props.user.first_name} {props.user.last_name} - {props.user.email}</h3>
-						<p>{props.user.role} {spots(spotWithUser, spotTempWithUser)} </p>
+
+						<span>{spots(spotWithUser, spotTempWithUser, props.user.role)}</span>
 					</div>                       
 				</div>
 				<div>
