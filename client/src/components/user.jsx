@@ -12,9 +12,24 @@ import ReactModal from 'react-modal';
  */
 export function User(props){
 
-	console.log(props.user.id_spot)
-
 	const userToken = "0000000000000000" //A faire marcher plus tard
+
+	/**
+     * BaseSpot
+     * Returns a array corresponding to the base spot being passed in a react select defaultValue
+     *
+     * @param { integer } spot - id of the spot
+     * @param { Array } list - List of options being passed in a react select
+     * @return { Array }
+     */
+	function BaseSpotOpt(spot, list) {
+		for (let s of list) {
+			if (s.value === spot) {
+				return s
+			}
+		}
+		return ""
+	}
 
 	function Spots(spot, spotTemp) {
 		if (spot.length != 0) {
@@ -35,12 +50,13 @@ export function User(props){
 
 	const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const [ spot, setSpot ] = useState(null);
+    const [ spot, setSpot ] = useState(props.user.id_spot);
 	const [ park, setPark ] = useState({});
 	const [ affErrMessage, setAffErrMessage ] = useState(false);
     const [ errMessage, setErrMessage ] = useState("");
 	const [ optSpot, setOptSpot ] = useState([])
 	const [ update, setUpdate ] = useState(true)
+	const [ allSpots, setAllSpots ] = useState([])
 
 	useEffect(() => {
 		async function fetchPark(parking_asked){
@@ -51,19 +67,22 @@ export function User(props){
 			let params = [{type: "Abonné"}, {id_park: props.user.id_park_demande}];
 			let resGetSpot = await getAllSpotsFilter(params)
 			let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
-			setOptSpot(AllSpots(newSpots)) 
+			setOptSpot(newSpots) 
 		}
 
 		if (props.user.id_spot != null) {
-			TakeAllSpots(0, props.user.id_spot).then(res => {
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
 				setSpotWithUser(SpotName(res[0]))
 			})
 		}
 		if (props.user.id_spot_temp != null) {
-			TakeAllSpots(0, props.user.id_spot_temp).then(res => {
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
 				setSpotTempWithUser(SpotName(res[0]))
 			})
 		}
+		TakeAllSpots(props.user.id_park_demande).then(res => {
+			setAllSpots(res)
+		})
 		fetchNewSpots()
 		fetchPark(props.user.id_park_demande);
 		setUpdate(false)
@@ -83,14 +102,18 @@ export function User(props){
 		async function SSFU(id_user, change) {
             await SetSpotFromUser(id_user, userToken, change)
         }
-		SSFU(props.user.id, {id_spot:spot})
-		
-		setErrMessage("Modification prise en compte.")
-        setAffErrMessage(true)
-        props.handleCallback(true)
-		setUpdate(true)
-        await delay(2000);
-        setIsOpen(false)
+		if (spot != props.user.id_spot && spot != null) {
+			SSFU(props.user.id, {id_spot:spot})
+			setErrMessage("Modification prise en compte.")
+			setAffErrMessage(true)
+			props.handleCallback(true)
+			await delay(2000);
+			setUpdate(true)
+			setIsOpen(false)
+		} else {
+			setErrMessage("Vous n'avez pas modifié la place.")
+			setAffErrMessage(true)
+		}
 	}
 
 	const customStyles = {
@@ -139,8 +162,8 @@ export function User(props){
                                 <Select
                                     name="spot"
                                     className="select-attr-spot"
-                                    placeholder="Place"
-                                    options= { optSpot }
+									defaultValue={BaseSpotOpt(props.user.id_spot, AllSpots(allSpots))}
+                                    options= { AllSpots(optSpot) }
                                     onChange={handleChangeSelect}
 									maxMenuHeight={200}
                                 />

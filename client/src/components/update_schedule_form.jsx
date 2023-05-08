@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, takeById, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { AllSpots } from "../interface"
+import { AllSpots, BaseSpot } from "../interface"
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
@@ -94,28 +94,6 @@ export function UpdateScheduleForm(props) {
                 }
             }
             return opts
-        }
-    }
-
-    /**
-     * BaseSpot
-     * Returns a array corresponding to the base spot being passed in a react select defaultValue
-     *
-     * @param { integer } spot - id of the spot
-     * @param { Array } list - List of options being passed in a react select
-     * @return { Array }
-     */
-    function BaseSpot(spot, list) {
-        var opts=[]
-        for (let s of list) {
-            if (s.value === spot) {
-                opts.push(s);
-            }
-        }
-        if (opts.length != 0) {
-            return opts[0].label
-        } else {
-            return ""
         }
     }
 
