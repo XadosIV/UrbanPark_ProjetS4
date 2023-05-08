@@ -1,44 +1,28 @@
 import React from "react";
-import { Button } from "@mui/material";
-import { PlaceNumber } from "./place_number";
+import { User } from "../components"
 
-export function SearchUser(list) {
 
-    const filteredData = list.list.filter((el) => {
+export function SearchUser(props) {
+
+    function Callback(childData) {
+        props.handleCallback(childData)
+    }
+
+    const filteredData = props.list.filter((el) => {
         //if no input the return the original
-        if (list.input === '') {
+        if (props.input === '') {
             return el;
         }
         //return the item which contains the user input
         else {
-            return el.first_name.toLowerCase().includes(list.input) || el.last_name.toLowerCase().includes(list.input) || (el.first_name.toLowerCase()+" "+el.last_name.toLowerCase()).includes(list.input)
+            return el.first_name.toLowerCase().includes(props.input) || el.last_name.toLowerCase().includes(props.input) || (el.first_name.toLowerCase()+" "+el.last_name.toLowerCase()).includes(props.input)
         }
     })
-
-    function hasPlace(user) {
-        if (user.id_spot != null) {
-            return (<p style={{display: "inline"}}>- <PlaceNumber user={user}/></p>)
-        } else {
-            return ""
-        }
-    }
 
 	return (
         <ul className="user-list">
             {filteredData.map((user, index) => (
-                <li key={index}>
-                    <div className="main-content">
-                        <div>
-                            <div>
-                                <h3>{user.first_name} {user.last_name} - {user.email}</h3>
-                                <p>{user.role} {hasPlace(user)} </p>
-                            </div>                       
-                        </div>
-                        <div>
-                            <Button variant="contained" color="primary">Voir les informations de l'utilisateur</Button>
-                        </div>
-                    </div>           
-                </li>))}
+                <User user={user} index={index} handleCallback={Callback}/>))}
 		</ul>
     )
 }
