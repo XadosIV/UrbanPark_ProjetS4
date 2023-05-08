@@ -14,12 +14,15 @@ function GetSchedulesAvailable(infos, callback){
 
 	// On récupère tout les utilisateurs concernés
 	var users = [];
-	for (let id of infos.users){
-		users.push(id);
+	if (infos.users){
+		for (let id of infos.users){
+			users.push(id);
+		}
 	}
+	
 
-	if (!infos.role) infos.role = [];
-	GetUsersFromRoleArray(infos.role, (err, data) => {
+	if (!infos.roles) infos.roles = [];
+	GetUsersFromRoleArray(infos.roles, (err, data) => {
 		if (err) {return callback(err, null)}
 		else {
 			for (let id of data){
