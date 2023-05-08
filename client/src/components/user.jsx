@@ -32,8 +32,6 @@ export function User(props){
 	}
 
 	function spots(spot, spotTemp) {
-		console.log("spot de ", props.user.id, spot, spotWithUser);
-		console.log("spotTemp de ", props.user.id, spotTemp, spotTempWithUser);
 		if (spot) {
 			if (spot.length !== 0) {
 				if (spotTemp) {
@@ -91,8 +89,8 @@ export function User(props){
 	useEffect(() => {
 		async function fetchBothSpot(){
 			// console.log("res spot", props.user.id_park_demande, allSpots);
-			let mainSpot = allSpots.find(spot => spot.id_user === props.user.id);
-			let tempSpot = allSpots.find(spot => spot.id_user_temp === props.user.id);
+			let mainSpot = allSpots.find(spot => spot.id === props.user.id_spot);
+			let tempSpot = allSpots.find(spot => spot.id === props.user.id_spot_temp);
 			console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
 			setSpotWithUser(SpotName(mainSpot));
 			setSpotTempWithUser(SpotName(tempSpot));
@@ -109,25 +107,29 @@ export function User(props){
 		}
 		
 		if (props.user.id_spot != null) {
-			do {
-				fetchAllSpots(props.user.id_park_demande, props.user.id_spot, setFetchingSpot)
-				console.log("RESSPOT :",fetchingSpot)
-			} while (fetchingSpot.length == 0);
-			console.log("RESSPOT FINAL :", fetchingSpot, "FOR", props.user.first_name)
-			setSpotWithUser(SpotName(fetchingSpot[0]))
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {	
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
+						setSpotWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotWithUser(SpotName(res[0]))
+				}
+			})
 		}
 		if (props.user.id_spot_temp != null) {
-			do {
-				fetchAllSpots(props.user.id_park_demande, props.user.id_spot_temp, setFetchingSpotTemp)
-				console.log("RESSPOTTEMP :",fetchingSpotTemp)
-			} while (fetchingSpotTemp.length == 0)
-			console.log("RESSPOTTEMP FINAL :", fetchingSpotTemp, "FOR", props.user.first_name)
-			setSpotTempWithUser(SpotName(fetchingSpotTemp[0]))
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+						setSpotTempWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotTempWithUser(SpotName(res[0]))
+				}
+			})
 		}
 		setUpdate(false)
     }, [props, update])*/
-
-	// console.log(spotWithUser, spotTempWithUser)
 
 	useEffect(() => {
 		const body = document.querySelector('body');

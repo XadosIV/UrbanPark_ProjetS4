@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SpotName } from "../interface"
-import { Link } from "react-router-dom";
 import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot, DeleteSpotFromUser, SetSpotFromUser, TakeAllSpotTypes, TakeBySpot, TakeBySpotTemp, TakeByRole } from "../services";
-import { AdminVerif, User, UpdateSpot } from "../components";
+import { AdminVerif, UpdateSpot } from "../components";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -139,7 +138,7 @@ export function Spot(props) {
 
 
     const { userToken } = useContext(ContextUser);
-	  const [ roleUser, setRoleUser ] = useState("");
+    const [ roleUser, setRoleUser ] = useState("");
     const admin = roleUser === "Gérant";
 
     const [infos, setInfos] = useState({user:[]})
