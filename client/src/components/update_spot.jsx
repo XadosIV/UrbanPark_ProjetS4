@@ -29,7 +29,7 @@ export function UpdateSpot (props) {
 		for (let typeL of typeList){
 			let trouve = false;
 			for (let typeB of base){
-				if (typeL.name == typeB.name){
+				if (typeL.name === typeB.name){
 					trouve = true;
 				}
 			}
@@ -40,7 +40,7 @@ export function UpdateSpot (props) {
 		for (let typeB of base){
 			let trouve = false;
 			for (let typeL of typeList){
-				if (typeL.name == typeB.name){
+				if (typeL.name === typeB.name){
 					trouve = true;
 				}
 			}

@@ -3,7 +3,8 @@ import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { DeleteUser, getAllSpotsFilter, updateInfoPerso, TakeParking } from '../services';
-import { SpotName, NbFloors } from "../interface";
+import { NbFloors } from "../interface";
+import { SpotInfos } from "../components";
 
 export function DemandeAbo({ infos, up }){
 

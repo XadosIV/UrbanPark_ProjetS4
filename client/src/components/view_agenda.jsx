@@ -5,7 +5,6 @@ import "moment/locale/fr"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { TakeAllEvents } from "../services";
 import { UpdateScheduleForm } from "../components";
-import { sliderClasses } from "@mui/material";
 
 export function ViewAgenda (props){
 	const localizer = momentLocalizer(moment);
@@ -106,7 +105,7 @@ export function ViewAgenda (props){
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
-	}, [props.update || update]);
+	}, [props.update, update]);
 
 	const messages = {
 		allDays: "Tous les jours",
@@ -143,7 +142,7 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-			<div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
+			<div className={`modal-${modalState === true ? 'show' : 'hide'}`}>
 				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback}/>
 		    </div>}
 		</div>
