@@ -71,8 +71,14 @@ export function User(props){
 		}
 
 		if (props.user.id_spot != null) {
-			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
-				setSpotWithUser(SpotName(res[0]))
+			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {	
+				if (res.length == 0) {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+						setSpotWithUser(SpotName(res[0]))
+					})
+				} else {
+					setSpotWithUser(SpotName(res[0]))
+				}
 			})
 		}
 		if (props.user.id_spot_temp != null) {
@@ -80,6 +86,7 @@ export function User(props){
 				setSpotTempWithUser(SpotName(res[0]))
 			})
 		}
+		
 		TakeAllSpots(props.user.id_park_demande).then(res => {
 			setAllSpots(res)
 		})
