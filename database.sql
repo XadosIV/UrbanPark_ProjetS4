@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Schedule (
 	id INT NOT NULL AUTO_INCREMENT,
 	type VARCHAR(50) NOT NULL,
 	id_user INT NOT NULL,
-	id_parking CHAR NOT NULL,
+	id_parking CHAR,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
 	first_spot INT DEFAULT NULL,

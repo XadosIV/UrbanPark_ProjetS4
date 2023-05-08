@@ -10,7 +10,7 @@ const Errors = require('../errors');
  */
 function GetUsers(infos, callback){
 	sql = `SELECT id, first_name, last_name, email, id_spot, id_spot_temp, role, id_park_demande FROM User WHERE id LIKE :id AND email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name AND (id_spot LIKE :id_spot OR '%' = :id_spot OR :id_spot = 'NULL' AND id_spot IS NULL) AND (id_spot_temp LIKE :id_spot_temp OR '%' = :id_spot_temp OR :id_spot_temp = 'NULL' AND id_spot_temp IS NULL);`;
-	console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
+	// console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		id:infos.id||'%',
 		email:infos.email||'%',
@@ -32,7 +32,7 @@ function GetUsers(infos, callback){
  */
 function DeleteUser(id, callback){
 	sql = `DELETE FROM User WHERE id=:id;`;
-	console.log("SQL at DeleteUser : " + sql + " with id=" + id);
+	// console.log("SQL at DeleteUser : " + sql + " with id=" + id);
 	dbConnection.query(sql, {
 		id:id
 	}, callback);
@@ -165,7 +165,7 @@ function UpdateUser(infos, callback){
 */
 function GetUserFromToken(infos, callback){
 	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM User WHERE  token=:token;`;
-	console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
+	// console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		token: infos.token
 	}, callback);
