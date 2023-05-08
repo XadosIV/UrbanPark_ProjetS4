@@ -3,14 +3,14 @@ import { SearchUser } from "./search_user";
 import { Separation } from "./separation";
 import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
-import TBR from "../services/take_by_role"
+import { TakeByRole } from "../services"
 
 export function UserList() {
 
 	const [usersList, setUsersList] = useState([]);
 
 	useEffect(() => {
-		TBR.TakeByRole().then(res => {setUsersList(res);})
+		TakeByRole().then(res => {setUsersList(res);})
 	}, []);
 
 	const [inputTextUsers, setInputTextUsers] = useState("");

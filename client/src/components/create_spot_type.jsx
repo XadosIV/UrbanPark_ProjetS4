@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
-import TAST from "../services/take_all_spot_types"
 import Popup from 'reactjs-popup';
-import { CreationSpotType } from "../services"
+import { CreationSpotType,TakeAllSpotTypes } from "../services"
 
 export function CreateSpotType() {
     const [spotTypes, setSpotTypes] = useState([]);
@@ -13,7 +12,7 @@ export function CreateSpotType() {
     const [infos, setInfos] = useState({name: ""})
 
     useEffect(() => {
-        TAST.TakeAllSpotTypes().then(res => {setSpotTypes(res);});
+        TakeAllSpotTypes().then(res => {setSpotTypes(res);});
     }, []);
 
     const handleChange = (event) => {

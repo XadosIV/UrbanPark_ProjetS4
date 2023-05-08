@@ -17,4 +17,4 @@ async function TakeAllSpots(id_park=0){
 	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeAllSpots };
+export { TakeAllSpots };

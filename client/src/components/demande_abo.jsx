@@ -2,11 +2,8 @@ import { Button } from '@mui/material';
 import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { NbFloors } from '../interface';
-import TP from "../services/take_parking";
-import { DeleteUser, getAllSpotsFilter, updateInfoPerso } from '../services';
-import { SpotInfos } from './spot_infos';
-import { SpotName } from "../interface";
+import { DeleteUser, getAllSpotsFilter, updateInfoPerso, TakeParking } from '../services';
+import { SpotName, NbFloors } from "../interface";
 
 export function DemandeAbo({ infos, up }){
 
@@ -30,7 +27,7 @@ export function DemandeAbo({ infos, up }){
 
     useEffect(() => {
         async function fetchPark(parking_demende){
-            let resPark = await TP.TakeParking(parking_demende);
+            let resPark = await TakeParking(parking_demende);
             // console.log("resPark", resPark);
             setPark(resPark[0]);
             const name = "id_park";
@@ -163,7 +160,7 @@ export function DemandeAbo({ infos, up }){
                     <h3>{infos.first_name} {infos.last_name} - {infos.email}</h3>
                 </div>
                 <div className='spot-infos'>
-                { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <p> Place {SpotName(place)} </p> : <p> Place non attribuée </p> }
+                { (place.number !== placeNull.number && place.floor !== placeNull.floor && place.id_park !== placeNull.id_park) ? <SpotInfos spotInfos={dataNewSpot}/> : <p> Place non attribuée </p> }
                 </div>
                 <div>
                     <Button
