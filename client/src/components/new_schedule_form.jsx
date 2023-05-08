@@ -262,7 +262,7 @@ export function NewScheduleForm(props) {
             if (scheduleAdded === stock.length) {
                 infosReunions.user = stock
                 setWrongInput(true);
-                setErrMessage("Réunion placée du " + ChangeDate(infosReunions.date_start.slice(0,10)) + "à" + infosReunions.date_start.slice(11,19) + " au " + ChangeDate(infosReunions.date_end.slice(0,10)) + "à" + infosReunions.date_end.slice(11,19));
+                setErrMessage("Réunion placée du " + ChangeDate(infosReunions.date_start.slice(0,10)) + " à " + infosReunions.date_start.slice(11,19) + " au " + ChangeDate(infosReunions.date_end.slice(0,10)) + " à " + infosReunions.date_end.slice(11,19));
             }
         } else {
             setWrongInput(true);
