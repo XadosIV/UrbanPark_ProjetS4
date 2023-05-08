@@ -1,3 +1,7 @@
+body {
+	overflow-x:hidden;
+}
+
 .div-info-user {
 	display: flex;
 	flex-direction:row;

@@ -4,7 +4,7 @@ import "../css/admin.css"
 
 export function AdminGuardian() {
 
-	return(<div>
+	return(<div style={{overflowX:"hidden"}}>
 		<div style={{minWidth:"50%"}}>
 			<ParkingsStaff admin={false} />
 		</div>

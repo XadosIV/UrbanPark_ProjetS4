@@ -31,13 +31,12 @@ app.use((req,res,next) => {
 			req.query[key] = 'NULL';
 		}
 	});
+	Object.keys(req.body).forEach((key)=>{
+		if (req.body[key] == '\x00'){
+			req.body[key] = null;
+		}
+	});
 	next();
-});
-
-// Test endpoint
-app.get('/api/test', (req, res) => {
-	let data = ["test1","test2","test3"];
-	res.status(200).json(data);
 });
 
 app.get('/api/auth', (req, res) => {
@@ -206,7 +205,7 @@ app.post('/api/types', (req, res) => {
 });
 
 app.get('/api/spots', (req, res) => {
-	//console.log("Request at GET /api/spots : " + JSON.stringify(req.query));
+	// console.log("Request at GET /api/spots : " + JSON.stringify(req.query));
 	GetSpots(req.query, (err, data) => {
 		if (err){ 
 			Errors.HandleError(err, res);
@@ -303,7 +302,7 @@ app.get('/api/schedules', (req, res) => {
 
 app.post('/api/schedule', (req, res) => {
 	//console.log("Request at POST /api/schedule : " + JSON.stringify(req.body));
-	if (req.body && (!!req.body.role ^ req.body.user) && req.body.parking && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
+	if (req.body && (!!req.body.role ^ req.body.user) && (typeof req.body.parking != "undefined") && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
 		PostSchedule(req.body, (err, data) => {
 			if (err){
 				Errors.HandleError(err, res);
@@ -370,7 +369,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 
 app.get('/api/reunion', (req, res) => {
 	// req.body
-	GetSchedulesAvailable(req.body, (err, data) => {
+	GetSchedulesAvailable(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{

@@ -13,7 +13,7 @@ export function Header () {
 				alignItems:"center"
 			}}>
 			<Link to="/">
-				<Typography variant="h3">Logo</Typography>
+				<Typography variant="h3">UrbanPark</Typography>
 			</Link>
 			{ /*userToken*/ false && <NotifBell /> }
 			<Link to="/perso" style={{
