@@ -44,7 +44,7 @@ function GetSchedules(infos, callback) {
 function GetSchedulesRole(infos, callback) {
 	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot 
 	FROM Schedule s JOIN User u ON s.id_user = u.id 
-	JOIN Parking p ON s.id_parking = p.id
+	JOIN Parking p ON s.id_parking = p.id OR s.id_parking IS NULL
 	WHERE u.role LIKE :role AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
 	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
@@ -65,11 +65,16 @@ function GetSchedulesRole(infos, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedulesUser(infos, callback) {
-	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking, DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end, s.first_spot, s.last_spot 
-	FROM Schedule s JOIN User u ON s.id_user = u.id 
-	JOIN Parking p ON s.id_parking = p.id 
-	WHERE id_user LIKE :user AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
+
+	sql = `SELECT s.id, s.type, s.id_user AS user, u.last_name, u.role, p.name, s.id_parking AS parking,
+	 DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start,
+	  DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end,
+	  s.first_spot, s.last_spot FROM Schedule s
+	  JOIN User u ON s.id_user = u.id
+	  JOIN Parking p ON s.id_parking = p.id OR s.id_parking IS NULL
+	  WHERE id_user LIKE :user AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL)
+	  AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot)
+	  AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot)`;
 	dbConnection.query(sql, {
 		user: infos.user || '%',
 		parking: infos.parking || '%',
@@ -77,7 +82,7 @@ function GetSchedulesUser(infos, callback) {
 		date_end: infos.date_end || '%',
 		first_spot: infos.first_spot || '%',
 		last_spot: infos.last_spot || '%'
-	}, callback);
+	}, callback)
 }
 
 /**
