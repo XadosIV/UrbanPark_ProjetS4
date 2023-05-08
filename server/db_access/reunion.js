@@ -34,9 +34,7 @@ function GetSchedulesAvailable(infos, callback){
 			GetAllSchedulesFromUserArray(users, infos.date_start, infos.date_end, (err, data) => {
 				if (err) {return callback(err, null)}
 				else {
-					console.log(data);
 					let schedules = ReduceSchedules(data);
-					console.log(schedules);
 					callback(null, InvertSchedules(infos.date_start, infos.date_end, schedules))
 				}
 			})
@@ -71,11 +69,12 @@ function InvertSchedules(min, max, schedules){
 
 	//Pour le dernier, on vérifie son état par rapport à max
 	let last_schedule = schedules[schedules.length-1];
-	if (last_schedule[0][0] < max){ // s'il commence avant la date de fin, on doit vérifier s'il finit après ou non
+	console.log(last_schedule)
+	if (last_schedule[0] < max){ // s'il commence avant la date de fin, on doit vérifier s'il finit après ou non
 		// pour savoir si on doit rajouter un schedule de fin_last_schedule à fin_range
-		if (last_schedule[0][1] < max){ //s'il finit avant
+		if (last_schedule[1] < max){ //s'il finit avant
 			// on ajoute un schedule
-			i_schedules.push([schedules[0][1], max]);
+			i_schedules.push([last_schedule[1], max]);
 		}
 	}
 
@@ -108,10 +107,10 @@ function ArrayEquals(a, b) {
 function IncludeArray(element, array){
 	for (let telement of array){
 		if (ArrayEquals(telement, element)){
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 /**
