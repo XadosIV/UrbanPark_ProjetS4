@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { SpotsList, ParkingList, NewSpotForm, AdminVerif } from "../components";
 import { NbFloors, GetSpotsFromFilter } from "../interface"
 import Select from 'react-select';
@@ -7,6 +7,7 @@ import "../css/parking.css"
 import { useContext } from "react";
 import { userFromToken, DeleteSpot, TakeParking, TakeAllSpots, TakeAllSpotTypes } from "../services";
 import { ContextUser } from "../contexts/context_user";
+import { Check, Clear } from "@mui/icons-material";
 
 export function ParkingSpots(props) {
 
@@ -14,11 +15,54 @@ export function ParkingSpots(props) {
         setUpdate(childData)
     }
 
+    const [ arrSpotCheckbox, setArrSpotCheckbox ] = useState([]);
+
+    const toggleSpotArr = (spotData) => {
+        let index = arrSpotCheckbox.indexOf(spotData);
+        console.log("index", index);
+        let nouv = arrSpotCheckbox;
+        console.log("old", nouv);
+        if(index === -1){
+            nouv.push(spotData);
+        }else{
+            nouv.splice(index, 1);
+        }
+        console.log("new", nouv);
+        setArrSpotCheckbox(nouv);
+    }
+
+    const isChecked = (idSpot) => {
+        return arrSpotCheckbox.includes(idSpot);
+    }
+    const [ checkAll, setCheckAll ] = useState(false);
+    const [ up, setUp ] = useState(false);
+
+    const checkBoxAll = () => {
+        setCheckAll(!checkAll);
+        let visibleSpot = GetSpotsFromFilter(list, infos);
+        for (let i = 0; i < visibleSpot.length; i++) {
+            if(!arrSpotCheckbox.includes(visibleSpot[i].id)){
+                toggleSpotArr(visibleSpot[i].id)
+            }
+        }
+        setUp(!up);
+    }
+    const clearBoxAll = () => {
+        setCheckAll(!checkAll);
+        let visibleSpot = GetSpotsFromFilter(list, infos);
+        for (let i = 0; i < visibleSpot.length; i++) {
+            if(arrSpotCheckbox.includes(visibleSpot[i].id)){
+                toggleSpotArr(visibleSpot[i].id)
+            }
+        }
+        setUp(!up);
+    }
+
     function CallbackDelete(childData) { 
         var deleted = 0;
         const forLoop = async _ => {
-            for (let spot of GetSpotsFromFilter(list, infos)) {
-                const res = await DeleteSpot(spot.id)
+            for (let idSpot of arrSpotCheckbox) {
+                const res = await DeleteSpot(idSpot)
                 if (res.status === 200) {
                     deleted++;
                 }
@@ -29,6 +73,7 @@ export function ParkingSpots(props) {
                 setUpdate(childData)
             }
         })
+        setUpdate(!update);
     }
 
     const { userToken } = useContext(ContextUser);
@@ -278,16 +323,32 @@ export function ParkingSpots(props) {
                     {ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
                 </div>
 		    </form>
-            <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
-            {
-                addSpotSiAdmin()
-            }
-            {
-                delSpotSiAdmin()
-            }    
+            <div style={{display:"flex", flexDirection:"column", justifyContent:"center", width: "30%"}}>
+                {
+                    addSpotSiAdmin()
+                }
+                {
+                    delSpotSiAdmin()
+                }
+                <div>
+                    <Button 
+                        style={{marginTop:"20px", marginBottom: "20px", width: "50%"}}
+                        color="info"
+                        variant="contained"
+                        onClick={() => checkBoxAll()}
+                        startIcon={<Check />}
+                    > Tout choisir </Button>
+                    <Button 
+                        style={{marginTop:"20px", marginBottom: "20px", width: "50%"}}
+                        color="info"
+                        variant="contained"
+                        onClick={() => clearBoxAll()}
+                        startIcon={<Clear />}
+                    > Tout exclure </Button>
+                </div>
             </div>
         </div>  
 
-        <SpotsList list={list} infos={infos} handleCallback={Callback}/>  
+        <SpotsList list={list} infos={infos} handleCallback={Callback} checkBoxCallback={toggleSpotArr} toCheck={isChecked} up={up}/>  
     </div>)
 }

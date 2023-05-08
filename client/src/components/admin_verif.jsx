@@ -32,7 +32,7 @@ export function AdminVerif(props) {
         },
     };
 
-    const {userToken, setUserToken, userId } = useContext(ContextUser);
+    const {userToken } = useContext(ContextUser);
     const [password, setPassword] = useState("")
 
     const [wrongInput, setWrongInput] = useState(false);
@@ -98,7 +98,7 @@ export function AdminVerif(props) {
     
     return (
         <div>
-            <Button variant="contained" color="primary" style={{marginTop:"20px", backgroundColor:"red"}} onClick={() => setIsOpen(true)}>{props.title}</Button>
+            <Button variant="contained" color="primary" style={{marginTop:"20px", backgroundColor:"red", width: "100%"}} onClick={() => setIsOpen(true)}>{props.title}</Button>
             <ReactModal
                 ariaHideApp={false}
                 isOpen={isOpen}

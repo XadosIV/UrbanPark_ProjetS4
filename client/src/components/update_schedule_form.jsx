@@ -103,12 +103,34 @@ export function UpdateScheduleForm(props) {
         if (list) {
             for (let user of list) {
                 for (let id of id_user) {
-                    if (user.value == id) {
+                    if (user.value === id) {
                         opts.push(user);
                     }       
                 }
             }
             return opts
+        }
+    }
+
+    /**
+     * BaseSpot
+     * Returns a array corresponding to the base spot being passed in a react select defaultValue
+     *
+     * @param { integer } spot - id of the spot
+     * @param { Array } list - List of options being passed in a react select
+     * @return { Array }
+     */
+    function BaseSpot(spot, list) {
+        var opts=[]
+        for (let s of list) {
+            if (s.value === spot) {
+                opts.push(s);
+            }
+        }
+        if (opts.length !== 0) {
+            return opts[0].label
+        } else {
+            return ""
         }
     }
 
@@ -154,16 +176,16 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infos.user.length == 0) {
+        if (infos.user.length === 0) {
             setWrongInput(true)
             setErrMessage("Vous n'avez assigné ce créneau à personne")
         }
-        else if (!(infos.parking == props.event.idparking && infos.user == props.event.user && infos.date_start == props.event.d_st && infos.date_end == props.event.d_en && infos.first_spot == props.event.first_spot && infos.last_spot == props.event.last_spot)) {
+        else if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
             var scheduleAdded = 0;
             var nbModif = 0;
             let stock = infos.user
+            var fun;
             for (let i=0; i<props.event.user.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (!(props.event.user.includes(infos.user))) {
                     fun = DeleteSchedule(props.event.id_schedule[i]);
@@ -181,7 +203,6 @@ export function UpdateScheduleForm(props) {
                 }
             }
             for (let i=0; i<stock.length; i++) {
-                var fun;
                 infos.user = stock[i]
                 if (props.event.user.includes(infos.user)) {
                     fun = UpdateSchedule(infos, props.event.id_schedule[i]);
@@ -201,7 +222,7 @@ export function UpdateScheduleForm(props) {
                     }
                 }
             }
-            if (scheduleAdded == nbModif) {
+            if (scheduleAdded === nbModif) {
                 setWrongInput(true);
                 setErrMessage("Modification prise en compte.")
                 setDisabled(true)
