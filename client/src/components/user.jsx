@@ -61,8 +61,11 @@ export function User(props){
 	const [ optSpot, setOptSpot ] = useState([])
 	const [ update, setUpdate ] = useState(true)
 	const [ allSpots, setAllSpots ] = useState([])
+	const [ fetchingSpot, setFetchingSpot ] = useState([])
+	const [ fetchingSpotTemp, setFetchingSpotTemp ] = useState([])
 
 	useEffect(() => {
+
 		async function fetchPark(parking_asked){
 			let resPark = await TakeParking(parking_asked);
 			setPark(resPark[0]);
@@ -73,28 +76,26 @@ export function User(props){
 			let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
 			setOptSpot(newSpots) 
 		}
+		async function fetchAllSpots(id_park, id, set){
+			const data = await TakeAllSpots(id_park, id);
+			set(data);
+		}
 
 		if (props.user.id_spot != null) {
-			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {	
-				if (res.length == 0) {
-					TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
-						setSpotWithUser(SpotName(res[0]))
-					})
-				} else {
-					setSpotWithUser(SpotName(res[0]))
-				}
-			})
+			do {
+				fetchAllSpots(props.user.id_park_demande, props.user.id_spot, setFetchingSpot)
+				console.log("RESSPOT :",fetchingSpot)
+			} while (fetchingSpot.length == 0);
+			console.log("RESSPOT FINAL :", fetchingSpot, "FOR", props.user.first_name)
+			setSpotWithUser(SpotName(fetchingSpot[0]))
 		}
 		if (props.user.id_spot_temp != null) {
-			TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
-				if (res.length == 0) {
-					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
-						setSpotTempWithUser(SpotName(res[0]))
-					})
-				} else {
-					setSpotTempWithUser(SpotName(res[0]))
-				}
-			})
+			do {
+				fetchAllSpots(props.user.id_park_demande, props.user.id_spot_temp, setFetchingSpotTemp)
+				console.log("RESSPOTTEMP :",fetchingSpotTemp)
+			} while (fetchingSpotTemp.length == 0)
+			console.log("RESSPOTTEMP FINAL :", fetchingSpotTemp, "FOR", props.user.first_name)
+			setSpotTempWithUser(SpotName(fetchingSpotTemp[0]))
 		}
 		
 		TakeAllSpots(props.user.id_park_demande).then(res => {

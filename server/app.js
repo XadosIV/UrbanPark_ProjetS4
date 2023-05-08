@@ -206,7 +206,7 @@ app.post('/api/types', (req, res) => {
 });
 
 app.get('/api/spots', (req, res) => {
-	//console.log("Request at GET /api/spots : " + JSON.stringify(req.query));
+	// console.log("Request at GET /api/spots : " + JSON.stringify(req.query));
 	GetSpots(req.query, (err, data) => {
 		if (err){ 
 			Errors.HandleError(err, res);
