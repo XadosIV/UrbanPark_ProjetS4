@@ -131,21 +131,21 @@ function ReduceSchedules(schedules){
 
 	// Retirer ceux qui commencent ou finissent en même temps
 	// Genre un 10h-20h et un 10h-12h donne qu'un 10h-20h
-	ids_a_virer = []; // On delete pas dans les boucles donc on stocke avant
+	ids_a_supprimer = []; // On delete pas dans les boucles donc on stocke avant
 	for (let i in schedules){
 		for (let j in schedules){
 			if (i != j){
 				if (schedules[i][0] == schedules[j][0]){ // si même date de début
 					if (schedules[i][1] > schedules[j][1]){ // on retire la plus petite date de fin
-						ids_a_virer.push(j);
+						ids_a_supprimer.push(j);
 					}else{
-						ids_a_virer.push(i);
+						ids_a_supprimer.push(i);
 					}
 				}else if (schedules[i][1] == schedules[j][1]){ // si même date de fin
 					if (schedules[i][0] > schedules[j][0]){ // on retire la plus grande date de debut
-						ids_a_virer.push(i);
+						ids_a_supprimer.push(i);
 					}else{
-						ids_a_virer.push(j);
+						ids_a_supprimer.push(j);
 					}
 				}
 
@@ -153,10 +153,10 @@ function ReduceSchedules(schedules){
 		}
 	}
 
-	ids_a_virer.sort((a,b) => a-b); // on trie en descendant pour d'abord supprimer le dernier
+	ids_a_supprimer.sort((a,b) => a-b); // on trie en descendant pour d'abord supprimer le dernier
 	// comme ça on a pas de décalage d'id lors de la suppression
 
-	for (let id of ids_a_virer){
+	for (let id of ids_a_supprimer){
 		schedules.splice(id, 1); // suppression de l'element à l'index 'id'
 	}
 
