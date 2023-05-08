@@ -46,7 +46,7 @@ function GetSchedulesRole(infos, callback) {
 	FROM Schedule s JOIN User u ON s.id_user = u.id 
 	JOIN Parking p ON s.id_parking = p.id
 	WHERE u.role LIKE :role AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND s.date_start LIKE :date_start AND s.date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
+	//console.log("SQL at GetSchedulesRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role || '%',
 		parking: infos.parking || '%',
@@ -69,7 +69,7 @@ function GetSchedulesUser(infos, callback) {
 	FROM Schedule s JOIN User u ON s.id_user = u.id 
 	JOIN Parking p ON s.id_parking = p.id 
 	WHERE id_user LIKE :user AND (s.id_parking LIKE :parking OR '%' = :parking OR :parking = 'NULL' AND s.id_parking IS NULL) AND date_start LIKE :date_start AND date_end LIKE :date_end AND (s.first_spot LIKE :first_spot OR '%' LIKE :first_spot) AND (s.last_spot LIKE :last_spot OR '%' LIKE :last_spot);`;
-	console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
+	//console.log("SQL at GetSchedulesUser : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		user: infos.user || '%',
 		parking: infos.parking || '%',
