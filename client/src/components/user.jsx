@@ -32,14 +32,18 @@ export function User(props){
 	}
 
 	function Spots(spot, spotTemp) {
-		if (spot.length != 0) {
-			if (spotTemp.length != 0) {
-				return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+		if (spot) {
+			if (spot.length != 0) {
+				if (spotTemp) {
+					if (spotTemp.length != 0) {
+						return <p style={{display: "inline"}}><br/>- Place {spot} <br/>- Place temporaire {spotTemp}</p>
+					} else {
+						return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+					}
+				}
 			} else {
-				return <p style={{display: "inline"}}><br/>- Place {spot}</p>
+				return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
 			}
-		} else {
-			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
 		}
 	}
 
@@ -73,7 +77,7 @@ export function User(props){
 		if (props.user.id_spot != null) {
 			TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {	
 				if (res.length == 0) {
-					TakeAllSpots(props.user.id_park_demande, props.user.id_spot_temp).then(res => {
+					TakeAllSpots(props.user.id_park_demande, props.user.id_spot).then(res => {
 						setSpotWithUser(SpotName(res[0]))
 					})
 				} else {
@@ -100,6 +104,8 @@ export function User(props){
 		fetchPark(props.user.id_park_demande);
 		setUpdate(false)
     }, [update])
+
+	console.log(spotWithUser, spotTempWithUser)
 
 	useEffect(() => {
 		const body = document.querySelector('body');
