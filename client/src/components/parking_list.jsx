@@ -21,6 +21,10 @@ export function ParkingList(props) {
         props.handleCallback(childData)
     }
 
+    function CallbackUpdate(childData) {
+        props.handleCallback(childData)
+    }
+
     /**
      * PutButton
      * Returns a button if value = true
@@ -179,7 +183,7 @@ export function ParkingList(props) {
             <div className="button-parking">
                 <p>{props.parking.nbPlaceLibre} places restantes / {props.parking.nbPlaceTot}</p> 
                 {PutButton(props.button)}
-				{props.admin && <UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={Callback} handleChangeView={HandleAskChange} id={props.parking.id} askChange={HandleAskChange}/>}
+				{props.admin && <UpdateParking used={{nom:props.parking.name, floor:props.parking.floors, address:props.parking.address}} handleCallback={CallbackUpdate} handleChangeView={HandleAskChange} id={props.parking.id} askChange={HandleAskChange}/>}
                 {props.admin && <AdminVerif title="Supprimer ce parking" text={"Vous êtes sur le point de supprimer le parking " + props.parking.name + " !"} handleCallback={Callback}/>}
             </div>
         </div>)

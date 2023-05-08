@@ -5,7 +5,6 @@ import ReactModal from "react-modal";
 
 export function UpdateParking (props) {
 	const base = props.used;
-	console.log(base);
 	const [name, setNewName] = useState(base.nom);
 	const [floor, setNewFloor] = useState(base.floor);
 	const [address, setNewAddress] = useState(base.address);
@@ -13,29 +12,26 @@ export function UpdateParking (props) {
 
 	const handleNameChanged = (event) => {
 		setNewName(event.target.value);
-		console.log(name)
     }
 	const handleFloorChanged = (event) => {
 		setNewFloor(parseInt(event.target.value));
-		console.log(floor)
     }
 	const handleAddressChanged = (event) => {
 		setNewAddress(event.target.value);
-		console.log(address)
     }
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (e) => {
+		e.preventDefault()
 		let changes = {
 			name: name,
-			floor: floor,
+			floors: floor,
 			address: address
 		}
 
-		console.log(changes)
-
-		ServiceUpdateParking(changes, props.id);
+		await ServiceUpdateParking(changes, props.id);
 		props.handleCallback(true);
 		props.handleChangeView();
+		setIsOpen(false);
 	}
 
 	const HandleAskChange = () => {
@@ -106,7 +102,7 @@ export function UpdateParking (props) {
 					onChange={event => handleAddressChanged(event)}
 					style={inputStyle}
 				/>
-				<Button variant="contained" color="primary" onClick={handleSubmit}>
+				<Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
 					Modifier le parking
 				</Button>
 			</form>
