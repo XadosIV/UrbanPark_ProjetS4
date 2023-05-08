@@ -22,19 +22,21 @@ function GetSchedulesAvailable(infos, callback){
 	
 
 	if (!infos.roles) infos.roles = [];
+
+
 	GetUsersFromRoleArray(infos.roles, (err, data) => {
 		if (err) {return callback(err, null)}
 		else {
-			for (let id of data){
-				users.push(id);
+			for (let d of data){
+				users.push(d.id);
 			}
 			// On devrait ajouter un algo pour retirer les doublons dans "users[]" ici afin d'optimiser les perfs
-
 			GetAllSchedulesFromUserArray(users, infos.date_start, infos.date_end, (err, data) => {
 				if (err) {return callback(err, null)}
 				else {
+					console.log(data);
 					let schedules = ReduceSchedules(data);
-
+					console.log(schedules);
 					callback(null, InvertSchedules(infos.date_start, infos.date_end, schedules))
 				}
 			})
@@ -239,10 +241,10 @@ function FusingOverlappingSchedules(schedules){
  */
 function GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules=[]){
 	if (user_array.length == 0){
-		callback(null, user_array);
+		callback(null, schedules);
 	}else{
 		let user = user_array.pop();
-		let sql = `SELECT date_start, date_end FROM schedule WHERE id_user = :id AND (date_start <= :date_end AND date_end >= :date_start)`
+		let sql = `SELECT DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM schedule WHERE id_user = :id AND (date_start <= :date_end AND date_end >= :date_start)`
 		dbConnection.query(sql, {id:user, date_start:min, date_end:max}, (err, data) => {
 			if (err) {callback(err, null)}
 			else{
@@ -270,7 +272,7 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 		callback(null, user_array)
 	}else{
 		let role = role_array.pop();
-		let sql = `SELECT id FROM users WHERE role=:role`
+		let sql = `SELECT id FROM user WHERE role=:role`
 		dbConnection.query(sql, {role:role}, (err, data) => {
 			if (err) {callback(err, null)}
 			else{
