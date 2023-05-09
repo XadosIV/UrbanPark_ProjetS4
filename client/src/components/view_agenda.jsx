@@ -123,8 +123,6 @@ export function ViewAgenda (props){
 		setUpdate(true)
 	}
 
-	const [popupOpened, setPopupOpened] = useState(false);
-
 	return (
 		<div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
 			<Calendar
@@ -138,9 +136,8 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-			<div className={`modal-${modalState == true ? 'show' : 'hide'}`} style={{alignSelf:(popupOpened ? "flex-start" : "center")}}>
-				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} setPopupOpened={setPopupOpened}/>
-		    </div>}
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback}/>
+		    }
 		</div>
 	)
 }
