@@ -366,6 +366,7 @@ export function NewScheduleForm(props) {
                             name="type" 
                             isSearchable={false}
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>  
                     {(infos.type === "Gardiennage" || infos.type === "Nettoyage") && <div style={{zIndex:1007}}>   
@@ -377,6 +378,7 @@ export function NewScheduleForm(props) {
                             name="parking" 
                             isSearchable={false}
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>}
                     {infos.type === "Réunion" && <div style={{zIndex:1007}}>  
@@ -388,6 +390,7 @@ export function NewScheduleForm(props) {
                             className="search-add-two "
                             isSearchable={false}
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>}
                     {infos.type != null && <div style={{zIndex:1006}}>  
@@ -398,6 +401,7 @@ export function NewScheduleForm(props) {
                             options={optionsUsers.opts}
                             className="search-add-two "
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>}
                     {infos.type === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
@@ -411,6 +415,7 @@ export function NewScheduleForm(props) {
                             name="first_spot"
                             className="search"
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                         <p style={{margin:"7px 7px 0 7px"}}>à</p>
                         <Select
@@ -423,6 +428,7 @@ export function NewScheduleForm(props) {
                             name="last_spot"
                             className="search"
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>}
                     {(infos.type == "Nettoyage" || infos.type == "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
@@ -507,10 +513,10 @@ export function NewScheduleForm(props) {
                         />
                     </div>
                 <div className="input-div" style={{marginTop:'20px'}}>
-                    <Button 
+                    <Button
                         className="submit_button"
                         variant="contained" 
-                        color="primary" 
+                        color="primary"
                         type="submit"
                     >Valider cette horaire</Button>
                 </div>

@@ -7,6 +7,7 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import "../css/parking.css"
+import ReactModal from 'react-modal';
 
 export function UpdateScheduleForm(props) {
 
@@ -251,8 +252,28 @@ export function UpdateScheduleForm(props) {
         })
     }, [optionsSpots.change])
 
+	const [popupOpened, setPopupOpened] = useState(false);
+
+	const customStyles = {
+        overlay: {
+            zIndex : 100000
+        },
+        content: {
+            top: '5%',
+            left: '25%',
+            right: '25%',
+            bottom: 'auto',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection:"column",
+            marginRight: '-50%',
+            width: '50%'
+        },
+    };
+
     return (
-        <Popup trigger={open =>(
+		<div>
 			<Button variant="contained" color="primary" 
 				style={{
 					backgroundColor: "#FE434C",
@@ -261,87 +282,99 @@ export function UpdateScheduleForm(props) {
 					width:"150px",
 					height:"75px",
 					margin:"10px 0"
-				}}> {props.setPopupOpened(open)}
-					Modifier
-				</Button>)}
-				position="right center" onClose={() => {setWrongInput(false)}}>
-            <div className="form_div">
-                <h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
-                <form onSubmit={handlleSubmit} className="form">   
-                    <div style={{zIndex:1007}}>
-                        <Select
-                            id="parking"
-                            className="searchs-add"
-                            options={AllParkings(parkingsList)} 
-                            placeholder={BaseParking(infos.parking, parkingsList)}
-                            name="parking" 
-                            isSearchable={false}
-                            onChange={handleChangeSelect}
-                        />
-                    </div> 
-                    <div style={{zIndex:1006}}>  
-                        <Select
-                            isMulti
-                            name="user"
-                            options={BaseListType(baseType)}
-                            defaultValue={BaseUser(infos.user, baseType)}
-                            className="search-add-two"
-                            onChange={handleChangeSelect}
-                        />
-                    </div>
-                    {baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
-                        <Select
-                            options={optionsSpots.opts}
-                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-                            size="small"
-                            id="first_spot"
-                            placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
-                            type="text"
-                            name="first_spot"
-                            className="search"
-                            onChange={handleChangeSelect}
-                        />
-                        <p style={{margin:"7px 7px 0 7px"}}>à</p>
-                        <Select
-                            options={optionsSpots.opts}
-                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-                            size="small"
-                            id="last_spot"
-                            placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
-                            type="text"
-                            name="last_spot"
-                            className="search"
-                            onChange={handleChangeSelect}
-                        />
-                    </div>}
-                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
-                        <DatePicker
-                            name="date_start"
-                            selected={new Date(infos.date_start)}
-                            onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
-                            showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
-                        />
-                        <p style={{margin:"0 7px 7px 7px"}}>à</p>
-                        <DatePicker
-                            name="date_end"
-                            selected={new Date(infos.date_end)}
-                            onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
-                            showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
-                        />
-                    </div>
-                    <Button
-                        disabled={disabled}
-                        className="submit_button" 
-                        variant="contained" 
-                        color="primary" 
-                        type="submit"
-                    >Modifier</Button>
-                </form>
-                { wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
-            </div>
-        </Popup>
+				}}
+				onClick={()=>setPopupOpened(true)}>
+				Modifier
+			</Button>
+			<ReactModal
+				ariaHideApp={false}
+                isOpen={popupOpened}
+                contentLabel="Modifier le créneau"
+                onRequestClose={() => setPopupOpened(false)}
+                style={customStyles}
+			>
+				<div className="form_div">
+					<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
+					<form onSubmit={handlleSubmit} className="form">   
+						<div style={{zIndex:1007}}>
+							<Select
+								id="parking"
+								className="searchs-add"
+								options={AllParkings(parkingsList)} 
+								placeholder={BaseParking(infos.parking, parkingsList)}
+								name="parking" 
+								isSearchable={false}
+								onChange={handleChangeSelect}
+								maxMenuHeight={200}
+							/>
+						</div> 
+						<div style={{zIndex:1006}}>  
+							<Select
+								isMulti
+								name="user"
+								options={BaseListType(baseType)}
+								defaultValue={BaseUser(infos.user, baseType)}
+								className="search-add-two"
+								onChange={handleChangeSelect}
+								maxMenuHeight={200}
+							/>
+						</div>
+						{baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
+							<Select
+								options={optionsSpots.opts}
+								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+								size="small"
+								id="first_spot"
+								placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
+								type="text"
+								name="first_spot"
+								className="search"
+								onChange={handleChangeSelect}
+								maxMenuHeight={150}
+							/>
+							<p style={{margin:"7px 7px 0 7px"}}>à</p>
+							<Select
+								options={optionsSpots.opts}
+								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+								size="small"
+								id="last_spot"
+								placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
+								type="text"
+								name="last_spot"
+								className="search"
+								onChange={handleChangeSelect}
+								maxMenuHeight={150}
+							/>
+						</div>}
+						<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+							<DatePicker
+								name="date_start"
+								selected={new Date(infos.date_start)}
+								onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+								showTimeSelect
+								dateFormat="yyyy:MM:dd hh:mm:ss"
+							/>
+							<p style={{margin:"0 7px 7px 7px"}}>à</p>
+							<DatePicker
+								name="date_end"
+								selected={new Date(infos.date_end)}
+								onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+								showTimeSelect
+								dateFormat="yyyy:MM:dd hh:mm:ss"
+							/>
+						</div>
+						<Button
+							disabled={disabled}
+							className="submit_button" 
+							variant="contained" 
+							color="primary" 
+							type="submit"
+						>Modifier</Button>
+					</form>
+					{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
+				</div>
+			</ReactModal>
+		</div>
     )
 }
 
