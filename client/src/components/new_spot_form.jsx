@@ -206,6 +206,7 @@ export function NewSpotForm(props) {
                             name="floor" 
                             isSearchable={false}
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                         <div className="numeros">
                             {ErrorOnFirstNumero(infos.number)}
@@ -221,6 +222,7 @@ export function NewSpotForm(props) {
                             options={props.options.type.slice(1)}
                             className="search-add-two "
                             onChange={handleChangeSelect}
+							maxMenuHeight={200}
                         />
                     </div>
                     <Button
