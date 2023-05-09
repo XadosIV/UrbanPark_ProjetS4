@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken, placeFromId } from "../services";
-import TP from "../services/take_parking";
+import { userFromToken, placeFromId, TakeParking } from "../services";
 import { SpotName } from "../interface/spot_name";
 
 export function PersoMySpot(){
@@ -33,11 +32,11 @@ export function PersoMySpot(){
 
     useEffect(() => {
         async function fetchParking() {
-            if(maPlace.id_park !== ""){
-                //console.log("idP", maPlace);
-                const resParking = await TP.TakeParking(maPlace.id_park);
+            if(maPlace){
+                // console.log("idP", maPlace);
+                const resParking = await TakeParking(maPlace.id_park);
+                // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
-                //console.log("parking", resParking[0])
             }
         }
         fetchParking();
@@ -49,13 +48,13 @@ export function PersoMySpot(){
                 if(infosUser.id_spot_temp == null){
                     setIsPlaceTemp(false);
                     const resMaPlace = await placeFromId(infosUser.id_spot);
-                    setMaPlace(resMaPlace.data[0]);
-                    //console.log("place", resMaPlace.data[0]);
+                    //console.log("place", resMaPlace);
+                    setMaPlace(resMaPlace);
                 }else{
                     setIsPlaceTemp(true);
                     const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
-                    setMaPlace(resMaPlaceTemp.data[0]);
-                    //console.log("place_temp", resMaPlaceTemp.data[0]);
+                    //console.log("place_temp", resMaPlaceTemp);
+                    setMaPlace(resMaPlaceTemp);
                 }
             }
         }
@@ -65,25 +64,25 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
+            //console.log("user", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
-            //console.log("user", resInfosUser.data[0])
         }
         fetchUserInfos();
     }, [userToken]);
 
     const affSpotName = () => {
-        if(maPlace.id_park && maPlace.floor && maPlace.number){
+        if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
             return SpotName(maPlace);
         }else{
-            return "Place Indisponible";
+            return "Place non attribuée, veuillez patienter.";
         }
     }
 
     const listeTypes = () => {
         if(maPlace.types.length !== 0){
-            return maPlace.types.map( (type, index) => <li key={index} > { type } </li> ) 
+            return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
         }else{
-            return <li> aucun types </li>
+            return <li> Place abonné simple </li>
         }
     }
             
@@ -91,7 +90,7 @@ export function PersoMySpot(){
         <div className="div-place">
             <div className="div-info-place">
                 <div>
-                    { isPlaceTemp && <p className="msg-place-temp"> /!\ vous avez été assigné une place temporaire </p> }
+                    { isPlaceTemp && <p className="msg-place-temp"> /!\ Une place temporaire vous a été assignée </p> }
                 </div>
                 <div className="aff-place">
                     <h2>
@@ -102,7 +101,7 @@ export function PersoMySpot(){
                         <li> { parkPlace.address } </li>
                     </ul>
                     <ul>
-                        { listeTypes() }
+                        {(maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined) && listeTypes() }
                     </ul>
                 </div>
             </div>

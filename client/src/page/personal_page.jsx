@@ -12,7 +12,7 @@ export function PersonalPage(){
         async function fetchUserInfos() {
             const resUserToken = await userFromToken(userToken);
             setRoleUser(resUserToken.data[0].role);
-            //console.log("token", resUserToken.data[0])
+            // console.log("token", resUserToken.data[0])
         }
         fetchUserInfos();
     }, [userToken]);
@@ -32,8 +32,16 @@ export function PersonalPage(){
 		}
 	};
 
-	return<div>
-		<h1>Page Personelle</h1>
+	return <div className="container" style={{
+			display:"flex",
+			flexDirection:"column",
+			alignItems:"stretch"
+		}}>
+		<h1 style={{
+			marginLeft:"1.5rem"
+		}}>
+			Page personnelle
+		</h1>
 		<PersonalInfos />
 		{
 			persoParRole()

@@ -6,7 +6,11 @@
 }
 
 .go_back_button {
-    align-self: flex-start;
+    margin: 1em;
+}
+
+.home-button {
+    margin: 1em;
 }
 
 .form {
@@ -18,7 +22,7 @@
     align-content: space-evenly;
 }
 
-.inputs_divs {
+.inputs-divs {
     display: flex;
     flex-direction: column;
 }
@@ -27,9 +31,11 @@
     margin: 5%;
 }
 
-.inputs_divs>* {
-    margin: 5%;
+.inputs-divs>* {
+    margin: 5px;
 }
+
+
 
 .err_message {
     color: red;

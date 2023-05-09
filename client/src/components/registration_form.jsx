@@ -1,13 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { creationCompte, authenticate, userFromToken } from "../services";
-import { useUpdateContext } from "../interface";
+import { creationCompte, authenticate, userFromToken, TakeParking } from "../services";
+import { useUpdateContext, isValideNom } from "../interface";
+import Select from 'react-select';;
 
 export function RegistrationForm(props) {
-	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
+	const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: "", id_park_demande: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
+	const [ parkings, setParkings ] = useState([]);
+	const [ optParking, setOptParking ] = useState([]);
 	const updateContext = useUpdateContext();
+
+	useEffect(() => {
+		async function fetchParkings(){
+			let resParking = await TakeParking();
+			console.log("parkings", resParking);
+			setParkings(resParking);
+		}
+		fetchParkings();
+	}, [])
+
+	useEffect(() => {
+		console.log("parkOpt", parkings);
+		if(parkings){
+			let newOptPark = [];
+			let newLabel = "";
+			parkings.forEach(park => {
+				newLabel = <div><p>{park.name}</p><h6>{park.address}</h6></div>;
+				newOptPark.push({value: park.id, label: newLabel});
+			});
+			console.log("newOptPark", newOptPark);
+			setOptParking(newOptPark);
+		}
+	}, [parkings])
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
@@ -15,6 +41,9 @@ export function RegistrationForm(props) {
 		if(infos.password !== infos.password_conf){
 			setWrongInput(true);
 			setErrMessage("la confirmation du mot de passe est invalide");
+		}else if(!isValideNom(infos.first_name) || !isValideNom(infos.last_name)){
+			setWrongInput(true);
+			setErrMessage("nom ou prénom invalide");
 		}else{
 			setWrongInput(false);
 			const res = await creationCompte(infos);
@@ -55,6 +84,12 @@ export function RegistrationForm(props) {
         setInfos(values => ({...values, [name]: value}))
     }
 
+	const handleChangeSelect = (selectedOptions, nom) => {
+		const name = nom.name;
+		const value = selectedOptions.value;
+		setInfos(values => ({...values, [name]: value}));
+	}
+
 	const noPaste = (e) => {
 		e.preventDefault();
 		return false;
@@ -62,8 +97,24 @@ export function RegistrationForm(props) {
 
 	return(<div className="form_div">
 		<form onSubmit={handlleSubmit} className="form">
-			<div className="inputs_divs">
-                <TextField
+			<div className="inputs-divs">
+				<div><TextField
+					required
+					id="last_name"
+					label="Nom"
+					type="text"
+					name="last_name"
+					onChange={handleChange}
+				/></div>
+				<div><TextField
+					required
+					id="first_name"
+					label="Prénom"
+					type="text"
+					name="first_name"
+					onChange={handleChange}
+				/></div>
+                <div><TextField
 					required
 					id="email"
 					label="email"
@@ -71,24 +122,8 @@ export function RegistrationForm(props) {
 					name="email"
 					defaultValue={props.mail}
 					onChange={handleChange}
-				/>
-				<TextField
-					required
-					id="first_name"
-					label="first_name"
-					type="text"
-					name="first_name"
-					onChange={handleChange}
-				/>
-                <TextField
-					required
-					id="last_name"
-					label="last_name"
-					type="text"
-					name="last_name"
-					onChange={handleChange}
-				/>
-                <TextField
+				/></div>
+                <div><TextField
 					required
 					id="password"
 					label="mot de passe"
@@ -96,8 +131,8 @@ export function RegistrationForm(props) {
 					name="password"
 					onChange={handleChange}
 					onPaste={ noPaste }
-				/>
-                <TextField
+				/></div>
+                <div><TextField
 					required
 					id="password_conf"
 					label="confirmation du mot de passe"
@@ -105,7 +140,15 @@ export function RegistrationForm(props) {
 					name="password_conf"
 					onChange={handleChange}
 					onPaste={ noPaste }
-				/>
+				/></div>
+				<div><Select 
+					required
+					name="id_park_demande"
+					className="select-park-abo"
+					placeholder="parking demandé"
+					options={ optParking }
+					onChange={handleChangeSelect}
+				/></div>
 			</div>
 			<Button 
 				className="submit_button"

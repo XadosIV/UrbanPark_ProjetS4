@@ -10,27 +10,24 @@ export function ViewAgenda (props){
 	const localizer = momentLocalizer(moment);
 
 	const [eventsList, setEventsList] = useState([]);
+	const [update, setUpdate] = useState(true)
+
+	function Callback(childData) {
+        setUpdate(childData)
+    }
 
 	function FormatSchedule (list)
 	{
 		let sortie = []
 		let i = 0;
 		list.forEach(element => {
+			let type = element.type
 			let role = element.role;
 			let idParking = element.parking;
 			let parking = element.name;
 			let user = element.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
-
-			let startTitle = "";
-
-			if (role == "Gardien"){
-				startTitle = "Gardiennage ";
-			}
-			else {
-				startTitle = "Nettoyage ";
-			}
 
 			let trouve = false;
 
@@ -64,9 +61,10 @@ export function ViewAgenda (props){
 			{
 				let newElement = {
 					id_schedule:[element.id],
+					type : type,
 					id: i,
 					idparking: idParking,
-					title: startTitle + " du parking " + parking + " par " + user,
+					title: type != "Reunion" ? type + " du parking " + parking + " par " + user : type,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
@@ -79,6 +77,7 @@ export function ViewAgenda (props){
 			}
 			i++;
 		});
+		console.log(sortie)
 		return sortie;
 	}
 
@@ -100,7 +99,7 @@ export function ViewAgenda (props){
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
-	}, []);
+	}, [props.update, update]);
 
 	const messages = {
 		allDays: "Tous les jours",
@@ -121,18 +120,13 @@ export function ViewAgenda (props){
 	const handleSelectedEvent = (event) => {
 		setSelectedEvent(event)
 		setModalState(!modalState)
+		setUpdate(true)
 	}
 
-	const ButtonUpdateSchedule = () => {
-		return (
-		    <div className={`modal-${modalState == true ? 'show' : 'hide'}`}>
-				<UpdateScheduleForm event={selectedEvent}/>
-		    </div>
-		)
-	}
+	const [popupOpened, setPopupOpened] = useState(false);
 
 	return (
-		<div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
+		<div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
 			<Calendar
 				localizer={localizer}
 				events={eventsList}
@@ -143,7 +137,10 @@ export function ViewAgenda (props){
 				culture="fr"
 				messages={messages}
 			/>
-			{selectedEvent && <ButtonUpdateSchedule />}
+			{selectedEvent && update &&
+			<div className={`modal-${modalState == true ? 'show' : 'hide'}`} style={{alignSelf:(popupOpened ? "flex-start" : "center")}}>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} setPopupOpened={setPopupOpened}/>
+		    </div>}
 		</div>
 	)
 }

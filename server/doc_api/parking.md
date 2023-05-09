@@ -93,7 +93,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 * * *
 * * *
 
-# PUT: /api/parking/:parking
+# PUT: /api/parking/:id
 > Permission requise : AUTH
 
 > Description : Modifie certaines informations d'un parking.
@@ -103,7 +103,7 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 | Name | Description | Required? | 
 | ---- | ----------- | --------- | 
 | name | Pour renommer le parking | false | 
-| floors | Modifier son nombre d'étages | false | 
+| floor | Modifier son nombre d'étages | false | 
 | address | Modifier son adresse | false |
 
 #### **Erreurs** :

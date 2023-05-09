@@ -16,4 +16,4 @@ async function TakeAllSpotTypes(id_spot=0){
 	return axios.get(url).then((res) => res.data)
 }
 
-export default { TakeAllSpotTypes };
+export { TakeAllSpotTypes };

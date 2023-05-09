@@ -19,6 +19,7 @@
 }
 
 .list-item {
+	min-width:500px;
 	display: flex;
 	flex-direction:row;
 	flex-basis: calc(42%);  
@@ -42,7 +43,7 @@
 	list-style-position: inside;
 	margin:0;
 	padding:0;
-	max-height: 500px;
+	max-height: 800px;
 	overflow-y: auto;
 	scrollbar-width: thin;
 }
@@ -70,7 +71,7 @@
 	list-style-position: inside;
 	margin:0;
 	padding:0;
-	max-height: 500px;
+	max-height: 800px;
 	overflow-y: auto;
 	scrollbar-width: thin;
 }
@@ -104,10 +105,11 @@
     flex-direction:column;
 	min-width:50%;
 	margin-right: 30px;
+	margin-left:30px;
 }
 
 .UserList {
-	min-width:100%;
+	width:90%;
 }
 
 .divider {
@@ -177,3 +179,44 @@
 	background-color: #3e8e41;
   }
 
+.popup-types-content {
+	display:flex;
+	flex-direction:row;
+	margin: auto;
+	background: rgb(255, 255, 255);
+	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
+	padding: 5px;
+	min-width:200px;
+	min-width:200px;
+	justify-content: center;
+	border-radius:10px;
+}
+
+.popup-div{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+.popup-div>p{
+	text-align: center;
+}
+
+.popup-div>h2{
+	text-align: center;
+}
+
+.popup-div>*{
+	margin: 2%;
+}
+
+.all-schedules {
+	margin-bottom:10px;
+}
+
+.all-schedules:hover {
+	background-color:#F2F3F5;
+}
