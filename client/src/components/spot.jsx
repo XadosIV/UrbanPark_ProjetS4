@@ -299,7 +299,7 @@ export function Spot(props) {
                                 onChange={toggleCheckbox}
                             />
                             Place {SpotName(props.spot)}
-                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false);}}>
+                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false); setModifiable(false)}}>
             {infosSpot}
             <hr/>
             {typesSpot}
