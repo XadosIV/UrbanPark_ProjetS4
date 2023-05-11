@@ -12,25 +12,31 @@ const Errors = require('../errors');
 
 function GetAllSpots(infos, callback){
 	sql = `SELECT
-				s.id,
-				s.number,
-				s.floor,
-				s.id_park,
-				u.id AS id_user,
-				uu.id AS id_user_temp,
-				u.first_name,
-				u.last_name,
-				uu.first_name AS first_name_temp,
-				uu.last_name AS last_name_temp
-	FROM Spot s 
-	LEFT JOIN User u ON s.id = u.id_spot 
-	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
-	WHERE
-		s.id_park LIKE :id_park AND
-		s.floor LIKE :floor AND
-		s.number LIKE :number AND
-		s.id LIKE :id
-	ORDER BY floor, number`;
+		s.id,
+		s.number,
+		s.floor,
+		s.id_park,
+		u.id AS id_user,
+		uu.id AS id_user_temp,
+		u.first_name,
+		u.last_name,
+		uu.first_name AS first_name_temp,
+		uu.last_name AS last_name_temp,
+		ns.id AS next_schedule
+	FROM Spot s
+		LEFT JOIN User u ON s.id = u.id_spot
+		LEFT JOIN User uu ON s.id = uu.id_spot_temp
+		LEFT JOIN Schedule ns ON s.id_park = ns.id_parking
+		JOIN Spot fs ON ns.first_spot = fs.id
+		JOIN Spot ls ON ns.last_spot = ls.id
+	WHERE s.id_park LIKE :id_park
+		AND s.floor LIKE :floor
+		AND s.number LIKE :number
+		AND s.id LIKE :id
+		AND fs.floor = s.floor -- If the data was inserted correctly, fs.floor = ls.floor
+		AND fs.number <= s.number
+		AND ls.number >= s.number
+	ORDER BY s.floor, s.number`;
     
 	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 

@@ -15,7 +15,8 @@
 	"types":[ // See : Ressources - Type
 		1,
 		3
-	]
+	],
+	"next_schedule":3
 }
 ```
 
