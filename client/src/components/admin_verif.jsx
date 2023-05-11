@@ -100,7 +100,6 @@ export function AdminVerif(props) {
         <div>
             <Button variant="contained" color="primary" style={{marginTop:"20px", backgroundColor:"red", width: "100%"}} onClick={() => setIsOpen(true)}>{props.title}</Button>
             <ReactModal
-                ariaHideApp={false}
                 isOpen={isOpen}
                 contentLabel="Suppression"
                 onRequestClose={() => setIsOpen(false)}

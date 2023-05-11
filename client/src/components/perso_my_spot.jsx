@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, placeFromId, TakeParking } from "../services";
-import { SpotName } from "../interface/spot_name";
+import { SpotName, CutAddress } from "../interface";
 
 export function PersoMySpot(){
     const { userToken } = useContext(ContextUser);
@@ -15,6 +15,14 @@ export function PersoMySpot(){
         role: "",
     });
     const [ maPlace, setMaPlace ] = useState({
+        id: undefined,
+	    number: undefined,
+	    floor: undefined,
+	    id_park: "",
+	    id_user: undefined,
+	    types:[]
+    });
+    const [ maPlaceTemp, setMaPlaceTemp ] = useState({
         id: undefined,
 	    number: undefined,
 	    floor: undefined,
@@ -45,20 +53,26 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchMaPlace() {
             if(infosUser.id_spot != null){
-                if(infosUser.id_spot_temp == null){
-                    setIsPlaceTemp(false);
-                    const resMaPlace = await placeFromId(infosUser.id_spot);
-                    //console.log("place", resMaPlace);
-                    setMaPlace(resMaPlace);
-                }else{
-                    setIsPlaceTemp(true);
-                    const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
-                    //console.log("place_temp", resMaPlaceTemp);
-                    setMaPlace(resMaPlaceTemp);
-                }
+                const resMaPlace = await placeFromId(infosUser.id_spot);
+                //console.log("place", resMaPlace);
+                setMaPlace(resMaPlace);
             }
         }
         fetchMaPlace();
+    }, [infosUser]);
+
+    useEffect(() => {
+        async function fetchMaPlaceTemp() {
+            if(infosUser.id_spot_temp != null){
+                setIsPlaceTemp(true);
+                const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
+                //console.log("place", resMaPlaceTemp);
+                setMaPlaceTemp(resMaPlaceTemp);
+            } else {
+                setIsPlaceTemp(false);
+            }
+        }
+        fetchMaPlaceTemp();
     }, [infosUser]);
 
     useEffect(() => {
@@ -72,7 +86,7 @@ export function PersoMySpot(){
 
     const affSpotName = () => {
         if((maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined)){
-            return SpotName(maPlace);
+            return <p>Ma place attitrée : {SpotName(maPlace)}</p>;
         }else{
             return "Place non attribuée, veuillez patienter.";
         }
@@ -80,7 +94,7 @@ export function PersoMySpot(){
 
     const listeTypes = () => {
         if(maPlace.types.length !== 0){
-            return maPlace.types.map( (type, index) =>  <li key={index} > { type } </li> ) 
+            return maPlace.types.map( (type, index) =>  <li key={index} > Place { type.toLowerCase() } </li> ) 
         }else{
             return <li> Place abonné simple </li>
         }
@@ -90,15 +104,16 @@ export function PersoMySpot(){
         <div className="div-place">
             <div className="div-info-place">
                 <div>
-                    { isPlaceTemp && <p className="msg-place-temp"> /!\ Une place temporaire vous a été assignée </p> }
+                    { isPlaceTemp && <p className="msg-place-temp"> /!\ Une place temporaire vous a été assignée :<br/>Votre place temporaire est la place {SpotName(maPlaceTemp)} </p> }
                 </div>
                 <div className="aff-place">
                     <h2>
                         { affSpotName() }
                     </h2>
                     <ul>
-                        <li> { parkPlace.name } </li>
-                        <li> { parkPlace.address } </li>
+                        <li> Parking { parkPlace.name } </li>
+                        <li> { parkPlace.address != "" ? CutAddress(parkPlace.address)[0] : "" } </li>
+                        <li> { parkPlace.address != "" ? CutAddress(parkPlace.address)[1] : "" } </li>
                     </ul>
                     <ul>
                         {(maPlace.id_park !== "") && (maPlace.floor !== undefined) && (maPlace.number !== undefined) && listeTypes() }

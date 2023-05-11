@@ -1,16 +1,16 @@
-body {
+/* body {
 	overflow-x:hidden;
-}
+} */
 
 .div-info-user {
 	display: flex;
 	flex-direction:row;
 	flex: auto;
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
@@ -19,11 +19,11 @@ body {
 .div-info-place{
 	display: flex;
 	flex: auto;
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
@@ -31,11 +31,11 @@ body {
 }
 
 .div-edt{
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	background-color: white;
 	display: flex;
 	justify-content: space-around;
@@ -68,11 +68,11 @@ body {
 }
 
 .div-UI{
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	background-color: white;
 	display: flex;
 	justify-content: space-around;
@@ -157,11 +157,11 @@ body {
 	display: flex;
 	flex-direction:row;
 	flex: auto;
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	justify-content:space-around;	
 	align-items:center;
 	background-color: white;
