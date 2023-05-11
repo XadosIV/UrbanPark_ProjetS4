@@ -11,12 +11,15 @@ const Errors = require('../errors');
 function GetSpotTypes(infos, callback){
 	//Don't ask why this is that hard, only @UP-4303 knows
 	//We could've did it in 2 separate functions, but what is life without challenge ?
-	let sql = `SELECT t.name FROM Typed y
+	
+	let sql = `SELECT t.name 
+		FROM Typed y
 		RIGHT JOIN Type t ON t.name=y.name_type
 		WHERE t.name LIKE :name
 		GROUP BY t.Name
 		HAVING MAX(case when y.id_spot LIKE :id_spot OR "%" = :id_spot then 1 else 0 end);`;
-	// console.log("SQL at GetSpotTypes : " + sql);
+	
+		// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         id_spot:infos.id_spot||'%',
 		name:infos.name||'%'
@@ -31,7 +34,9 @@ function GetSpotTypes(infos, callback){
  * @param {function(*,*)} callback (err, boolean)
  */
 function SpotTypeExists(name, callback) {
+	
 	let sql = `SELECT name FROM Type WHERE name LIKE :name;`;
+	
 	// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         name:name
@@ -74,8 +79,10 @@ function PostSpotType(infos, callback){
 			}else if (data.length != 0){ // Spot type name already used
 				return Errors.SendError(Errors.E_SPOT_TYPE_ALREADY_EXIST, "Type de place déjà existant.", callback);
 			}else{
+				
 				let sql=`INSERT INTO Type (name) VALUES (:name);`;
-				//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
+				
+				//console.log("SQL at PostSpotType : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, infos, callback);
 			}
 		});
@@ -90,7 +97,9 @@ function PostSpotType(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteSpotType (id, callback){
+
 	let sql = `DELETE FROM Typed WHERE id_spot=:id`
+	
 	dbConnection.query(sql,{
 		id:id
 	}, (err, data) => {
