@@ -1,6 +1,6 @@
 # Urban Park
 
-Projet L3 réalisé durant le semestre 4, année 2023
+Projet L2 réalisé durant le semestre 4, année 2023
 
 ## Equipe
 - @github/UP-4303
@@ -11,7 +11,7 @@ Projet L3 réalisé durant le semestre 4, année 2023
 
 ## Description
 
-- Une application Web d'un site de parking, possédant un système de gestion des employés du parking (Gardien, Equipe de nettoyage) ainsi que des utilisateurs (Abonnés)
+- Une application web d'un site de parking, possédant un système de gestion des employés du parking (Gardien, Equipe de nettoyage) ainsi que des utilisateurs (Abonnés)
 - Une couche API REST permettant de communiquer efficaement avec une base de donnée SQL
 
 ## Langages
@@ -72,12 +72,12 @@ PORT=				//	port d'accès de l'api
 USER=				//	nom de l'utilisateur de la base de donnée
 HOST=				//	nom de l'host de la base de donnée
 PASSWORD=			//	mot de passe de la base de donnée
-ADDITIONAL_SQL=		//	lien vers un fichier possédant des données de bases pour la base de donnée
+ADDITIONAL_SQL=		//	lien vers un fichier possédant des données de base pour la base de donnée
 ```
 
-Vous devez aussi pouvoir avoir accès à un serveur sql fonctionnel ou une base de donnée accessible.
+Vous devez aussi pouvoir avoir accès à un serveur sql fonctionnel ou une base de données accessible.
 
-Une fois tous cela réaliser, lancez 2 terminaux et executez les commandes suivantes:
+Une fois tous cela réalisé, lancez 2 terminaux et exécutez les commandes suivantes:
 
 ```
 cd server
