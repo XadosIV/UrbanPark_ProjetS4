@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { AllSpots, BaseSpot } from "../interface"
-import Popup from 'reactjs-popup';
+import { AllSpots } from "../interface"
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
@@ -19,7 +18,7 @@ export function UpdateScheduleForm(props) {
      * @return { Array }
      */
     function DeOrDu(type) {
-        if(type == "Réunion") {
+        if(type === "Réunion") {
             return "de"
         } else {
             return "du"
@@ -80,9 +79,9 @@ export function UpdateScheduleForm(props) {
      * @return { Array }
      */
     function BaseListType(type) {
-        if (type == "Gardiennage") {
+        if (type === "Gardiennage") {
             return AllServices(guardiansList)
-        } else if (type == "Nettoyage") {
+        } else if (type === "Nettoyage") {
             return AllServices(serviceList)
         }
     }
@@ -319,7 +318,7 @@ export function UpdateScheduleForm(props) {
 								maxMenuHeight={200}
 							/>
 						</div>
-						{baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
+						{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
 							<Select
 								options={optionsSpots.opts}
 								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}

@@ -64,7 +64,7 @@ export function ViewAgenda (props){
 					type : type,
 					id: i,
 					idparking: idParking,
-					title: type != "Reunion" ? type + " du parking " + parking + " par " + user : type,
+					title: type !== "Reunion" ? type + " du parking " + parking + " par " + user : type,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,

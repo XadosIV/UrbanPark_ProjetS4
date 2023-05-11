@@ -13,7 +13,7 @@ export function BaseSpot(spot, list) {
             opts.push(s);
         }
     }
-    if (opts.length != 0) {
+    if (opts.length !== 0) {
         return opts[0].label
     } else {
         return ""
