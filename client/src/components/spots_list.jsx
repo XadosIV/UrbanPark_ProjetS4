@@ -16,8 +16,6 @@ export function SpotsList(props) {
 	}
 
 	const filteredData = GetSpotsFromFilter(props.list, props.infos)
-	console.log(props.list)
-	console.log(props.infos)
 
 	const generateKey = (index, spot) => {
 		let id = ""+ index + spot.floor + spot.number;

@@ -68,7 +68,7 @@ export function App() {
 			<main>
 				<AppRoutes />
 			</main>
-			<footer>
+			<footer style={{zIndex:300}}>
 				<Footer/>
 			</footer>
 		</ContextUser.Provider>

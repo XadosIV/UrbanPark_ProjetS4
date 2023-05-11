@@ -190,7 +190,7 @@ export function NewSpotForm(props) {
                 borderColor: "transparent",
                 height:"36px",
                 width: "100%"
-            }}>Ajouter des places</Button>} position="left center" onClose={() => {setWrongInput(false); setOpen(false);}}> 
+            }}>Ajouter des places</Button>} position="left center" onClose={() => {setWrongInput(false); setOpen(false); setInfos({floor: 0, number: 0, id_park: props.id, types:[]})}}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'une nouvelle place<br/> au parking : {props.name}</h3>
                 <form onSubmit={handlleSubmit} className="form">
