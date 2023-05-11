@@ -21,7 +21,7 @@ export function Header () {
 					flexDirection:"row",
 					justifyContent:"flex-end"
 				}}>
-				<AccountCircleIcon variant="contained" sx={{ width: '20%', height: '20%' }} />
+				<AccountCircleIcon variant="contained" sx={{ fontSize:"3rem" }} />
 			</Link>
 		</div>
 	)
