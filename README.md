@@ -52,7 +52,6 @@ Projet L2 réalisé durant le semestre 4, année 2023
 - dotenv
 - express
 - mysql2
-- react-datepicker
 ```
 
 ## Prérequis
@@ -72,7 +71,7 @@ PORT=				//	port d'accès de l'api
 USER=				//	nom de l'utilisateur de la base de donnée
 HOST=				//	nom de l'host de la base de donnée
 PASSWORD=			//	mot de passe de la base de donnée
-ADDITIONAL_SQL=		//	lien vers un fichier possédant des données de base pour la base de donnée
+ADDITIONAL_SQL=		//	lien vers un fichier possédant des données de base pour la base de données
 ```
 
 Vous devez aussi pouvoir avoir accès à un serveur sql fonctionnel ou une base de données accessible.
