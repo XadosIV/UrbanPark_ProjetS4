@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
 import { AllSpots, BaseSpot } from "../interface"
-import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
@@ -252,8 +251,6 @@ export function UpdateScheduleForm(props) {
         })
     }, [optionsSpots.change])
 
-	const [popupOpened, setPopupOpened] = useState(false);
-
 	const customStyles = {
         overlay: {
             zIndex : 100000
@@ -274,25 +271,16 @@ export function UpdateScheduleForm(props) {
 
     return (
 		<div>
-			<Button variant="contained" color="primary" 
-				style={{
-					backgroundColor: "#FE434C",
-					borderColor: "transparent",
-					borderRadius: 20,
-					width:"150px",
-					height:"75px",
-					margin:"10px 0"
-				}}
-				onClick={()=>setPopupOpened(true)}>
-				Modifier
-			</Button>
 			<ReactModal
 				ariaHideApp={false}
-                isOpen={popupOpened}
+                isOpen={props.modalState}
                 contentLabel="Modifier le créneau"
-                onRequestClose={() => setPopupOpened(false)}
+                onRequestClose={() => props.setModalState(false)}
                 style={customStyles}
 			>
+				<div className="info_reunion">
+					
+				</div>
 				<div className="form_div">
 					<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
 					<form onSubmit={handlleSubmit} className="form">   

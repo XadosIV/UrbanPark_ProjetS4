@@ -96,6 +96,7 @@ export function ViewAgenda (props){
 				role = props.props.role;
 			}
 		}
+		console.log(role)
 		TakeAllEvents(id, role).then(res => {
 			setEventsList(FormatSchedule(res));
 		})
@@ -136,7 +137,7 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback}/>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState}/>
 		    }
 		</div>
 	)
