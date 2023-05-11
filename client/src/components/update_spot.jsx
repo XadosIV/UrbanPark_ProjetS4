@@ -29,26 +29,28 @@ export function UpdateSpot (props) {
 		for (let typeL of typeList){
 			let trouve = false;
 			for (let typeB of base){
-				if (typeL.name === typeB.name){
+				if (typeL.name === typeB.name || (typeL.name === "Abonné" && (props.spot.id_user != null || props.spot.id_user_temp != null))){
 					trouve = true;
 				}
 			}
-			if (!trouve){
+			if (!trouve && base.length != 0){
 				changes.push(typeL.name);
 			}
 		}
 		for (let typeB of base){
 			let trouve = false;
 			for (let typeL of typeList){
-				if (typeL.name === typeB.name){
+				if (typeL.name === typeB.name || (typeB.name === "Abonné" && (props.spot.id_user != null || props.spot.id_user_temp != null))){
 					trouve = true;
 				}
 			}
-			if (!trouve){
+			if (!trouve && typeList.length != 0){
 				changes.push(typeB.name);
 			}
 		}
-		ServiceUpdateSpot(changes, props.id);
+		if (changes.length != 0) {
+			ServiceUpdateSpot(changes, props.spot.id);
+		}
 		props.handleCallback(true);
 		props.handleChangeView()
 	}

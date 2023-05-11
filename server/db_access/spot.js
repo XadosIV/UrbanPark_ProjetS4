@@ -151,6 +151,7 @@ function InsertListTyped(id_spot, name_types, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function PostSpot(infos, callback){
+	const { GetParkings } = require("./parking")
 	GetSpots({id_park:infos.id_park, floor:infos.floor, number:infos.number}, (err, res) => {
 		if (err){
 			callback(err, []);
@@ -200,6 +201,7 @@ function PostSpot(infos, callback){
  * if toggle_type == [] then, delete all types
  */
 function UpdateSpot(infos, callback){
+	const { GetParkings } = require("./parking")
 	if ( !(infos.number || infos.floor || infos.id_park || infos.toggle_type) ) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Au moins un des champs doit être remplis parmi : number, floor, id_park & toggle_type", callback)
 	// check if need update
 	if ( infos.number || infos.floor || infos.id_park ){

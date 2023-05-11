@@ -76,6 +76,7 @@ function PostParking(infos, callback){
  * @param {function(*,*)} callback
  */
 function PutParkings(infos, callback){
+	const { GetParkings } = require ("./parking");
 	GetParkings({"id":infos.id},(err,data)=>{
 		if(err){
 			callback(err,data);
@@ -125,6 +126,7 @@ function PutParkings(infos, callback){
  * @param {function(*,*)} callback
  */
 function DeleteParking(infos, callback){
+	const { GetParkings } = require ("./parking");
     if (!infos.id) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Spécifier l'id du parking à supprimer.", callback)
 
     //check if parking exist
