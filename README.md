@@ -23,9 +23,9 @@ Projet L2 réalisé durant le semestre 4, année 2023
 ```
 
 
-## Frameworks et Librairies
+## Frameworks et librairies
 
-### Application Cliente
+### Application cliente
 
 ```
 - npm
@@ -77,7 +77,7 @@ ADDITIONAL_SQL=		//	lien vers un fichier possédant des données de base pour la
 
 Vous devez aussi pouvoir avoir accès à un serveur sql fonctionnel ou une base de données accessible.
 
-Une fois tous cela réalisé, lancez 2 terminaux et exécutez les commandes suivantes:
+Une fois tout cela réalisé, lancez 2 terminaux et exécutez les commandes suivantes:
 
 ```
 cd server
