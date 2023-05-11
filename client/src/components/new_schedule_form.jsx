@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole, TakeAllRoles, TakeAllSchedulesAvailable } from "../services"
 import { AllSchedulesAvailable } from "../components";
 import { SpotName, NeedS, ChangeDate } from "../interface"
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
@@ -94,9 +95,9 @@ export function NewScheduleForm(props) {
     const [guardiansList, setGuardiansList] = useState([]);
     const [schedulesAvailable, setSchedulesAvailable] = useState([]);
     const [staffList, setStaffList] = useState([]);
-    const [rolesReunions, setRolesReunions] = useState([]);
-    const [infosReunions, setInfosReunions] = useState({parking:'\x00', type:"Réunion", date_start: baseDate, date_end: baseDate, user:[]})
+    const [infosReunions, setInfosReunions] = useState({parking:'\x00', type:"Réunion", date_start: baseDate, date_end: baseDate, user:[], role:[]})
     const [horairesSchedules, setHorairesSchedules] = useState({date_start: baseDate, date_end: baseDate})
+    const [checkbox, setCheckbox] = useState(false);
 
     const [isOpen, setIsOpen] = useState(false);
     const [onlyOne, setOnlyOne] = useState(false)
@@ -104,19 +105,27 @@ export function NewScheduleForm(props) {
     
     const [editable, setEditable] = useState(true)
 
+    const toggleCheckbox = () => {
+        setCheckbox(!checkbox);
+    }
+
+    const checkboxIcon = () => {
+        return checkbox ? <CheckBox /> : <CheckBoxOutlineBlank />;
+    }
+
     const handleChangeSelect = (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "parking") {
                 TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
-            } else if (name.name === "type") {
+            } else if (name.name == "type") {
                 let liste = [];
-                if (selectedOptions.value === "Gardiennage") {
+                if (selectedOptions.value == "Gardiennage") {
                     liste = guardiansList
-                } else if (selectedOptions.value === "Nettoyage") {
+                } else if (selectedOptions.value == "Nettoyage") {
                     liste = serviceList
-                } else if (selectedOptions.value === "Réunion") {
+                } else if (selectedOptions.value == "Réunion") {
                     liste = staffList
                 }
                 setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
@@ -128,9 +137,7 @@ export function NewScheduleForm(props) {
                 value.push(option.value)
             }
         }
-        if (name.name === "roles") {
-            setRolesReunions(value)
-        } else if (name.name === "user" && infos.type === "Réunion") {
+        if ((name.name === "user" || name.name == "role") && infos.type === "Réunion") {
             setInfosReunions(values => ({...values, [name.name]: value}))
         } else {
             setInfos(values => ({...values, [name.name]: value}))
@@ -145,47 +152,22 @@ export function NewScheduleForm(props) {
         }
     }
 
-    function PushToTab(base, newTab) {
-        console.log(base)
-        for (let data of newTab) {
-            var isNotIn = 0;
-            if (base.length !== 0) {
-                for (let baseData of base) {
-                    if (baseData !== data.id) {
-                        isNotIn++
-                    }
-                }
-            }
-            if (isNotIn === base.length) {
-                base.push(data.id)
-            }
-        }
-        return base
-    }
-
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
         var isSubmit = false;
         if (infos.type === "Réunion") {
-            if ((rolesReunions.length === 0 && infos.user.length === 0)) {
+            if ((infos.roles.length == 0 && infos.user.length == 0)) {
                 setWrongInput(true)
                 setErrMessage("Vous devez assigner ce créneau à un rôle ou des utilisateurs")
-            } else if (horairesSchedules.date_start === baseDate && horairesSchedules.date_end === baseDate) {
+            } else if (horairesSchedules.date_start == baseDate && horairesSchedules.date_end == baseDate) {
                 setWrongInput(true)
                 setErrMessage("Choisissez une date de début et de fin.")
             } else if (horairesSchedules.date_end < horairesSchedules.date_start) {
                 setWrongInput(true)
                 setErrMessage("L'heure de fin ne peut pas précéder l'heure de début.")
             } else {
-                var newTab = infosReunions.user
-                for (let role of rolesReunions) {
-                    let res = await TakeByRole(role).then(res => res)
-                    newTab = PushToTab(newTab, res)
-                }
-                console.log(newTab)
-                setInfosReunions(values => ({...values, ["user"]: newTab}))
-                TakeAllSchedulesAvailable({roles: rolesReunions, users:infos.user, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+                TakeAllSchedulesAvailable({roles: infos.roles, users:infos.user, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
                 setIsOpen(true)
             }
         } else {
@@ -196,22 +178,9 @@ export function NewScheduleForm(props) {
                 if (!Array.isArray(infos.user)) {
                     infos.user = [infos.user]
                 }
-                var stock = infos.user;
-                var scheduleAdded = 0;
-                for (let user of stock) {
-                    infos.user = user;
-                    const res = await CreationSchedule(infos); 
-                    console.log(res);
-                    if (res.status === 200) {
-                        scheduleAdded++;
-                    } else {
-                        setWrongInput(true);
-                        setErrMessage(res.data.message);
-                        break;
-                    }
-                }
-                if (scheduleAdded === stock.length) {
-                    infos.user = stock
+                const res = await CreationSchedule(infos); 
+                //console.log(res);
+                if (res.status === 200) {
                     if (optionsUsers === AllServices(serviceList)) {
                         if (infos.last_spot === infos.first_spot) {
                             placeFromId(infos.first_spot).then(res => {
@@ -232,6 +201,9 @@ export function NewScheduleForm(props) {
                         })
                         isSubmit = true;
                     }
+                } else {
+                    setWrongInput(true);
+                    setErrMessage(res.data.message);
                 }
             }
         }
@@ -244,33 +216,22 @@ export function NewScheduleForm(props) {
     const handlleSubmitNewReunion = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infosReunions.date_start !== baseDate && infosReunions.date_end !== baseDate && infosReunions.user.length !== 0) {
-            var stock = infosReunions.user;
-            var scheduleAdded = 0;
-            for (let user of stock) {
-                infosReunions.user = user;
-                const res = await CreationSchedule(infosReunions); 
-                console.log(res);
-
-                if (res.status === 200) {
-                    scheduleAdded++;
-                } else {
-                    setWrongInput(true);
-                    setErrMessage(res.data.message);
-                    break;
-                }
-            }
-            if (scheduleAdded === stock.length) {
-                infosReunions.user = stock
+        if (infosReunions.date_start != baseDate && infosReunions.date_end != baseDate) {
+            const res = await CreationSchedule(infosReunions); 
+            //console.log(res);
+            if (res.status === 200) {
                 setWrongInput(true);
                 setErrMessage("Réunion placée du " + ChangeDate(infosReunions.date_start.slice(0,10)) + " à " + infosReunions.date_start.slice(11,19) + " au " + ChangeDate(infosReunions.date_end.slice(0,10)) + " à " + infosReunions.date_end.slice(11,19));
+            } else {
+                setWrongInput(true);
+                setErrMessage(res.data.message);
             }
+            await delay(2000);
+            setIsOpen(false)
         } else {
             setWrongInput(true);
             setErrMessage("Vous n'avez pas choisi d'horaire pour cette réunion");
         }
-        await delay(2000);
-        setIsOpen(false)
     }
 
     var optionsParking = AllParkings(parkingsList)
@@ -319,14 +280,14 @@ export function NewScheduleForm(props) {
     };
 
     function TitleButton(type) {
-        if (type === "Nettoyage" || type === "Gardiennage") {
+        if (type == "Nettoyage" || type == "Gardiennage") {
             return <Button
                 className="submit_button" 
                 variant="contained" 
                 color="primary" 
                 type="submit"
             >Ajouter</Button>
-        } else if (type === "Réunion") {
+        } else if (type == "Réunion") {
             return <Button
                 className="submit_button" 
                 variant="contained" 
@@ -356,7 +317,7 @@ export function NewScheduleForm(props) {
             onClose={() => {setWrongInput(false); 
                 setEditable(true); 
                 setInfos({parking: "", user: [], type:null, date_start:baseDate, date_end: baseDate}); 
-                setInfosReunions({parking: '\x00', user: [], type:"Réunion", date_start:baseDate, date_end: baseDate}); }} 
+                setInfosReunions({parking: '\x00', user: [], role:[], type:"Réunion", date_start:baseDate, date_end: baseDate}); }} 
             onOpen={() => {
                 setWrongInput(false); 
                 setEditable(true); 
@@ -390,10 +351,17 @@ export function NewScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
+                    {infos.type === "Réunion" && 
+                        <Checkbox 
+                        style={{color:"blue"}}
+                        icon={checkboxIcon()}
+                        checked={checkbox}
+                        onChange={toggleCheckbox}
+                    />}
                     {infos.type === "Réunion" && <div style={{zIndex:1007}}>  
                         <Select
                             isMulti
-                            name="roles"
+                            name="role"
                             placeholder="Assigner à... (rôles)"
                             options={AllRoles(optionsRoles)}
                             className="search-add-two "
@@ -440,7 +408,7 @@ export function NewScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
-                    {(infos.type === "Nettoyage" || infos.type === "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+                    {(infos.type == "Nettoyage" || infos.type == "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                         <DatePicker
                             name="date_start"
                             selected={new Date(infos.date_start)}
@@ -457,7 +425,7 @@ export function NewScheduleForm(props) {
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
                     </div>}
-                    {(infos.type === "Réunion") && <div >
+                    {(infos.type == "Réunion") && <div >
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
