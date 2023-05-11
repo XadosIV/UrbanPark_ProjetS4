@@ -329,12 +329,12 @@ export function ParkingSpots(props) {
 			}
 		</div>
 		
-		<div style={{maxWidth:"500px", marginBottom:"10px"}}>
+		<div style={{maxWidth:"500px", marginBottom:"10px", marginLeft:"10px"}}>
 			<input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
 			<input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
 		</div>
 		
-		<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+		<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", marginLeft:"10px"}}>
 			<form className="all-searchs">
 				<Select 
 					className="front-search"
@@ -367,7 +367,7 @@ export function ParkingSpots(props) {
 					{ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
 				</div>
 			</form>
-			<div style={{display:"flex", flexDirection:"column", justifyContent:"center", width: "30%"}}>
+			<div style={{display:"flex", flexDirection:"column", justifyContent:"center", width: "30%", marginRight:"10px"}}>
 				{
 					addSpotSiAdmin()
 				}

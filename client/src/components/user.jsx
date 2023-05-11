@@ -43,7 +43,13 @@ export function User(props){
 				}
 			}
 		} else {
-			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+			if (spotTemp) {
+				if (spotTemp.length != 0) {
+					return <p style={{display: "inline"}}><br/>- Place temporaire {spotTemp}</p>
+				}
+			} else {
+				return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+			}
 		}
 	}
 
