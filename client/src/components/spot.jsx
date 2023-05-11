@@ -241,6 +241,7 @@ export function Spot(props) {
             })
         }
         if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
+        if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
             SSFU(infos.user, toModif);
         }
         if (type === "changeSpot" && gender === "temporary") {
