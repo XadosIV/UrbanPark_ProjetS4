@@ -10,7 +10,8 @@ export function Header () {
 				display:"flex",
 				flexDirection:"row",
 				justifyContent:"space-around",
-				alignItems:"center"
+				alignItems:"center",
+				margin:"1%"
 			}}>
 			<Link to="/">
 				<Typography variant="h3">UrbanPark</Typography>
@@ -21,7 +22,7 @@ export function Header () {
 					flexDirection:"row",
 					justifyContent:"flex-end"
 				}}>
-				<AccountCircleIcon variant="contained" sx={{ fontSize:"3rem" }} />
+				<AccountCircleIcon variant="contained" sx={{ fontSize:"4rem" }} />
 			</Link>
 		</div>
 	)
