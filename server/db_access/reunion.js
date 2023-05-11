@@ -247,7 +247,7 @@ function GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules=
 
 		let sql = `SELECT DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start,
 						DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end 
-				   FROM schedule
+				   FROM Schedule
 				   WHERE id_user = :id AND (date_start <= :date_end AND date_end >= :date_start)`
 
 		dbConnection.query(sql, {id:user, date_start:min, date_end:max}, (err, data) => {
@@ -278,7 +278,7 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 	}else{
 		let role = role_array.pop();
 
-		let sql = `SELECT id FROM user WHERE role=:role`
+		let sql = `SELECT id FROM User WHERE role=:role`
 
 		dbConnection.query(sql, {role:role}, (err, data) => {
 			if (err) {callback(err, null)}

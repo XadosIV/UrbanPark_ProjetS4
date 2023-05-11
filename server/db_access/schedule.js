@@ -497,8 +497,17 @@ function IsntSpotOverlapping(infos, callback) {
 				}else if(last_spot.length != 1){
 					return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
 				}else{
-					sql = `SELECT s.id FROM Schedule s JOIN Spot spf ON s.first_spot=spf.id JOIN Spot spl ON s.last_spot=spl.id WHERE s.date_start < :date_end AND s.date_end > :date_start AND spf.number < :first_spot AND spl.number > :last_spot;`;
-					//console.log("SQL at IsntSpotOverlapping : " + sql + " with " + JSON.stringify(infos));
+					
+					sql = `SELECT s.id FROM Schedule s
+					JOIN Spot spf ON s.first_spot=spf.id 
+					JOIN Spot spl ON s.last_spot=spl.id 
+					WHERE
+						s.date_start < :date_end AND
+						s.date_end > :date_start AND
+						spf.number < :first_spot AND
+						spl.number > :last_spot;`;
+					
+						//console.log("SQL at IsntSpotOverlapping : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if (err) {
 							callback(err, data)
