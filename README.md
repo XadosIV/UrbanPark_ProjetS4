@@ -9,7 +9,7 @@ Projet L3 réalisé durant le semestre 4, année 2023
 - @github/XadosIV
 - @github/Poutchy
 
-## Descritpion
+## Description
 
 - Une application Web d'un site de parking, possédant un système de gestion des employés du parking (Gardien, Equipe de nettoyage) ainsi que des utilisateurs (Abonnés)
 - Une couche API REST permettant de communiquer efficaement avec une base de donnée SQL
@@ -17,7 +17,7 @@ Projet L3 réalisé durant le semestre 4, année 2023
 ## Langages
 
 ```
-- HTML
+- HTML / CSS
 - JavaScript
 - SQL
 ```
@@ -30,7 +30,7 @@ Projet L3 réalisé durant le semestre 4, année 2023
 ```
 - npm
 - axios
-- bootsrap
+- bootstrap
 - moment
 - react
 - react-big-calendar
