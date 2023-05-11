@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { TakeAllSpots, TakeParking, getAllSpotsFilter, SetSpotFromUser } from "../services"
+import { TakeParking, SetSpotFromUser } from "../services"
 import { SpotName, AllSpots } from "../interface"
 import Select from 'react-select';
 import ReactModal from 'react-modal';
@@ -62,8 +62,6 @@ export function User(props){
 	const [ optSpot, setOptSpot ] = useState([]);
 	const [ update, setUpdate ] = useState(true);
 	const [ allSpots, setAllSpots ] = useState([]);
-	const [ fetchingSpot, setFetchingSpot ] = useState([]);
-	const [ fetchingSpotTemp, setFetchingSpotTemp ] = useState([]);
 
 	useEffect(() => {
 		setAllSpots(props.allSpots);
@@ -146,7 +144,7 @@ export function User(props){
 		async function SSFU(id_user, change) {
             await SetSpotFromUser(id_user, userToken, change)
         }
-		if (spot != props.user.id_spot && spot != null) {
+		if (spot !== props.user.id_spot && spot != null) {
 			SSFU(props.user.id, {id_spot:spot})
 			setErrMessage("Modification prise en compte.")
 			setAffErrMessage(true)
