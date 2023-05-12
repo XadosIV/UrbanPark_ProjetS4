@@ -188,4 +188,10 @@
 }
 li {
 	list-style: none;
+	align-self: center;
+		text-align: center;
+	}
+	
+	h3 {
+		text-align: center;
 }

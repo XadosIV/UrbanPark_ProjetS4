@@ -171,7 +171,8 @@ export function UpdateScheduleForm(props) {
 	const [parkingsList, setParkingsList] = useState([]);
 	const [serviceList, setServiceList] = useState([]);
 	const [guardiansList, setGuardiansList] = useState([]);
-	const [baseType, setBaseType] = useState(props.event.type)
+	const [baseType, setBaseType] = useState(props.event.type);
+	const [modifiable, setModifiable] = useState(false);
 
 
 	const [disabled, setDisabled] = useState(false)
@@ -249,6 +250,7 @@ export function UpdateScheduleForm(props) {
 				setDisabled(true)
 				await delay(2000);
 				props.handleCallback(false)
+				Modifier()
 			}
 			infos.user = stock
 		} else {
@@ -303,26 +305,9 @@ export function UpdateScheduleForm(props) {
 		},
 	};
 
-	return (
-		<div>
-			<ReactModal
-				ariaHideApp={false}
-				isOpen={props.modalState}
-				contentLabel="Modifier le créneau"
-				onRequestClose={() => {
-					props.setModalState(false);
-				}}
-				style={customStyles}
-			>
-				<div className="info_reunion">
-					<h3>{props.event.type}</h3>
-					<div>
-						{
-							InformationEvent(infos, baseType)
-						}
-					</div>
-				</div>
-				<div className="form_div">
+	function AffichageModifs () {
+		return (
+			<div className="form_div">
 					<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
 					<form onSubmit={handlleSubmit} className="form">   
 						<div style={{zIndex:1007}}>
@@ -402,6 +387,45 @@ export function UpdateScheduleForm(props) {
 					</form>
 					{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
 				</div>
+		)
+	}
+
+	function Modifier() {
+		setModifiable(!modifiable);
+	}
+
+	return (
+		<div>
+			<ReactModal
+				ariaHideApp={false}
+				isOpen={props.modalState}
+				contentLabel="Modifier le créneau"
+				onRequestClose={() => {
+					props.setModalState(false);
+				}}
+				style={customStyles}
+			>
+				<div className="info_reunion">
+					<h3>{props.event.type}</h3>
+					<div>
+						{
+							InformationEvent(infos, baseType)
+						}
+					</div>
+				</div>
+				{
+					!modifiable && 
+					<Button
+							disabled={disabled}
+							className="submit_button" 
+							variant="contained" 
+							color="primary"
+							onClick={Modifier()}
+						>Modification</Button>
+				}
+				{
+					modifiable && AffichageModifs()
+				}
 			</ReactModal>
 		</div>
 	)
