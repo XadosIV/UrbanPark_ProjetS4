@@ -55,12 +55,16 @@ CREATE TABLE IF NOT EXISTS Schedule (
 	id_parking CHAR,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
-	first_spot INT DEFAULT NULL,
-	last_spot INT DEFAULT NULL,
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
-	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES Parking (id),
-	CONSTRAINT fk_schedule_first_spot FOREIGN KEY (first_spot) REFERENCES Spot (id),
-	CONSTRAINT fk_schedule_last_spot FOREIGN KEY (last_spot) REFERENCES Spot (id)
+	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES Parking (id)
+);
+
+CREATE TABLE IF NOT EXISTS Schedule_Spot (
+	id_schedule INT NOT NULL,
+	id_spot INT NOT NULL,
+	CONSTRAINT pk_schedule_spot PRIMARY KEY (id_schedule, id_spot),
+	CONSTRAINT fk_schedule_spot_spot FOREIGN KEY (id_spot) REFERENCES Spot (id),
+	CONSTRAINT fk_schedule_spot_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
 );
 
 CREATE TABLE IF NOT EXISTS User_Schedule (

@@ -78,13 +78,25 @@ INSERT IGNORE INTO Schedule (id, type, id_parking, date_start, date_end) VALUES
 	(9, "Gardiennage", 'L', '2023-04-19T08:00:00', '2023-04-19T16:00:00'),
 	(10, "Gardiennage", 'L', '2023-04-20T08:00:00', '2023-04-20T16:00:00'),
 
+	(11, "Nettoyage", 'H', '2023-04-16T08:00:00', '2023-04-16T16:00:00'),
+	(12, "Nettoyage", 'H', '2023-04-17T08:00:00', '2023-04-17T16:00:00'),
+	(13, "Nettoyage", 'L', '2023-04-18T08:00:00', '2023-04-18T16:00:00'),
+	(14, "Nettoyage", 'L', '2023-04-19T08:00:00', '2023-04-19T16:00:00'),
+
 	(15, "Réunion", NULL, '2023-05-19T08:00:00', '2023-05-19T16:00:00');
 
-INSERT IGNORE INTO Schedule (id, type, id_parking, date_start, date_end, first_spot, last_spot) VALUES
-	(11, "Nettoyage", 'H', '2023-04-16T08:00:00', '2023-04-16T16:00:00',1,4),
-	(12, "Nettoyage", 'H', '2023-04-17T08:00:00', '2023-04-17T16:00:00',5,8),
-	(13, "Nettoyage", 'L', '2023-04-18T08:00:00', '2023-04-18T16:00:00',19,20),
-	(14, "Nettoyage", 'L', '2023-04-19T08:00:00', '2023-04-19T16:00:00',21,21);
+INSERT IGNORE INTO Schedule_Spot (id_schedule, id_spot) VALUES
+	(11,1),
+	(11,2),
+	(11,3),
+	(11,4),
+	(12,5),
+	(12,6),
+	(12,7),
+	(12,8),
+	(13,19),
+	(13,20),
+	(14,21);
 
 INSERT IGNORE INTO User_Schedule (id_user, id_schedule) VALUES
 	(2,1),
