@@ -21,23 +21,27 @@ function IsValidDatetime(datetime) {
  * GetSchedules
  * Return a JSON with every schedule corresponding to paramaters
  * 
- * @param {object} infos {role, user}
+ * @param {object} infos {role, user, id}
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedules(infos, callback){
-	if (!infos.roles && !infos.users) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Au moins un des deux champs doit être défini parmi : role, user", callback);
-
-	let users = [];
-	if (infos.users){
-		users.concat(infos.users);
-	}
+	//if (!infos.roles && !infos.users && !infos.id) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Au moins un des champs doit être défini parmi : role, user, id", callback);
 
 	let doSqlRequest = (users) => {
-		let sql = `SELECT DISTINCT s.* FROM Schedule s 
-					JOIN User_Schedule us ON s.id = us.id_schedule 
-					WHERE us.id_user IN (:users)`
+		let sql = `SELECT DISTINCT s.* FROM Schedule s`
+		if (users.length != 0){
+			sql += ` JOIN User_Schedule us ON s.id = us.id_schedule 
+			WHERE us.id_user IN (:users)`
+		}
+		if (infos.id){
+			if (sql.includes("WHERE")){
+				sql += " AND s.id = :id"
+			}else{
+				sql += " WHERE s.id = :id"
+			}
+		}
 
-		dbConnection.query(sql, {users:users}, (err, schedules) => {
+		dbConnection.query(sql, {users:users.length!=0?users:[0], id:infos.id}, (err, schedules) => {
 			if (err) return callback(err, null);
 			if (schedules.length == 0){
 				callback(null, [])
@@ -63,6 +67,7 @@ function GetSchedules(infos, callback){
 										let newmnspot = mnspot.filter(e => e.id_schedule == schedule.id).map(e => e.id_spot);
 										schedule.users = users.filter(e => newmnuser.includes(e.id));
 										schedule.spots = spots.filter(e => newmnspot.includes(e.id));
+										schedule.id_parking = undefined;
 									}
 									callback(null, schedules);
 								})
@@ -74,17 +79,31 @@ function GetSchedules(infos, callback){
 		})
 	}
 
-	if (infos.roles){
-		GetUsersFromRoleArray(infos.roles, (err, data) => {
+
+	if (!infos.roles && !infos.users && !infos.id){
+		GetUsers({}, (err, data) => {
 			if (err) return callback(err, null);
-			if (data){
-				users = users.concat(data.map(e => e.id));
-			}
-			doSqlRequest(users);
-		} )
+			doSqlRequest(data.map(e => e.id))
+		})
 	}else{
-		doSqlRequest(users);
+		let users = [];
+		if (infos.users){
+			users.concat(infos.users);
+		}
+		if (infos.roles){
+			GetUsersFromRoleArray(infos.roles, (err, data) => {
+				if (err) return callback(err, null);
+				if (data){
+					users = users.concat(data.map(e => e.id));
+				}
+				doSqlRequest(users);
+			} )
+		}else{
+			doSqlRequest(users);
+		}
 	}
+
+	
 }
 
 /**
@@ -95,7 +114,7 @@ function GetSchedules(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function PostSchedule(infos, callback) {
-	if(infos.role && infos.user) {
+	if (infos.role && infos.user) {
 		Errors.SendError(Errors.E_CONFLICTING_PARAMETERS, 
 			"Un seul champ peut être définit parmis : role, user.",
 			callback);
@@ -255,23 +274,7 @@ function PostScheduleUsers(infos, ids, callback) {
 }
 
 function GetScheduleById(id, callback){
-	sql = `SELECT
-			s.id,
-			s.type,
-			s.id_user AS user,
-			u.last_name, u.role,
-			p.name,
-			s.id_parking AS parking,
-			DATE_FORMAT(s.date_start,"%Y-%m-%dT%T") AS date_start,
-			DATE_FORMAT(s.date_end,"%Y-%m-%dT%T") AS date_end,
-			s.first_spot,
-			s.last_spot 
-		FROM Schedule s 
-		JOIN User u ON s.id_user = u.id 
-		LEFT JOIN Parking p ON s.id_parking = p.id
-		WHERE 
-			s.id=:id;`;
-	dbConnection.query(sql, {id:id}, callback);
+	GetSchedules({id:id}, callback);
 }
 
 function UpdateSchedule(infos, callback){
