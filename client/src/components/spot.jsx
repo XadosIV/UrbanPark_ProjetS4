@@ -3,7 +3,7 @@ import { SpotName } from "../interface"
 import { Button, Checkbox } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, DeleteSpot, DeleteSpotFromUser, SetSpotFromUser, TakeAllSpotTypes, TakeBySpot, TakeBySpotTemp, TakeByRole } from "../services";
-import { AdminVerif, UpdateSpot } from "../components";
+import { AdminVerif, UpdateSpot } from "./";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Popup from 'reactjs-popup';
 import Select from 'react-select';
@@ -75,7 +75,8 @@ export function Spot(props) {
                 {title}
             </Button>)
             || (!noSubmit && <div><hr/>
-            Définitive<input
+            Réattribuer à :
+            {(props.spot.id_user === null) && <div>Définitive<input
                 type="checkbox"
                 checked={gender === "definitive"}
                 onChange={() => setGender("definitive")}
@@ -84,7 +85,7 @@ export function Spot(props) {
                 type="checkbox"
                 checked={gender === "temporary"}
                 onChange={() => setGender("temporary")}
-            />Temporaire
+            />Temporaire</div>}
             <form onSubmit={(e) => handlleSubmit(e, type)} className="form">
                 <Select 
                     id="user"
@@ -120,7 +121,7 @@ export function Spot(props) {
 			</Button>)
 			|| (
 			modifiable && <div>
-				<UpdateSpot allTypes={spotTypes} used={used} id={props.spot.id} handleCallback={CallBackUpdate} handleChangeView={HandleAskChange}/>
+				<UpdateSpot allTypes={spotTypes} used={used} spot={props.spot} handleCallback={CallBackUpdate} handleChangeView={HandleAskChange}/>
 			</div>)
 	}
     const checkboxIcon = () => {
@@ -230,7 +231,7 @@ export function Spot(props) {
         if (gender === "temporary") {
             toModif = {id_spot_temp:props.spot.id}
         }
-        if (type === "changeSpot") {
+        if (type === "changeSpot" && gender !== "temporary") {
             TakeBySpot(props.spot.id).then(res => {
                 DSFU(res[0].id, {id_spot:null});
             })
@@ -239,10 +240,13 @@ export function Spot(props) {
                 DSFU(res[0].id, {id_spot_temp:null});
             })
         }
-        if (infos.user != 0) {
+        if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
             SSFU(infos.user, toModif);
         }
-
+        if (type === "changeSpot" && gender === "temporary") {
+            setErrMessage("Vous ne pouvez pas enlever la place d'un abonné pour la mettre temporairement à un autre.")
+            setWrongInput(true)
+        }
         setErrMessage("Modification prise en compte.")
         setWrongInput(true)
         props.handleCallback(true)
@@ -265,7 +269,7 @@ export function Spot(props) {
         for (let type of props.spot.types) {
             if (type === "Abonné") {     
                 infosSpot = <div style={{textAlign:"center"}}>
-                        Cette place n'a pas d'abonné attitré
+                        Cette place n'a pas d'abonné attitré <br/>
                         {ChangeUserSpot("Assigner")}
                     </div>
             }
@@ -295,7 +299,7 @@ export function Spot(props) {
                                 onChange={toggleCheckbox}
                             />
                             Place {SpotName(props.spot)}
-                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false);}}>
+                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false); setModifiable(false)}}>
             {infosSpot}
             <hr/>
             {typesSpot}

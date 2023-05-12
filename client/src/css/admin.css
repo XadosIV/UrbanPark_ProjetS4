@@ -26,12 +26,12 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	background-color: white;
-	border:solid;
+	border:solid 1px;
 	border-color:gray;
-	border-radius: 20px;	
+	border-radius: 2px;	
 	justify-content:space-between;
 	align-items:center;
-	box-shadow:5px 5px 5px gray;
+	box-shadow:1px 1px 1px gray;
 }
 
 .list-item p {
@@ -52,11 +52,11 @@
 	display: flex;
 	flex-direction:column;
 	flex: auto;
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	justify-content:space-between;	
 	align-items:center;
 	background-color: white;
@@ -80,11 +80,11 @@
 	display: flex;
 	flex-direction:row;
 	flex: auto;
-	border:solid;
-	border-radius: 20px;
+	border:solid 1px;
+	border-radius: 2px;
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
-	box-shadow:10px 10px 10px gray;
+	box-shadow:1px 1px 1px gray;
 	justify-content:space-between;	
 	align-items:center;
 	background-color: white;

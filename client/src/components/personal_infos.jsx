@@ -163,8 +163,8 @@ export function PersonalInfos(){
 
     return(<div>
         <div className="div-info-user">
-            <h3> { infosUser.first_name + " " + infosUser.last_name } </h3>
-            <p> { infosUser.email } </p>
+            <h3> Connecté en tant que : <br/> { infosUser.first_name + " " + infosUser.last_name } </h3>
+            <p> Email : <br/> { infosUser.email } </p>
             <div className="div-button-place">
             <Button 
                 classvariant="contained"

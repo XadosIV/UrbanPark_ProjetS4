@@ -352,7 +352,16 @@ export function NewScheduleForm(props) {
                 marginLeft: "42%",
                 height:"100px",
                 marginBottom:"100px"
-            }}>Ajouter des créneaux de travail</Button>} position="right center" onOpen={() => {setWrongInput(false); setEditable(true); setInfos({parking: "", user: [], type:null, date_start:baseDate, date_end: baseDate}); setInfosReunions({parking: '\x00', user: [], type:"Réunion", date_start:baseDate, date_end: baseDate}); setHorairesSchedules({date_start:baseDate, date_end: baseDate}); setOptionsUsers({opts:[], change:false});}}> 
+            }}>Ajouter des créneaux de travail</Button>} position="right center" 
+            onClose={() => {setWrongInput(false); 
+                setEditable(true); 
+                setInfos({parking: "", user: [], type:null, date_start:baseDate, date_end: baseDate}); 
+                setInfosReunions({parking: '\x00', user: [], type:"Réunion", date_start:baseDate, date_end: baseDate}); }} 
+            onOpen={() => {
+                setWrongInput(false); 
+                setEditable(true); 
+                setHorairesSchedules({date_start:baseDate, date_end: baseDate}); 
+                setOptionsUsers({opts:[], change:false});}}> 
             <div className="form_div">
                 <h3 style={{textAlign:"center"}}>Ajout d'un nouveau créneau</h3>
                 <form onSubmit={handlleSubmit} className="form"> 
@@ -481,9 +490,6 @@ export function NewScheduleForm(props) {
             <p style={{color:"red", alignText:"center"}}>
                 Voici la liste des horaires où tous sont disponibles. Choisissez en un et mettez une date et une horaire précise.
             </p>
-            <div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px"}}>{schedulesAvailable.map((schedule, index) => (
-                <AllSchedulesAvailable schedule={schedule} handleCallback={CallbackSetOne}/>
-            ))}</div>
             {onlyOne && <div>
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Choisir une date entre le {ChangeDate(onlyOneInfo[0].slice(0,10))} à {onlyOneInfo[0].slice(11,19)} et le {ChangeDate(onlyOneInfo[1].slice(0,10))} à {onlyOneInfo[1].slice(11,19)} : </div><br/>  
                 <form onSubmit={ handlleSubmitNewReunion } name="form-modif-mdp">
@@ -522,6 +528,9 @@ export function NewScheduleForm(props) {
                 </div>
                 </form>
             </div>}
+            <div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px"}}>{schedulesAvailable.map((schedule, index) => (
+                <AllSchedulesAvailable schedule={schedule} handleCallback={CallbackSetOne}/>
+            ))}</div>
             { wrongInput && <p className="err_message"> { errMessage } </p>}
         </ReactModal>
         </div>

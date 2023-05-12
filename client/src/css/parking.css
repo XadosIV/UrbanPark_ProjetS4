@@ -17,7 +17,7 @@
 	margin: 0 1rem 1rem;
 	padding: 0 1rem 1rem;
 	background-color:#FFF8DC;
-	border-radius:50px;
+	border-radius:2px;
 	justify-content:space-between;
 	align-items:center;
 }
@@ -29,6 +29,7 @@
 .all-spots {
 	display: flex;                       /* establish flex container */
 	flex-wrap: wrap;                     /* enable flex items to wrap */
+	margin:0 30px 0 30px;
 }
 
 .spot {
@@ -134,7 +135,7 @@
 }
 
 .popup-arrow {
-	color: rgb(255, 255, 255);
+	display:none;
 }
   
 .popup-overlay {
@@ -181,8 +182,8 @@
 	justify-content:center;
 	background: rgb(255, 255, 255);
 	box-shadow: rgba(0, 0, 0, 0.16) 0 0 3px;
-	min-width:220px;
-	max-width:220px;
+	min-width:250px;
+	max-width:250px;
 	align-items:center;
 }
 li {

@@ -43,7 +43,6 @@ export function ModifMultSpot (props) {
     const handleChangeSelect = (e) => {
         let newTypes = [];
         e.forEach(t => {
-            console.log("t", t);
             newTypes.push(t.value);
         });
         props.callbackSetTypes(newTypes);
@@ -51,7 +50,6 @@ export function ModifMultSpot (props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(e);
         let clear = e.nativeEvent.submitter.id === "clear";
         props.callbackHandleSubmit(clear);
         setIsOpen(false);
@@ -95,7 +93,7 @@ export function ModifMultSpot (props) {
                     name="types"
                     placeholder="Choisir des types"
                     options={types}
-                    maxMenuHeight={100}
+                    maxMenuHeight={150}
                     onChange={(e) => handleChangeSelect(e)}
                 />
                 <Button 
