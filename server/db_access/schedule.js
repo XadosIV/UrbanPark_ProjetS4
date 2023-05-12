@@ -3,7 +3,6 @@ const { GetUsers } = require('./user');
 const { GetPermRole } = require('./role');
 const { GetSpots } = require('./spot');
 const Errors = require('../errors');
-const e = require('express');
 
 /**
  * IsValidDatetime
