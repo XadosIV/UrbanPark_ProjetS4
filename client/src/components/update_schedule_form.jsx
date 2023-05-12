@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
 import { AllSpots, BaseSpot, BaseParking } from "../interface"
-import { AllSpots } from "../interface"
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
