@@ -308,85 +308,85 @@ export function UpdateScheduleForm(props) {
 	function AffichageModifs () {
 		return (
 			<div className="form_div">
-					<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
-					<form onSubmit={handlleSubmit} className="form">   
-						<div style={{zIndex:1007}}>
-							<Select
-								id="parking"
-								className="searchs-add"
-								options={AllParkings(parkingsList)} 
-								placeholder={BaseParking(infos.parking, parkingsList)}
-								name="parking" 
-								isSearchable={false}
-								onChange={handleChangeSelect}
-								maxMenuHeight={200}
-							/>
-						</div> 
-						<div style={{zIndex:1006}}>  
-							<Select
-								isMulti
-								name="user"
-								options={BaseListType(baseType)}
-								defaultValue={props.baseUser}
-								className="search-add-two"
-								onChange={handleChangeSelect}
-								maxMenuHeight={200}
-							/>
-						</div>
-						{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
-							<Select
-								options={optionsSpots.opts}
-								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-								size="small"
-								id="first_spot"
-								placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
-								type="text"
-								name="first_spot"
-								className="search"
-								onChange={handleChangeSelect}
-								maxMenuHeight={150}
-							/>
-							<p style={{margin:"7px 7px 0 7px"}}>à</p>
-							<Select
-								options={optionsSpots.opts}
-								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-								size="small"
-								id="last_spot"
-								placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
-								type="text"
-								name="last_spot"
-								className="search"
-								onChange={handleChangeSelect}
-								maxMenuHeight={150}
-							/>
-						</div>}
-						<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
-							<DatePicker
-								name="date_start"
-								selected={new Date(infos.date_start)}
-								onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
-								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
-							/>
-							<p style={{margin:"0 7px 7px 7px"}}>à</p>
-							<DatePicker
-								name="date_end"
-								selected={new Date(infos.date_end)}
-								onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
-								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
-							/>
-						</div>
-						<Button
-							disabled={disabled}
-							className="submit_button" 
-							variant="contained" 
-							color="primary" 
-							type="submit"
-						>Modifier</Button>
-					</form>
-					{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
-				</div>
+				<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
+				<form onSubmit={handlleSubmit} className="form">   
+					<div style={{zIndex:1007}}>
+						<Select
+							id="parking"
+							className="searchs-add"
+							options={AllParkings(parkingsList)} 
+							placeholder={BaseParking(infos.parking, parkingsList)}
+							name="parking" 
+							isSearchable={false}
+							onChange={handleChangeSelect}
+							maxMenuHeight={200}
+						/>
+					</div> 
+					<div style={{zIndex:1006}}>  
+						<Select
+							isMulti
+							name="user"
+							options={BaseListType(baseType)}
+							defaultValue={props.baseUser}
+							className="search-add-two"
+							onChange={handleChangeSelect}
+							maxMenuHeight={200}
+						/>
+					</div>
+					{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
+						<Select
+							options={optionsSpots.opts}
+							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+							size="small"
+							id="first_spot"
+							placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
+							type="text"
+							name="first_spot"
+							className="search"
+							onChange={handleChangeSelect}
+							maxMenuHeight={150}
+						/>
+						<p style={{margin:"7px 7px 0 7px"}}>à</p>
+						<Select
+							options={optionsSpots.opts}
+							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+							size="small"
+							id="last_spot"
+							placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
+							type="text"
+							name="last_spot"
+							className="search"
+							onChange={handleChangeSelect}
+							maxMenuHeight={150}
+						/>
+					</div>}
+					<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+						<DatePicker
+							name="date_start"
+							selected={new Date(infos.date_start)}
+							onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+							showTimeSelect
+							dateFormat="yyyy:MM:dd hh:mm:ss"
+						/>
+						<p style={{margin:"0 7px 7px 7px"}}>à</p>
+						<DatePicker
+							name="date_end"
+							selected={new Date(infos.date_end)}
+							onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+							showTimeSelect
+							dateFormat="yyyy:MM:dd hh:mm:ss"
+						/>
+					</div>
+					<Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						type="submit"
+					>Modifier</Button>
+				</form>
+				{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
+			</div>
 		)
 	}
 
@@ -402,7 +402,9 @@ export function UpdateScheduleForm(props) {
 				contentLabel="Modifier le créneau"
 				onRequestClose={() => {
 					props.setModalState(false);
+					setModifiable(false);
 				}}
+				onAfterOpen={() => {setModifiable(false)}}
 				style={customStyles}
 			>
 				<div className="info_reunion">
@@ -420,7 +422,7 @@ export function UpdateScheduleForm(props) {
 							className="submit_button" 
 							variant="contained" 
 							color="primary"
-							onClick={Modifier()}
+							onClick={() => Modifier()}
 						>Modification</Button>
 				}
 				{
