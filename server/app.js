@@ -291,7 +291,7 @@ app.get('/api/role', (req, res) => {
 
 app.get('/api/schedules', (req, res) => {
 	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
-	GetSchedules(req.query, (err, data) => {
+	GetSchedules(req.body, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
