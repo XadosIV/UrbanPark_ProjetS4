@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { ParkingsStaff, StaffList, UserList, Separation, CreateSpotType, NewScheduleForm } from "../components";
-import { Button } from "@mui/material";
+import { ParkingsStaff, StaffList, UserList, CreateSpotType, NewScheduleForm } from "../components";
 import "../css/admin.css"
 
 export function AdminPage() {

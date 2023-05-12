@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
 import { AllSpots, BaseSpot, BaseParking } from "../interface"
+import { AllSpots } from "../interface"
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
@@ -10,20 +11,20 @@ import ReactModal from 'react-modal';
 
 export function UpdateScheduleForm(props) {
 
-	/**
-	 * DeOrDu
-	 * Returns a string which is de or du depending of the type of the schedule
-	 *
-	 * @param { String } type - The type of schedule
-	 * @return { Array }
-	 */
-	function DeOrDu(type) {
-		if(type == "Réunion") {
-			return "de"
-		} else {
-			return "du"
-		}
-	}
+    /**
+     * DeOrDu
+     * Returns a string which is de or du depending of the type of the schedule
+     *
+     * @param { String } type - The type of schedule
+     * @return { Array }
+     */
+    function DeOrDu(type) {
+        if(type === "Réunion") {
+            return "de"
+        } else {
+            return "du"
+        }
+    }
 
 	/**
 	 * AllParkings
@@ -348,7 +349,7 @@ export function UpdateScheduleForm(props) {
 								maxMenuHeight={200}
 							/>
 						</div>
-						{baseType == "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
+						{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
 							<Select
 								options={optionsSpots.opts}
 								style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}

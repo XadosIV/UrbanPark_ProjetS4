@@ -110,13 +110,13 @@ export function NewScheduleForm(props) {
             if (name.name === "parking") {
                 TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
-            } else if (name.name == "type") {
+            } else if (name.name === "type") {
                 let liste = [];
-                if (selectedOptions.value == "Gardiennage") {
+                if (selectedOptions.value === "Gardiennage") {
                     liste = guardiansList
-                } else if (selectedOptions.value == "Nettoyage") {
+                } else if (selectedOptions.value === "Nettoyage") {
                     liste = serviceList
-                } else if (selectedOptions.value == "Réunion") {
+                } else if (selectedOptions.value === "Réunion") {
                     liste = staffList
                 }
                 setOptionsUsers(values => ({...values, opts:AllServices(liste), change: true}))
@@ -149,14 +149,14 @@ export function NewScheduleForm(props) {
         console.log(base)
         for (let data of newTab) {
             var isNotIn = 0;
-            if (base.length != 0) {
+            if (base.length !== 0) {
                 for (let baseData of base) {
-                    if (baseData != data.id) {
+                    if (baseData !== data.id) {
                         isNotIn++
                     }
                 }
             }
-            if (isNotIn == base.length) {
+            if (isNotIn === base.length) {
                 base.push(data.id)
             }
         }
@@ -168,10 +168,10 @@ export function NewScheduleForm(props) {
         setWrongInput(false);
         var isSubmit = false;
         if (infos.type === "Réunion") {
-            if ((rolesReunions.length == 0 && infos.user.length == 0)) {
+            if ((rolesReunions.length === 0 && infos.user.length === 0)) {
                 setWrongInput(true)
                 setErrMessage("Vous devez assigner ce créneau à un rôle ou des utilisateurs")
-            } else if (horairesSchedules.date_start == baseDate && horairesSchedules.date_end == baseDate) {
+            } else if (horairesSchedules.date_start === baseDate && horairesSchedules.date_end === baseDate) {
                 setWrongInput(true)
                 setErrMessage("Choisissez une date de début et de fin.")
             } else if (horairesSchedules.date_end < horairesSchedules.date_start) {
@@ -244,7 +244,7 @@ export function NewScheduleForm(props) {
     const handlleSubmitNewReunion = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infosReunions.date_start != baseDate && infosReunions.date_end != baseDate && infosReunions.user.length != 0) {
+        if (infosReunions.date_start !== baseDate && infosReunions.date_end !== baseDate && infosReunions.user.length !== 0) {
             var stock = infosReunions.user;
             var scheduleAdded = 0;
             for (let user of stock) {
@@ -319,14 +319,14 @@ export function NewScheduleForm(props) {
     };
 
     function TitleButton(type) {
-        if (type == "Nettoyage" || type == "Gardiennage") {
+        if (type === "Nettoyage" || type === "Gardiennage") {
             return <Button
                 className="submit_button" 
                 variant="contained" 
                 color="primary" 
                 type="submit"
             >Ajouter</Button>
-        } else if (type == "Réunion") {
+        } else if (type === "Réunion") {
             return <Button
                 className="submit_button" 
                 variant="contained" 
@@ -440,7 +440,7 @@ export function NewScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
-                    {(infos.type == "Nettoyage" || infos.type == "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+                    {(infos.type === "Nettoyage" || infos.type === "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                         <DatePicker
                             name="date_start"
                             selected={new Date(infos.date_start)}
@@ -457,7 +457,7 @@ export function NewScheduleForm(props) {
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
                     </div>}
-                    {(infos.type == "Réunion") && <div >
+                    {(infos.type === "Réunion") && <div >
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker

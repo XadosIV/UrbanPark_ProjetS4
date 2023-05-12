@@ -12,7 +12,9 @@ const Errors = require('../errors');
  */
 
 function GetParkings(infos, callback){
+
 	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
+
     //console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%'
@@ -27,7 +29,9 @@ function GetParkings(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function GetParkingsByIdOrName(infos, callback){
+
 	sql = `SELECT * FROM Parking WHERE id LIKE :id OR name LIKE :name;`;
+
     console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%',
@@ -81,7 +85,11 @@ function PutParkings(infos, callback){
 		}else{
 			let oldParking = data[0];
 			let update = (err,data)=>{
-				sql = `UPDATE Parking SET name=:name, floors=:floors, address=:address WHERE id=:id;`;
+
+				sql = `UPDATE Parking 
+                SET name=:name, floors=:floors, address=:address 
+                WHERE id=:id;`;
+
 				console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, {
 					"name":infos.name||oldParking.name,
@@ -130,37 +138,57 @@ function DeleteParking(infos, callback){
 
             var parking = data[0];
             //delete schedule parking
+
             let sql = `DELETE FROM Schedule WHERE id_parking = :parkId`
+
             dbConnection.query(sql, {parkId: parking.id}, (err, data) => {
                 if (err) {
                     callback(err, null)
                 }else{
                     //delete typed
-                    let sql = `DELETE t FROM Typed t INNER JOIN Spot s ON t.id_spot = s.id WHERE s.id_park = :parkId;`
+
+                    let sql = `DELETE t FROM Typed t 
+                               INNER JOIN Spot s ON t.id_spot = s.id
+                               WHERE s.id_park = :parkId;`
+                    
                     dbConnection.query(sql, {parkId:parking.id}, (err, data) => {
                         if (err){
                             callback(err, null);
                         }else{
                             //delete cle etrangere spot dans user pour id_spot
-                            let sql = `UPDATE User u LEFT JOIN Spot s ON s.id = u.id_spot SET id_spot = NULL WHERE s.id_park = :parkId`
+                            
+                            let sql = `UPDATE User u 
+                                       LEFT JOIN Spot s ON s.id = u.id_spot
+                                       SET id_spot = NULL
+                                       WHERE s.id_park = :parkId`
+
                             dbConnection.query(sql, {parkId: parking.id}, (err, data) => {
                                 if (err){
                                     callback(err, null);
                                 }else{
                                     //delete cle etrangere spot dans user pour id_spot_temp
-                                    let sql = `UPDATE User u LEFT JOIN Spot s ON s.id = u.id_spot_temp SET id_spot_temp = NULL WHERE s.id_park = :parkId`
+                                    
+                                    let sql = `UPDATE User u
+                                               LEFT JOIN Spot s ON s.id = u.id_spot_temp
+                                               SET id_spot_temp = NULL 
+                                               WHERE s.id_park = :parkId`
+                                    
                                     dbConnection.query(sql, {parkId: parking.id}, (err, data) => {
                                         if (err){
                                             callback(err, null);
                                         }else{
                                             //delete spot
+
                                             let sql = `DELETE FROM Spot WHERE id_park = :parkId`
+                                            
                                             dbConnection.query(sql, {parkId: parking.id}, (err, data) => {
                                                 if (err){
                                                     callback(err, null)
                                                 }else{
                                                     //delete parking
+
                                                     let sql = `DELETE FROM Parking WHERE id=:parkId`
+                                                    
                                                     dbConnection.query(sql, {parkId: parking.id}, (err, data) => {
                                                         if (err){
                                                             callback(err, null)

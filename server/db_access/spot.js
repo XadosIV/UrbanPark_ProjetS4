@@ -11,13 +11,28 @@ const Errors = require('../errors');
  */
 
 function GetAllSpots(infos, callback){
-	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp 
+	sql = `SELECT
+				s.id,
+				s.number,
+				s.floor,
+				s.id_park,
+				u.id AS id_user,
+				uu.id AS id_user_temp,
+				u.first_name,
+				u.last_name,
+				uu.first_name AS first_name_temp,
+				uu.last_name AS last_name_temp
 	FROM Spot s 
 	LEFT JOIN User u ON s.id = u.id_spot 
 	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
-	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number AND s.id LIKE :id
+	WHERE
+		s.id_park LIKE :id_park AND
+		s.floor LIKE :floor AND
+		s.number LIKE :number AND
+		s.id LIKE :id
 	ORDER BY floor, number`;
-    //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
+    
+	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 
 		{
 			id:infos.id ||'%',
@@ -28,8 +43,10 @@ function GetAllSpots(infos, callback){
         if (err){
             callback(err, [])
         }else{
-            sql = `SELECT * FROM Typed`
-            //console.log("SQL at GetAllSpots : " + sql);
+    
+			sql = `SELECT * FROM Typed`
+    
+			//console.log("SQL at GetAllSpots : " + sql);
             allSpots = data
             dbConnection.query(sql, (err, data) => {
                 if (err){
@@ -108,7 +125,9 @@ function GetSpotsMultipleFloors(infos, callback, recData=[]){
  * @param {function(*,*)} callback (err, data)
  */
 function InsertListTyped(id_spot, name_types, callback){
+	
 	sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
+	
 	//console.log("SQL at InsertListTyped : " + sql + " with " + {id_spot:id_spot,names_types:names_types});
 	dbConnection.query(sql, {
 			id_spot:id_spot,
@@ -147,7 +166,9 @@ function PostSpot(infos, callback){
 				}else if (infos.floor >= parkings[0].floors){
 					Errors.SendError(Errors.E_WRONG_FLOOR, "L'étage n'existe pas.",callback);
 				}else{
+	
 					sql = `INSERT INTO Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
+	
 					//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if(err){
@@ -191,10 +212,12 @@ function UpdateSpot(infos, callback){
 
 			//console.log(currentSpot)
 			//check if schedule with spot
+
 			let sql = `SELECT * FROM Schedule sc
 			JOIN Spot s ON sc.first_spot = s.id
 			JOIN Spot ss ON sc.last_spot = ss.id
 			WHERE id_parking = :id_park AND s.number <= :number AND ss.number >= :number`
+
 			dbConnection.query(sql, currentSpot, (err, data) => {
 				if (err) return callback(err, null)
 				if (data.length > 0) return Errors.SendError(Errors.E_BUSY_SPOT, "La place est assigné à des créneaux et ne peut donc pas être modifié.", callback)
@@ -216,6 +239,7 @@ function UpdateSpot(infos, callback){
 						if (data.length != 0) return Errors.SendError(Errors.E_SPOT_ALREADY_EXIST, "La place existe déjà.", callback);
 
 						let sql = `UPDATE Spot SET number=:number, floor=:floor, id_park=:id_park WHERE id=:id`;
+
 						spot.id = infos.id;
 						dbConnection.query(sql, spot, (err, data) => {
 							if (err) return callback(err, null)
@@ -247,7 +271,9 @@ function CheckToggleTypes(id, toggle, callback){
 	if (toggle == undefined) return callback(null, null);
 	if (toggle && toggle.length != undefined && typeof(toggle) == 'object'){ // check if it's an array (not a string, not a object, an array.)
 		if (toggle.length == 0){
+
 			let sql = `DELETE FROM Typed WHERE id_spot = :id`
+
 			dbConnection.query(sql, {id:id}, callback)
 		}else{
 			// checkTypeExist passes toggle as reference so erase the array after its process. So we give a copy of toggle instead.
@@ -280,7 +306,9 @@ function CheckTypeExist(toggle, callback){
 		callback(null, true)
 	}else{
 		let name = toggle.pop()
+
 		sql = `SELECT * FROM Type WHERE name=:name`
+
 		dbConnection.query(sql, {name:name}, (err, data) => {
 			if (err) return callback(err, null);
 			if (data.length == 0) return callback(null, false);
@@ -305,12 +333,16 @@ function ToggleTypes(id, toggle, callback){
 		let name = toggle.pop();
 
 		//check if spot has type
+
 		let sql = `SELECT * FROM Typed WHERE id_spot=:id AND name_type=:name`
+
 		dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 			if (err) return callback(err, null)
 			if (data.length == 0){
 				//type not exist, insert
+
 				let sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id, :name)`
+
 				dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 					if (err) return callback(err, null)
 
@@ -318,7 +350,9 @@ function ToggleTypes(id, toggle, callback){
 				})
 			}else{
 				//type exist, delete
+
 				let sql = `DELETE FROM Typed WHERE id_spot=:id AND name_type=:name`
+
 				dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 					if (err) return callback(err, null)
 
@@ -357,7 +391,9 @@ function DeleteSpot(id, callback){
 							callback(err, res)
 						}
 						else {
+
 							sql = `DELETE FROM Spot WHERE id=:id`;
+
 							dbConnection.query(sql,{
 								id:id
 							}, (err, data) => {
