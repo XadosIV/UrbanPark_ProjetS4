@@ -185,3 +185,6 @@
 	max-width:220px;
 	align-items:center;
 }
+li {
+	list-style: none;
+}
