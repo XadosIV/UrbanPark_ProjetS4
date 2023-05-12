@@ -22,22 +22,28 @@ function GetAllSpots(infos, callback){
 		u.last_name,
 		uu.first_name AS first_name_temp,
 		uu.last_name AS last_name_temp,
+		ns.date_end,
 		ns.id AS next_schedule
 	FROM Spot s
 		LEFT JOIN User u ON s.id = u.id_spot
 		LEFT JOIN User uu ON s.id = uu.id_spot_temp
-		LEFT JOIN Schedule ns ON s.id_park = ns.id_parking
-		JOIN Spot fs ON ns.first_spot = fs.id
-		JOIN Spot ls ON ns.last_spot = ls.id
-	WHERE s.id_park LIKE :id_park
+		LEFT JOIN Schedule_Spot ss ON s.id = ss.id_spot
+		LEFT JOIN Schedule ns ON ss.id_schedule = ns.id AND ns.date_end > NOW()
+	WHERE
+		s.id_park LIKE :id_park
 		AND s.floor LIKE :floor
 		AND s.number LIKE :number
 		AND s.id LIKE :id
-		AND fs.floor = s.floor -- If the data was inserted correctly, fs.floor = ls.floor
-		AND fs.number <= s.number
-		AND ls.number >= s.number
-	ORDER BY s.floor, s.number`;
-    
+	ORDER BY s.id, ns.date_end`;
+
+	/**
+	 * Note on schedules :
+	 * Only futur or actual schedules are fetched this way.
+	 * Using a `GROUP BY s.id` clause along a `HAVING MIN(ns.date_end)` didn't work.
+	 * BTW : Using an `AND` clause in a `LEFT JOIN ON` isn't a hack, it's taking advantage of the features.
+	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really usefull)
+	 */
+	
 	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, 
 		{
@@ -49,11 +55,27 @@ function GetAllSpots(infos, callback){
         if (err){
             callback(err, [])
         }else{
+			let allSpots = [];
+			console.log(data);
+			data.forEach((element) => {
+				allSpots.forEach((spot, index) => {
+					if (spot.id == element.id){
+						if (spot.next_schedule === null || (element.next_schedule !== null && element.next_schedule < spot.next_schedule)){ // elem.next_schedule !== null part is a safe-net
+							allSpots[index] = element;
+						}
+					}
+				})
+				if (!(element.id in allSpots.map(elem=>elem.id))){
+					allSpots.push(element);
+				}
+			});
+			//console.log(allSpots);
+
+			allSpots = allSpots.map(({next_schedule, ...others}) => others);
     
 			sql = `SELECT * FROM Typed`
     
 			//console.log("SQL at GetAllSpots : " + sql);
-            allSpots = data
             dbConnection.query(sql, (err, data) => {
                 if (err){
                     callback(err, [])
