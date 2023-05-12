@@ -89,7 +89,7 @@ export function Spot(props) {
             <form onSubmit={(e) => handlleSubmit(e, type)} className="form">
                 <Select 
                     id="user"
-                    className="searchs-add"
+                    className="select-size-change"
                     options={AllSubs(subs)} 
                     defaultValue={defaultValue}
                     name="user" 

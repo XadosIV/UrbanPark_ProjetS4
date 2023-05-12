@@ -62,7 +62,7 @@ export function UpdateSpot (props) {
 				name="types"
 				placeholder="Choisir des types"
 				options={AllTypes(allTypes)}
-				className="search-add-two "
+				className="select-size-change"
 				defaultValue={AllTypes(base)}
 				onChange={event => handleChangeSelect(event)}
 			/>

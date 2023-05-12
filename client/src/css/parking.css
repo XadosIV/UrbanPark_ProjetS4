@@ -186,3 +186,8 @@
 	max-width:250px;
 	align-items:center;
 }
+
+.select-size-change {
+	width:200px;
+	margin-bottom: 10px;
+}
