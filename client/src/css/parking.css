@@ -186,12 +186,17 @@
 	max-width:250px;
 	align-items:center;
 }
-li {
-	list-style: none;
+.li-infos {
 	align-self: center;
-		text-align: center;
-	}
+	text-align: center;
+}
+
+.ul-infos {
+	padding:0;
+	margin:0;
+	list-style-type:none;
+}
 	
-	h3 {
-		text-align: center;
+h3 {
+	text-align: center;
 }

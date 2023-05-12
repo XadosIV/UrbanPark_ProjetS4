@@ -131,13 +131,13 @@ export function UpdateScheduleForm(props) {
 		}
 		let listRes = Array()
 		for (let element of baseList) {
-			listRes.push(<li>{element.label}</li>)
+			listRes.push(<li className="li-infos"><strong>-</strong> {element.label}</li>)
 		}
 		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3)
 		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3)
 		return (
 			<div>
-				<ul>
+				<ul className="ul-infos">
 					{
 						listRes
 					}
@@ -408,7 +408,7 @@ export function UpdateScheduleForm(props) {
 				style={customStyles}
 			>
 				<div className="info_reunion">
-					<h3>{props.event.type}</h3>
+					<h3>{props.event.type} par :</h3>
 					<div>
 						{
 							InformationEvent(infos, baseType)
@@ -418,12 +418,12 @@ export function UpdateScheduleForm(props) {
 				{
 					!modifiable && 
 					<Button
-							disabled={disabled}
-							className="submit_button" 
-							variant="contained" 
-							color="primary"
-							onClick={() => Modifier()}
-						>Modification</Button>
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary"
+						onClick={() => Modifier()}
+					>Modification</Button>
 				}
 				{
 					modifiable && AffichageModifs()
