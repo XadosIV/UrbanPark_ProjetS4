@@ -119,7 +119,9 @@ function PostSchedule(infos, callback) {
 	let doSqlRequest = (users, guests, spots) => {
 		if (!infos.parking) infos.parking = null;
 
-		FixUsersGuests(users, guests); // array are given by reference, there's no need to set the result, variables are already modified.
+		let res = FixUsersGuests(users, guests);
+		users = res[0];
+		guests = res[1];
 
 		if (users.length == 0) return Errors.SendError(Errors.E_USER_NOT_FOUND, "Aucun utilisateur obligatoire à ajouter au créneau.", callback);
 
@@ -370,8 +372,9 @@ function UpdateSchedule(infos, callback){
 
 	let doUpdate = (users, guests) => {
 
-		FixUsersGuests(users, guests);
-
+		let res = FixUsersGuests(users, guests);
+		users = res[0];
+		guests = res[1];
 		//Start all functions
 		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
 			if (err) return callback(err, null);
