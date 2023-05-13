@@ -48,7 +48,6 @@ export function UpdateSpot (props) {
 				changes.push(typeB.name);
 			}
 		}
-		console.log(changes)
 		if (changes.length != 0) {
 			ServiceUpdateSpot(changes, props.spot.id);
 		}

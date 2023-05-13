@@ -77,7 +77,6 @@ function GetSchedules(infos, callback){
 		})
 	}
 
-
 	if (!infos.roles && !infos.users && !infos.id){
 		GetUsers({}, (err, data) => {
 			if (err) return callback(err, null);
@@ -100,8 +99,6 @@ function GetSchedules(infos, callback){
 			doSqlRequest(users);
 		}
 	}
-
-	
 }
 
 /**
@@ -356,6 +353,7 @@ function IsntScheduleOverlapping(infos, callback) {
 			WHERE 
 			id_user=:user AND
 			(date_start <= :date_end AND date_end >= :date_start);`;
+
 	
 			//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {
