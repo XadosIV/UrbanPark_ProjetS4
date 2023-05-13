@@ -45,33 +45,29 @@ function GetAllSpots(infos, callback){
 	 */
 	
 	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
-    dbConnection.query(sql, 
-		{
-			id:infos.id ||'%',
-			number:infos.number||'%',
-			floor:infos.floor||'%',
-			id_park:infos.id_park||'%'
-		}, (err, data) => {
+    dbConnection.query(sql, {
+		id:infos.id ||'%',
+		number:infos.number||'%',
+		floor:infos.floor||'%',
+		id_park:infos.id_park||'%'
+	}, (err, data) => {
         if (err){
             callback(err, [])
         }else{
 			let allSpots = [];
-			console.log(data);
+
 			data.forEach((element) => {
-				allSpots.forEach((spot, index) => {
-					if (spot.id == element.id){
-						if (spot.next_schedule === null || (element.next_schedule !== null && element.next_schedule < spot.next_schedule)){ // elem.next_schedule !== null part is a safe-net
-							allSpots[index] = element;
-						}
+				let index = allSpots.map(spot => spot.id).indexOf(element.id)
+				if(index != -1){
+					if(allSpots[index].next_schedule === null || (element.next_schedule !== null && element.end_date < allSpots[index].end_date)){
+						allSpots[index] = element;
 					}
-				})
-				if (!(element.id in allSpots.map(elem=>elem.id))){
+				}else{
 					allSpots.push(element);
 				}
 			});
-			//console.log(allSpots);
 
-			allSpots = allSpots.map(({next_schedule, ...others}) => others);
+			allSpots = allSpots.map(({date_end, ...others}) => others);
     
 			sql = `SELECT * FROM Typed`
     
