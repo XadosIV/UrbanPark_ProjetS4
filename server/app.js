@@ -320,7 +320,7 @@ app.get('/api/schedules/:id', (req, res) => {
 				if (data.length == 1){
 					res.status(200).json(data[0]);
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});
