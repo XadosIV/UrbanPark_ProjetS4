@@ -52,17 +52,27 @@ CREATE TABLE IF NOT EXISTS User (
 CREATE TABLE IF NOT EXISTS Schedule (
 	id INT NOT NULL AUTO_INCREMENT,
 	type VARCHAR(50) NOT NULL,
-	id_user INT NOT NULL,
 	id_parking CHAR,
 	date_start DATETIME NOT NULL,
 	date_end DATETIME NOT NULL,
-	first_spot INT DEFAULT NULL,
-	last_spot INT DEFAULT NULL,
 	CONSTRAINT pk_schedule PRIMARY KEY (id),
-	CONSTRAINT fk_schedule_user FOREIGN KEY (id_user) REFERENCES User (id),
-	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES Parking (id),
-	CONSTRAINT fk_schedule_first_spot FOREIGN KEY (first_spot) REFERENCES Spot (id),
-	CONSTRAINT fk_schedule_last_spot FOREIGN KEY (last_spot) REFERENCES Spot (id)
+	CONSTRAINT fk_schedule_parking FOREIGN KEY (id_parking) REFERENCES Parking (id)
+);
+
+CREATE TABLE IF NOT EXISTS Schedule_Spot (
+	id_schedule INT NOT NULL,
+	id_spot INT NOT NULL,
+	CONSTRAINT pk_schedule_spot PRIMARY KEY (id_schedule, id_spot),
+	CONSTRAINT fk_schedule_spot_spot FOREIGN KEY (id_spot) REFERENCES Spot (id),
+	CONSTRAINT fk_schedule_spot_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
+);
+
+CREATE TABLE IF NOT EXISTS User_Schedule (
+	id_user INT NOT NULL,
+	id_schedule INT NOT NULL,
+	CONSTRAINT pk_user_schedule PRIMARY KEY (id_user, id_schedule),
+	CONSTRAINT fk_user_schedule_user FOREIGN KEY (id_user) REFERENCES User (id),
+	CONSTRAINT fk_user_schedule_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
 );
 
 CREATE TABLE IF NOT EXISTS Type (
