@@ -1,19 +1,21 @@
 import { IconButton } from '@mui/material';
 import { Notifications, NotificationsNone } from '@mui/icons-material';
-import React from 'react';
+import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import '../css/notif_bell.css';
+import { NotificationList} from "."
 
 export function NotifBell(){
-    const active = true;
+    const [active, setActive] = useState(true);
 
     return (
         <Popup
-            trigger={<IconButton>
-                { active ? <Notifications sx={{ width: '20%', height: '20%' }} /> : <NotificationsNone sx={{ width: '20%', height: '20%' }} /> }
+            trigger={<IconButton disableRipple onClick={() => setActive(!active)}>
+                { active ? <Notifications sx={{ fontSize:"4rem" }} /> : <NotificationsNone sx={{ fontSize:"4rem" }} /> }
             </IconButton>}
             position='bottom center'
         >
+			<NotificationList/>
         </Popup>
     );
 }
