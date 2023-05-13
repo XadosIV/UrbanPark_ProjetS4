@@ -85,11 +85,47 @@ function GetAllSpots(infos, callback){
                             }
                         }
                     }
-                    callback(err, allSpots)
+
+					CheckIsCleanning(allSpots, callback);
+                    // callback(err, allSpots)
                 }
             })
         }
     });
+}
+
+/**
+ * CheckIsCleanning
+ * add a boolean to each spots OBJECT in a array indicating if it's beeing cleaned
+ * 
+ * @param { array of spots } arrSpot [ { OBJECT Spot}, ... ]
+ * @param {function(*,*)} callback (err, data)
+ */
+function CheckIsCleanning(arrSpots, callback){
+
+	let sql = 
+	`SELECT DISTINCT sp.id_spot
+	 FROM Schedule_Spot sp
+	 JOIN Schedule s ON s.id = sp.id_schedule
+	 WHERE 
+	 	s.type = "Nettoyage" AND
+		s.date_start <= NOW() AND
+		s.date_end >= NOW()
+	`;
+
+	dbConnection.query(sql, {}, (err, data) => {
+		console.log(data);
+		if(err){
+			return callback(err, null);
+		}else{
+			arrSpotId = data.map(elt => elt.id_spot)
+			arrSpots.forEach(spot => {
+				spot.inCleaning = arrSpotId.includes(spot.id);
+			})
+			return callback(err, arrSpots);
+		}
+	})
+
 }
 
 /**

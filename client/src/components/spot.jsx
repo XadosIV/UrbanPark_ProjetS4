@@ -240,8 +240,8 @@ export function Spot(props) {
                 DSFU(res[0].id, {id_spot_temp:null});
             })
         }
-        if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
-            if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
+        if (infos.user !== 0 && !(type === "changeSpot" && gender === "temporary")) {
+            if (infos.user !== 0 && !(type === "changeSpot" && gender === "temporary")) {
                 SSFU(infos.user, toModif);
             }
             if (type === "changeSpot" && gender === "temporary") {
