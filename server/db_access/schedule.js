@@ -1,9 +1,9 @@
 const { dbConnection } = require('../database');
 const { GetUsers } = require('./user');
-const { GetPermRole } = require('./role');
 const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 const { GetUsersFromRoleArray } = require("./reunion");
+const { GetAllSpots } = require('./spot');
 
 /**
  * IsValidDatetime
@@ -25,8 +25,6 @@ function IsValidDatetime(datetime) {
  * @param {function(*,*)} callback (err, data)
  */
 function GetSchedules(infos, callback){
-	//if (!infos.roles && !infos.users && !infos.id) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Au moins un des champs doit être défini parmi : role, user, id", callback);
-
 	let doSqlRequest = (users) => {
 		let sql = `SELECT DISTINCT s.* FROM Schedule s`
 		if (users.length != 0){
@@ -88,7 +86,7 @@ function GetSchedules(infos, callback){
 	}else{
 		let users = [];
 		if (infos.users){
-			users.concat(infos.users);
+			users = users.concat(infos.users);
 		}
 		if (infos.roles){
 			GetUsersFromRoleArray(infos.roles, (err, data) => {
@@ -110,167 +108,120 @@ function GetSchedules(infos, callback){
  * PostSchedule
  * Insert a/several schedule(s) in the database
  * 
- * @param {object} infos {role, user, parking, date_start, date_end}
+ * @param {object} infos {roles, users, parking, date_start, date_end, spots, type}
  * @param {function(*,*)} callback (err, data)
  */
 function PostSchedule(infos, callback) {
-	if (infos.role && infos.user) {
-		Errors.SendError(Errors.E_CONFLICTING_PARAMETERS, 
-			"Un seul champ peut être définit parmis : role, user.",
-			callback);
-	}else if (isNaN(infos.first_spot) != isNaN(infos.last_spot)) {
-		Errors.SendError(Errors.E_MISSING_PARAMETER, 
-			"Les champs suivants doivent être définits : first_spot, last_spot.",
-			callback);
-	}else if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) {
-		Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
-	}else if (infos.date_start > infos.date_end){
-		Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
-	}else if (!isNaN(infos.first_spot)){
-		GetSpots({"id":infos.first_spot}, (err,first_spot) =>{
-			if(err){
-				callback(err,{});
-			}else if(first_spot.length != 1){
-				Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-			}else{
-				GetSpots({"id":infos.last_spot}, (err, last_spot) => {
-					if(err){
-						callback(err, {});
-					}else if(last_spot.length != 1){
-						Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-					}else if(first_spot[0].id_park != last_spot[0].id_park){
-						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_PARKINGS, "Les places sélectionnées ne sont pas dans le même parking.", callback);
-					}else if (first_spot[0].floor != last_spot[0].floor){
-						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
-					}else if (first_spot[0].number > last_spot[0].number){
-						Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
-					}else{
-						IsntSpotOverlapping(infos, (err, isntOverlapping)=>{
-							if(err){
-								callback(err, []);
-							}else if(!isntOverlapping){
-								Errors.SendError(Errors.E_OVERLAPPING_SPOTS, "La sélection est superposée à un autre créneau.", callback);
-							}else if(infos.role){
-								PostScheduleRole(infos, callback);
-							}else{
-								PostScheduleUser(infos, callback);
-							}
-						});
-					}
-				});
+	if (!infos.roles && !infos.users) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Un des champs suivant doit être rempli : users, roles", callback);
+	if (!infos.type) return Errors.SendError(Errors.E_TYPE_DONT_EXIST, "Aucun type n'a été demandé.", callback);
+	if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
+	if (infos.date_start > infos.date_end) return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
+	
+	let doSqlRequest = (users, spots) => {
+		if (!infos.parking) infos.parking = null;
+
+		//Copy of users because IsntSchedule function empty the users variable
+		users_copy = []
+		for (let user of users){
+			users_copy.push(user);
+		}
+
+		IsntScheduleOverlappingForList({date_start: infos.date_start, date_end: infos.date_end}, users, (err, isntOverlapping) => {
+			if (err) return callback(err, null);
+			if (!isntOverlapping) return Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Les créneaux se superpose pour au moins un des utilisateurs.", callback);
+
+			// Insert schedule
+			let sql = `INSERT INTO Schedule(type, id_parking, date_start, date_end) VALUES (:type, :parking, :date_start, :date_end)`
+			dbConnection.query(sql, infos, (err, data) => {
+				if (err) return callback(err, null);
+
+				var id_schedule = data.insertId;
+				//Insert user_schedule
+				InsertUsersSchedules(users_copy, id_schedule, (err, data) => {
+					if (err) return callback(err, null);
+					InsertSpotsSchedules(spots.map(e => e.id), id_schedule, callback)
+				})
+			})
+		})
+	}
+
+	let getUsersFromParameters = (spots) => {
+		// Get users_id from parameters
+		let users = [];
+		if (infos.users){
+			users = users.concat(infos.users);
+		}
+		if (infos.roles){
+			GetUsersFromRoleArray(infos.roles, (err, data) => {
+				if (err) return callback(err, null);
+				if (data){
+					users = users.concat(data.map(e => e.id));
+				}
+				doSqlRequest(users, spots);
+			} )
+		}else{
+			doSqlRequest(users, spots);
+		}
+	}
+		
+	
+	// Check spots if exists
+	var spots = [];
+	if (infos.parking) {
+		if (infos.spots.length == 0) return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "Aucun spot n'a été donné.", callback);
+		GetAllSpots({}, (err, spots) => {
+			if (err) return callback(err, null);
+			spots = spots.filter(e => infos.spots.includes(e.id))
+			for (let spot of spots){
+				if (spot.id_park != infos.parking){
+					console.log("err")
+					return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
+				}
 			}
-		});
-	}else if (infos.role){
-		PostScheduleRole(infos, callback);
+			getUsersFromParameters(spots)
+		})
 	}else{
-		PostScheduleUser(infos, callback);
+		if (infos.type != "Réunion") return Errors.SendError(Errors.E_WRONG_TYPE_SCHEDULE, "Les créneaux n'étant pas des réunions ont besoin d'avoir un parking attribué.", callback)
+		getUsersFromParameters(spots)
 	}
 }
 
 /**
- * PostScheduleRole
- * Insert a schedule for every user with the role in the database
  * 
- * @param {object} infos {role, parking, date_start, date_end}
- * @param {function(*,*)} callback (err, data)
+ * @param {Array<integer>} users_id liste des identifiants à ajouter
+ * @param {integer} id_schedule le schedule auquel les ajouter
+ * @param {function(*,*)} callback 
  */
-function PostScheduleRole(infos, callback) {
-	GetPermRole({ "role": infos.role }, (err, data) => {
-		if (err) {
-			callback(err, data);
-		} else if (data.length != 1) {
-			Errors.SendError(Errors.E_ROLE_NOT_FOUND, "Ce rôle n'existe pas.", callback);
-		} else {
-
-			sql = `SELECT id FROM User WHERE role LIKE :role`;
-
-			 console.log("SQL at PostScheduleRole : " + sql + " with " + JSON.stringify(infos));
-			dbConnection.query(sql, {
-				role: infos.role || '%'
-			}, (err, data) => {
-				if (err) {
-					callback(err, data);
-				} else {
-					IsntScheduleOverlappingForList(infos, data.map(i => i.id), (err, isntOverlapping) => {
-						if (err) {
-							callback(err, {});
-						} else if (!isntOverlapping) {
-							Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
-						} else {
-							PostScheduleUsers(infos, data.map(i => i.id), callback);
-						}
-					});
-				}
-			});
-		}
-	});
+function InsertUsersSchedules(users_id, id_schedule, callback){
+	if (users_id.length == 0){
+		callback(null, true)
+	}else{
+		let userId = users_id.pop();
+		let sql = `INSERT INTO User_Schedule VALUES (:userId, :scheduleId)`
+		dbConnection.query(sql, {userId:userId, scheduleId:id_schedule}, (err, data) => {
+			if (err) return callback(err, data);
+			InsertUsersSchedules(users_id, id_schedule, callback);
+		})
+	}
 }
 
 /**
- * PostScheduleUser
- * Insert a schedule for the user in the database
  * 
- * @param {object} infos {user, parking, date_start, date_end}
- * @param {function(*,*)} callback (err, data)
+ * @param {Array<integer>} spots_id liste des identifiants à ajouter
+ * @param {integer} id_schedule le schedule auquel les ajouter
+ * @param {function(*,*)} callback 
  */
-function PostScheduleUser(infos, callback) {
-	GetUsers({ id: infos.user }, (err, data) => {
-		if (err) {
-			callback(err, data);
-		} else if (data.length != 1) {
-			Errors.SendError(Errors.E_USER_NOT_FOUND, "Cet utilisateur n'existe pas.", callback);
-		} else {
-			IsntScheduleOverlapping(infos, (err, isntOverlapping) => {
-				if (err) {
-					callback(err, {});
-				} else if (!isntOverlapping) {
-					Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour un/des utilisateur(s) saisi(s).", callback);
-				} else {
-
-					sql = `INSERT INTO Schedule 
-							(id_user, type, id_parking, date_start, date_end, first_spot, last_spot)
-						   VALUES 
-						     (:user, :type, :parking, :date_start, :date_end, :first_spot, :last_spot);`;
-					
-					console.log("SQL at PostScheduleUser : " + sql + " with " + JSON.stringify(infos));
-					dbConnection.query(sql, {
-						user:infos.user,
-						type:infos.type,
-						parking:infos.parking,
-						date_start:infos.date_start,
-						date_end:infos.date_end,
-						first_spot:infos.first_spot||null,
-						last_spot:infos.last_spot||null
-					}, callback);
-				}
-			});
-		}
-	});
-}
-
-/**
- * PostScheduleUsers
- * Insert schedules for all users in the array
- * 
- * @param {object} infos {role, parking, date_start, date_end}
- * @param {Array<string>} ids IDs of the users
- * @param {function(*,*)} callback (err, data)
- */
-function PostScheduleUsers(infos, ids, callback) {
-	PostScheduleUser({
-		user: ids.pop(),
-		parking: infos.parking,
-		date_start: infos.date_start,
-		date_end: infos.date_end
-	}, (err, data) => {
-		if (err) {
-			callback(err, data);
-		} else if (ids.length > 0) {
-			PostScheduleUsers(infos, ids, callback);
-		} else {
-			callback(err, data);
-		}
-	});
+function InsertSpotsSchedules(spots_id, id_schedule, callback){
+	if (spots_id.length == 0){
+		callback(null, true)
+	}else{
+		let spotId = spots_id.pop();
+		let sql = `INSERT INTO Schedule_Spot VALUES (:scheduleId, :spotId)`
+		dbConnection.query(sql, {spotId:spotId, scheduleId:id_schedule}, (err, data) => {
+			if (err) return callback(err, data);
+			InsertSpotsSchedules(spots_id, id_schedule, callback);
+		})
+	}
 }
 
 function GetScheduleById(id, callback){
@@ -400,11 +351,11 @@ function UpdateSchedule(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function IsntScheduleOverlapping(infos, callback) {
-	
-	sql = `SELECT * FROM Schedule 
-		   WHERE 
+	sql = `SELECT * FROM User_Schedule us
+		   	JOIN Schedule s on us.id_schedule = s.id
+			WHERE 
 			id_user=:user AND
-			(date_start < :date_end AND date_end > :date_start);`;
+			(date_start <= :date_end AND date_end >= :date_start);`;
 	
 			//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {

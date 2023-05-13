@@ -302,17 +302,13 @@ app.get('/api/schedules', (req, res) => {
 
 app.post('/api/schedule', (req, res) => {
 	//console.log("Request at POST /api/schedule : " + JSON.stringify(req.body));
-	if (req.body && (!!req.body.role ^ req.body.user) && (typeof req.body.parking != "undefined") && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
-		PostSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json(data);
-			}
-		});
-	}else{
-		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définis. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
-	}
+	PostSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json(data);
+		}
+	})
 });
 
 app.get('/api/schedules/:id', (req, res) => {
