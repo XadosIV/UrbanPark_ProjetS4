@@ -292,4 +292,4 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 	}
 }
 
-module.exports = {GetSchedulesAvailable};
+module.exports = {GetSchedulesAvailable, GetUsersFromRoleArray, GetAllSchedulesFromUserArray};
