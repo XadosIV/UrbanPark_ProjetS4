@@ -118,11 +118,9 @@ function PostSchedule(infos, callback) {
 	
 	let doSqlRequest = (users, guests, spots) => {
 		if (!infos.parking) infos.parking = null;
-
 		let res = FixUsersGuests(users, guests);
 		users = res[0];
 		guests = res[1];
-
 		if (users.length == 0) return Errors.SendError(Errors.E_USER_NOT_FOUND, "Aucun utilisateur obligatoire à ajouter au créneau.", callback);
 
 		//Copy of users because IsntSchedule function empty the users variable
