@@ -89,7 +89,7 @@ export function Spot(props) {
             <form onSubmit={(e) => handlleSubmit(e, type)} className="form">
                 <Select 
                     id="user"
-                    className="searchs-add"
+                    className="select-size-change"
                     options={AllSubs(subs)} 
                     defaultValue={defaultValue}
                     name="user" 
@@ -241,18 +241,19 @@ export function Spot(props) {
             })
         }
         if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
-        if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
-            SSFU(infos.user, toModif);
-        }
-        if (type === "changeSpot" && gender === "temporary") {
-            setErrMessage("Vous ne pouvez pas enlever la place d'un abonné pour la mettre temporairement à un autre.")
-            setWrongInput(true)
-        } else {
-            setErrMessage("Modification prise en compte.")
-            setWrongInput(true)
-            props.handleCallback(true)
-            await delay(2000);
-            setNoSubmit(true)
+            if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
+                SSFU(infos.user, toModif);
+            }
+            if (type === "changeSpot" && gender === "temporary") {
+                setErrMessage("Vous ne pouvez pas enlever la place d'un abonné pour la mettre temporairement à un autre.")
+                setWrongInput(true)
+            } else {
+                setErrMessage("Modification prise en compte.")
+                setWrongInput(true)
+                props.handleCallback(true)
+                await delay(2000);
+                setNoSubmit(true)
+            }
         }
     }
 

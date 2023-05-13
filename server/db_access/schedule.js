@@ -118,9 +118,9 @@ function PostSchedule(infos, callback) {
 	
 	let doSqlRequest = (users, guests, spots) => {
 		if (!infos.parking) infos.parking = null;
-
-		FixUsersGuests(users, guests); // array are given by reference, there's no need to set the result, variables are already modified.
-
+		let res = FixUsersGuests(users, guests);
+		users = res[0];
+		guests = res[1];
 		if (users.length == 0) return Errors.SendError(Errors.E_USER_NOT_FOUND, "Aucun utilisateur obligatoire à ajouter au créneau.", callback);
 
 		//Copy of users because IsntSchedule function empty the users variable
@@ -175,18 +175,23 @@ function PostSchedule(infos, callback) {
 	// Check spots if exists
 	var spots = [];
 	if (infos.parking) {
-		if (infos.spots.length == 0) return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "Aucun spot n'a été donné.", callback);
-		GetAllSpots({}, (err, spots) => {
-			if (err) return callback(err, null);
-			spots = spots.filter(e => infos.spots.includes(e.id))
-			for (let spot of spots){
-				if (spot.id_park != infos.parking){
-					console.log("err")
-					return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
+		if (infos.type == "Nettoyage"){
+			if (infos.spots.length == 0) return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "Aucun spot n'a été donné.", callback);
+			GetAllSpots({}, (err, spots) => {
+				if (err) return callback(err, null);
+				spots = spots.filter(e => infos.spots.includes(e.id))
+				for (let spot of spots){
+					if (spot.id_park != infos.parking){
+						console.log("err")
+						return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
+					}
 				}
-			}
+				getUsersFromParameters(spots)
+			})
+		}else{
 			getUsersFromParameters(spots)
-		})
+		}
+		
 	}else{
 		if (infos.type != "Réunion") return Errors.SendError(Errors.E_WRONG_TYPE_SCHEDULE, "Les créneaux n'étant pas des réunions ont besoin d'avoir un parking attribué.", callback)
 		getUsersFromParameters(spots)
@@ -365,8 +370,9 @@ function UpdateSchedule(infos, callback){
 
 	let doUpdate = (users, guests) => {
 
-		FixUsersGuests(users, guests);
-
+		let res = FixUsersGuests(users, guests);
+		users = res[0];
+		guests = res[1];
 		//Start all functions
 		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
 			if (err) return callback(err, null);

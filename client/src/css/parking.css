@@ -200,3 +200,8 @@
 h3 {
 	text-align: center;
 }
+
+.select-size-change {
+	width:200px;
+	margin-bottom: 10px;
+}
