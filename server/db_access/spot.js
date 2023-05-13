@@ -12,42 +12,66 @@ const Errors = require('../errors');
 
 function GetAllSpots(infos, callback){
 	sql = `SELECT
-				s.id,
-				s.number,
-				s.floor,
-				s.id_park,
-				u.id AS id_user,
-				uu.id AS id_user_temp,
-				u.first_name,
-				u.last_name,
-				uu.first_name AS first_name_temp,
-				uu.last_name AS last_name_temp
-	FROM Spot s 
-	LEFT JOIN User u ON s.id = u.id_spot 
-	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
+		s.id,
+		s.number,
+		s.floor,
+		s.id_park,
+		u.id AS id_user,
+		uu.id AS id_user_temp,
+		u.first_name,
+		u.last_name,
+		uu.first_name AS first_name_temp,
+		uu.last_name AS last_name_temp,
+		ns.date_end,
+		ns.id AS next_schedule
+	FROM Spot s
+		LEFT JOIN User u ON s.id = u.id_spot
+		LEFT JOIN User uu ON s.id = uu.id_spot_temp
+		LEFT JOIN Schedule_Spot ss ON s.id = ss.id_spot
+		LEFT JOIN Schedule ns ON ss.id_schedule = ns.id AND ns.date_end > NOW()
 	WHERE
-		s.id_park LIKE :id_park AND
-		s.floor LIKE :floor AND
-		s.number LIKE :number AND
-		s.id LIKE :id
-	ORDER BY floor, number`;
-    
+		s.id_park LIKE :id_park
+		AND s.floor LIKE :floor
+		AND s.number LIKE :number
+		AND s.id LIKE :id
+	ORDER BY s.id, ns.date_end`;
+
+	/**
+	 * Note on schedules :
+	 * Only futur or actual schedules are fetched this way.
+	 * Using a `GROUP BY s.id` clause along a `HAVING MIN(ns.date_end)` didn't work.
+	 * BTW : Using an `AND` clause in a `LEFT JOIN ON` isn't a hack, it's taking advantage of the features.
+	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really usefull)
+	 */
+	
 	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
-    dbConnection.query(sql, 
-		{
-			id:infos.id ||'%',
-			number:infos.number||'%',
-			floor:infos.floor||'%',
-			id_park:infos.id_park||'%'
-		}, (err, data) => {
+    dbConnection.query(sql, {
+		id:infos.id ||'%',
+		number:infos.number||'%',
+		floor:infos.floor||'%',
+		id_park:infos.id_park||'%'
+	}, (err, data) => {
         if (err){
             callback(err, [])
         }else{
+			let allSpots = [];
+
+			data.forEach((element) => {
+				let index = allSpots.map(spot => spot.id).indexOf(element.id)
+				if(index != -1){
+					if(allSpots[index].next_schedule === null || (element.next_schedule !== null && element.end_date < allSpots[index].end_date)){
+						allSpots[index] = element;
+					}
+				}else{
+					allSpots.push(element);
+				}
+			});
+
+			allSpots = allSpots.map(({date_end, ...others}) => others);
     
 			sql = `SELECT * FROM Typed`
     
 			//console.log("SQL at GetAllSpots : " + sql);
-            allSpots = data
             dbConnection.query(sql, (err, data) => {
                 if (err){
                     callback(err, [])
