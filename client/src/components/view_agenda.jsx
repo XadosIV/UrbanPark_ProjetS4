@@ -23,9 +23,13 @@ export function ViewAgenda (props){
 		list.forEach(element => {
 			let type = element.type
 			let role = element.role;
-			let idParking = element.parking;
-			let parking = element.name;
-			let user = element.last_name;
+			let idParking = null;
+			let parking = null;
+			if (type !== "Réunion") {
+				idParking = element.parking.id;
+				parking = element.parking.name;
+			}
+			let user = element.users[0].last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
 
@@ -48,14 +52,14 @@ export function ViewAgenda (props){
 
 			while (j < sortie.length && !trouve)
 			{
-				if (MemeParking(idParking, sortie[j]) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
+				if ((MemeParking(idParking, sortie[j])) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
 				{
 					trouve = true;
 					if (sortie[j].type !== "Réunion"){
 						sortie[j].title += " and " + user;
 					}
 					if (!(sortie[j].user.find(user => element.user === user))) {
-						sortie[j].user.push(element.user)
+						sortie[j].user.push(element.users)
 					}
 					sortie[j].id_schedule.push(element.id)
 				}
@@ -67,15 +71,14 @@ export function ViewAgenda (props){
 					id_schedule:[element.id],
 					type : type,
 					id: i,
-					idparking: idParking,
+					idparking: type !== "Réunion" ? idParking : "",
 					title: type !== "Réunion" ? type + " du parking " + parking + " par " + user : type,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
 					end: new Date(dateEnd),
-					user: [element.user],
-					first_spot:element.first_spot,
-					last_spot:element.last_spot
+					user: [element.users],
+					spots:[element.spots]
 				};
 				sortie.push(newElement);
 			}
@@ -174,25 +177,22 @@ export function ViewAgenda (props){
 	 * BaseUser
 	 * Returns a array corresponding to the base user being passed in a react select defaultValue
 	 *
-	 * @param { integer } id_user - id of the user
+	 * @param { integer } list_user - id of the user
 	 * @param { Array } list - List of users
 	 * @return { Array }
 	 */
-	function BaseUser(id_user, list) {
+	function BaseUser(list_user, list) {
 		list = BaseListType(list)
 		var opts = []
-		if (!Array.isArray(id_user)) {
-			id_user = [id_user]
-		}
 		if (list) {
 			for (let user of list) {
-				for (let id of id_user) {
-					if (user.value === id) {
+				for (let user2 of list_user[0]) {
+					if (user.value === user2.id) {
 						opts.push(user);
 					}
 				}
 			}
-			return opts
+			return opts;
 		}
 	}
 

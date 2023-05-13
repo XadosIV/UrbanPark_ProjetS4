@@ -124,14 +124,34 @@ export function UpdateScheduleForm(props) {
 		}
 	}
 
-	function InformationEvent (infos, baseType) {
-		let baseList = props.baseUser;
-		if (!Array.isArray(baseList)) {
-			baseList = [baseList]
+	function AffichagePlaces() {
+		let liste = props.event.spots[0];
+
+		function CompletePlace (number) {
+			let res = ""
+			if (number < 10) {
+				res = "0"
+			}
+			return res
 		}
+
+		let ajout = "";
+		return (
+			<ul>
+				{liste.map(
+					(spot) => {
+						return <li>{spot.id_park}-{spot.floor}{CompletePlace(spot.number)}{spot.number}</li>
+					})
+				}
+			</ul>
+		)
+	}
+
+	function InformationEvent (infos, baseType) {
+		let baseList = props.event.user[0];
 		let listRes = Array()
 		for (let element of baseList) {
-			listRes.push(<li className="li-infos"><strong>-</strong> {element.label}</li>)
+			listRes.push(<li className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>)
 		}
 		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3)
 		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3)
@@ -142,6 +162,7 @@ export function UpdateScheduleForm(props) {
 						listRes
 					}
 				</ul>
+				{baseType === "Nettoyage" && AffichagePlaces()}
 				<p>
 					{
 						"Du " + dates_start + " au " + dates_end

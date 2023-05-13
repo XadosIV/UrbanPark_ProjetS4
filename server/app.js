@@ -52,7 +52,7 @@ app.get('/api/auth', (req, res) => {
 
 
 app.get('/api/users', (req, res) => {
-	//console.log("Request at GET /api/users : " + JSON.stringify(req.query));
+	console.log("Request at GET /api/users : " + JSON.stringify(req.query));
 	GetUsers(req.query, (err, data) => {
 		if (err){ 
 			Errors.HandleError(err, res);
@@ -290,8 +290,8 @@ app.get('/api/role', (req, res) => {
 });
 
 app.get('/api/schedules', (req, res) => {
-	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
-	GetSchedules(req.body, (err, data) => {
+	console.log("Request at GET /api/schedules : " + JSON.stringify(req.query) + "\n body: " + JSON.stringify(req.body));
+	GetSchedules(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
