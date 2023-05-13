@@ -61,9 +61,11 @@ function GetSchedules(infos, callback){
 									if (err) return callback(err, null);
 									for (let schedule of schedules){
 										schedule.parking = parkings.find(e => e.id == schedule.id_parking);
-										let newmnuser = mnuser.filter(e => e.id_schedule == schedule.id).map(e => e.id_user);
+										let newmnuser = mnuser.filter(e => e.id_schedule == schedule.id && e.is_guest == 0).map(e => e.id_user);
+										let newmnguest = mnuser.filter(e => e.id_schedule == schedule.id && e.is_guest == 1).map(e => e.id_user);
 										let newmnspot = mnspot.filter(e => e.id_schedule == schedule.id).map(e => e.id_spot);
 										schedule.users = users.filter(e => newmnuser.includes(e.id));
+										schedule.guests = users.filter(e => newmnguest.includes(e.id));
 										schedule.spots = spots.filter(e => newmnspot.includes(e.id));
 										schedule.id_parking = undefined;
 									}
@@ -105,7 +107,7 @@ function GetSchedules(infos, callback){
  * PostSchedule
  * Insert a/several schedule(s) in the database
  * 
- * @param {object} infos {roles, users, parking, date_start, date_end, spots, type}
+ * @param {object} infos {roles, users, guests, parking, date_start, date_end, spots, type}
  * @param {function(*,*)} callback (err, data)
  */
 function PostSchedule(infos, callback) {
@@ -114,8 +116,12 @@ function PostSchedule(infos, callback) {
 	if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
 	if (infos.date_start > infos.date_end) return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
 	
-	let doSqlRequest = (users, spots) => {
+	let doSqlRequest = (users, guests, spots) => {
 		if (!infos.parking) infos.parking = null;
+
+		FixUsersGuests(users, guests); // array are given by reference, there's no need to set the result, variables are already modified.
+
+		if (users.length == 0) return Errors.SendError(Errors.E_USER_NOT_FOUND, "Aucun utilisateur obligatoire à ajouter au créneau.", callback);
 
 		//Copy of users because IsntSchedule function empty the users variable
 		users_copy = []
@@ -133,10 +139,14 @@ function PostSchedule(infos, callback) {
 				if (err) return callback(err, null);
 
 				var id_schedule = data.insertId;
-				//Insert user_schedule
-				InsertUsersSchedules(users_copy, id_schedule, (err, data) => {
+				//Insert USERS user_schedule
+				InsertUsersSchedules(users_copy, id_schedule, false, (err, data) => {
 					if (err) return callback(err, null);
-					InsertSpotsSchedules(spots.map(e => e.id), id_schedule, callback)
+					// Insert GUESTS user_schedule
+					InsertUsersSchedules(guests, id_schedule, true, (err, data) => {
+						if (err) return callback(err, null);
+						InsertSpotsSchedules(spots.map(e => e.id), id_schedule, callback)
+					})
 				})
 			})
 		})
@@ -145,19 +155,19 @@ function PostSchedule(infos, callback) {
 	let getUsersFromParameters = (spots) => {
 		// Get users_id from parameters
 		let users = [];
-		if (infos.users){
-			users = users.concat(infos.users);
-		}
+		let guests = [];
+		if (infos.users) users = users.concat(infos.users);
+		if (infos.guests) guests = guests.concat(infos.guests);
 		if (infos.roles){
 			GetUsersFromRoleArray(infos.roles, (err, data) => {
 				if (err) return callback(err, null);
 				if (data){
-					users = users.concat(data.map(e => e.id));
+					guests = guests.concat(data.map(e => e.id));
 				}
-				doSqlRequest(users, spots);
+				doSqlRequest(users, guests, spots);
 			} )
 		}else{
-			doSqlRequest(users, spots);
+			doSqlRequest(users, guests, spots);
 		}
 	}
 		
@@ -184,20 +194,52 @@ function PostSchedule(infos, callback) {
 }
 
 /**
+ * FixUsersGuests
+ * Remove duplicated id in the two arrays
+ * If an id is includes in the two arrays, remove the one from guests
+ * (Because: if someone is a guest and a required person, it's just a required person)
+ * 
+ * @param {Array<integer>} users 
+ * @param {Array<integer>} guests 
+ */
+function FixUsersGuests(users, guests){
+	// Found the two next line in : https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+	users = [...new Set(users)];
+	guests = [...new Set(guests)];
+
+	// Get index of all duplicata between guests and users
+	to_delete_index = [];
+	for (let index in guests){
+		if (users.includes(guests[index])){
+			to_delete_index.push(index);
+		}
+	}
+
+	// Remove all indexes, by descending order to avoid shifted index problems
+	to_delete_index.sort((a,b) => a[0]<b[0]?-1:1) // Descending order sort
+	for (let index in to_delete_index){
+		guests.splice(index, 1); // remove id
+	}
+
+	return [users, guests];
+}
+
+/**
  * 
  * @param {Array<integer>} users_id liste des identifiants à ajouter
  * @param {integer} id_schedule le schedule auquel les ajouter
+ * @param {boolean} isGuest Si oui ou non les utilisateurs qu'on ajoute sont des invités
  * @param {function(*,*)} callback 
  */
-function InsertUsersSchedules(users_id, id_schedule, callback){
+function InsertUsersSchedules(users_id, id_schedule, isGuest, callback){
 	if (users_id.length == 0){
 		callback(null, true)
 	}else{
 		let userId = users_id.pop();
-		let sql = `INSERT INTO User_Schedule VALUES (:userId, :scheduleId)`
-		dbConnection.query(sql, {userId:userId, scheduleId:id_schedule}, (err, data) => {
+		let sql = `INSERT INTO User_Schedule VALUES (:userId, :scheduleId, :isGuest)`
+		dbConnection.query(sql, {userId:userId, scheduleId:id_schedule, isGuest:isGuest}, (err, data) => {
 			if (err) return callback(err, data);
-			InsertUsersSchedules(users_id, id_schedule, callback);
+			InsertUsersSchedules(users_id, id_schedule, isGuest, callback);
 		})
 	}
 }
@@ -225,119 +267,150 @@ function GetScheduleById(id, callback){
 	GetSchedules({id:id}, callback);
 }
 
+/**
+ * 
+ * @param {*} infos {id, users, guests, roles, date_start, date_end, spots}
+ * @param {function(*,*)} callback 
+ */
 function UpdateSchedule(infos, callback){
-	//infos has {id, user, parking, date_start, date_end}
-	//Check date_start syntax
+	let UpdateScheduleTable = (id, date_start, date_end, suite) => {
+		if (date_start || date_end){
 
-	let doSqlRequest = (schedule) => {
-		//insert sql
-
-		sql = `UPDATE Schedule 
-			SET 
-				id_user=:user,
-				id_parking=:parking,
-				date_start=:start,
-				date_end=:end,
-				first_spot=:first,
-				last_spot=:last
-			WHERE
-				id=:id`
-		
-		dbConnection.query(sql, schedule, callback);
-	}
-
-	if (infos.date_start){
-		if (!IsValidDatetime(infos.date_start)){
-			return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
-		}
-	}
-	//Check date_end syntax
-	if (infos.date_end){
-		if (!IsValidDatetime(infos.date_end)){
-			return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
-		}
-	}
-
-	GetScheduleById(infos.id, (err, data) => {
-		if (err){
-			callback(err, {})
-		}else{
-			if (data.length == 1){
-				data = data[0]
-				// schedule object will contains information post update, to check if everything works fine with the new data
-				schedule = {start:data.date_start, end:data.date_end, user:data.user, parking:data.parking, first:data.first_spot, last:data.last_spot, id:infos.id}
-				if (infos.date_start) schedule.start = infos.date_start
-				if (infos.date_end) schedule.end = infos.date_end
-				if (infos.user) schedule.user = infos.user
-				if (infos.parking) schedule.parking = infos.parking
-				if (infos.first_spot) schedule.first = infos.first_spot
-				if (infos.last_spot) schedule.last = infos.last_spot
-
-				// check schedule order
-				if (schedule.end < schedule.start){
-					return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "La date de fin ne peut pas précéder la date de commencement.", callback);
+			let toChange = {}
+			if (date_start){
+				if (!IsValidDatetime(date_start)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", suite);
+				else {
+					toChange.start = date_start;
 				}
-
-				//check schedule overlap
-				IsntScheduleOverlapping(schedule, (err, no_overlap) => {
-					if (err){
-						callback(err, {})
-					}else{
-						if (no_overlap){
-							
-							// get first spot
-							if (schedule.first && schedule.last){
-								GetSpots({id:schedule.first}, (err, first_spot) => {
-									if (err){
-										callback(err, [])
-									}else if (first_spot.length == 0){
-										return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-									}else{
-										// get second spot
-										GetSpots({id:schedule.last}, (err, last_spot) => {
-											if (err){
-												callback(err, [])
-											}else if(last_spot.length == 0){
-												return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-											}else{
-												first_spot = first_spot[0]
-												last_spot = last_spot[0]
-												//check spot restriction error
-												if (first_spot.id_park != last_spot.id_park){
-													return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_PARKINGS, "Les places sélectionnées ne sont pas dans le même parking.", callback);
-												}else if (first_spot.id_park != schedule.parking){
-													return Errors.SendError(Errors.E_SPOTS_PARKING_DIFFERENT_SCHEDULE_PARKING, "Les places sont dans un parking différent de celui attribué par le créneau.", callback);
-												}else if (first_spot.floor != last_spot.floor){
-													return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Les places sélectionnées sont dans le même parking mais pas dans le même étage", callback);
-												}else if (first_spot.number >= last_spot.number){
-													return Errors.SendError(Errors.E_WRONG_SPOT_ORDER, "La place de fin ne peut pas être avant la place de début.", callback);
-												}else{
-													//Check overlapping spots
-													IsntSpotOverlapping({date_start:schedule.start, date_end:schedule.end, first_spot:schedule.first, last_spot:schedule.last}, (err, no_overlap_spot) => {
-														if (no_overlap_spot){
-															doSqlRequest(schedule)
-														}else{
-															return Errors.SendError(Errors.E_OVERLAPPING_SPOTS, "La sélection est superposée à un autre créneau.", callback);
-														}
-													})
-												}
-											}
-										})
-									}
-								})
-							}else{
-								doSqlRequest(schedule);
-							}
-						}else{
-							return Errors.SendError(Errors.E_OVERLAPPING_SCHEDULES, "Ce créneau est superposé à un autre pour l'utilisateur concerné.", callback);
-						}
-					}
-				})
-			}else{
-				return Errors.SendError(Errors.E_SCHEDULE_NOT_FOUND, "Le créneau demandé n'existe pas.", callback);
 			}
+			if (date_end){
+				if (!IsValidDatetime(date_end)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", suite);
+				else {
+					toChange.end = date_end;
+				}
+			}
+
+			GetScheduleById(id, (err, schedule) => {
+				if (err) return suite(err, null);
+				if (!toChange.start) toChange.start = schedule.date_start;
+				if (!toChange.end) toChange.end = schedule.date_end;
+				if (toChange.start > toChange.end) return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "Le créneau ne peut pas commencer après avoir fini.", suite);
+				toChange.id = infos.id
+				let sql = `UPDATE Schedule SET date_start=:start, date_end=:end WHERE id=:id`
+				dbConnection.query(sql, {toChange}, suite)
+			})
+
+
+			
+		}else{
+			suite(null, null)
 		}
-	})
+	}
+
+	let ToggleSpotSchedule = (id, spots, suite) => {
+		if (spots.length == 0){
+			suite(null, true);
+		}else{
+			idSpot = spots.pop();
+			let sql = `SELECT * FROM Schedule_Spot WHERE id_schedule=:id AND id_spot=:spotid`
+
+			dbConnection.query(sql, {id:id, spotid:idSpot}, (err, data) => {
+				if (err) return suite(err, data);
+				if (data.length == 0){
+					//relation not existing, add it
+					let sql = `INSERT INTO Schedule_Spot (id_schedule, id_spot) VALUES (:id, :spotid)`
+					dbConnection.query(sql, {id:id, spotid:idSpot}, (err, data) => {
+						if (err) return suite(err, data);
+						ToggleSpotSchedule(id, spots, suite);
+					})
+				}else{
+					//relation existing, delete it
+					let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id AND id_spot=:spotid`
+					dbConnection.query(sql, {id:id, spotid:idSpot}, (err, data) => {
+						if (err) return suite(err, data);
+						ToggleSpotSchedule(id, spots, suite);
+					})
+				}
+			})
+		}
+	}
+
+	let ToggleUserSchedule = (id, users, isGuest, suite) => {
+		if (users.length == 0){
+			suite(null, true);
+		}else{
+			idUser = users.pop();
+			let sql = `SELECT * FROM User_Schedule WHERE id_schedule=:id AND id_user=:idUser`
+
+			dbConnection.query(sql, {id:id, idUser:idUser}, (err, data) => {
+				if (err) return suite(err, data);
+				if (data.length == 0){
+					//relation not existing, add it
+					let sql = `INSERT INTO User_Schedule (id_user, id_schedule, is_guest) VALUES (:idUser, :id, :isGuest)`
+					dbConnection.query(sql, {id:id, idUser:idUser, isGuest:isGuest}, (err, data) => {
+						if (err) return suite(err, data);
+						ToggleUserSchedule(id, users, isGuest, suite);
+					})
+				}else{
+					//relation existing, delete it
+					let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id AND id_user=:idUser`
+					dbConnection.query(sql, {id:id, idUser:idUser}, (err, data) => {
+						if (err) return suite(err, data);
+						ToggleUserSchedule(id, users, isGuest, suite);
+					})
+				}
+			})
+		}
+	}
+
+	let doUpdate = (users, guests) => {
+
+		FixUsersGuests(users, guests);
+
+		//Start all functions
+		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
+			if (err) return callback(err, null);
+		
+			let spots = [];
+			if (infos.spots){
+				spots.concat(infos.spots);
+			}
+		
+			spots = [...new Set(spots)] // remove duplicated elements;
+		
+			ToggleSpotSchedule(infos.id, spots, (err, data) => {
+				if (err) return callback(err, null);
+			
+			
+				ToggleUserSchedule(id, users, true, (err, data) => {
+					if (err) return callback(err, null);
+					
+					ToggleUserSchedule(id, guests, true, (err, data) => {
+						if (err) return callback(err, null);
+						callback(null, null)
+					})
+				})
+			});
+		})
+	}
+	
+	// Get users_id from parameters
+	let users = [];
+	let guests = [];
+	if (infos.users) users = users.concat(infos.users);
+	if (infos.guests) guests = guests.concat(infos.guests);
+	if (infos.roles){
+		GetUsersFromRoleArray(infos.roles, (err, data) => {
+			if (err) return callback(err, null);
+			if (data){
+				guests = guests.concat(data.map(e => e.id));
+			}
+			doUpdate(users, guests);
+		} )
+	}else{
+		doUpdate(users, guests);
+	}
+	
 }
 
 /**
@@ -351,9 +424,8 @@ function IsntScheduleOverlapping(infos, callback) {
 	sql = `SELECT * FROM User_Schedule us
 		   	JOIN Schedule s on us.id_schedule = s.id
 			WHERE 
-			id_user=:user AND
+			id_user=:user AND is_guest=0 AND 
 			(date_start <= :date_end AND date_end >= :date_start);`;
-
 	
 			//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {
@@ -435,8 +507,8 @@ function IsntSpotOverlapping(infos, callback) {
 }
 
 /**
- * DeleteUSchedule
- * Delete user by id
+ * DeleteSchedule
+ * Delete a schedule by id
  * 
  * @param {int} id
  * @param {function(*,*)} callback (err, data)
