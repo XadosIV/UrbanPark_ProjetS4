@@ -297,7 +297,7 @@ function UpdateSchedule(infos, callback){
 				if (toChange.start > toChange.end) return Errors.SendError(Errors.E_WRONG_DATETIME_ORDER, "Le créneau ne peut pas commencer après avoir fini.", suite);
 				toChange.id = infos.id
 				let sql = `UPDATE Schedule SET date_start=:start, date_end=:end WHERE id=:id`
-				dbConnection.query(sql, {toChange}, suite)
+				dbConnection.query(sql, toChange, suite)
 			})
 
 
@@ -382,10 +382,10 @@ function UpdateSchedule(infos, callback){
 				if (err) return callback(err, null);
 			
 			
-				ToggleUserSchedule(id, users, true, (err, data) => {
+				ToggleUserSchedule(infos.id, users, true, (err, data) => {
 					if (err) return callback(err, null);
 					
-					ToggleUserSchedule(id, guests, true, (err, data) => {
+					ToggleUserSchedule(infos.id, guests, true, (err, data) => {
 						if (err) return callback(err, null);
 						callback(null, null)
 					})
