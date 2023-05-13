@@ -331,17 +331,13 @@ app.get('/api/schedules/:id', (req, res) => {
 
 app.put('/api/schedules/:id', (req, res) => {
 	req.body.id = req.params.id;
-	if (req.body && (req.body.user || req.body.parking || req.body.date_start || req.body.date_end)){
-		UpdateSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json()
-			}
-		})
-	}else{
-		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Un parmi user, parking, date_start, date_end doit être défini."})
-	}
+	UpdateSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json()
+		}
+	})
 })
 
 app.delete('/api/schedule/:id', (req, res) => {
@@ -359,7 +355,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
