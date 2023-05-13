@@ -126,7 +126,18 @@ export function UpdateScheduleForm(props) {
 
 	function AffichagePlaces() {
 		let liste = props.event.spots[0];
+	
+		let nListe = []
 
+		liste.map((spot) => {
+			let floor = spot.floor
+			if (Array.isArray(nListe[spot.floor])) {
+				nListe[floor].push(spot);
+			} else {
+				nListe.push([spot]);
+			}
+		})
+		
 		function CompletePlace (number) {
 			let res = ""
 			if (number < 10) {
@@ -135,15 +146,28 @@ export function UpdateScheduleForm(props) {
 			return res
 		}
 
-		let ajout = "";
+		console.log(nListe)
+
+		for (let spots of nListe) {
+			spots.sort();
+		}
+
 		return (
-			<ul>
-				{liste.map(
-					(spot) => {
-						return <li>{spot.id_park}-{spot.floor}{CompletePlace(spot.number)}{spot.number}</li>
-					})
-				}
-			</ul>
+			<div>
+				<p>Pour les places: </p>
+				<ul>
+					{nListe.map(
+						(spots) => {
+							if (spots.length > 1) {
+								return <li>Etage {spots[0].floor} la place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number} à la place {spots[spots.length -1].id_park}-{spots[spots.length -1].floor}{CompletePlace(spots[spots.length -1].number)}{spots[spots.length -1].number}</li>
+							}
+							else {
+								return <li>Place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number}</li>
+							}
+						})
+					}
+				</ul>
+			</div>
 		)
 	}
 
@@ -429,7 +453,7 @@ export function UpdateScheduleForm(props) {
 				style={customStyles}
 			>
 				<div className="info_reunion">
-					<h3>{props.event.type} par :</h3>
+					<h3>{props.event.type} {props.event.type==="Réunion"? "avec": "réaliser par"} :</h3>
 					<div>
 						{
 							InformationEvent(infos, baseType)

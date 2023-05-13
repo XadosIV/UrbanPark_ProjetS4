@@ -55,9 +55,6 @@ export function ViewAgenda (props){
 				if ((MemeParking(idParking, sortie[j])) && MemeDepart(dateStart, sortie[j]) && MemeFin(dateEnd, sortie[j]))
 				{
 					trouve = true;
-					if (sortie[j].type !== "Réunion"){
-						sortie[j].title += " and " + user;
-					}
 					if (!(sortie[j].user.find(user => element.user === user))) {
 						sortie[j].user.push(element.users)
 					}
@@ -72,7 +69,7 @@ export function ViewAgenda (props){
 					type : type,
 					id: i,
 					idparking: type !== "Réunion" ? idParking : "",
-					title: type !== "Réunion" ? type + " du parking " + parking + " par " + user : type,
+					title: type,
 					start: new Date(dateStart),
 					d_st: dateStart,
 					d_en: dateEnd,
