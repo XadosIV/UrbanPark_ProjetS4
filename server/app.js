@@ -354,7 +354,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 				if (data.affectedRows == 1){
 					res.status(200).json();
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun utilisateur n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});

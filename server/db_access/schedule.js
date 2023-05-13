@@ -443,12 +443,19 @@ function IsntSpotOverlapping(infos, callback) {
  */
 function DeleteSchedule(id, callback){
 	
-	sql = `DELETE FROM Schedule WHERE id=:id;`;
+	//Remove from MN Table User_Schedule
+	let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id`
+	dbConnection.query(sql, {id:id}, (err, data) => {
+		if (err) return callback(err, null);
+		//Remove from MN Table Schedule_Spot
+		let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id`
+		dbConnection.query(sql, {id:id}, (err, data) => {
+			if (err) return callback(err, null);
+			sql = `DELETE FROM Schedule WHERE id=:id;`;
+			dbConnection.query(sql, {id:id}, callback);
+		})
+	})
 	
-	//console.log("SQL at DeleteUser : " + sql + " with id=" + id);
-	dbConnection.query(sql, {
-		id:id
-	}, callback);
 }
 
 /**
