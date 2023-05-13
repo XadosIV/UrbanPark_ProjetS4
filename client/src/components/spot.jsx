@@ -258,14 +258,22 @@ export function Spot(props) {
     }
 
     var infosSpot;
+    var cleaning = null;
+    if(props.spot.inCleaning){
+        cleaning = <p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
+            Cette place est en cours de netoyage
+        </p>
+    }
     if (props.spot.id_user != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                         Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}</p>
+                        { cleaning }
                         {ChangeUserSpot("Changer", "changeSpot")}
                     </div>
     } else if (props.spot.id_user_temp != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                     Place attribuée temporairement à : <br/> {props.spot.first_name_temp} {props.spot.last_name_temp}</p>
+                    { cleaning }
                     {ChangeUserSpot("Changer", "changeSpotTemp")}
                 </div>
     } else {
@@ -273,6 +281,7 @@ export function Spot(props) {
             if (type === "Abonné") {     
                 infosSpot = <div style={{textAlign:"center"}}>
                         Cette place n'a pas d'abonné attitré <br/>
+                        { cleaning }
                         {ChangeUserSpot("Assigner")}
                     </div>
             }
@@ -280,7 +289,7 @@ export function Spot(props) {
         }  
     }
     if (!infosSpot) {
-        infosSpot = <div style={{textAlign:"center"}}>Cette place est destinée à tous les utilisateurs</div>
+        infosSpot = <div style={{textAlign:"center"}}><p>Cette place est destinée à tous les utilisateurs</p>{ cleaning }</div>
     }
 
     var typesSpot = [];
@@ -294,22 +303,43 @@ export function Spot(props) {
 
 	return (<div className="spot">
 
-        <Popup className="popup-spot" trigger={<Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
-                            <Checkbox 
-								style={{color:"white"}}
-                                icon={checkboxIcon()}
-                                checked={checkbox}
-                                onChange={toggleCheckbox}
-                            />
-                            Place {SpotName(props.spot)}
-                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false); setModifiable(false)}}>
+        <Popup 
+            className="popup-spot"
+            trigger={
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className="dropbtn"
+                    style={{width:"200px"}}
+                >
+                    <Checkbox 
+                        style={{color:"white"}}
+                        icon={checkboxIcon()}
+                        checked={checkbox}
+                        onChange={toggleCheckbox}
+                    />
+                    Place {SpotName(props.spot)}
+                </Button>}
+            position="bottom center"
+            onOpen={() => {
+                setNoSubmit(true);
+            }}
+            onClose={() => {
+                setNoSubmit(true);
+                setWrongInput(false);
+                setModifiable(false)
+            }}
+        >
             {infosSpot}
             { wrongInput && <p className="err-message"> { errMessage } </p>}
             <hr/>
             {typesSpot}
             { admin && HandleTypesModification()}
-            {admin && 
-            <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}/>}
+            { admin && 
+            <AdminVerif 
+                title="Supprimer cette place"
+                text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}
+            />}
         </Popup>
     </div>)
 }
