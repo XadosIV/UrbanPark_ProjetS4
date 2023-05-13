@@ -311,5 +311,5 @@ export function Spot(props) {
             {admin && 
             <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}/>}
         </Popup>
-    </div>)}
+    </div>)
 }
