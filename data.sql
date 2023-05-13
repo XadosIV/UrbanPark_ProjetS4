@@ -107,25 +107,25 @@ INSERT IGNORE INTO Schedule_Spot (id_schedule, id_spot) VALUES
 	(16,2),
 	(16,3);
 
-INSERT IGNORE INTO User_Schedule (id_user, id_schedule, is_guest) VALUES
-	(2,1,0),
-	(2,2,0),
-	(2,3,0),
-	(2,4,0),
-	(2,5,0),
-	(2,6,0),
-	(3,7,0),
-	(3,8,0),
-	(3,9,0),
-	(3,10,0),
-	(4,11,0),
-	(4,12,0),
-	(4,13,0),
-	(4,14,0),
-	(1,15,0),
-	(2,15,0),
-	(3,15,1),
-	(4,15,1);
+INSERT IGNORE INTO User_Schedule (id_user, id_schedule) VALUES
+	(2,1),
+	(2,2),
+	(2,3),
+	(2,4),
+	(2,5),
+	(2,6),
+	(3,7),
+	(3,8),
+	(3,9),
+	(3,10),
+	(4,11),
+	(4,12),
+	(4,13),
+	(4,14),
+	(1,15),
+	(2,15),
+	(3,15),
+	(4,15);
 
 INSERT IGNORE INTO Type (name) VALUES
 	("Abonné"),

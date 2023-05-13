@@ -70,7 +70,6 @@ CREATE TABLE IF NOT EXISTS Schedule_Spot (
 CREATE TABLE IF NOT EXISTS User_Schedule (
 	id_user INT NOT NULL,
 	id_schedule INT NOT NULL,
-	is_guest TINYINT(1) NOT NULL,
 	CONSTRAINT pk_user_schedule PRIMARY KEY (id_user, id_schedule),
 	CONSTRAINT fk_user_schedule_user FOREIGN KEY (id_user) REFERENCES User (id),
 	CONSTRAINT fk_user_schedule_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)

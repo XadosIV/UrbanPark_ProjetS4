@@ -291,7 +291,7 @@ app.get('/api/role', (req, res) => {
 
 app.get('/api/schedules', (req, res) => {
 	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
-	GetSchedules(req.body, (err, data) => {
+	GetSchedules(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
@@ -302,13 +302,17 @@ app.get('/api/schedules', (req, res) => {
 
 app.post('/api/schedule', (req, res) => {
 	//console.log("Request at POST /api/schedule : " + JSON.stringify(req.body));
-	PostSchedule(req.body, (err, data) => {
-		if (err){
-			Errors.HandleError(err, res);
-		}else{
-			res.status(200).json(data);
-		}
-	})
+	if (req.body && (!!req.body.role ^ req.body.user) && (typeof req.body.parking != "undefined") && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
+		PostSchedule(req.body, (err, data) => {
+			if (err){
+				Errors.HandleError(err, res);
+			}else{
+				res.status(200).json(data);
+			}
+		});
+	}else{
+		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définis. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
+	}
 });
 
 app.get('/api/schedules/:id', (req, res) => {
@@ -354,7 +358,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 				if (data.affectedRows == 1){
 					res.status(200).json();
 				}else{
-					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun utilisateur n'a l'identifiant demandé."});
 				}
 			}
 		});
