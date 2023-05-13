@@ -129,21 +129,21 @@ export function PersoMySpot(){
             let dateE = new Date(nextSchedule.date_end)
             if(dateS > Date.now()){
                 return (<div className="elt-aff-place">
-                    <h3> le prochains netoyage de votre place aura lieu aux horraires suivants : </h3>
+                    <h3> Le prochain nettoyage de votre place aura lieu aux horaires suivantes : </h3>
                     <ul>
-                        <li>du {dateS.toLocaleDateString(undefined, options) +" à "+ dateS.toLocaleTimeString()}</li>
+                        <li>Du {dateS.toLocaleDateString(undefined, options) +" à "+ dateS.toLocaleTimeString()}</li>
                         <li>au {dateE.toLocaleDateString(undefined, options) +" à "+ dateE.toLocaleTimeString()}</li>
                     </ul>
                 </div>)
             }else{
                 return (<div className="elt-aff-place">
-                    <h3> le netoyage de votre place se terminera </h3>
-                    <p>le {dateE.toLocaleDateString(undefined, options) +" à "+ dateE.toLocaleTimeString()}</p>
+                    <h3> Le nettoyage de votre place se terminera :</h3>
+                    <p>Le {dateE.toLocaleDateString(undefined, options) +" à "+ dateE.toLocaleTimeString()}</p>
                 </div>)
             }
         }else{
             return(<div className="elt-aff-place">
-                <h3> aucun netoyage planifié </h3>
+                <h3> Aucun nettoyage de votre place planifié </h3>
             </div>)
         }
     }
