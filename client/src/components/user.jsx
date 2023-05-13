@@ -44,7 +44,7 @@ export function User(props){
 			}
 		} else {
 			if (spotTemp) {
-				if (spotTemp.length != 0) {
+				if (spotTemp.length !== 0) {
 					return <p style={{display: "inline"}}><br/>- Place temporaire {spotTemp}</p>
 				}
 			} else {
