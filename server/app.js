@@ -76,7 +76,7 @@ app.get('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -94,7 +94,7 @@ app.delete('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -230,7 +230,7 @@ app.get('/api/spot/:spot', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -325,7 +325,7 @@ app.get('/api/schedules/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 })
 
