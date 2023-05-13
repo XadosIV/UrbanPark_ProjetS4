@@ -124,21 +124,22 @@ export function PersoMySpot(){
     
     const affNextSchedule = () => {
         if(nextSchedule.id){
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const optionsTime = { hour: "numeric", minute: "numeric", };
             let dateS = new Date(nextSchedule.date_start);
             let dateE = new Date(nextSchedule.date_end)
             if(dateS > Date.now()){
                 return (<div className="elt-aff-place">
                     <h3> le prochains netoyage de votre place aura lieu aux horraires suivants : </h3>
                     <ul>
-                        <li>du {dateS.toLocaleDateString(undefined, options) +" à "+ dateS.toLocaleTimeString()}</li>
-                        <li>au {dateE.toLocaleDateString(undefined, options) +" à "+ dateE.toLocaleTimeString()}</li>
+                        <li>du {dateS.toLocaleDateString(undefined, optionsDate) +" à "+ dateS.toLocaleTimeString(undefined, optionsTime)}</li>
+                        <li>au {dateE.toLocaleDateString(undefined, optionsDate) +" à "+ dateE.toLocaleTimeString(undefined, optionsTime)}</li>
                     </ul>
                 </div>)
             }else{
                 return (<div className="elt-aff-place">
                     <h3> le netoyage de votre place se terminera </h3>
-                    <p>le {dateE.toLocaleDateString(undefined, options) +" à "+ dateE.toLocaleTimeString()}</p>
+                    <p>le {dateE.toLocaleDateString(undefined, optionsDate) +" à "+ dateE.toLocaleTimeString(undefined, optionsTime)}</p>
                 </div>)
             }
         }else{
