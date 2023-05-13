@@ -77,7 +77,6 @@ export function ViewAgenda (props){
 			}
 			i++;
 		});
-		console.log(sortie)
 		return sortie;
 	}
 
