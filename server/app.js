@@ -76,7 +76,7 @@ app.get('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
 	}
 });
 
@@ -94,7 +94,7 @@ app.delete('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
 	}
 });
 
@@ -230,7 +230,7 @@ app.get('/api/spot/:spot', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
 	}
 });
 
@@ -272,7 +272,7 @@ app.delete('/api/spot/:id', (req, res) => {
 			}
 		})
 	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","id":"Champs obligatoires : id"});
+		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : id"});
 	}
 })
 
@@ -325,7 +325,7 @@ app.get('/api/schedules/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
 	}
 })
 
@@ -340,7 +340,7 @@ app.put('/api/schedules/:id', (req, res) => {
 			}
 		})
 	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Un parmi user, parking, date_start, date_end doit être défini."})
+		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Un parmi user, parking, date_start, date_end doit être défini."})
 	}
 })
 
@@ -359,7 +359,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un entier"});
 	}
 });
 
@@ -373,7 +373,6 @@ app.get('/api/reunion', (req, res) => {
 			res.status(200).json(data);
 		}
 	})
-
 })
 
 module.exports = app;
