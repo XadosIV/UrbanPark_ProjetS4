@@ -257,13 +257,13 @@ export function Spot(props) {
         }
     }
 
-    var infosSpot;
-    var cleaning = null;
+    var cleaning;
     if(props.spot.inCleaning){
-        cleaning = <p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
-            Cette place est en cours de netoyage
+        cleaning = <p style={{textDecoration:"none", marginBottom:"10px", fontSize:"0.7em", color:"red", marginTop:"-10px"}}>
+            Cette place est en cours de nettoyage
         </p>
     }
+    var infosSpot;
     if (props.spot.id_user != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                         Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}</p>
@@ -289,7 +289,7 @@ export function Spot(props) {
         }  
     }
     if (!infosSpot) {
-        infosSpot = <div style={{textAlign:"center"}}><p>Cette place est destinée à tous les utilisateurs</p>{ cleaning }</div>
+        infosSpot = <div style={{textAlign:"center", marginTop:"-15px"}}><p>Cette place est destinée à tous les utilisateurs</p>{ cleaning }</div>
     }
 
     var typesSpot = [];
