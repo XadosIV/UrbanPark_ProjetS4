@@ -153,9 +153,9 @@ export function UpdateScheduleForm(props) {
 		}
 
 		return (
-			<div>
-				<p>Pour les places: </p>
-				<ul>
+			<div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+				<p>Sur les places : </p>
+				<ul style={{marginTop:"-10px"}}>
 					{nListe.map(
 						(spots) => {
 							if (spots.length > 1) {
@@ -453,7 +453,7 @@ export function UpdateScheduleForm(props) {
 				style={customStyles}
 			>
 				<div className="info_reunion">
-					<h3>{props.event.type} {props.event.type==="Réunion"? "avec": "réaliser par"} :</h3>
+					<h3>{props.event.type} {props.event.type==="Réunion"? "avec": "réalisé par"} :</h3>
 					<div>
 						{
 							InformationEvent(infos, baseType)
