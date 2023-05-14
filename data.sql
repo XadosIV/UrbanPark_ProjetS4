@@ -149,7 +149,6 @@ INSERT IGNORE INTO Notification (id, id_user, type) VALUES
 	(2,4,"Nouveau nettoyage"),
 	(3,5,"Nouvelle place temporaire");
 
-
 INSERT IGNORE INTO Notification_Schedule (id_notification,id_schedule) VALUES
 	(1,15),
 	(2,16);
