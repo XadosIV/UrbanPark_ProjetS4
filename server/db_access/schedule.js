@@ -182,7 +182,7 @@ function PostSchedule(infos, callback) {
 				spots = spots.filter(e => infos.spots.includes(e.id))
 				for (let spot of spots){
 					if (spot.id_park != infos.parking){
-						console.log("err")
+						//console.log("err")
 						return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
 					}
 				}

@@ -29,7 +29,7 @@ export function ViewAgenda (props){
 				idParking = element.parking.id;
 				parking = element.parking.name;
 			}
-			let user = element.users[0].last_name;
+			let user = element.users.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
 
@@ -65,7 +65,7 @@ export function ViewAgenda (props){
 			if (!trouve)
 			{
 				let newElement = {
-					id_schedule:[element.id],
+					id_schedule:element.id,
 					type : type,
 					id: i,
 					idparking: type !== "Réunion" ? idParking : "",
@@ -74,8 +74,8 @@ export function ViewAgenda (props){
 					d_st: dateStart,
 					d_en: dateEnd,
 					end: new Date(dateEnd),
-					user: [element.users],
-					spots:[element.spots]
+					user: element.users,
+					spots:element.spots
 				};
 				sortie.push(newElement);
 			}
@@ -183,7 +183,7 @@ export function ViewAgenda (props){
 		var opts = []
 		if (list) {
 			for (let user of list) {
-				for (let user2 of list_user[0]) {
+				for (let user2 of list_user) {
 					if (user.value === user2.id) {
 						opts.push(user);
 					}
