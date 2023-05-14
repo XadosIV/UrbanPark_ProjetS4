@@ -125,7 +125,8 @@ INSERT IGNORE INTO User_Schedule (id_user, id_schedule, is_guest) VALUES
 	(1,15,0),
 	(2,15,0),
 	(3,15,1),
-	(4,15,1);
+	(4,15,1),
+	(4,16,0);
 
 INSERT IGNORE INTO Type (name) VALUES
 	("Abonné"),
@@ -142,3 +143,13 @@ INSERT IGNORE INTO Typed (`id_spot`, `name_type`) VALUES
 	(7, 'Handicapée'),
 	(7, 'Municipale'),
 	(10, 'Abonné');
+
+INSERT IGNORE INTO Notification (id, id_user, type) VALUES
+	(1,4,"Nouvelle réunion"),
+	(2,4,"Nouveau nettoyage"),
+	(3,5,"Nouvelle place temporaire");
+
+
+INSERT IGNORE INTO Notification_Schedule (id_notification,id_schedule) VALUES
+	(1,15),
+	(2,16);
