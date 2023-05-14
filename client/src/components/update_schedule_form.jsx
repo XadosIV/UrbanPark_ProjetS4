@@ -153,7 +153,7 @@ export function UpdateScheduleForm(props) {
 		}
 
 		return (
-			<div>
+			<div id="centrer">
 				<p>Pour les places: </p>
 				<ul>
 					{nListe.map(
