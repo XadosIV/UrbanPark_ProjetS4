@@ -88,3 +88,19 @@ CREATE TABLE IF NOT EXISTS Typed (
 	CONSTRAINT fk_typed_spot FOREIGN KEY (id_spot) REFERENCES Spot (id),
 	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES Type (name)
 );
+
+CREATE TABLE IF NOT EXISTS Notification (
+	id INT NOT NULL AUTO_INCREMENT,
+	id_user INT NOT NULL,
+	type VARCHAR(45) NOT NULL,
+	CONSTRAINT pk_notification PRIMARY KEY (id),
+	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id)
+);
+
+CREATE TABLE IF NOT EXISTS Notification_Schedule (
+	id_notification INT NOT NULL,
+	id_schedule INT NOT NULL,
+	CONSTRAINT pk_notification_schedule PRIMARY KEY (id_notification, id_schedule),
+	CONSTRAINT fk_notification FOREIGN KEY (id_notification) REFERENCES Notification (id),
+	CONSTRAINT fk_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
+);
