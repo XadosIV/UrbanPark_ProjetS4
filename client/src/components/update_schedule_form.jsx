@@ -159,7 +159,7 @@ export function UpdateScheduleForm(props) {
 					{nListe.map(
 						(spots) => {
 							if (spots.length > 1) {
-								return <li>Etage {spots[0].floor} de la place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number} à la place {spots[spots.length -1].id_park}-{spots[spots.length -1].floor}{CompletePlace(spots[spots.length -1].number)}{spots[spots.length -1].number}</li>
+								return <li>Etage {spots[0].floor} : De la place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number} à la place {spots[spots.length -1].id_park}-{spots[spots.length -1].floor}{CompletePlace(spots[spots.length -1].number)}{spots[spots.length -1].number}</li>
 							}
 							else {
 								return <li>Place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number}</li>
