@@ -46,7 +46,13 @@ function GetUsers(infos, callback){
 		id_spot:infos.id_spot||'%',
 		id_spot_temp:infos.id_spot_temp||'%',
 		id_park_demande:infos.id_park_demande||'%'
-	}, callback);
+	}, (err, data) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			UpdateSpotTemp(data, callback);
+		}
+	});
 }
 
 /**
@@ -56,8 +62,50 @@ function GetUsers(infos, callback){
  * @param {object user} { id, id_spot }
  * @param {function(*,*)} callback (err, data)
  */
-function UpdateSpotTemp(idU, callback){
-	
+function UpdateSpotTemp(users, callback){
+	const { GetSpots } = require("./spot");
+
+	function updateNewSpot(dataUser, id, resUser){
+		// console.log("dataUser", dataUser);
+		// console.log("set id_spot_temp of user ", dataUser.id, " to ", id);
+		dataUser.id_spot_temp = id;
+		UpdateUser({id_spot_temp: null, id: dataUser.id}, (err, data) => {
+			if(err){
+				return callback(err, null);
+			}
+		})
+		return dataUser;
+	}
+
+	function actualiseTempSpot(user){
+		GetSpots({id: user.id_spot}, (err, userSpot) => {
+			if(err){
+				return callback(err, null);
+			}else{
+				if(userSpot.inCleaning){
+					GetSpots({id_park: userSpot.id_park, type: ["Abonné"]}, (err, optTempSpot) => {
+						if(err){
+							return callback(err, null);
+						}else{
+							if(optTempSpot.length > 0){
+								return updateNewSpot(user, optTempSpot[0].id);
+							}else{
+								return updateNewSpot(user, -1);
+							}
+						}
+					})
+				}else{
+					if(user.id_spot_temp){
+						return updateNewSpot(user, null);
+					}else{
+						return user;
+					}
+				}
+			}
+		})
+	}
+
+	callback(null, users.map(user => actualiseTempSpot(user)));
 }
 
 /**
