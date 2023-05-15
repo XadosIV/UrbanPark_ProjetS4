@@ -50,6 +50,17 @@ function GetUsers(infos, callback){
 }
 
 /**
+ * UpdateSpotTemp
+ * update id_spot_temp either setting it to NULL or giving at free temporary spot
+ * 
+ * @param {object user} { id, id_spot }
+ * @param {function(*,*)} callback (err, data)
+ */
+function UpdateSpotTemp(idU, callback){
+	
+}
+
+/**
  * DeleteUser
  * Delete user by id
  * 
