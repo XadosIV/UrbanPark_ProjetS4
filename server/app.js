@@ -1,17 +1,18 @@
 const express = require('express');
-const app = express();
 const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('./db_access/user');
 
 const {GetParkings, PostParking, PutParkings, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
-
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
 const {GetSchedulesAvailable} = require('./db_access/reunion');
 const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
-
 const {GetPermRole} = require('./db_access/role');
+const {GetNotifications} = require('./db_access/notification')
+
 const Errors = require('./errors');
+
+const app = express();
 
 // Default headers
 app.use((req, res, next) => {
@@ -52,7 +53,7 @@ app.get('/api/auth', (req, res) => {
 
 
 app.get('/api/users', (req, res) => {
-	console.log("Request at GET /api/users : " + JSON.stringify(req.query));
+	//console.log("Request at GET /api/users : " + JSON.stringify(req.query));
 	GetUsers(req.query, (err, data) => {
 		if (err){ 
 			Errors.HandleError(err, res);
@@ -340,7 +341,7 @@ app.put('/api/schedules/:id', (req, res) => {
 	})
 })
 
-app.delete('/api/schedule/:id', (req, res) => {
+app.delete('/api/schedules/:id', (req, res) => {
 	//console.log(req.params.id)
 	if (parseInt(req.params.id)){
 		DeleteSchedule(parseInt(req.params.id), (err, data) => {
@@ -365,7 +366,18 @@ app.get('/api/reunion', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			console.log(data)
+			//console.log(data)
+			res.status(200).json(data);
+		}
+	})
+});
+
+app.get('/api/notifications', (req, res) => {
+	GetNotifications(req.query, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			//console.log(data)
 			res.status(200).json(data);
 		}
 	})
