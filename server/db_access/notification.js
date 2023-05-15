@@ -9,7 +9,7 @@ const {SendError} = require('../errors');
  * @param {object} infos {id_user}
  * @param {function(*,*)} callback (err, data)
  */
-function GetNotifications(){
+function GetNotifications(infos, callback){
 	let sql = `SELECT
 		id,
 		id_user,

@@ -101,6 +101,6 @@ CREATE TABLE IF NOT EXISTS Notification (
 	date_start DATETIME,
 	date_end DATETIME,
 	CONSTRAINT pk_notification PRIMARY KEY (id),
-	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id)
+	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id),
 	CONSTRAINT fk_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
 );
