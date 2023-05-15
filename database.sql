@@ -100,6 +100,10 @@ CREATE TABLE IF NOT EXISTS Notification (
 CREATE TABLE IF NOT EXISTS Notification_Schedule (
 	id_notification INT NOT NULL,
 	id_schedule INT NOT NULL,
+	type VARCHAR(50),
+	id_parking CHAR,
+	date_start DATETIME,
+	date_end DATETIME,
 	CONSTRAINT pk_notification_schedule PRIMARY KEY (id_notification, id_schedule),
 	CONSTRAINT fk_notification FOREIGN KEY (id_notification) REFERENCES Notification (id),
 	CONSTRAINT fk_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
