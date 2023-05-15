@@ -77,7 +77,7 @@ function UpdateSpotTemp(users, callback){
 		return dataUser;
 	}
 
-	function actualiseTempSpot(user){
+	async function actualiseTempSpot(user){
 		GetSpots({id: user.id_spot}, (err, userSpot) => {
 			if(err){
 				return callback(err, null);
@@ -105,7 +105,7 @@ function UpdateSpotTemp(users, callback){
 		})
 	}
 
-	callback(null, users.map(user => actualiseTempSpot(user)));
+	callback(null, users.map(async (user) => await actualiseTempSpot(user)));
 }
 
 /**
