@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS Typed (
 CREATE TABLE IF NOT EXISTS Notification (
 	id INT NOT NULL AUTO_INCREMENT,
 	id_user INT NOT NULL,
+	action VARCHAR(100) NOT NULL,
 	type VARCHAR(100) NOT NULL,
 	CONSTRAINT pk_notification PRIMARY KEY (id),
 	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id)

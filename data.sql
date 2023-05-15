@@ -144,10 +144,10 @@ INSERT IGNORE INTO Typed (`id_spot`, `name_type`) VALUES
 	(7, 'Municipale'),
 	(10, 'Abonné');
 
-INSERT IGNORE INTO Notification (id, id_user, type) VALUES
-	(1,4,"Nouvelle réunion"),
-	(2,4,"Nouveau nettoyage"),
-	(3,5,"Nouvelle place temporaire");
+INSERT IGNORE INTO Notification (id, id_user, action, type) VALUES
+	(1,4,"POST","réunion"),
+	(2,4,"POST", "nettoyage"),
+	(3,5,"POST", "place temporaire");
 
 INSERT IGNORE INTO Notification_Schedule (id_notification,id_schedule) VALUES
 	(1,15),
