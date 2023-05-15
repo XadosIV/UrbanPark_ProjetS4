@@ -340,7 +340,7 @@ app.put('/api/schedules/:id', (req, res) => {
 	})
 })
 
-app.delete('/api/schedule/:id', (req, res) => {
+app.delete('/api/schedules/:id', (req, res) => {
 	//console.log(req.params.id)
 	if (parseInt(req.params.id)){
 		DeleteSchedule(parseInt(req.params.id), (err, data) => {
@@ -365,7 +365,7 @@ app.get('/api/reunion', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			console.log(data)
+			//console.log(data)
 			res.status(200).json(data);
 		}
 	})
