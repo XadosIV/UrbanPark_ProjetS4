@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Checkbox } from "@mui/material";
 import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole, TakeAllRoles, TakeAllSchedulesAvailable, userFromToken } from "../services"
 import { AllSchedulesAvailable, Separation } from "../components";
-import { SpotName, NeedS, ChangeDate } from "../interface"
+import { SpotName, NeedS, ChangeDate, AllNotNecessary } from "../interface"
 import { ContextUser } from "../contexts/context_user";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Select from 'react-select';
@@ -73,22 +73,6 @@ export function NewScheduleForm(props) {
             if (role.name !== "Abonné" && role.name !== "Gérant") {
                 opt.push({value:role.name, label:role.name})
             }
-        }
-        return opt
-    }
-
-    function AllNotNecessary(list, necessaryList) {
-        var opt = []
-		if (necessaryList.length === 0) {
-			for (let user of list) {
-				opt.push({value:user.id, label:user.first_name + " " + user.last_name})
-			}
-		} else {
-			for (let user of list) {
-				if (!(necessaryList.includes(user.id))) {
-					opt.push({value:user.id, label:user.first_name + " " + user.last_name})
-				}
-			}       
         }
         return opt
     }
@@ -197,7 +181,9 @@ export function NewScheduleForm(props) {
         var isSubmit = false;
         if (infos.type === "Réunion") {
             if (checkboxInclude) {
-                infosReunions.users.push(infosUser.id)
+                if (!(infosReunions.users.includes(infosUser.id))) {
+                    infosReunions.users.push(infosUser.id)
+                }
             }
             if (infosReunions.users.length < 2) {
                 setWrongInput(true)
@@ -376,8 +362,17 @@ export function NewScheduleForm(props) {
         setOnlyOneInfo(childData.schedule)
     }
 
-    return (
-        <div>
+    return (<div>
+        <Button variant="contained" color="primary" onClick={() => setPopupOpened(true)}
+        style={{
+            backgroundColor: "#FE434C",
+            borderColor: "transparent",
+            borderRadius: 20,
+            width: "16%",
+            marginLeft: "42%",
+            height:"100px",
+            marginBottom:"100px"
+        }}>Ajouter des créneaux de travail</Button>
         <ReactModal
             ariaHideApp={false}
             isOpen={popupOpened}
@@ -448,7 +443,7 @@ export function NewScheduleForm(props) {
                             />
                         </div>
                         <Separation value="Personnes invitées"/>
-						<p style={{fontSize:"0.7em",color:"red", marginTop:"-10px"}}>Les personnes invitées ne participent pas à la réunion si elles ne sont pas libres au moment où elle se déroule.<br/> Le créneau ne sera pas prioritaire pour eux.</p>
+						<p style={{fontSize:"0.7em",color:"red", marginTop:"-10px"}}>Les personnes invitées ne participent pas à la réunion si elles ne sont pas libres au moment où elle se déroule.<br/> Le créneau ne sera pas prioritaire pour elles.</p>
                         <div style={{zIndex:1007, display:"flex", justifyContent:"center"}}>
                             <Select
                                 isMulti
@@ -552,16 +547,6 @@ export function NewScheduleForm(props) {
                 <div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
             </div>
         </ReactModal>
-        <Button variant="contained" color="primary" onClick={() => setPopupOpened(true)}
-            style={{
-                backgroundColor: "#FE434C",
-                borderColor: "transparent",
-                borderRadius: 20,
-                width: "16%",
-                marginLeft: "42%",
-                height:"100px",
-                marginBottom:"100px"
-            }}>Ajouter des créneaux de travail</Button>
         <ReactModal
             ariaHideApp={false}
             isOpen={isOpen}
@@ -616,7 +601,7 @@ export function NewScheduleForm(props) {
                 </div>
                 </form>
             </div>}
-            <div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px"}}>
+            <div style={{maxHeight:"300px", overflowY: "auto", paddingRight:"20px"}}>
 				{schedulesAvailable.map((schedule, index) => (
 					<AllSchedulesAvailable schedule={schedule} optionals={infosReunions.guests} handleCallback={CallbackSetOne}/>
             	))}

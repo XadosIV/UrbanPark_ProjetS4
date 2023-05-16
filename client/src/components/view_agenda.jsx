@@ -75,6 +75,7 @@ export function ViewAgenda (props){
 					d_en: dateEnd,
 					end: new Date(dateEnd),
 					user: element.users,
+					guests: element.guests,
 					spots:element.spots
 				};
 				sortie.push(newElement);
@@ -135,22 +136,6 @@ export function ViewAgenda (props){
 			opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
 		}
 		return opt
-	}
-
-	/**
-	 * BaseParking
-	 * Returns a string corresponding to the base parking
-	 *
-	 * @param { integer } id_park - id of the parking
-	 * @param { Array } list - List of parkings
-	 * @return { string }
-	 */
-	function BaseParking(id_park, list) {
-		for (let parking of list) {
-			if (parking.id === id_park) {
-				return "Parking " + parking.name.toLowerCase();
-			}
-		}
 	}
 
 	/**
@@ -234,7 +219,6 @@ export function ViewAgenda (props){
 		TakeByRole("Gardien").then(res => setGuardiansList(res));
 	}, [props])
 
-
 	return (
 		<div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"100%"}}>
 			<Calendar
@@ -248,7 +232,7 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)}/>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)} baseGuests={BaseUser(selectedEvent.guests, selectedEvent.type)} admin={props.admin}/>
 		    }
 		</div>
 	)
