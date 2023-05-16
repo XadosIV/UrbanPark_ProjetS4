@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { AllSpots, BaseSpot, BaseParking } from "../interface"
+import { UpdateSchedule, TakeAllSpots, TakeParking, TakeByRole, placeFromId } from "../services"
+import { AllSpots, BaseParking, FindToggles } from "../interface"
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
@@ -38,33 +38,6 @@ export function UpdateScheduleForm(props) {
 			opt.push({value:list[i].id, label:"Parking " + list[i].name.toLowerCase()})
 		}
 		return opt
-	}
-
-
-	/**
-	 * BaseUser
-	 * Returns a array corresponding to the base user being passed in a react select defaultValue
-	 *
-	 * @param { integer } id_user - id of the user
-	 * @param { Array } list - List of users
-	 * @return { Array }
-	 */
-	function BaseUser(id_user, list) {
-		list = BaseListType(list)
-		var opts = []
-		if (!Array.isArray(id_user)) {
-			id_user = [id_user]
-		}
-		if (list) {
-			for (let user of list) {
-				for (let id of id_user) {
-					if (user.value === id) {
-						opts.push(user);
-					}
-				}
-			}
-			return opts
-		}
 	}
 
 	/**
@@ -125,7 +98,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function AffichagePlaces() {
-		let liste = props.event.spots[0];
+		let liste = props.event.spots;
 	
 		let nListe = []
 
@@ -145,8 +118,6 @@ export function UpdateScheduleForm(props) {
 			}
 			return res
 		}
-
-		console.log(nListe)
 
 		for (let spots of nListe) {
 			spots.sort();
@@ -172,7 +143,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function InformationEvent (infos, baseType) {
-		let baseList = props.event.user[0];
+		let baseList = props.event.user;
 		let listRes = Array()
 		for (let element of baseList) {
 			listRes.push(<li className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>)
@@ -198,17 +169,17 @@ export function UpdateScheduleForm(props) {
 
 	const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
+	console.log(props.event.d_st.slice(0,19), props.event.d_en.slice(0,19))
 
-	const [infos, setInfos] = useState(
-		{
-			parking: props.event.idparking,
-			user: props.event.user,
-			date_start: props.event.d_st,
-			date_end: props.event.d_en,
-			first_spot:props.event.first_spot,
-			last_spot:props.event.last_spot
-		}
-	);
+	const [infos, setInfos] = useState({
+		parking: props.event.idparking,
+		users: props.event.user.map(e => e.id),
+		spots: props.event.spots.map(e => e.id),
+		date_start: props.event.d_st.slice(0,19),
+		date_end: props.event.d_en.slice(0,19)
+	});
+	const [spotsCleaning, setSpotsCleaning] = useState({first_spot:null, last_spot:null})
+	const [spotsList, setSpotsList] = useState([])
 
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
@@ -219,14 +190,15 @@ export function UpdateScheduleForm(props) {
 	const [baseType, setBaseType] = useState(props.event.type);
 	const [modifiable, setModifiable] = useState(false);
 
-
 	const [disabled, setDisabled] = useState(false)
 	const delay = ms => new Promise(res => setTimeout(res, ms));
 
 	const handleChangeSelect = (selectedOptions, name) => {
 		var value = [];
 		if (selectedOptions.value) {
-			if (name.name === "parking") {
+			if (name.name === "first_spot" || name.name === "last_spot") {
+                setSpotsCleaning(values => ({...values, [name.name]: selectedOptions.value}))
+			} else if (name.name === "parking") {
 				TakeAllSpots(selectedOptions.value).then(res => {
 					setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
 				})
@@ -243,53 +215,38 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmit = async (event) => {
 		event.preventDefault()
 		setWrongInput(false);
-		if (infos.user.length === 0) {
+		if (infos.users.length === 0) {
 			setWrongInput(true)
 			setErrMessage("Vous n'avez assigné ce créneau à personne")
-		}
-		else if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
-			var scheduleAdded = 0;
-			var nbModif = 0;
-			let stock = infos.user
-			var fun;
-			for (let i=0; i<props.event.user.length; i++) {
-				infos.user = stock[i]
-				if (!(props.event.user.includes(infos.user))) {
-					fun = DeleteSchedule(props.event.id_schedule[i]);
-					nbModif++;
-				}
-				if (fun) {
-					const res = await fun
-					if (res.status === 200) {
-						scheduleAdded++;
-					} else {
-						setWrongInput(true);
-						setErrMessage(res.data.message);
-						break;
-					}
-				}
+		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
+			if (JSON.stringify(infos.users) !== JSON.stringify(props.event.user.map(e => e.id))) {
+				infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
+			} else {
+				infos.users = []
 			}
-			for (let i=0; i<stock.length; i++) {
-				infos.user = stock[i]
-				if (props.event.user.includes(infos.user)) {
-					fun = UpdateSchedule(infos, props.event.id_schedule[i]);
-					nbModif++;
+			let listSpotsCleaning = [];
+            let first, last;
+            if (baseType === "Nettoyage") {
+                first = await placeFromId(spotsCleaning.first_spot).then(first => first)
+                last = await placeFromId(spotsCleaning.last_spot).then(last => last)
+                listSpotsCleaning = spotsList.filter((el) => {
+                    if ((el.floor > first.floor && el.floor < last.floor) ||
+                    (el.floor === first.floor && el.floor === last.floor && el.number >= first.number && el.number <= last.number) ||
+                    (el.floor === first.floor && el.floor !== last.floor && el.number >= first.number) ||
+                    (el.floor === last.floor && el.floor !== first.floor && el.number <= last.number)) {
+                        return true
+                    }
+                })
+				infos.spots = listSpotsCleaning.map(e => e.id);
+				if (JSON.stringify(infos.spots) !== JSON.stringify(props.event.spots.map(e => e.id))) {
+					infos.spots = FindToggles(props.event.spots.map(e => e.id), infos.spots)
 				} else {
-					fun = CreationSchedule(infos);
-					nbModif++;
+					infos.spots = []
 				}
-				if (fun) {
-					const res = await fun
-					if (res.status === 200) {
-						scheduleAdded++;
-					} else {
-						setWrongInput(true);
-						setErrMessage(res.data.message);
-						break;
-					}
-				}
-			}
-			if (scheduleAdded === nbModif) {
+            }
+			console.log(infos)
+			const res = await UpdateSchedule(infos, props.event.id_schedule)
+			if (res.status === 200) {
 				setWrongInput(true);
 				setErrMessage("Modification prise en compte.")
 				setDisabled(true)
@@ -297,7 +254,6 @@ export function UpdateScheduleForm(props) {
 				props.handleCallback(false)
 				Modifier()
 			}
-			infos.user = stock
 		} else {
 			setWrongInput(true);
 			setErrMessage("Vous n'avez rien modifié");
@@ -305,8 +261,11 @@ export function UpdateScheduleForm(props) {
 	}
 
 	useEffect(() => {
-		TakeParking().then(res => setParkingsList(res));
+		TakeParking().then(res => {
+			setParkingsList(res)
+		});
 		TakeAllSpots(infos.parking).then(res => {
+			setSpotsList(res);
 			setOptionsSpots({opts:AllSpots(res), change:false});
 		});
 		TakeByRole("Agent d'entretien").then(res => setServiceList(res));
@@ -317,11 +276,10 @@ export function UpdateScheduleForm(props) {
 		setBaseType(props.event.type);
 		setInfos({
 			parking: props.event.idparking,
-			user: props.event.user,
-			date_start: props.event.d_st,
-			date_end: props.event.d_en,
-			first_spot: props.event.first_spot,
-			last_spot: props.event.last_spot
+			users: props.event.user.map(e => e.id),
+			spots: props.event.spots.map(e => e.id),
+			date_start: props.event.d_st.slice(0,19),
+			date_end: props.event.d_en.slice(0,19)
 		});
 	}, [props])
 
@@ -358,7 +316,7 @@ export function UpdateScheduleForm(props) {
 					<div style={{zIndex:1007}}>
 						<Select
 							id="parking"
-							className="searchs-add"
+							className="size-select-popup"
 							options={AllParkings(parkingsList)} 
 							placeholder={BaseParking(infos.parking, parkingsList)}
 							name="parking" 
@@ -370,41 +328,41 @@ export function UpdateScheduleForm(props) {
 					<div style={{zIndex:1006}}>  
 						<Select
 							isMulti
-							name="user"
+							name="users"
 							options={BaseListType(baseType)}
 							defaultValue={props.baseUser}
-							className="search-add-two"
+							className="size-select-popup"
 							onChange={handleChangeSelect}
 							maxMenuHeight={200}
 						/>
 					</div>
 					{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
-						<Select
-							options={optionsSpots.opts}
-							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-							size="small"
-							id="first_spot"
-							placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
-							type="text"
-							name="first_spot"
-							className="search"
-							onChange={handleChangeSelect}
-							maxMenuHeight={150}
-						/>
-						<p style={{margin:"7px 7px 0 7px"}}>à</p>
-						<Select
-							options={optionsSpots.opts}
-							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-							size="small"
-							id="last_spot"
-							placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
-							type="text"
-							name="last_spot"
-							className="search"
-							onChange={handleChangeSelect}
-							maxMenuHeight={150}
-						/>
-					</div>}
+                        <Select
+                            options={optionsSpots.opts}
+                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                            size="small"
+                            id="first_spot"
+                            label="Numéro"
+                            type="text"
+                            name="first_spot"
+                            className="size-type"
+                            onChange={handleChangeSelect}
+							maxMenuHeight={200}
+                        />
+                        <p style={{margin:"7px 7px 0 7px"}}>à</p>
+                        <Select
+                            options={optionsSpots.opts}
+                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                            size="small"
+                            id="last_spot"
+                            label="Numéro"
+                            type="text"
+                            name="last_spot"
+                            className="size-type"
+                            onChange={handleChangeSelect}
+							maxMenuHeight={200}
+                        />
+                    </div>}
 					<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
 						<DatePicker
 							name="date_start"
@@ -430,7 +388,7 @@ export function UpdateScheduleForm(props) {
 						type="submit"
 					>Modifier</Button>
 				</form>
-				{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
+				<div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
 			</div>
 		)
 	}
@@ -448,8 +406,18 @@ export function UpdateScheduleForm(props) {
 				onRequestClose={() => {
 					props.setModalState(false);
 					setModifiable(false);
+					setWrongInput(false);
 				}}
-				onAfterOpen={() => {setModifiable(false)}}
+				onAfterOpen={() => {
+					setModifiable(false)
+					setInfos({
+						parking: props.event.idparking,
+						users: props.event.user.map(e => e.id),
+						spots: props.event.spots.map(e => e.id),
+						date_start: props.event.d_st.slice(0,19),
+						date_end: props.event.d_en.slice(0,19)
+					})
+				}}
 				style={customStyles}
 			>
 				<div className="info_reunion">

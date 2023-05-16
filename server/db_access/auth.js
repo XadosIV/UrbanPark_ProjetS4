@@ -16,7 +16,7 @@ function GenerateNewToken(callback){
 
 	let sql = `SELECT * FROM User WHERE token=:token;`;
 
-	console.log("SQL at GenerateNewToken : " + sql + " with " + JSON.stringify({token:token}));
+	//console.log("SQL at GenerateNewToken : " + sql + " with " + JSON.stringify({token:token}));
 	dbConnection.query(sql,{
 		token: token
 	}, (err, data) => {
@@ -49,7 +49,7 @@ function GetToken(infos, callback){
 			
 			let sql = `SELECT token FROM User WHERE email=:email AND password=:password`;
 
-			console.log("SQL at GetToken : " + sql + " with " + JSON.stringify(infos));
+			//console.log("SQL at GetToken : " + sql + " with " + JSON.stringify(infos));
 			dbConnection.query(sql, infos, (err, res) =>{
 				if (res.length == 1){ // Password is correct
 					callback(err, {token:res[0].token});

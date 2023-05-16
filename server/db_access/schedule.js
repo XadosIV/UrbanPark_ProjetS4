@@ -183,7 +183,7 @@ function PostSchedule(infos, callback) {
 				spots = spots.filter(e => infos.spots.includes(e.id))
 				for (let spot of spots){
 					if (spot.id_park != infos.parking){
-						console.log("err")
+						//console.log("err")
 						return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
 					}
 				}
@@ -360,7 +360,7 @@ function UpdateSchedule(infos, callback){
 				if (data.length == 0){
 					//relation not existing, add it
 					let sql = `INSERT INTO User_Schedule (id_user, id_schedule, is_guest) VALUES (:idUser, :id, :isGuest)`
-					dbConnection.query(sql, {id:id, idUser:idUser, isGuest:isGuest}, (err, data) => {
+					dbConnection.query(sql, {id:id, idUser:idUser, isGuest:isGuest?1:0}, (err, data) => {
 						if (err) return suite(err, data);
 						ToggleUserSchedule(id, users, isGuest, suite);
 					})
@@ -387,16 +387,16 @@ function UpdateSchedule(infos, callback){
 		
 			let spots = [];
 			if (infos.spots){
-				spots.concat(infos.spots);
+				spots = spots.concat(infos.spots);
 			}
 		
 			spots = [...new Set(spots)] // remove duplicated elements;
-		
+
 			ToggleSpotSchedule(infos.id, spots, (err, data) => {
 				if (err) return callback(err, null);
 			
 			
-				ToggleUserSchedule(infos.id, users, true, (err, data) => {
+				ToggleUserSchedule(infos.id, users, false, (err, data) => {
 					if (err) return callback(err, null);
 					
 					ToggleUserSchedule(infos.id, guests, true, (err, data) => {

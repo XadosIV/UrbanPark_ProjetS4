@@ -114,7 +114,7 @@ function CheckIsCleanning(arrSpots, callback){
 	`;
 
 	dbConnection.query(sql, {}, (err, data) => {
-		console.log(data);
+		//console.log(data);
 		if(err){
 			return callback(err, null);
 		}else{
