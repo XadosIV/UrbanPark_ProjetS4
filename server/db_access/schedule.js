@@ -235,7 +235,7 @@ function FixUsersGuests(users, guests){
  * @param {Array<integer>} users_id liste des identifiants à ajouter
  * @param {integer} id_schedule le schedule auquel les ajouter
  * @param {boolean} isGuest Si oui ou non les utilisateurs qu'on ajoute sont des invités
- * @param {}
+ * @param {string} type  Type de notification
  * @param {function(*,*)} callback 
  */
 function InsertUsersSchedules(users_id, id_schedule, isGuest, type, callback){
