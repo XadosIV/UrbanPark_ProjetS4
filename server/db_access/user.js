@@ -46,7 +46,8 @@ function GetUsers(infos, callback){
 		id_spot:infos.id_spot||'%',
 		id_spot_temp:infos.id_spot_temp||'%',
 		id_park_demande:infos.id_park_demande||'%'
-	}, (err, dataMain) => {
+	}, callback);
+	/*(err, dataMain) => {
 		if (err) {
 			callback(err, [])
 		} else {
@@ -60,7 +61,7 @@ function GetUsers(infos, callback){
                     for (let user of dataMain){
                         user.types = []
                         for (let type of data){
-                        /*type : {id_user:6, name_type:"Handicapé"}*/
+                        type : {id_user:6, name_type:"Handicapé"}
                             if (type.id_user == user.id){
                                 user.types.push(type.name_type)
                             }
@@ -70,7 +71,7 @@ function GetUsers(infos, callback){
                 }
             })
 		}
-	});
+	});*/
 }
 
 /**

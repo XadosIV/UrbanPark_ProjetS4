@@ -52,7 +52,7 @@ export function CreateSpotType(props) {
 
 
     return (
-        <Popup className="popup-types" trigger={<Button className="dropbtn" style={{width: 200, height:"120%", backgroundColor:"blue", color:"yellow"}}>Types de places</Button>} position="bottom center"> 
+        <Popup className="popup-types" trigger={<Button className="dropbtn" style={{width: 200, height:"120%", backgroundColor:"blue", color:"yellow"}}>Types de places</Button>} onClose={() => setNoSubmit(true)} position="bottom center"> 
             <div >
                 {spotTypes.map((type, index) => (<p key={index} style={{textAlign:"center"}}>{type.name}</p>))}
                 {noSubmit && <Button variant="contained" color="primary" onClick={handleSet}
