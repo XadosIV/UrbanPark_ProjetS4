@@ -361,7 +361,7 @@ app.delete('/api/schedule/:id', (req, res) => {
 
 app.get('/api/reunion', (req, res) => {
 	// req.body
-	GetSchedulesAvailable(req.body, (err, data) => {
+	GetSchedulesAvailable(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
