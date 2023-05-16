@@ -219,7 +219,6 @@ export function ViewAgenda (props){
 		TakeByRole("Gardien").then(res => setGuardiansList(res));
 	}, [props])
 
-
 	return (
 		<div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"100%"}}>
 			<Calendar
@@ -233,7 +232,7 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)} baseGuests={BaseUser(selectedEvent.guests, selectedEvent.type)}/>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)} baseGuests={BaseUser(selectedEvent.guests, selectedEvent.type)} admin={props.admin}/>
 		    }
 		</div>
 	)

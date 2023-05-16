@@ -746,7 +746,7 @@ export function UpdateScheduleForm(props) {
 					</div>
 				</div>
 				{
-					!modifiable && 
+					((!modifiable && baseType !== "Réunion") || (!modifiable && props.admin && baseType === "Réunion")) &&
 					<Button
 						disabled={disabled}
 						className="submit_button" 
