@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Button, Checkbox } from "@mui/material";
-import { UpdateSchedule, TakeAllSpots, TakeParking, TakeByRole, placeFromId, TakeAllRoles, userFromToken, TakeAllSchedulesAvailable } from "../services"
-import { Separation, AllSchedulesAvailable } from "../components"
+import { UpdateSchedule, TakeAllSpots, TakeParking, TakeByRole, placeFromId, TakeAllRoles, userFromToken, TakeAllSchedulesAvailable, DeleteSchedule } from "../services"
+import { Separation, AllSchedulesAvailable, AdminVerif } from "../components"
 import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate, ToFrenchISODate } from "../interface"
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { ContextUser } from "../contexts/context_user";
@@ -18,6 +18,12 @@ export function UpdateScheduleForm(props) {
 	function CallbackSetOne(childData) {
         setOnlyOne(childData.update)
         setOnlyOneInfo(childData.schedule)
+    }
+
+	async function CallbackDelete(childData) {
+        const res = await DeleteSchedule(props.event.id_schedule);
+		setPopupOpened(false);
+        props.handleCallback(false);
     }
 
     /**
@@ -747,13 +753,16 @@ export function UpdateScheduleForm(props) {
 				</div>
 				{
 					((!modifiable && baseType !== "Réunion") || (!modifiable && props.admin && baseType === "Réunion")) &&
-					<Button
-						disabled={disabled}
-						className="submit_button" 
-						variant="contained" 
-						color="primary"
-						onClick={() => Modifier()}
-					>Modification</Button>
+					<div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
+						<Button
+							disabled={disabled}
+							className="submit_button" 
+							variant="contained" 
+							color="primary"
+							onClick={() => Modifier()}
+						>Modification</Button>
+						<AdminVerif title="Supprimer ce créneau" text={"Vous êtes sur le point de supprimer ce créneau !"} handleCallback={CallbackDelete}/>
+					</div>
 				}
 				{
 					modifiable && AffichageModifs()

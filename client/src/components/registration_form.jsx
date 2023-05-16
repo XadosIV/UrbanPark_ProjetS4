@@ -149,6 +149,7 @@ export function RegistrationForm(props) {
 					options={ optParking }
 					onChange={handleChangeSelect}
 				/></div>
+
 			</div>
 			<Button 
 				className="submit_button"
@@ -160,3 +161,14 @@ export function RegistrationForm(props) {
 		{ wrongInput && <p className="err_message"> { errMessage } </p>}
 	</div>)
 }
+
+/*
+<div><Select 
+	required
+	name="type_demande"
+	className="select-park-abo"
+	placeholder="parking demandé"
+	options={ optTypes }
+	onChange={handleChangeSelect}
+/></div>
+*/
