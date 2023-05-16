@@ -120,7 +120,7 @@ function CheckIsCleanning(arrSpots, callback){
 		}else{
 			arrSpotId = data.map(elt => elt.id_spot)
 			arrSpots.forEach(spot => {
-				spot.inCleaning = arrSpotId.includes(spot.id);
+				spot.in_cleaning = arrSpotId.includes(spot.id);
 			})
 			return callback(err, arrSpots);
 		}
