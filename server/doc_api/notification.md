@@ -34,3 +34,11 @@ Aucune (Tableau vide si la recherche n'a donné aucun résultat.)
 
 * * *
 * * *
+
+#### **type_notif**
+
+type_notif peut prendre les valeurs suivantes :
+* "Réunion"
+* "Nettoyage"
+* "Gardiennage"
+* "Place temporaire"

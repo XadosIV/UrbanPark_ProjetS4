@@ -145,6 +145,6 @@ INSERT IGNORE INTO Typed (`id_spot`, `name_type`) VALUES
 	(10, 'Abonné');
 
 INSERT IGNORE INTO Notification (id, id_user, action, type) VALUES
-	(1,4,"POST","réunion"),
-	(2,4,"POST", "nettoyage"),
-	(3,5,"POST", "place temporaire");
+	(1,4,"POST","Réunion"),
+	(2,4,"POST", "Nettoyage"),
+	(3,5,"POST", "Place temporaire");
