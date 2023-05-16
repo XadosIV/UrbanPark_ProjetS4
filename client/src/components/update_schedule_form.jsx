@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Checkbox } from "@mui/material";
 import { UpdateSchedule, TakeAllSpots, TakeParking, TakeByRole, placeFromId, TakeAllRoles, userFromToken, TakeAllSchedulesAvailable } from "../services"
 import { Separation, AllSchedulesAvailable } from "../components"
-import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate } from "../interface"
+import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate, ToFrenchISODate } from "../interface"
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { ContextUser } from "../contexts/context_user";
 import Select from 'react-select';
@@ -88,34 +88,6 @@ export function UpdateScheduleForm(props) {
 			opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
 		}
 		return opt
-	}
-
-	/**
-     * AllRoles
-     * Returns a list of options for a Select React component composed of every role
-     * 
-     * @param { Array } list - List of roles
-     * @return { Array }
-     */
-    function AllRoles(list) {
-        var opt = []
-        for (let role of list) {
-            if (role.name !== "Abonné" && role.name !== "Gérant") {
-                opt.push({value:role.name, label:role.name})
-            }
-        }
-        return opt
-    }
-
-	function BaseRoles(listUsers) {
-		let opts = []
-		if (serviceList.map(e => e.id).every(base => listUsers.map(e => e.id).includes(base))) {
-			opts.push({value:"Agent d'entretien", label:"Agent d'entretien"})
-		}
-		if (guardiansList.map(e => e.id).every(base => listUsers.map(e => e.id).includes(base))) {
-			opts.push({value:"Gardien", label:"Gardien"})
-		}
-		return opts
 	}
 
 	/**
@@ -207,17 +179,17 @@ export function UpdateScheduleForm(props) {
     }
 
 	/**
-	 * CheckIfNotChange
+	 * CheckIfScheduleIn
 	 * Check if the schedule is available or not
 	 *
 	 * @param { JSON } datesCheck - The schedule to check
 	 * @param { JSON<Array> } available - All schedules availables
 	 * @returns { Boolean }
 	 */
-	function CheckIfNotChange(datesCheck, available) {
+	function CheckIfScheduleIn(datesCheck, available) {
 		let res = false;
 		for (let find of available) {
-			if (datesCheck.date_start > find[0] && datesCheck.date_end < find[1]) {
+			if (datesCheck.date_start >= find[0] && datesCheck.date_end <= find[1]) {
 				res = true;
 			}
 		}
@@ -235,8 +207,8 @@ export function UpdateScheduleForm(props) {
 		users: props.event.user.map(e => e.id),
 		spots: props.event.spots.map(e => e.id),
 		guests: props.event.guests.map(e => e.id),
-		date_start: props.event.d_st.slice(0,19),
-		date_end: props.event.d_en.slice(0,19)
+		date_start: ToFrenchISODate(props.event.start),
+		date_end: ToFrenchISODate(props.event.end)
 	});
 	const [spotsCleaning, setSpotsCleaning] = useState({first_spot:null, last_spot:null})
 	const [spotsList, setSpotsList] = useState([])
@@ -247,7 +219,7 @@ export function UpdateScheduleForm(props) {
 	const [parkingsList, setParkingsList] = useState([]);
 	const [serviceList, setServiceList] = useState([]);
 	const [staffList, setStaffList] = useState([]);
-	const [horairesSchedules, setHorairesSchedules] = useState({date_start: props.event.d_st.slice(0,19), date_end: props.event.d_en.slice(0,19)})
+	const [horairesSchedules, setHorairesSchedules] = useState({date_start: ToFrenchISODate(props.event.start), date_end: ToFrenchISODate(props.event.end)})
 	const [guardiansList, setGuardiansList] = useState([]);
 	const [baseType, setBaseType] = useState(props.event.type);
 	const [modifiable, setModifiable] = useState(false);
@@ -271,11 +243,27 @@ export function UpdateScheduleForm(props) {
     const [onlyOne, setOnlyOne] = useState(false)
     const [onlyOneInfo, setOnlyOneInfo] = useState({})
 	const [schedulesAvailable, setSchedulesAvailable] = useState([]);
+	const [changeSchedule, setChangeSchedule] = useState(false)
 
 	const [popupOpened, setPopupOpened] = useState(true)
 
 	const toggleCheckbox = () => {
         setCheckboxInclude(!checkboxInclude);
+		if (baseType === "Réunion" && checkboxInclude) {
+			for (let i=0; i<infos.users.length; i++) {
+				if (infos.users[i] === infosUser.id) {
+					let baseUsers = infos.users
+					let newInfos = baseUsers.splice(i,1)
+					setInfos(values => ({...values, ["users"]: baseUsers}))
+				}
+			}
+		} else if (baseType === "Réunion" && !checkboxInclude) {
+			if (!(infos.users.includes(infosUser.id))) {
+				let baseUsers = infos.users
+				let newInfos = baseUsers.push(infosUser.id)
+				setInfos(values => ({...values, ["users"]: baseUsers}))
+			}
+		}
     }
 
     const checkboxIcon = () => {
@@ -300,21 +288,19 @@ export function UpdateScheduleForm(props) {
 		}
 		if (name.name === "users" && baseType === "Réunion") {
 			setOptionsUsersChange(values => ({...values, change: true}))
-			TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+			UpdateIfNoHourChange({users:value, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
 		} else if (name.name === "guests") {
 			setOptionsUsers(AllNotNecessary(staffList, value))
         }
+		if (baseType === "Réunion" && checkboxInclude) {
+			value.push(infosUser.id)
+		}
 		setInfos(values => ({...values, [name.name]: value}))
 	}
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault()
 		setWrongInput(false);
-		if (baseType === "Réunion" && checkboxInclude) {
-			if (!(infos.users.includes(infosUser.id))) {
-				infos.users.push(infosUser.id)
-			}
-		}
 		if (infos.users.length === 0) {
 			setWrongInput(true)
 			setErrMessage("Vous n'avez assigné ce créneau à personne")
@@ -327,7 +313,7 @@ export function UpdateScheduleForm(props) {
 		} else if (horairesSchedules.date_end < horairesSchedules.date_start) {
 			setWrongInput(true)
 			setErrMessage("L'heure de fin ne peut pas précéder l'heure de début.")
-		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
+		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
 			let listSpotsCleaning = [];
             let first, last;
 			//Set toggles for spots (only if "Nettoyage") on spots between first and last
@@ -348,7 +334,7 @@ export function UpdateScheduleForm(props) {
 			//If it's "Réunion" then parking = null
 			if (baseType === "Réunion") {
 				infos.parking = '\x00'
-				TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+				TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end, id_exclure:props.event.id_schedule}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
                 setIsOpen(true)
 			} else {
 				//Set toggles for users
@@ -371,6 +357,15 @@ export function UpdateScheduleForm(props) {
 			setWrongInput(true);
 			setErrMessage("Vous n'avez rien modifié");
 		}
+	}
+
+	function UpdateIfNoHourChange(params) {
+		TakeAllSchedulesAvailable(params).then(res => {
+			setSchedulesAvailable(FixOnlyOne(res))
+			if (CheckIfScheduleIn(horairesSchedules, FixOnlyOne(res))) {
+				setChangeSchedule(false)
+			}
+		})
 	}
 
 	const handlleSubmitNewReunion = async (event) => {
@@ -400,6 +395,36 @@ export function UpdateScheduleForm(props) {
             }
         }
     }
+
+	const handleNoChangeDate = async (event) => {
+		event.preventDefault()
+        setWrongInput(false);
+		if (!(JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)))) {
+			//Set toggles for users
+			infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
+			//Set toggles for guests
+			infos.guests = FindToggles(props.event.guests.map(e => e.id), infos.guests)
+			infos.date_start = horairesSchedules.date_start
+			infos.date_end = horairesSchedules.date_end
+
+			const res = await UpdateSchedule(infos, props.event.id_schedule); 
+			//console.log(res);
+			if (res.status === 200) {
+				setWrongInput(true);
+				setErrMessage("Modification prise en compte.");
+				await delay(2000);
+				setIsOpen(false)
+				setPopupOpened(false)
+				props.handleCallback(false)
+			} else {
+				setWrongInput(true);
+				setErrMessage(res.data.message);
+			}
+		} else {
+			setWrongInput(true);
+			setErrMessage("Vous n'avez rien modifié");
+		}
+	}
 
 	useEffect(() => {
         async function fetchUserInfos() {
@@ -438,7 +463,7 @@ export function UpdateScheduleForm(props) {
             })
         })
 		TakeAllRoles().then(res => setOptionsRoles(res))
-		TakeAllSchedulesAvailable({users:infos.users, date_start:props.event.d_st.slice(0,19), date_end:props.event.d_en.slice(0,19)}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+		UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
 		setPopupOpened(true)
 	}, [props])
 
@@ -449,8 +474,8 @@ export function UpdateScheduleForm(props) {
 			users: props.event.user.map(e => e.id),
 			spots: props.event.spots.map(e => e.id),
 			guests: props.event.guests.map(e => e.id),
-			date_start: props.event.d_st.slice(0,19),
-			date_end: props.event.d_en.slice(0,19)
+			date_start: ToFrenchISODate(props.event.start),
+			date_end: ToFrenchISODate(props.event.end)
 		});
 	}, [props])
 
@@ -516,8 +541,6 @@ export function UpdateScheduleForm(props) {
         }
     }
 
-	console.log(horairesSchedules, schedulesAvailable, CheckIfNotChange(horairesSchedules, schedulesAvailable))
-
 	function AffichageModifs () {
 		return (
 			<div className="form_div">
@@ -572,19 +595,6 @@ export function UpdateScheduleForm(props) {
                                 maxMenuHeight={200}
                             />
                         </div>
-                        <div style={{zIndex:1006, display:"flex", justifyContent:"center"}}>
-                            <Select
-                                isMulti
-                                name="roles"
-                                placeholder="Inviter... (rôles)"
-                                options={AllRoles(optionsRoles)}
-								defaultValue={BaseRoles(props.event.guests)}
-                                className="size-select-popup"
-                                isSearchable={false}
-                                onChange={handleChangeSelect}
-                                maxMenuHeight={200}
-                            />
-                        </div>
                     </div>}
 					{baseType !== null && baseType !== "Réunion" && <div style={{zIndex:1006}}>  
 						<Select
@@ -624,15 +634,31 @@ export function UpdateScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
-					{(baseType == "Réunion") && <div style={{marginTop:"-10px"}}>
+					{baseType === "Réunion" && CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={handleNoChangeDate}
+					>Garder la même horaire</Button></div>}
+					{baseType === "Réunion" && !CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={() => setChangeSchedule(true)}
+					>Changer d'horaire</Button></div>}
+					{(baseType == "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
                             name="date_start"
                             selected={new Date(horairesSchedules.date_start)}
                             onChange={(date) => {
-								setHorairesSchedules(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))
-								TakeAllSchedulesAvailable({users:infos.users, date_start:date.toISOString().slice(0, 19), date_end:horairesSchedules.date_end}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+								setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(date), date_end:ToFrenchISODate(horairesSchedules.date_end), id_exclure:props.event.id_schedule})
 							}}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
@@ -642,8 +668,8 @@ export function UpdateScheduleForm(props) {
                             name="date_end"
                             selected={new Date(horairesSchedules.date_end)}
                             onChange={(date) => {
-								setHorairesSchedules(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))
-								TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:date.toISOString().slice(0, 19)}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+								setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(horairesSchedules.date_start), date_end:ToFrenchISODate(date), id_exclure:props.event.id_schedule})
 							}}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
@@ -673,8 +699,7 @@ export function UpdateScheduleForm(props) {
 							type="submit"
 						>Modifier</Button>
 					</div>}
-					{baseType === "Réunion" && CheckIfNotChange(horairesSchedules, schedulesAvailable) && <p>aaaa</p>}
-					{TitleButton(baseType)}
+					{(!CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && changeSchedule || baseType !== "Réunion") && TitleButton(baseType)}
 				</form>
 				<div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
 			</div>
@@ -698,15 +723,16 @@ export function UpdateScheduleForm(props) {
 				}}
 				onAfterOpen={() => {
 					setModifiable(false)
-					setHorairesSchedules({date_start:props.event.d_st.slice(0,19), date_end: props.event.d_en.slice(0,19)}); 
-					TakeAllSchedulesAvailable({users:infos.users, date_start:props.event.d_st.slice(0,19), date_end:props.event.d_en.slice(0,19)}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+					setChangeSchedule(false)
+					setHorairesSchedules({date_start:ToFrenchISODate(props.event.start), date_end: ToFrenchISODate(props.event.end)}); 
+					UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
 					setInfos({
 						parking: props.event.idparking,
 						users: props.event.user.map(e => e.id),
 						spots: props.event.spots.map(e => e.id),
 						guests: props.event.guests.map(e => e.id),
-						date_start: props.event.d_st.slice(0,19),
-						date_end: props.event.d_en.slice(0,19)
+						date_start: ToFrenchISODate(props.event.start),
+						date_end: ToFrenchISODate(props.event.end)
 					})
 				}}
 				style={customStyles}
