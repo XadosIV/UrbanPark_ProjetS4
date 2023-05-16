@@ -182,7 +182,7 @@ function PostSchedule(infos, callback) {
 				spots = spots.filter(e => infos.spots.includes(e.id))
 				for (let spot of spots){
 					if (spot.id_park != infos.parking){
-						console.log("err")
+						//console.log("err")
 						return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
 					}
 				}
@@ -274,7 +274,7 @@ function GetScheduleById(id, callback){
 
 /**
  * 
- * @param {*} infos {id, users, guests, roles, date_start, date_end, spots}
+ * @param {*} infos {id, users, guests, date_start, date_end, spots}
  * @param {function(*,*)} callback 
  */
 function UpdateSchedule(infos, callback){
@@ -352,7 +352,7 @@ function UpdateSchedule(infos, callback){
 				if (data.length == 0){
 					//relation not existing, add it
 					let sql = `INSERT INTO User_Schedule (id_user, id_schedule, is_guest) VALUES (:idUser, :id, :isGuest)`
-					dbConnection.query(sql, {id:id, idUser:idUser, isGuest:isGuest}, (err, data) => {
+					dbConnection.query(sql, {id:id, idUser:idUser, isGuest:isGuest?1:0}, (err, data) => {
 						if (err) return suite(err, data);
 						ToggleUserSchedule(id, users, isGuest, suite);
 					})
@@ -379,16 +379,16 @@ function UpdateSchedule(infos, callback){
 		
 			let spots = [];
 			if (infos.spots){
-				spots.concat(infos.spots);
+				spots = spots.concat(infos.spots);
 			}
 		
 			spots = [...new Set(spots)] // remove duplicated elements;
-		
+
 			ToggleSpotSchedule(infos.id, spots, (err, data) => {
 				if (err) return callback(err, null);
 			
 			
-				ToggleUserSchedule(infos.id, users, true, (err, data) => {
+				ToggleUserSchedule(infos.id, users, false, (err, data) => {
 					if (err) return callback(err, null);
 					
 					ToggleUserSchedule(infos.id, guests, true, (err, data) => {
@@ -405,18 +405,7 @@ function UpdateSchedule(infos, callback){
 	let guests = [];
 	if (infos.users) users = users.concat(infos.users);
 	if (infos.guests) guests = guests.concat(infos.guests);
-	if (infos.roles){
-		GetUsersFromRoleArray(infos.roles, (err, data) => {
-			if (err) return callback(err, null);
-			if (data){
-				guests = guests.concat(data.map(e => e.id));
-			}
-			doUpdate(users, guests);
-		} )
-	}else{
-		doUpdate(users, guests);
-	}
-	
+	doUpdate(users, guests);
 }
 
 /**
@@ -468,51 +457,6 @@ function IsntScheduleOverlappingForList(infos, ids, callback) {
 }
 
 /**
- * IsntSpotOverlapping
- * Check if the new schedule isn't overlapping an existing one ON SPOTS (true if no overlapping)
- * Hint : Use it after checking with IsntScheduleOverlapping
- * 
- * @param {object} infos {date_start, date_end, first_spot, last_spot}
- * @param {function(*,*)} callback (err, data)
- */
-function IsntSpotOverlapping(infos, callback) {
-	GetSpots({"id":infos.first_spot}, (err,first_spot) =>{
-		if(err){
-			callback(err,{});
-		}else if(first_spot.length != 1){
-			return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-		}else{
-			GetSpots({"id":infos.last_spot}, (err, last_spot) => {
-				if(err){
-					callback(err, {});
-				}else if(last_spot.length != 1){
-					return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "L'un des spots de la sélection n'existe pas.", callback);
-				}else{
-					
-					sql = `SELECT s.id FROM Schedule s
-					JOIN Spot spf ON s.first_spot=spf.id 
-					JOIN Spot spl ON s.last_spot=spl.id 
-					WHERE
-						s.date_start < :date_end AND
-						s.date_end > :date_start AND
-						spf.number < :first_spot AND
-						spl.number > :last_spot;`;
-					
-						//console.log("SQL at IsntSpotOverlapping : " + sql + " with " + JSON.stringify(infos));
-					dbConnection.query(sql, infos, (err, data) => {
-						if (err) {
-							callback(err, data)
-						} else {
-							callback(err, data.length == 0);
-						}
-					});
-				}
-			});
-		}
-	});
-}
-
-/**
  * DeleteSchedule
  * Delete a schedule by id
  * 
@@ -536,209 +480,4 @@ function DeleteSchedule(id, callback){
 	
 }
 
-/**
- * AdaptSchedule
- * Adapt a schedule for the place suppression
- * 
- * @param {int} id
- * @param {function(*,*)} callback (err, data)
- */
-function AdaptSchedule(id, callback){
-	
-	sql = `SELECT id, first_spot, last_spot FROM Schedule WHERE first_spot=:id`;
-	
-	dbConnection.query(sql, {
-		"id":id
-	}, (err, data) => {
-		if (err){
-			callback(err, {})
-		}
-		else{
-			//console.log(data)
-			AdaptScheduleStart(data, (err, res) => {
-				if (err){
-					callback(err, res);
-				}
-				else {
-	
-					sql = `SELECT id, first_spot, last_spot FROM Schedule WHERE last_spot=:id`;
-
-					dbConnection.query(sql, {id:id}, (err, data) => {
-						if (err){
-							callback(err, res);
-						}else{
-							//console.log(data)
-							AdaptScheduleEnd(data, (err, res) => {
-								callback(err, res);
-							})
-						}
-					})
-				}
-			});
-		}
-	});
-}
-
-/**
- * AdaptScheduleStart
- * Adapt a schedule for the first place suppression
- * 
- * @param {Array} fdata {id, first_spot, last_spot}
- * @param {function(*,*)} callback (err, data)
- */
-function AdaptScheduleStart(fdata, callback){
-	if (fdata.length == 0){
-		callback(null, {})
-	}
-	else {
-		let info = fdata.shift()
-		let id_schedule = info.id
-		let first_spot = info.first_spot
-		let last_spot = info.last_spot
-		if (first_spot == last_spot){
-			DeleteSchedule(id_schedule, (err, data) => {
-				if (err){
-					callback(err, data);
-				}
-				else if (fdata.length > 0){
-					AdaptScheduleStart(fdata, (err, data) => {
-						callback(err, data);
-					})
-				}
-				else {
-					callback(err, data)
-				}
-			})
-		} else {
-
-			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
-			
-			dbConnection.query(sql, {id:first_spot}, (err, data) => {
-				if (err){
-					callback(err, {})
-				}
-				else{
-					// console.log(data)
-					let place_a_modifier = data.shift()
-					
-					sql = `SELECT id 
-						FROM Spot 
-						WHERE 
-							number > :prev_num AND
-							id_park=:prev_id_park AND
-							floor=:prev_floor
-						ORDER BY number
-						LIMIT 1`;
-					
-					dbConnection.query(sql, {
-						prev_num:place_a_modifier.number,
-						prev_id_park:place_a_modifier.id_park,
-						prev_floor:place_a_modifier.floor
-					}, (err, data) => {
-						if (err){
-							callback(err, {})
-						}
-						else{
-
-							sql = `UPDATE Schedule SET first_spot=:new WHERE id=:id`;
-							
-							dbConnection.query(sql, {
-								id:id_schedule,
-								new:data[0].id
-							}, (err, data) => {
-								if (err){
-									callback(err, data);
-								}
-								else if (fdata.length > 0){
-									AdaptScheduleStart(fdata, (err, data) => {
-										callback(err, data);
-									})
-								}
-								else {
-									callback(err, data)
-								}
-							})
-						}
-					})
-				}
-			})
-		}
-	}
-}
-
-/**
- * AdaptScheduleEnd
- * Adapt a schedule for the last place suppression
- * 
- * @param {Array} fdata {id, first_spot, last_spot}
- * @param {function(*,*)} callback (err, data)
- */
-function AdaptScheduleEnd(fdata, callback){
-	if (fdata.length == 0){
-		callback(null, {})
-	}
-	else {
-		let info = fdata.shift()
-		let id_schedule = info.id
-		let first_spot = info.first_spot
-		let last_spot = info.last_spot
-		if (data[0].id == first_spot){
-			DeleteSchedule(id_schedule, (err, data) => {
-				if (err){
-					callback(err, data);
-				} else if (fdata.length > 0){
-					AdaptScheduleEnd(fdata, (err, data) => {
-						callback(err, data);
-					})
-				} else {
-					callback(err, data)
-				}
-			})
-		} else {
-
-			sql = `SELECT number, floor, id_park FROM Spot WHERE id=:id`;
-			
-			dbConnection.query(sql, {id:last_spot}, (err, data) => {
-				if (err){
-					callback(err, {})
-				}else{
-					let place_a_modifier = data.shift()
-			
-					sql = `SELECT id FROM Spot WHERE number < :prev_num AND id_park=:prev_id_park AND floor=:prev_floor ORDER BY number DESC LIMIT 1`;
-			
-					dbConnection.query(sql, {
-						prev_num:place_a_modifier.number,
-						prev_id_park:place_a_modifier.id_park,
-						prev_floor:place_a_modifier.floor
-					}, (err, data) => {
-						if (err){
-							callback(err, {})
-						}
-						else{
-			
-							sql = `UPDATE Schedule SET last_spot=:new WHERE id=:id`;
-			
-							dbConnection.query(sql, {
-								id:id_schedule,
-								new:data[0].id
-							}, (err, data) => {
-								if (err){
-									callback(err, data);
-								}
-								else if (fdata.length > 0){
-									AdaptScheduleEnd(fdata, (err, data) => {
-										callback(err, data);
-									})
-								} else {
-									callback(err, data)
-								}
-							})
-						}
-					})
-				}
-			})
-		}
-	}
-}
-
-module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById, AdaptSchedule};
+module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById};

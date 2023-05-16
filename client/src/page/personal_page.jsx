@@ -22,7 +22,7 @@ export function PersonalPage(){
 			case "Abonné":
 				return <PersoSub />;
 			case "Gérant":
-				return <PersoAdmin />;
+				return <PersoAdmin id={userId}/>;
 			case "Gardien":
 				return <PersoGuardian id={userId} />;
 			case "Agent d'entretien":

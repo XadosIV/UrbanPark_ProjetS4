@@ -266,7 +266,7 @@ app.delete('/api/spot/:id', (req, res) => {
 	if (parseInt(req.params.id)){
 		DeleteSpot(parseInt(req.params.id), (err, data)=>{
 			if (err){
-				console.log(err);
+				//console.log(err);
 				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 			} else {
 				res.status(200).json();
@@ -291,7 +291,7 @@ app.get('/api/role', (req, res) => {
 });
 
 app.get('/api/schedules', (req, res) => {
-	console.log("Request at GET /api/schedules : " + JSON.stringify(req.query) + "\n body: " + JSON.stringify(req.body));
+	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query) + "\n body: " + JSON.stringify(req.body));
 	GetSchedules(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
