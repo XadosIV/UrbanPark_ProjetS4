@@ -1,5 +1,4 @@
 const { dbConnection } = require('../database');
-const { GetUsers } = require('./user');
 const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 const { GetUsersFromRoleArray } = require("./reunion");
@@ -47,8 +46,8 @@ function GetSchedules(infos, callback){
 				// {id, type, id_parking, date_start, date_end}
 				let sql = "SELECT * FROM Parking";
 				dbConnection.query(sql, (err, parkings) => {
+					const { GetUsers } = require('./user');
 					if (err) return callback(err, null);
-					let {GetUsers} = require('./user');
 					GetUsers({}, (err, users) => {
 						if (err) return callback(err, null);
 						GetSpots({}, (err, spots) => {
@@ -80,6 +79,7 @@ function GetSchedules(infos, callback){
 	}
 
 	if (!infos.roles && !infos.users && !infos.id){
+		const { GetUsers } = require('./user');
 		GetUsers({}, (err, data) => {
 			if (err) return callback(err, null);
 			doSqlRequest(data.map(e => e.id))

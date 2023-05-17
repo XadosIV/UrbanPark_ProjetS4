@@ -185,12 +185,19 @@ function UpdateUserTemp(spots, callback, newSpots = []){
 
 // Retirer la place temporaire si la place temporaire n'est plus en nettoyage
 function ActualiseTempUser(spot, callback){
-	const { GetUsers } = require("./user");
 	if(spot.id_user || !spot.id_user_temp) return callback(null, spot);
-	GetUsers({id: spot.id_user_temp}, (err, userTemp) => { // permet l'attribution ou la suppression de la place temporaire.
+
+	let sql = `SELECT id_spot_temp FROM User WHERE id = :id`;
+
+	dbConnection.query(sql, {id: spot.id_user_temp}, (err, userTemp) => { // permet l'attribution ou la suppression de la place temporaire.
 		if(err){
 			return callback(err, null);
 		}else{
+			if(userTemp.id_spot_temp === null){
+				spot.id_user_temp = null;
+				spot.first_name_temp = null;
+				spot.last_name_temp = null;
+			}
 			return callback(null, spot);
 		}
 	})

@@ -1,8 +1,5 @@
 const {dbConnection} = require('../database');
 const {GetSchedules} = require('./schedule');
-const Errors = require('../errors');
-const {SendError} = require('../errors');
-const { GetUsers } = require('./user');
 
 /**
  * GetNotifications
