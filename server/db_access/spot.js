@@ -170,7 +170,7 @@ function GetSpots(infos, callback){
  */
 function UpdateUserTemp(spots, callback, newSpots = []){
 	//RECURSIVE
-	console.log(newSpots)
+	//console.log(newSpots)
 	if (spots.length == 0){
 		callback(null, newSpots)
 	}else{
