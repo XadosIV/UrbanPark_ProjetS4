@@ -135,7 +135,7 @@ INSERT IGNORE INTO Type (name) VALUES
 	("Urgence"),
 	("Municipale");
 
-INSERT IGNORE INTO Typed (`id_spot`, `name_type`) VALUES
+INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(3, 'Abonné'),
 	(4, 'Abonné'),
 	(5, 'Abonné'),
@@ -144,6 +144,16 @@ INSERT IGNORE INTO Typed (`id_spot`, `name_type`) VALUES
 	(7, 'Municipale'),
 	(10, 'Abonné');
 
+/*INSERT IGNORE INTO Type_User (id_user, name_type) VALUES
+	(6, 'Handicapée'),
+	(6, 'Électrique'),
+	(7, 'Électrique');*/
+
+INSERT IGNORE INTO Notification (id, id_user, action, type) VALUES
+	(1,4,"POST","réunion"),
+	(2,4,"POST", "nettoyage"),
+	(3,5,"POST", "place temporaire");
+  
 INSERT IGNORE INTO Notification (id, id_user, action, type_notif, id_schedule) VALUES
 	(1,4,"POST","Réunion", 15),
 	(2,4,"POST", "Nettoyage", 16),

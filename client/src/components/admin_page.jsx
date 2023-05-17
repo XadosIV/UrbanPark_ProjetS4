@@ -13,7 +13,9 @@ export function AdminPage() {
 	return(<div style={{overflowX:"hidden"}}>
 		<div style={{minWidth:"50%"}}>
 			<ParkingsStaff admin={true} />
-			<CreateSpotType/>
+			<div style={{marginLeft:"40px"}}>
+				<CreateSpotType/>
+			</div>
 		</div>
 		<br/><br/><hr/><br/><br/>
 		<NewScheduleForm handleCallback={Callback}/>

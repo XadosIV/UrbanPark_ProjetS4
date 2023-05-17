@@ -41,7 +41,7 @@ function GetAllSpots(infos, callback){
 	 * Only futur or actual schedules are fetched this way.
 	 * Using a `GROUP BY s.id` clause along a `HAVING MIN(ns.date_end)` didn't work.
 	 * BTW : Using an `AND` clause in a `LEFT JOIN ON` isn't a hack, it's taking advantage of the features.
-	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really usefull)
+	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really useful)
 	 */
 	
 	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));

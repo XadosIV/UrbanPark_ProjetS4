@@ -53,7 +53,32 @@ function GetUsers(infos, callback){
 			UpdateSpotTemp(data, callback);
 		}
 	});
-}
+  /*(err, dataMain) => {
+		if (err) {
+			callback(err, [])
+		} else {
+			sql = `SELECT * FROM Type_User`
+    
+			//console.log("SQL at GetUsers : " + sql);
+            dbConnection.query(sql, (err, data) => {
+                if (err){
+                    callback(err, [])
+                }else{
+                    for (let user of dataMain){
+                        user.types = []
+                        for (let type of data){
+                        type : {id_user:6, name_type:"Handicapé"}
+                            if (type.id_user == user.id){
+                                user.types.push(type.name_type)
+                            }
+                        }
+                    }
+					callback(err, dataMain)
+                }
+            })
+		}
+	});*/
+}	
 
 /**
  * UpdateSpotTemp
@@ -165,6 +190,7 @@ function DeleteUser(id, callback){
 * <>* -> required
 * @param {function(*,*)} callback (err, data)
 * 
+* [DEPRECATED]
 */
 function isMySelf(infos, callback){
 	// console.log("info Myself", infos);
