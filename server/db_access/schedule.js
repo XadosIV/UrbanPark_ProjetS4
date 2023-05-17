@@ -415,15 +415,20 @@ function UpdateSchedule(infos, callback){
 	if (infos.guests) guests = guests.concat(infos.guests);
 
 	let sql = `SELECT id_user FROM User_Schedule WHERE id_schedule=:id`;
-	dbConnection.query(sql, {id:id}, (err, data) => {
+	dbConnection.query(sql, {id: infos.id}, (err, data) => {
 		if(err){
 			return callback(err, null);
 		}else{
 			let userAvant = data.map(elt => elt.id_user);
+			console.log("userAvant", userAvant);
+			console.log("usersPrec", users);
+			console.log("guestsPrec", guests);
 
 			let res = FixUsersGuests(users, guests, userAvant);
 			users = res[0];
 			guests = res[1];
+			console.log("users", users);
+			console.log("guests", guests);
 
 			let postUser = [];
 			let putUser = [];
@@ -453,16 +458,20 @@ function UpdateSchedule(infos, callback){
 					putUser.push(idU);
 				}
 			})
+			console.log("putUser", putUser);
+			console.log("postUser", postUser);
+			console.log("deleteUser", deleteUser);
+			console.log("==========");
 
-			PrepareListPostNotification(postUser, "POST", "", id, (err, notifsPost) => {
+			PrepareListPostNotification(postUser, "POST", "", infos.id, (err, notifsPost) => {
 				if(err){
 					return callback(err, null);
 				}else{
-					PrepareListPostNotification(putUser, "PUT", "", id, (err, notifsPut) => {
+					PrepareListPostNotification(putUser, "PUT", "", infos.id, (err, notifsPut) => {
 						if(err){
 							return callback(err, null);
 						}else{
-							PrepareListPostNotification(deleteUser, "DELETE", "", id, (err, notifsDelete) => {
+							PrepareListPostNotification(deleteUser, "DELETE", "", infos.id, (err, notifsDelete) => {
 								if(err){
 									return callback(err, null);
 								}else{
