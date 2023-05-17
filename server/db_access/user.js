@@ -520,4 +520,4 @@ function RemoveSpotUserTemp(infos, callback){
 }
 
 
-module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser, RemoveSpotUsers, UpdateNewSpotTemp};
+module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser, RemoveSpotUsers};
