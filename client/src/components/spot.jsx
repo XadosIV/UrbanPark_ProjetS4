@@ -258,7 +258,7 @@ export function Spot(props) {
     }
 
     var cleaning;
-    if(props.spot.inCleaning){
+    if(props.spot.in_cleaning){
         cleaning = <p style={{textDecoration:"none", marginBottom:"10px", fontSize:"0.7em", color:"red", marginTop:"-10px"}}>
             Cette place est en cours de nettoyage
         </p>

@@ -176,6 +176,7 @@ export function UpdateScheduleForm(props) {
 		);
 	}
 
+
 	function FixOnlyOne(tab) {
         if(typeof tab[0] == "string") {
             return [tab]

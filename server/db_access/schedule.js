@@ -4,6 +4,7 @@ const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 const { GetUsersFromRoleArray } = require("./reunion");
 const { GetAllSpots } = require('./spot');
+const { PreparePostNotification, PostNotification } = require("./notification");
 
 /**
  * IsValidDatetime
@@ -140,10 +141,10 @@ function PostSchedule(infos, callback) {
 
 				var id_schedule = data.insertId;
 				//Insert USERS user_schedule
-				InsertUsersSchedules(users_copy, id_schedule, false, (err, data) => {
+				InsertUsersSchedules(users_copy, id_schedule, false, infos.type, (err, data) => {
 					if (err) return callback(err, null);
 					// Insert GUESTS user_schedule
-					InsertUsersSchedules(guests, id_schedule, true, (err, data) => {
+					InsertUsersSchedules(guests, id_schedule, true, infos.type, (err, data) => {
 						if (err) return callback(err, null);
 						InsertSpotsSchedules(spots.map(e => e.id), id_schedule, callback)
 					})
@@ -234,17 +235,24 @@ function FixUsersGuests(users, guests){
  * @param {Array<integer>} users_id liste des identifiants à ajouter
  * @param {integer} id_schedule le schedule auquel les ajouter
  * @param {boolean} isGuest Si oui ou non les utilisateurs qu'on ajoute sont des invités
+ * @param {string} type  Type de notification
  * @param {function(*,*)} callback 
  */
-function InsertUsersSchedules(users_id, id_schedule, isGuest, callback){
+function InsertUsersSchedules(users_id, id_schedule, isGuest, type, callback){
 	if (users_id.length == 0){
 		callback(null, true)
 	}else{
 		let userId = users_id.pop();
-		let sql = `INSERT INTO User_Schedule VALUES (:userId, :scheduleId, :isGuest)`
+		let sql = `INSERT INTO User_Schedule (id_user, id_schedule, is_guest) VALUES (:userId, :scheduleId, :isGuest)`
 		dbConnection.query(sql, {userId:userId, scheduleId:id_schedule, isGuest:isGuest}, (err, data) => {
 			if (err) return callback(err, data);
-			InsertUsersSchedules(users_id, id_schedule, isGuest, callback);
+			PreparePostNotification(userId, "POST", type, id_schedule, (err,data) =>{
+				if (err) return callback(err, data);
+				PostNotification(data, (err,data) => {
+					if (err) return callback(err, data);
+					InsertUsersSchedules(users_id, id_schedule, isGuest, type, callback);
+				});
+			});
 		})
 	}
 }
