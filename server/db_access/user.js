@@ -46,7 +46,98 @@ function GetUsers(infos, callback){
 		id_spot:infos.id_spot||'%',
 		id_spot_temp:infos.id_spot_temp||'%',
 		id_park_demande:infos.id_park_demande||'%'
-	}, callback);
+	}, (err, data) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			UpdateSpotTemp(data, callback);
+		}
+	});
+}
+
+/**
+ * UpdateSpotTemp
+ * update id_spot_temp either setting it to NULL or giving at free temporary spot
+ * 
+ * @param {Array<object user>} [{ id, id_spot, ... }, {...}, ...]
+ * @param {function(*,*)} callback (err, data)
+ */
+function UpdateSpotTemp(users, callback, newusers = []){
+	//RECURSIVE
+	if (users.length == 0){
+		callback(null, newusers)
+	}else{
+		let user = users.pop();
+		ActualiseTempSpot(user, (err, newuser) => {
+			if (err) return callback(err, null);
+			newusers.push(newuser);
+			UpdateSpotTemp(users, callback, newusers)
+		})
+	}
+}
+
+function UpdateNewSpotTemp(user, idspot, callback){
+	UpdateUser({id_spot_temp: idspot, id: user.id}, (err, data) => {
+		if (err) return callback(err, null);
+		user.id_spot_temp = idspot;
+		callback(null, user);
+	})
+}
+
+function ActualiseTempSpot(user, callback){
+	const { GetSpots } = require("./spot");
+	if (!user.id_spot) return callback(null, user);
+	GetSpots({id: user.id_spot}, (err, userSpot) => { // Spot du user
+		if(err)	return callback(err, null);
+		if (userSpot.length == 0){return callback(null, user)}
+		userSpot = userSpot[0]
+		if (userSpot.in_cleaning){
+			if(user.id_spot_temp) return callback(null, user);
+			GetSpots({
+				id_park: userSpot.id_park,
+				type: ["Abonné"],
+				id_user: null,
+				id_user_temp: null,
+				in_cleaning: false
+			}, (err, optTempSpot) => {
+				if (err) return callback(err, null);
+				if(optTempSpot.length > 0){ 
+					UpdateNewSpotTemp(user, optTempSpot[0].id, (err, newuser) => {
+						if (err) return callback(err, null);
+						callback(null, newuser);
+					})
+				}else{
+					GetSpots({
+						id_park: userSpot.id_park,
+						id_user: null,
+						id_user_temp: null,
+						in_cleaning: false
+					}, (err, optPasAbo) => {
+						if (err) return callback(err, null);
+						optPasAbo = optPasAbo.filter(e => !optTempSpot.includes(e))
+						if (optPasAbo.length > 0){
+							UpdateNewSpotTemp(user, optPasAbo[0].id, (err, newuser) => {
+								if (err) return callback(err, null);
+								callback(null, newuser);
+							})
+						}else{
+							callback(null, user);
+						}
+					})
+				}
+			})
+		}else{
+			///
+			if(user.id_spot_temp){
+				UpdateNewSpotTemp(user, null, (err, newuser) => {
+					if (err) return callback(err, null);
+					callback(null, newuser);
+				});
+			}else{
+				callback(null, user);
+			}
+		}
+	})
 }
 
 /**
