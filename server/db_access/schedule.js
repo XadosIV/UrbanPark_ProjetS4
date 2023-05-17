@@ -287,7 +287,7 @@ function GetScheduleById(id, callback){
  * @param {function(*,*)} callback 
  */
 function UpdateSchedule(infos, callback){
-	const { PreparePostNotification, PostNotification } = require("./notification");  // Avoiding circular dependencies
+	const { PrepareListPostNotification, ListPostNotification } = require("./notification");  // Avoiding circular dependencies
 
 	let UpdateScheduleTable = (id, date_start, date_end, suite) => {
 		if (date_start || date_end){
@@ -379,7 +379,7 @@ function UpdateSchedule(infos, callback){
 		}
 	}
 
-	let doUpdate = (users, guests) => {
+	let doUpdate = (users, guests, callback) => {
 
 		let res = FixUsersGuests(users, guests);
 		users = res[0];
@@ -416,7 +416,61 @@ function UpdateSchedule(infos, callback){
 	let guests = [];
 	if (infos.users) users = users.concat(infos.users);
 	if (infos.guests) guests = guests.concat(infos.guests);
-	doUpdate(users, guests);
+
+	let sql = `SELECT id_user FROM User_Schedule WHERE id_schedule=:id`;
+	dbConnection.query(sql, {id:id}, (err, data) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			let userAvant = data.map(elt => elt.id_user);
+			let userModif = users.concat(guests);
+			let postUser = [];
+			let putUser = [...userAvant];
+			let deleteUser = [];
+			userModif.forEach(idU => {
+				if(userAvant.includes(idU)){
+					deleteUser.push(idU);
+				}else{
+					postUser.push(idU);
+				}
+			})
+			putUser = putUser.filter(idU => !deleteUser.includes(idU));
+
+			PrepareListPostNotification(postUser, "POST", "", id, (err, notifsPost) => {
+				if(err){
+					return callback(err, null);
+				}else{
+					PrepareListPostNotification(putUser, "PUT", "", id, (err, notifsPut) => {
+						if(err){
+							return callback(err, null);
+						}else{
+							PrepareListPostNotification(deleteUser, "DELETE", "", id, (err, notifsDelete) => {
+								if(err){
+									return callback(err, null);
+								}else{
+									let allNotifs = notifsPost.concat(notifsPut).concat(notifsDelete);
+
+									doUpdate(users, guests, (err, data) => {
+										if(err){
+											return callback(err, data);
+										}else{
+											ListPostNotification(allNotifs, (err, data) => {
+												if(err){
+													return callback(err, null);
+												}else{
+													return callback(null, null);
+												}
+											})
+										}
+									});
+								}
+							})
+						}
+					})
+				}
+			})
+		}
+	})
 }
 
 /**
