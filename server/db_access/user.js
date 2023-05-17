@@ -247,7 +247,7 @@ function UpdateUser(infos, callback){
       		// placeholders variables gave as the request
 			placeholders = {id:infos.id, parameters:parameters}
 			
-			console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
+			//console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
 			dbConnection.query(sql, placeholders, callback);
 		}
 
@@ -403,7 +403,7 @@ function PostUser(infos, callback){
 								
 								infos.role="Abonné";
 								infos.token = token;
-								console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
+								//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
 								dbConnection.query(sql, infos, callback);
 							}
 						});

@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@mui/material";
-import { UpdateSchedule, DeleteSchedule, CreationSchedule, TakeAllSpots, TakeParking, TakeByRole } from "../services"
-import { AllSpots, BaseSpot, BaseParking } from "../interface"
+import React, { useState, useEffect, useContext } from "react";
+import { Button, Checkbox } from "@mui/material";
+import { UpdateSchedule, TakeAllSpots, TakeParking, TakeByRole, placeFromId, TakeAllRoles, userFromToken, TakeAllSchedulesAvailable } from "../services"
+import { Separation, AllSchedulesAvailable } from "../components"
+import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate, ToFrenchISODate } from "../interface"
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { ContextUser } from "../contexts/context_user";
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
+import setHours from "date-fns/setHours";
+import setMinutes from "date-fns/setMinutes";
 import "../css/parking.css"
 import ReactModal from 'react-modal';
 
 export function UpdateScheduleForm(props) {
+
+	function CallbackSetOne(childData) {
+        setOnlyOne(childData.update)
+        setOnlyOneInfo(childData.schedule)
+    }
 
     /**
      * DeOrDu
@@ -38,33 +48,6 @@ export function UpdateScheduleForm(props) {
 			opt.push({value:list[i].id, label:"Parking " + list[i].name.toLowerCase()})
 		}
 		return opt
-	}
-
-
-	/**
-	 * BaseUser
-	 * Returns a array corresponding to the base user being passed in a react select defaultValue
-	 *
-	 * @param { integer } id_user - id of the user
-	 * @param { Array } list - List of users
-	 * @return { Array }
-	 */
-	function BaseUser(id_user, list) {
-		list = BaseListType(list)
-		var opts = []
-		if (!Array.isArray(id_user)) {
-			id_user = [id_user]
-		}
-		if (list) {
-			for (let user of list) {
-				for (let id of id_user) {
-					if (user.value === id) {
-						opts.push(user);
-					}
-				}
-			}
-			return opts
-		}
 	}
 
 	/**
@@ -125,7 +108,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function AffichagePlaces() {
-		let liste = props.event.spots[0];
+		let liste = props.event.spots;
 	
 		let nListe = []
 
@@ -137,16 +120,6 @@ export function UpdateScheduleForm(props) {
 				nListe.push([spot]);
 			}
 		})
-		
-		function CompletePlace (number) {
-			let res = ""
-			if (number < 10) {
-				res = "0"
-			}
-			return res
-		}
-
-		console.log(nListe)
 
 		for (let spots of nListe) {
 			spots.sort();
@@ -159,10 +132,10 @@ export function UpdateScheduleForm(props) {
 					{nListe.map(
 						(spots) => {
 							if (spots.length > 1) {
-								return <li>Etage {spots[0].floor} : De la place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number} à la place {spots[spots.length -1].id_park}-{spots[spots.length -1].floor}{CompletePlace(spots[spots.length -1].number)}{spots[spots.length -1].number}</li>
+								return <li>Etage {spots[0].floor} : De la place {spots[0].id_park}{spots[0].floor}-{spots[0].number} à la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number}</li>
 							}
 							else {
-								return <li>Place {spots[0].id_park}-{spots[0].floor}{CompletePlace(spots[0].number)}{spots[0].number}</li>
+								return <li>Place {spots[0].id_park}{spots[0].floor}-{spots[0].number}</li>
 							}
 						})
 					}
@@ -172,7 +145,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function InformationEvent (infos, baseType) {
-		let baseList = props.event.user[0];
+		let baseList = props.event.user;
 		let listRes = Array()
 		for (let element of baseList) {
 			listRes.push(<li className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>)
@@ -186,6 +159,7 @@ export function UpdateScheduleForm(props) {
 						listRes
 					}
 				</ul>
+				{props.event.guests.length !== 0 && <p style={{fontSize:"0.7em", color:"red", display:"flex", justifyContent:"center"}}>Il y a {props.event.guests.length} invité{NeedS(props.event.guests.length)} à cette réunion</p>}
 				{baseType === "Nettoyage" && AffichagePlaces()}
 				<p>
 					{
@@ -196,37 +170,113 @@ export function UpdateScheduleForm(props) {
 		);
 	}
 
-	const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
 
+	function FixOnlyOne(tab) {
+        if(typeof tab[0] == "string") {
+            return [tab]
+        } else {
+            return tab
+        }
+    }
 
-	const [infos, setInfos] = useState(
-		{
-			parking: props.event.idparking,
-			user: props.event.user,
-			date_start: props.event.d_st,
-			date_end: props.event.d_en,
-			first_spot:props.event.first_spot,
-			last_spot:props.event.last_spot
+	/**
+	 * CheckIfScheduleIn
+	 * Check if the schedule is available or not
+	 *
+	 * @param { JSON } datesCheck - The schedule to check
+	 * @param { JSON<Array> } available - All schedules availables
+	 * @returns { Boolean }
+	 */
+	function CheckIfScheduleIn(datesCheck, available) {
+		let res = false;
+		for (let find of available) {
+			if (datesCheck.date_start >= find[0] && datesCheck.date_end <= find[1]) {
+				res = true;
+			}
 		}
-	);
+		return res;
+	}
+
+	const [baseDate, setBaseDate] = useState(new Date().toISOString().slice(0, 19))
+	const [optionsSpots, setOptionsSpots] = useState({opts:[], change:true})
+	const [optionsUsers, setOptionsUsers] = useState([])
+	const [optionsRoles, setOptionsRoles] = useState([])
+	const [optionsUsersChange, setOptionsUsersChange] = useState({opts:[], change:false})
+
+	const [infos, setInfos] = useState({
+		parking: props.event.idparking,
+		users: props.event.user.map(e => e.id),
+		spots: props.event.spots.map(e => e.id),
+		guests: props.event.guests.map(e => e.id),
+		date_start: ToFrenchISODate(props.event.start),
+		date_end: ToFrenchISODate(props.event.end)
+	});
+	const [spotsCleaning, setSpotsCleaning] = useState({first_spot:null, last_spot:null})
+	const [spotsList, setSpotsList] = useState([])
 
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
 
 	const [parkingsList, setParkingsList] = useState([]);
 	const [serviceList, setServiceList] = useState([]);
+	const [staffList, setStaffList] = useState([]);
+	const [horairesSchedules, setHorairesSchedules] = useState({date_start: ToFrenchISODate(props.event.start), date_end: ToFrenchISODate(props.event.end)})
 	const [guardiansList, setGuardiansList] = useState([]);
 	const [baseType, setBaseType] = useState(props.event.type);
 	const [modifiable, setModifiable] = useState(false);
 
-
 	const [disabled, setDisabled] = useState(false)
 	const delay = ms => new Promise(res => setTimeout(res, ms));
+	const [checkboxInclude, setCheckboxInclude] = useState(false);
+
+	const { userToken } = useContext(ContextUser);
+    const [ infosUser, setInfosUser ] = useState({
+        email: "",
+        first_name: "",
+        id: undefined,
+        id_spot: null,
+        id_spot_temp: null,
+        last_name: "",
+        role: "",
+    });
+
+	const [isOpen, setIsOpen] = useState(false);
+    const [onlyOne, setOnlyOne] = useState(false)
+    const [onlyOneInfo, setOnlyOneInfo] = useState({})
+	const [schedulesAvailable, setSchedulesAvailable] = useState([]);
+	const [changeSchedule, setChangeSchedule] = useState(false)
+
+	const [popupOpened, setPopupOpened] = useState(true)
+
+	const toggleCheckbox = () => {
+        setCheckboxInclude(!checkboxInclude);
+		if (baseType === "Réunion" && checkboxInclude) {
+			for (let i=0; i<infos.users.length; i++) {
+				if (infos.users[i] === infosUser.id) {
+					let baseUsers = infos.users
+					let newInfos = baseUsers.splice(i,1)
+					setInfos(values => ({...values, ["users"]: baseUsers}))
+				}
+			}
+		} else if (baseType === "Réunion" && !checkboxInclude) {
+			if (!(infos.users.includes(infosUser.id))) {
+				let baseUsers = infos.users
+				let newInfos = baseUsers.push(infosUser.id)
+				setInfos(values => ({...values, ["users"]: baseUsers}))
+			}
+		}
+    }
+
+    const checkboxIcon = () => {
+        return checkboxInclude ? <CheckBox /> : <CheckBoxOutlineBlank />;
+    }
 
 	const handleChangeSelect = (selectedOptions, name) => {
 		var value = [];
 		if (selectedOptions.value) {
-			if (name.name === "parking") {
+			if (name.name === "first_spot" || name.name === "last_spot") {
+                setSpotsCleaning(values => ({...values, [name.name]: selectedOptions.value}))
+			} else if (name.name === "parking") {
 				TakeAllSpots(selectedOptions.value).then(res => {
 					setOptionsSpots(values => ({...values, opts:AllSpots(res), change: true}))
 				})
@@ -237,67 +287,140 @@ export function UpdateScheduleForm(props) {
 				value.push(option.value)
 			}
 		}
+		if (name.name === "users" && baseType === "Réunion") {
+			setOptionsUsersChange(values => ({...values, change: true}))
+			UpdateIfNoHourChange({users:value, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
+		} else if (name.name === "guests") {
+			setOptionsUsers(AllNotNecessary(staffList, value))
+        }
+		if (baseType === "Réunion" && checkboxInclude) {
+			value.push(infosUser.id)
+		}
 		setInfos(values => ({...values, [name.name]: value}))
 	}
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault()
 		setWrongInput(false);
-		if (infos.user.length === 0) {
+		if (infos.users.length === 0) {
 			setWrongInput(true)
 			setErrMessage("Vous n'avez assigné ce créneau à personne")
-		}
-		else if (!(infos.parking === props.event.idparking && infos.user === props.event.user && infos.date_start === props.event.d_st && infos.date_end === props.event.d_en && infos.first_spot === props.event.first_spot && infos.last_spot === props.event.last_spot)) {
-			var scheduleAdded = 0;
-			var nbModif = 0;
-			let stock = infos.user
-			var fun;
-			for (let i=0; i<props.event.user.length; i++) {
-				infos.user = stock[i]
-				if (!(props.event.user.includes(infos.user))) {
-					fun = DeleteSchedule(props.event.id_schedule[i]);
-					nbModif++;
-				}
-				if (fun) {
-					const res = await fun
-					if (res.status === 200) {
-						scheduleAdded++;
-					} else {
-						setWrongInput(true);
-						setErrMessage(res.data.message);
-						break;
-					}
-				}
-			}
-			for (let i=0; i<stock.length; i++) {
-				infos.user = stock[i]
-				if (props.event.user.includes(infos.user)) {
-					fun = UpdateSchedule(infos, props.event.id_schedule[i]);
-					nbModif++;
+		} else if (baseType === "Réunion" && infos.users.length < 2) {
+			setWrongInput(true)
+            setErrMessage("Vous devez assigner ce créneau à 2 utilisateurs au minimum")
+		} else if (horairesSchedules.date_start === baseDate && horairesSchedules.date_end === baseDate) {
+			setWrongInput(true)
+			setErrMessage("Choisissez une date de début et de fin.")
+		} else if (horairesSchedules.date_end < horairesSchedules.date_start) {
+			setWrongInput(true)
+			setErrMessage("L'heure de fin ne peut pas précéder l'heure de début.")
+		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
+			let listSpotsCleaning = [];
+            let first, last;
+			//Set toggles for spots (only if "Nettoyage") on spots between first and last
+            if (baseType === "Nettoyage") {
+                first = await placeFromId(spotsCleaning.first_spot).then(first => first)
+                last = await placeFromId(spotsCleaning.last_spot).then(last => last)
+                listSpotsCleaning = spotsList.filter((el) => {
+                    if ((el.floor > first.floor && el.floor < last.floor) ||
+                    (el.floor === first.floor && el.floor === last.floor && el.number >= first.number && el.number <= last.number) ||
+                    (el.floor === first.floor && el.floor !== last.floor && el.number >= first.number) ||
+                    (el.floor === last.floor && el.floor !== first.floor && el.number <= last.number)) {
+                        return true
+                    }
+                })
+				infos.spots = FindToggles(props.event.spots.map(e => e.id), listSpotsCleaning.map(e => e.id))
+            }
+			
+			//If it's "Réunion" then parking = null
+			if (baseType === "Réunion") {
+				infos.parking = '\x00'
+				TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end, id_exclure:props.event.id_schedule}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
+                setIsOpen(true)
+			} else {
+				//Set toggles for users
+				infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
+
+				const res = await UpdateSchedule(infos, props.event.id_schedule)
+				if (res.status === 200) {
+					setWrongInput(true);
+					setErrMessage("Modification prise en compte.")
+					setDisabled(true)
+					await delay(2000);
+					props.handleCallback(false)
+					Modifier()
 				} else {
-					fun = CreationSchedule(infos);
-					nbModif++;
-				}
-				if (fun) {
-					const res = await fun
-					if (res.status === 200) {
-						scheduleAdded++;
-					} else {
-						setWrongInput(true);
-						setErrMessage(res.data.message);
-						break;
-					}
+					setWrongInput(true);
+					setErrMessage(res.data.message)
 				}
 			}
-			if (scheduleAdded === nbModif) {
-				setWrongInput(true);
-				setErrMessage("Modification prise en compte.")
-				setDisabled(true)
-				await delay(2000);
+		} else {
+			setWrongInput(true);
+			setErrMessage("Vous n'avez rien modifié");
+		}
+	}
+
+	function UpdateIfNoHourChange(params) {
+		TakeAllSchedulesAvailable(params).then(res => {
+			setSchedulesAvailable(FixOnlyOne(res))
+			if (CheckIfScheduleIn(horairesSchedules, FixOnlyOne(res))) {
+				setChangeSchedule(false)
+			}
+		})
+	}
+
+	const handlleSubmitNewReunion = async (event) => {
+        event.preventDefault()
+        setWrongInput(false);
+        if (infos.date_start == baseDate || infos.date_end == baseDate) {
+            setWrongInput(true)
+            setErrMessage("Veuillez ne pas laisser la date actuelle.")
+        } else {
+			//Set toggles for users
+			infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
+			//Set toggles for guests
+			infos.guests = FindToggles(props.event.guests.map(e => e.id), infos.guests)
+
+            const res = await UpdateSchedule(infos, props.event.id_schedule); 
+            //console.log(res);
+            if (res.status === 200) {
+                setWrongInput(true);
+                setErrMessage("Modification prise en compte.");
+                await delay(2000);
+                setIsOpen(false)
+                setPopupOpened(false)
 				props.handleCallback(false)
-				Modifier()
+            } else {
+                setWrongInput(true);
+                setErrMessage(res.data.message);
+            }
+        }
+    }
+
+	const handleNoChangeDate = async (event) => {
+		event.preventDefault()
+        setWrongInput(false);
+		if (!(JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)))) {
+			//Set toggles for users
+			infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
+			//Set toggles for guests
+			infos.guests = FindToggles(props.event.guests.map(e => e.id), infos.guests)
+			infos.date_start = horairesSchedules.date_start
+			infos.date_end = horairesSchedules.date_end
+
+			const res = await UpdateSchedule(infos, props.event.id_schedule); 
+			//console.log(res);
+			if (res.status === 200) {
+				setWrongInput(true);
+				setErrMessage("Modification prise en compte.");
+				await delay(2000);
+				setIsOpen(false)
+				setPopupOpened(false)
+				props.handleCallback(false)
+			} else {
+				setWrongInput(true);
+				setErrMessage(res.data.message);
 			}
-			infos.user = stock
 		} else {
 			setWrongInput(true);
 			setErrMessage("Vous n'avez rien modifié");
@@ -305,26 +428,57 @@ export function UpdateScheduleForm(props) {
 	}
 
 	useEffect(() => {
-		TakeParking().then(res => setParkingsList(res));
+        async function fetchUserInfos() {
+            const resInfosUser = await userFromToken(userToken);
+            //console.log("user", resInfosUser)
+            setInfosUser(resInfosUser.data[0]);
+			if (props.event.user.map(e => e.id).includes(resInfosUser.data[0].id)) {
+				setCheckboxInclude(true)
+			}
+        }
+        fetchUserInfos();
+    }, [userToken]);
+
+	useEffect(() => {
+		setOptionsUsersChange({opts:AllNotNecessary(staffList, infos.users), change:false})
+	}, [optionsUsersChange.change])
+
+	useEffect(() => {
+		TakeParking().then(res => {
+			setParkingsList(res)
+		});
 		TakeAllSpots(infos.parking).then(res => {
+			setSpotsList(res);
 			setOptionsSpots({opts:AllSpots(res), change:false});
 		});
 		TakeByRole("Agent d'entretien").then(res => setServiceList(res));
 		TakeByRole("Gardien").then(res => setGuardiansList(res));
+		TakeByRole("Agent d'entretien").then(res => {
+            TakeByRole("Gardien").then(res2 => {
+                for (let user of res2) {
+                    res.push(user)
+                }
+                setStaffList(res)
+				setOptionsUsers(AllNotNecessary(res, props.event.guests.map(e => e.id)))
+				setOptionsUsersChange({opts:AllNotNecessary(res, props.event.user.map(e => e.id)), change:false})
+            })
+        })
+		TakeAllRoles().then(res => setOptionsRoles(res))
+		UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
+		setPopupOpened(true)
 	}, [props])
 
 	useEffect(() => {
 		setBaseType(props.event.type);
 		setInfos({
 			parking: props.event.idparking,
-			user: props.event.user,
-			date_start: props.event.d_st,
-			date_end: props.event.d_en,
-			first_spot: props.event.first_spot,
-			last_spot: props.event.last_spot
+			users: props.event.user.map(e => e.id),
+			spots: props.event.spots.map(e => e.id),
+			guests: props.event.guests.map(e => e.id),
+			date_start: ToFrenchISODate(props.event.start),
+			date_end: ToFrenchISODate(props.event.end)
 		});
 	}, [props])
-
 
 	useEffect(() => {
 		TakeAllSpots(infos.parking).then(res => {
@@ -350,15 +504,53 @@ export function UpdateScheduleForm(props) {
 		},
 	};
 
+	const customStylesTwo = {
+        overlay: {
+            zIndex : 100000
+        },
+        content: {
+            top: '15%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexDirection:"column",
+            marginRight: '-50%',
+            width: '35%',
+            height: '75%',
+            transform: 'translate(-40%, -10%)'
+        },
+    };
+
+	function TitleButton(type) {
+        if (type === "Nettoyage" || type === "Gardiennage") {
+            return <Button
+                className="submit_button" 
+                variant="contained" 
+                color="primary" 
+                type="submit"
+            >Modifier</Button>
+        } else if (type === "Réunion") {
+            return <Button
+                className="submit_button" 
+                variant="contained" 
+                color="primary" 
+                type="submit"
+            >Voir la liste des horaires disponibles</Button>
+        }
+    }
+
 	function AffichageModifs () {
 		return (
 			<div className="form_div">
 				<h3 style={{textAlign:"center"}}>Modification {DeOrDu(baseType)} {baseType.toLowerCase()} :</h3>
 				<form onSubmit={handlleSubmit} className="form">   
-					<div style={{zIndex:1007}}>
+					{baseType !== "Réunion" && <div style={{zIndex:1007}}>
 						<Select
 							id="parking"
-							className="searchs-add"
+							className="size-select-popup"
 							options={AllParkings(parkingsList)} 
 							placeholder={BaseParking(infos.parking, parkingsList)}
 							name="parking" 
@@ -366,46 +558,125 @@ export function UpdateScheduleForm(props) {
 							onChange={handleChangeSelect}
 							maxMenuHeight={200}
 						/>
-					</div> 
-					<div style={{zIndex:1006}}>  
+					</div>}
+					{baseType === "Réunion" && <div style={{zIndex:1007, display:"flex", flexDirection:"column", justifyContent:"center", marginTop:"-30px"}}>  
+                        <Separation value="Personnes nécéssaires"/>
+						<p style={{fontSize:"0.7em", color:"red", marginTop:"-10px"}}>Les personnes nécéssaires seront obligatoirement dans la réunion.</p>
+                        <div style={{display:"flex", justifyContent:"center"}}>
+                            <Checkbox 
+                                style={{color:"blue"}}
+                                icon={checkboxIcon()}
+                                checked={checkboxInclude}
+                                onChange={toggleCheckbox}/>
+                            <p>Je veux m'inclure dans la réunion</p>
+                        </div>
+                        <div style={{zIndex:1008, display:"flex", justifyContent:"center"}}>
+                            <Select
+                                isMulti
+                                name="users"
+                                placeholder="Assigner à... (personnes)"
+                                options={optionsUsers}
+								defaultValue={props.baseUser}
+                                className="size-select-popup"
+                                onChange={handleChangeSelect}
+                                maxMenuHeight={200}
+                            />
+                        </div>
+                        <Separation value="Personnes invitées"/>
+						<p style={{fontSize:"0.7em",color:"red", marginTop:"-10px"}}>Les personnes invitées ne participent pas à la réunion si elles ne sont pas libres au moment où elle se déroule.<br/> Le créneau ne sera pas prioritaire pour elles.</p>
+                        <div style={{zIndex:1007, display:"flex", justifyContent:"center"}}>
+                            <Select
+                                isMulti
+                                name="guests"
+                                placeholder="Inviter... (personnes)"
+                                options={optionsUsersChange.opts}
+								defaultValue={props.baseGuests}
+                                className="size-select-popup"
+                                onChange={handleChangeSelect}
+                                maxMenuHeight={200}
+                            />
+                        </div>
+                    </div>}
+					{baseType !== null && baseType !== "Réunion" && <div style={{zIndex:1006}}>  
 						<Select
 							isMulti
-							name="user"
+							name="users"
 							options={BaseListType(baseType)}
 							defaultValue={props.baseUser}
-							className="search-add-two"
+							className="size-select-popup"
 							onChange={handleChangeSelect}
 							maxMenuHeight={200}
 						/>
-					</div>
-					{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
-						<Select
-							options={optionsSpots.opts}
-							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-							size="small"
-							id="first_spot"
-							placeholder={BaseSpot(infos.first_spot, optionsSpots.opts)}
-							type="text"
-							name="first_spot"
-							className="search"
-							onChange={handleChangeSelect}
-							maxMenuHeight={150}
-						/>
-						<p style={{margin:"7px 7px 0 7px"}}>à</p>
-						<Select
-							options={optionsSpots.opts}
-							style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
-							size="small"
-							id="last_spot"
-							placeholder={BaseSpot(infos.last_spot, optionsSpots.opts)}
-							type="text"
-							name="last_spot"
-							className="search"
-							onChange={handleChangeSelect}
-							maxMenuHeight={150}
-						/>
 					</div>}
-					<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+					{baseType === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
+                        <Select
+                            options={optionsSpots.opts}
+                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                            size="small"
+                            id="first_spot"
+                            label="Numéro"
+                            type="text"
+                            name="first_spot"
+                            className="size-type"
+                            onChange={handleChangeSelect}
+							maxMenuHeight={200}
+                        />
+                        <p style={{margin:"7px 7px 0 7px"}}>à</p>
+                        <Select
+                            options={optionsSpots.opts}
+                            style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
+                            size="small"
+                            id="last_spot"
+                            label="Numéro"
+                            type="text"
+                            name="last_spot"
+                            className="size-type"
+                            onChange={handleChangeSelect}
+							maxMenuHeight={200}
+                        />
+                    </div>}
+					{baseType === "Réunion" && CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={handleNoChangeDate}
+					>Garder la même horaire</Button></div>}
+					{baseType === "Réunion" && !CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={() => setChangeSchedule(true)}
+					>Changer d'horaire</Button></div>}
+					{(baseType == "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
+                        <DatePicker
+                            name="date_start"
+                            selected={new Date(horairesSchedules.date_start)}
+                            onChange={(date) => {
+								setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(date), date_end:ToFrenchISODate(horairesSchedules.date_end), id_exclure:props.event.id_schedule})
+							}}
+                            showTimeSelect
+                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                        />
+                        <p style={{margin:"0 7px 7px 7px"}}>et</p>
+                        <DatePicker
+                            name="date_end"
+                            selected={new Date(horairesSchedules.date_end)}
+                            onChange={(date) => {
+								setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(horairesSchedules.date_start), date_end:ToFrenchISODate(date), id_exclure:props.event.id_schedule})
+							}}
+                            showTimeSelect
+                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                        /></div>
+                    </div>}
+					{(infos.type == "Nettoyage" || infos.type == "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
 						<DatePicker
 							name="date_start"
 							selected={new Date(infos.date_start)}
@@ -421,16 +692,17 @@ export function UpdateScheduleForm(props) {
 							showTimeSelect
 							dateFormat="yyyy:MM:dd hh:mm:ss"
 						/>
-					</div>
-					<Button
-						disabled={disabled}
-						className="submit_button" 
-						variant="contained" 
-						color="primary" 
-						type="submit"
-					>Modifier</Button>
+						<Button
+							disabled={disabled}
+							className="submit_button" 
+							variant="contained" 
+							color="primary" 
+							type="submit"
+						>Modifier</Button>
+					</div>}
+					{(!CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && changeSchedule || baseType !== "Réunion") && TitleButton(baseType)}
 				</form>
-				{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}
+				<div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
 			</div>
 		)
 	}
@@ -443,17 +715,31 @@ export function UpdateScheduleForm(props) {
 		<div>
 			<ReactModal
 				ariaHideApp={false}
-				isOpen={props.modalState}
+				isOpen={props.modalState && popupOpened}
 				contentLabel="Modifier le créneau"
 				onRequestClose={() => {
 					props.setModalState(false);
 					setModifiable(false);
+					setWrongInput(false);
 				}}
-				onAfterOpen={() => {setModifiable(false)}}
+				onAfterOpen={() => {
+					setModifiable(false)
+					setChangeSchedule(false)
+					setHorairesSchedules({date_start:ToFrenchISODate(props.event.start), date_end: ToFrenchISODate(props.event.end)}); 
+					UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
+					setInfos({
+						parking: props.event.idparking,
+						users: props.event.user.map(e => e.id),
+						spots: props.event.spots.map(e => e.id),
+						guests: props.event.guests.map(e => e.id),
+						date_start: ToFrenchISODate(props.event.start),
+						date_end: ToFrenchISODate(props.event.end)
+					})
+				}}
 				style={customStyles}
 			>
 				<div className="info_reunion">
-					<h3>{props.event.type} {props.event.type==="Réunion"? "avec": "réalisé par"} :</h3>
+					<h3>{props.event.type} {props.event.type === "Réunion" ? "avec" : "réalisé par"} :</h3>
 					<div>
 						{
 							InformationEvent(infos, baseType)
@@ -461,7 +747,7 @@ export function UpdateScheduleForm(props) {
 					</div>
 				</div>
 				{
-					!modifiable && 
+					((!modifiable && baseType !== "Réunion") || (!modifiable && props.admin && baseType === "Réunion")) &&
 					<Button
 						disabled={disabled}
 						className="submit_button" 
@@ -474,7 +760,67 @@ export function UpdateScheduleForm(props) {
 					modifiable && AffichageModifs()
 				}
 			</ReactModal>
+			<ReactModal
+				ariaHideApp={false}
+				isOpen={isOpen}
+				onRequestClose={() => {setIsOpen(false);}}
+				onAfterOpen={() => {
+					setWrongInput(false);
+					setOnlyOne(false)
+				}}
+				style={customStylesTwo}
+			>
+				<div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
+					<p style={{alignText:"center"}}>
+						Voici la liste des horaires où toutes les personnes nécéssaires sont disponibles. Choisissez en un et mettez une date et une horaire précise.
+					</p>
+					<p style={{fontSize:"0.7em",color:"red", marginTop:"-10px"}}>Vous avez invité {infos.guests.length} personne{NeedS(infos.guests.length)} à cette réunion</p>
+				</div>
+				{onlyOne && <div>
+					<div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Choisir une date entre le {ChangeDate(onlyOneInfo[0].slice(0,10))} à {onlyOneInfo[0].slice(11,19)} et le {ChangeDate(onlyOneInfo[1].slice(0,10))} à {onlyOneInfo[1].slice(11,19)} : </div><br/>  
+					<form onSubmit={ handlleSubmitNewReunion } name="form-modif-mdp">
+						<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
+							<DatePicker
+								name="date_start"
+								selected={new Date(infos.date_start)}
+								minDate={new Date(onlyOneInfo[0])}
+								maxDate={new Date(onlyOneInfo[1])}
+								minTime={setHours(setMinutes(new Date(), 0), 8)}
+								maxTime={setHours(setMinutes(new Date(), 30), 20)}
+								onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+								showTimeSelect
+								dateFormat="yyyy:MM:dd hh:mm:ss"
+							/>
+							<p style={{margin:"0 60px 7px 0"}}>et</p>
+							<DatePicker
+								name="date_end"
+								selected={new Date(infos.date_end)}
+								minDate={new Date(onlyOneInfo[0])}
+								maxDate={new Date(onlyOneInfo[1])}
+								minTime={setHours(setMinutes(new Date(), 0), 8)}
+								maxTime={setHours(setMinutes(new Date(), 30), 20)}
+								onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+								showTimeSelect
+								dateFormat="yyyy:MM:dd hh:mm:ss"
+							/>
+						</div>
+					<div className="input-div" style={{marginTop:'20px'}}>
+						<Button
+							className="submit_button"
+							variant="contained" 
+							color="primary"
+							type="submit"
+						>Valider cette horaire</Button>
+					</div>
+					</form>
+				</div>}
+				<div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px", marginTop:"10px"}}>
+					{schedulesAvailable.map((schedule, index) => (
+						<AllSchedulesAvailable schedule={schedule} optionals={infos.guests} handleCallback={CallbackSetOne}/>
+					))}
+				</div>
+				{ wrongInput && <p className="err_message"> { errMessage } </p>}
+			</ReactModal>
 		</div>
 	)
 }
-

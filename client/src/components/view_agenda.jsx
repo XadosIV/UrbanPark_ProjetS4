@@ -29,7 +29,7 @@ export function ViewAgenda (props){
 				idParking = element.parking.id;
 				parking = element.parking.name;
 			}
-			let user = element.users[0].last_name;
+			let user = element.users.last_name;
 			let dateStart = element.date_start;
 			let dateEnd = element.date_end;
 
@@ -65,7 +65,7 @@ export function ViewAgenda (props){
 			if (!trouve)
 			{
 				let newElement = {
-					id_schedule:[element.id],
+					id_schedule:element.id,
 					type : type,
 					id: i,
 					idparking: type !== "Réunion" ? idParking : "",
@@ -74,8 +74,9 @@ export function ViewAgenda (props){
 					d_st: dateStart,
 					d_en: dateEnd,
 					end: new Date(dateEnd),
-					user: [element.users],
-					spots:[element.spots]
+					user: element.users,
+					guests: element.guests,
+					spots:element.spots
 				};
 				sortie.push(newElement);
 			}
@@ -138,22 +139,6 @@ export function ViewAgenda (props){
 	}
 
 	/**
-	 * BaseParking
-	 * Returns a string corresponding to the base parking
-	 *
-	 * @param { integer } id_park - id of the parking
-	 * @param { Array } list - List of parkings
-	 * @return { string }
-	 */
-	function BaseParking(id_park, list) {
-		for (let parking of list) {
-			if (parking.id === id_park) {
-				return "Parking " + parking.name.toLowerCase();
-			}
-		}
-	}
-
-	/**
 	 * BaseListType
 	 * Returns a array corresponding to the list of users corresponding to the type
 	 *
@@ -183,7 +168,7 @@ export function ViewAgenda (props){
 		var opts = []
 		if (list) {
 			for (let user of list) {
-				for (let user2 of list_user[0]) {
+				for (let user2 of list_user) {
 					if (user.value === user2.id) {
 						opts.push(user);
 					}
@@ -234,7 +219,6 @@ export function ViewAgenda (props){
 		TakeByRole("Gardien").then(res => setGuardiansList(res));
 	}, [props])
 
-
 	return (
 		<div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"100%"}}>
 			<Calendar
@@ -248,7 +232,7 @@ export function ViewAgenda (props){
 				messages={messages}
 			/>
 			{selectedEvent && update &&
-				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)}/>
+				<UpdateScheduleForm event={selectedEvent} handleCallback={Callback} modalState={modalState} setModalState={setModalState} baseUser={BaseUser(selectedEvent.user, selectedEvent.type)} baseGuests={BaseUser(selectedEvent.guests, selectedEvent.type)} admin={props.admin}/>
 		    }
 		</div>
 	)

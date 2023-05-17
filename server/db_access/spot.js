@@ -114,7 +114,6 @@ function CheckIsCleanning(arrSpots, callback){
 	`;
 
 	dbConnection.query(sql, {}, (err, data) => {
-		// console.log(data);
 		if(err){
 			return callback(err, null);
 		}else{
@@ -475,39 +474,22 @@ function ToggleTypes(id, toggle, callback){
  * @param {function (*,*)} callback (err, data)
  */
 function DeleteSpot(id, callback){
-	const {AdaptSchedule} = require("./schedule")
 	const {DeleteSpotType} = require("./spot_type")
 	const {RemoveSpotUsers} = require("./user")
-	// AdaptSchedule((err, res) => {
-	// 	callback(err, res);
-	// }, id)
-	AdaptSchedule(id, (err, res) =>{
-		if (err){
-			callback(err, res);
-		}else{
-			DeleteSpotType(id, (err, res) => {
-				if (err){
-					callback(err, res);
-				}
-				else{
-					RemoveSpotUsers(id, (err, res) => {
-						if (err){
-							callback(err, res)
-						}
-						else {
-
-							sql = `DELETE FROM Spot WHERE id=:id`;
-
-							dbConnection.query(sql,{
-								id:id
-							}, (err, data) => {
-								callback(err, data)
-							});
-						}
-					})
-				}
-			});
-		};
+	
+	sql = `DELETE FROM Schedule_Spot WHERE id_spot=:id`
+	dbConnection.query(sql, {id:id}, (err, data) => {
+		if (err) return callback(err, null);
+		DeleteSpotType(id, (err, res) => {
+			if (err) return callback(err, null);
+			RemoveSpotUsers(id, (err, res) => {
+				if (err) return callback(err, null)
+				sql = `DELETE FROM Spot WHERE id=:id`;
+				dbConnection.query(sql,{id:id}, (err, data) => {
+					callback(err, data)
+				});
+			})
+		});
 	})
 }
 
