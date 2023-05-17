@@ -77,9 +77,9 @@ export function Notification(props) {
 				<h2>
 					{event}
 				</h2>
-				<p>
+				<div>
 					{(event==="Nettoyage" || event ==="Gardiennage") && ajout}
-				</p>
+				</div>
 				<p>Avec les employés suivants:</p>
 				<ul>
 					{

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Notification } from "."
+import { GetNotificationId } from '../services';
 
 export function NotificationList () {
+	GetNotificationId(4)
 	const test = {
 		type:"Réunion",
 		users:["Matrac Henry", "Pavlof Gérard", "Tam Tom"],
