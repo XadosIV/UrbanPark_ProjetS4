@@ -76,7 +76,7 @@ app.get('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -94,7 +94,7 @@ app.delete('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -230,7 +230,7 @@ app.get('/api/spot/:spot', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -272,7 +272,7 @@ app.delete('/api/spot/:id', (req, res) => {
 			}
 		})
 	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","id":"Champs obligatoires : id"});
+		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : id"});
 	}
 })
 
@@ -291,7 +291,7 @@ app.get('/api/role', (req, res) => {
 
 app.get('/api/schedules', (req, res) => {
 	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
-	GetSchedules(req.query, (err, data) => {
+	GetSchedules(req.body, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
@@ -302,17 +302,13 @@ app.get('/api/schedules', (req, res) => {
 
 app.post('/api/schedule', (req, res) => {
 	//console.log("Request at POST /api/schedule : " + JSON.stringify(req.body));
-	if (req.body && (!!req.body.role ^ req.body.user) && (typeof req.body.parking != "undefined") && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
-		PostSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json(data);
-			}
-		});
-	}else{
-		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définis. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
-	}
+	PostSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json(data);
+		}
+	})
 });
 
 app.get('/api/schedules/:id', (req, res) => {
@@ -329,23 +325,19 @@ app.get('/api/schedules/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 })
 
 app.put('/api/schedules/:id', (req, res) => {
 	req.body.id = req.params.id;
-	if (req.body && (req.body.user || req.body.parking || req.body.date_start || req.body.date_end)){
-		UpdateSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json()
-			}
-		})
-	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Un parmi user, parking, date_start, date_end doit être défini."})
-	}
+	UpdateSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json()
+		}
+	})
 })
 
 app.delete('/api/schedule/:id', (req, res) => {
@@ -358,12 +350,12 @@ app.delete('/api/schedule/:id', (req, res) => {
 				if (data.affectedRows == 1){
 					res.status(200).json();
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun utilisateur n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -377,7 +369,6 @@ app.get('/api/reunion', (req, res) => {
 			res.status(200).json(data);
 		}
 	})
-
 })
 
 module.exports = app;

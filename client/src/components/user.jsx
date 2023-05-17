@@ -96,7 +96,7 @@ export function User(props){
 			// console.log("res spot", props.user.id_park_demande, allSpots);
 			let mainSpot = allSpots.find(spot => spot.id === props.user.id_spot);
 			let tempSpot = allSpots.find(spot => spot.id === props.user.id_spot_temp);
-			console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
+			//console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
 			setSpotWithUser(SpotName(mainSpot));
 			setSpotTempWithUser(SpotName(tempSpot));
 		}
