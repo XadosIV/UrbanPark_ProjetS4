@@ -207,7 +207,7 @@ function PostSchedule(infos, callback) {
  * @param {Array<integer>} users 
  * @param {Array<integer>} guests 
  */
-function FixUsersGuests(users, guests){
+function FixUsersGuests(users, guests, previous=[]){
 	// Found the two next line in : https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
 	users = [...new Set(users)];
 	guests = [...new Set(guests)];
@@ -215,7 +215,7 @@ function FixUsersGuests(users, guests){
 	// Get index of all duplicata between guests and users
 	to_delete_index = [];
 	for (let index in guests){
-		if (users.includes(guests[index])){
+		if (users.includes(guests[index]) && !previous.includes(guests[index])){
 			to_delete_index.push(index);
 		}
 	}
@@ -381,9 +381,6 @@ function UpdateSchedule(infos, callback){
 
 	let doUpdate = (users, guests, callback) => {
 
-		let res = FixUsersGuests(users, guests);
-		users = res[0];
-		guests = res[1];
 		//Start all functions
 		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
 			if (err) return callback(err, null);
@@ -423,18 +420,39 @@ function UpdateSchedule(infos, callback){
 			return callback(err, null);
 		}else{
 			let userAvant = data.map(elt => elt.id_user);
-			let userModif = users.concat(guests);
+
+			let res = FixUsersGuests(users, guests, userAvant);
+			users = res[0];
+			guests = res[1];
+
 			let postUser = [];
-			let putUser = [...userAvant];
+			let putUser = [];
 			let deleteUser = [];
-			userModif.forEach(idU => {
+			guests.forEach(idU => {
 				if(userAvant.includes(idU)){
-					deleteUser.push(idU);
+					if(users.includes(idU)){
+						putUser.push(idU);
+					}else{
+						deleteUser.push(idU);
+					}
 				}else{
 					postUser.push(idU);
 				}
 			})
-			putUser = putUser.filter(idU => !deleteUser.includes(idU));
+			users.forEach(idU => {
+				if(!guests.includes(idU)){
+					if(userAvant.includes(idU)){
+						deleteUser.push(idU);
+					}else{
+						postUser.push(idU);
+					}
+				}
+			})
+			userAvant.forEach(idU => {
+				if(!users.includes(idU) && !guests.includes(idU)){
+					putUser.push(idU);
+				}
+			})
 
 			PrepareListPostNotification(postUser, "POST", "", id, (err, notifsPost) => {
 				if(err){
