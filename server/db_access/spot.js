@@ -184,10 +184,11 @@ function UpdateUserTemp(spots, callback, newSpots = []){
 	}
 }
 
+// Retirer la place temporaire si la place temporaire n'est plus en nettoyage
 function ActualiseTempUser(spot, callback){
 	const { GetUsers } = require("./user");
 	if(spot.id_user || !spot.id_user_temp) return callback(null, spot);
-	GetUsers({id: spot.id_user_temp}, (err, userTemp) => {
+	GetUsers({id: spot.id_user_temp}, (err, userTemp) => { // permet l'attribution ou la suppression de la place temporaire.
 		if(err){
 			return callback(err, null);
 		}else{
