@@ -103,12 +103,11 @@ CREATE TABLE IF NOT EXISTS Notification (
 	action VARCHAR(100) NOT NULL,
 	type_notif VARCHAR(100) NOT NULL,
 
-	id_schedule INT,
+	id_schedule INT, -- Foreign key that is not a foreign key
 	type VARCHAR(50),
 	id_parking CHAR,
 	date_start DATETIME,
 	date_end DATETIME,
 	CONSTRAINT pk_notification PRIMARY KEY (id),
-	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id),
-	CONSTRAINT fk_schedule FOREIGN KEY (id_schedule) REFERENCES Schedule (id)
+	CONSTRAINT fk_notification_user FOREIGN KEY (id_user) REFERENCES User (id)
 );

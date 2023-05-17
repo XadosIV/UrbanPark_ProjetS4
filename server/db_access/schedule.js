@@ -4,7 +4,6 @@ const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 const { GetUsersFromRoleArray } = require("./reunion");
 const { GetAllSpots } = require('./spot');
-const { PreparePostNotification, PostNotification } = require("./notification");
 
 /**
  * IsValidDatetime
@@ -111,7 +110,7 @@ function GetSchedules(infos, callback){
  * @param {object} infos {roles, users, guests, parking, date_start, date_end, spots, type}
  * @param {function(*,*)} callback (err, data)
  */
-function PostSchedule(infos, callback) {
+function PostSchedule(infos, callback) {	
 	if (!infos.roles && !infos.users) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Un des champs suivant doit être rempli : users, roles", callback);
 	if (!infos.type) return Errors.SendError(Errors.E_TYPE_DONT_EXIST, "Aucun type n'a été demandé.", callback);
 	if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
@@ -239,6 +238,8 @@ function FixUsersGuests(users, guests){
  * @param {function(*,*)} callback 
  */
 function InsertUsersSchedules(users_id, id_schedule, isGuest, type, callback){
+	const { PreparePostNotification, PostNotification } = require("./notification");  // Avoiding circular dependencies
+
 	if (users_id.length == 0){
 		callback(null, true)
 	}else{
@@ -286,6 +287,8 @@ function GetScheduleById(id, callback){
  * @param {function(*,*)} callback 
  */
 function UpdateSchedule(infos, callback){
+	const { PreparePostNotification, PostNotification } = require("./notification");  // Avoiding circular dependencies
+
 	let UpdateScheduleTable = (id, date_start, date_end, suite) => {
 		if (date_start || date_end){
 
@@ -472,20 +475,32 @@ function IsntScheduleOverlappingForList(infos, ids, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteSchedule(id, callback){
+	const { PrepareListPostNotification, ListPostNotification } = require("./notification");  // Avoiding circular dependencies
 	
-	//Remove from MN Table User_Schedule
-	let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id`
-	dbConnection.query(sql, {id:id}, (err, data) => {
-		if (err) return callback(err, null);
-		//Remove from MN Table Schedule_Spot
-		let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id`
-		dbConnection.query(sql, {id:id}, (err, data) => {
-			if (err) return callback(err, null);
-			sql = `DELETE FROM Schedule WHERE id=:id;`;
-			dbConnection.query(sql, {id:id}, callback);
-		})
-	})
-	
+	let sql = `SELECT id_user FROM User_Schedule WHERE id_schedule=:id`;
+	dbConnection.query(sql, {id:id}, (err,data) => {
+		let ids_user = data.map(elem => elem.id_user);
+		PrepareListPostNotification(ids_user, "DELETE", "", id, (err, preparedNotifications) => {
+			//Remove from MN Table User_Schedule
+			let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id`
+			dbConnection.query(sql, {id:id}, (err, data) => {
+				if (err) return callback(err, null);
+				//Remove from MN Table Schedule_Spot
+				let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id`
+				dbConnection.query(sql, {id:id}, (err, data) => {
+					if (err) return callback(err, null);
+					sql = `DELETE FROM Schedule WHERE id=:id;`;
+					dbConnection.query(sql, {id:id}, (err, deletedData) => {
+						if(err){
+							callback(err,data);
+						}else{
+							ListPostNotification(preparedNotifications, (err,data)=>callback(err, deletedData));
+						}
+					});
+				});
+			});
+		});
+	});
 }
 
 module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById};
