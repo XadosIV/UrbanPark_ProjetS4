@@ -57,6 +57,11 @@
 	align-items: center;
 }
 
+.elt-aff-place{
+	flex-basis: 25%;
+	margin: .5%;
+}
+
 .p-form-title{
 	align-self: top;
 }

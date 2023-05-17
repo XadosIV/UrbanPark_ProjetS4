@@ -33,7 +33,7 @@ export function UpdateSpot (props) {
 					trouve = true;
 				}
 			}
-			if (!trouve && base.length != 0){
+			if (!trouve && base.length !== 0){
 				changes.push(typeL.name);
 			}
 		}
@@ -44,11 +44,11 @@ export function UpdateSpot (props) {
 					trouve = true;
 				}
 			}
-			if (!trouve && typeList.length != 0){
+			if (!trouve && typeList.length !== 0){
 				changes.push(typeB.name);
 			}
 		}
-		if (changes.length != 0) {
+		if (changes.length !== 0) {
 			ServiceUpdateSpot(changes, props.spot.id);
 		}
 		props.handleCallback(true);

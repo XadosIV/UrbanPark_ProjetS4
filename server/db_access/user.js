@@ -9,32 +9,32 @@ const Errors = require('../errors');
  * @param {function(*,*)} callback (err, data)
  */
 function GetUsers(infos, callback){
-	sql = `SELECT 
-				id,
-				first_name,
-				last_name,
-				email,
-				id_spot,
-				id_spot_temp,
-				role,
-				id_park_demande
-			FROM User 
-			WHERE
-				id LIKE :id AND
-				email LIKE :email AND
-				role LIKE :role AND
-				last_name LIKE :last_name AND
-				first_name LIKE :first_name AND
-				(
-					id_spot LIKE :id_spot OR
-					'%' = :id_spot OR
-					(:id_spot = 'NULL' AND id_spot IS NULL)
-				) AND
-				(
-					id_spot_temp LIKE :id_spot_temp OR
-					'%' = :id_spot_temp OR
-					(:id_spot_temp = 'NULL' AND id_spot_temp IS NULL)
-				);`;
+	let sql = `SELECT 
+		id,
+		first_name,
+		last_name,
+		email,
+		id_spot,
+		id_spot_temp,
+		role,
+		id_park_demande
+	FROM User 
+	WHERE
+		id LIKE :id AND
+		email LIKE :email AND
+		role LIKE :role AND
+		last_name LIKE :last_name AND
+		first_name LIKE :first_name AND
+		(
+			id_spot LIKE :id_spot OR
+			'%' = :id_spot OR
+			(:id_spot = 'NULL' AND id_spot IS NULL)
+		) AND
+		(
+			id_spot_temp LIKE :id_spot_temp OR
+			'%' = :id_spot_temp OR
+			(:id_spot_temp = 'NULL' AND id_spot_temp IS NULL)
+		);`;
 
 	// console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
@@ -156,7 +156,7 @@ function UpdateUser(infos, callback){
       		// placeholders variables gave as the request
 			placeholders = {id:infos.id, parameters:parameters}
 			
-			console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
+			//console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
 			dbConnection.query(sql, placeholders, callback);
 		}
 
@@ -292,27 +292,27 @@ function PostUser(infos, callback){
 
 								let sql=`
 									INSERT INTO User (
-													 	first_name,
-													 	last_name,
-													 	email,
-													 	password,
-													 	role,
-													 	token,
-													 	id_park_demande
-													 )
-												VALUES (
-														:first_name,
-														:last_name,
-														:email,
-														:password,
-														:role,
-														:token,
-														:id_park_demande
-													);`;
+										first_name,
+										last_name,
+										email,
+										password,
+										role,
+										token,
+										id_park_demande
+										)
+									VALUES (
+										:first_name,
+										:last_name,
+										:email,
+										:password,
+										:role,
+										:token,
+										:id_park_demande
+									);`;
 								
 								infos.role="Abonné";
 								infos.token = token;
-								console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
+								//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
 								dbConnection.query(sql, infos, callback);
 							}
 						});

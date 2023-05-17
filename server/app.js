@@ -1,17 +1,18 @@
 const express = require('express');
-const app = express();
 const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('./db_access/user');
 
 const {GetParkings, PostParking, PutParkings, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
-
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
 const {GetSchedulesAvailable} = require('./db_access/reunion');
 const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
-
 const {GetPermRole} = require('./db_access/role');
+const {GetNotifications} = require('./db_access/notification')
+
 const Errors = require('./errors');
+
+const app = express();
 
 // Default headers
 app.use((req, res, next) => {
@@ -265,7 +266,7 @@ app.delete('/api/spot/:id', (req, res) => {
 	if (parseInt(req.params.id)){
 		DeleteSpot(parseInt(req.params.id), (err, data)=>{
 			if (err){
-				console.log(err);
+				//console.log(err);
 				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 			} else {
 				res.status(200).json();
@@ -290,8 +291,8 @@ app.get('/api/role', (req, res) => {
 });
 
 app.get('/api/schedules', (req, res) => {
-	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
-	GetSchedules(req.body, (err, data) => {
+	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query) + "\n body: " + JSON.stringify(req.body));
+	GetSchedules(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
@@ -306,7 +307,7 @@ app.post('/api/schedule', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			res.status(200).json(data);
+			res.status(200).json();
 		}
 	})
 });
@@ -320,7 +321,7 @@ app.get('/api/schedules/:id', (req, res) => {
 				if (data.length == 1){
 					res.status(200).json(data[0]);
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});
@@ -340,7 +341,7 @@ app.put('/api/schedules/:id', (req, res) => {
 	})
 })
 
-app.delete('/api/schedule/:id', (req, res) => {
+app.delete('/api/schedules/:id', (req, res) => {
 	//console.log(req.params.id)
 	if (parseInt(req.params.id)){
 		DeleteSchedule(parseInt(req.params.id), (err, data) => {
@@ -365,7 +366,18 @@ app.get('/api/reunion', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			console.log(data)
+			//console.log(data)
+			res.status(200).json(data);
+		}
+	})
+});
+
+app.get('/api/notifications', (req, res) => {
+	GetNotifications(req.query, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			//console.log(data)
 			res.status(200).json(data);
 		}
 	})

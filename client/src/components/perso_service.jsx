@@ -20,6 +20,6 @@ export function PersoService(props){
             onClick={ toggleAffEntretient }
         > mon planning </Button>
         </div>
-        { affEdtEntretient && <ScheduleService id={id} /> }
+        { affEdtEntretient && <ScheduleService id={id} admin={false}/> }
     </div>)
 }

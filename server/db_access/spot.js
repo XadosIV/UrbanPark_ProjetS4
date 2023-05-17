@@ -85,11 +85,47 @@ function GetAllSpots(infos, callback){
                             }
                         }
                     }
-                    callback(err, allSpots)
+
+					CheckIsCleanning(allSpots, callback);
+                    // callback(err, allSpots)
                 }
             })
         }
     });
+}
+
+/**
+ * CheckIsCleanning
+ * add a boolean to each spots OBJECT in a array indicating if it's beeing cleaned
+ * 
+ * @param { array of spots } arrSpot [ { OBJECT Spot}, ... ]
+ * @param {function(*,*)} callback (err, data)
+ */
+function CheckIsCleanning(arrSpots, callback){
+
+	let sql = 
+	`SELECT DISTINCT sp.id_spot
+	 FROM Schedule_Spot sp
+	 JOIN Schedule s ON s.id = sp.id_schedule
+	 WHERE 
+	 	s.type = "Nettoyage" AND
+		s.date_start <= NOW() AND
+		s.date_end >= NOW()
+	`;
+
+	dbConnection.query(sql, {}, (err, data) => {
+		//console.log(data);
+		if(err){
+			return callback(err, null);
+		}else{
+			arrSpotId = data.map(elt => elt.id_spot)
+			arrSpots.forEach(spot => {
+				spot.inCleaning = arrSpotId.includes(spot.id);
+			})
+			return callback(err, arrSpots);
+		}
+	})
+
 }
 
 /**
@@ -395,39 +431,22 @@ function ToggleTypes(id, toggle, callback){
  * @param {function (*,*)} callback (err, data)
  */
 function DeleteSpot(id, callback){
-	const {AdaptSchedule} = require("./schedule")
 	const {DeleteSpotType} = require("./spot_type")
 	const {RemoveSpotUsers} = require("./user")
-	// AdaptSchedule((err, res) => {
-	// 	callback(err, res);
-	// }, id)
-	AdaptSchedule(id, (err, res) =>{
-		if (err){
-			callback(err, res);
-		}else{
-			DeleteSpotType(id, (err, res) => {
-				if (err){
-					callback(err, res);
-				}
-				else{
-					RemoveSpotUsers(id, (err, res) => {
-						if (err){
-							callback(err, res)
-						}
-						else {
-
-							sql = `DELETE FROM Spot WHERE id=:id`;
-
-							dbConnection.query(sql,{
-								id:id
-							}, (err, data) => {
-								callback(err, data)
-							});
-						}
-					})
-				}
-			});
-		};
+	
+	sql = `DELETE FROM Schedule_Spot WHERE id_spot=:id`
+	dbConnection.query(sql, {id:id}, (err, data) => {
+		if (err) return callback(err, null);
+		DeleteSpotType(id, (err, res) => {
+			if (err) return callback(err, null);
+			RemoveSpotUsers(id, (err, res) => {
+				if (err) return callback(err, null)
+				sql = `DELETE FROM Spot WHERE id=:id`;
+				dbConnection.query(sql,{id:id}, (err, data) => {
+					callback(err, data)
+				});
+			})
+		});
 	})
 }
 
