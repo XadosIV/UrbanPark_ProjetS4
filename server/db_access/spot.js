@@ -140,22 +140,23 @@ function GetSpots(infos, callback){
         if (err) {
             callback(err, []);
         }else{
-
-            for (let key of Object.keys(infos)){
-                key = key.toLowerCase()
-                if (key == "type"){
-                    spots = spots.filter(spot => spot.types.includes(infos.type));
-                }else{
-                    spots = spots.filter(spot => spot[key] == infos[key]);
-                }
-			}
 			UpdateUserTemp(spots, (err, upSpots) => {
-				if(err){
-					return callback(err, null);
-				}else{
-					callback(null, upSpots);
+				if(err) return callback(err, null);
+
+				for (let key of Object.keys(infos)){
+					key = key.toLowerCase()
+					if (key == "type"){
+						upSpots = upSpots.filter(spot => spot.types.includes(infos.type));
+					}else{
+						upSpots = upSpots.filter(spot => spot[key] == infos[key]);
+					}
 				}
+				return callback(null, upSpots);
 			})
+
+            
+			//callback(null, spots)
+			
         }
     })
 }
@@ -170,14 +171,15 @@ function GetSpots(infos, callback){
  */
 function UpdateUserTemp(spots, callback, newSpots = []){
 	//RECURSIVE
+	console.log(newSpots)
 	if (spots.length == 0){
 		callback(null, newSpots)
 	}else{
 		let spot = spots.pop();
-		ActualiseTempUser(spot, (err, newuser) => {
+		ActualiseTempUser(spot, (err, newspot) => {
 			if (err) return callback(err, null);
-			newSpots.push(newuser);
-			UpdateUserTemp(users, callback, newSpots)
+			newSpots.push(newspot);
+			UpdateUserTemp(spots, callback, newSpots)
 		})
 	}
 }
