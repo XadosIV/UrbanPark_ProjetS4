@@ -1,5 +1,5 @@
 import React from "react";
-
+import "../css/notif_bell.css"
 
 export function Notification(props) {
 	function AffichagePlaces (places) {
@@ -14,14 +14,7 @@ export function Notification(props) {
 		return (
 			<div>
 				{
-					etages.map((user, index) => (
-						<div>
-							<h4 key={index}>Etage {user.numero}</h4>
-							{
-								AffichagePlaces(user.places)
-							}
-						</div>
-					))
+					
 				}
 			</div>
 		)
@@ -41,7 +34,7 @@ export function Notification(props) {
 		)
 	}
 
-	function AffichaeGardiennage(parking){
+	function AffichageGardiennage(parking){
 		return (
 			<div>
 				<h4>
@@ -52,6 +45,7 @@ export function Notification(props) {
 	}
 
 	function toLi(info) {
+		const action = info.action
 		const event = info.type;
 		let users = info.users;
 		let ajout, parking;
@@ -69,13 +63,13 @@ export function Notification(props) {
 		else if (event === "Gardiennage") {
 			parking = info.parking;
 
-			ajout = AffichaeGardiennage(parking);
+			ajout = AffichageGardiennage(parking);
 		}
 
 		return (
 			<div>
 				<h2>
-					{event}
+					{action==="POST"? "Création": action==="PUT"? "Modification": "Supression"} {event==="Réunion"? "d'une": "d'un"} {event}
 				</h2>
 				<div>
 					{(event==="Nettoyage" || event ==="Gardiennage") && ajout}
@@ -95,7 +89,6 @@ export function Notification(props) {
 
 	return (
 		<div>
-			test {props.index}
 			{
 				props.info && toLi(props.info)
 			}

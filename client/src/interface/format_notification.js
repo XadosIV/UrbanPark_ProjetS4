@@ -16,6 +16,5 @@ export async function FormatNotification (infos) {
 	for (let notification of infos) {
 		final.push(FormatInformationNotification(notification.action, await getScheduleId(notification.id_schedule).then(res=>{return res.data})));
 	}
-	console.log("p1", final)
 	return final;
 }

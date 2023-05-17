@@ -1,5 +1,4 @@
 export function FormatInformationNotification (action, infos) {
-	console.log("infos", infos)
 	let final = {action:action, type:infos.type, users:[], horaire:[], parking:null, etages:null}
 	for (let user of infos.guests) {
 		final.users.push(user.last_name + " " + user.first_name);

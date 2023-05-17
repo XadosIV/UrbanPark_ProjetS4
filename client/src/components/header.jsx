@@ -6,7 +6,7 @@ import { NotifBell } from "."
 import { ContextUser } from "../contexts/context_user";
 
 export function Header () {
-	const { userToken } = useContext(ContextUser)
+	const { userToken, userId } = useContext(ContextUser)
 
 	return(
 		<div className="container" style={{
@@ -19,7 +19,7 @@ export function Header () {
 			<Link to="/">
 				<Typography variant="h3">UrbanPark</Typography>
 			</Link>
-			{ !!userToken && <NotifBell /> }
+			{ !!userToken && !!userId && <NotifBell userId={userId}/> }
 			<Link to="/perso" style={{
 					display:"flex",
 					flexDirection:"row",

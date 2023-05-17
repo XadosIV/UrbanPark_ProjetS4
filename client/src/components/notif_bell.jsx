@@ -5,7 +5,7 @@ import Popup from 'reactjs-popup';
 import '../css/notif_bell.css';
 import { NotificationList} from "."
 
-export function NotifBell(){
+export function NotifBell(props){
     const [active, setActive] = useState(true);
 
     return (
@@ -15,7 +15,7 @@ export function NotifBell(){
             </IconButton>}
             position='bottom center'
         >
-			<NotificationList/>
+			<NotificationList id={props.userId} reBoot={active}/>
         </Popup>
     );
 }

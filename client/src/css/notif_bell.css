@@ -12,6 +12,10 @@
     height:"100px";
     margin-bottom:"100px";
 }
+.notification-list {
+	max-height: 50vh;
+	overflow-y: auto;
+}
 li {
 	list-style: none;
 }
