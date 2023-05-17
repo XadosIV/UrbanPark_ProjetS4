@@ -140,6 +140,7 @@ function GetSpots(infos, callback){
         if (err) {
             callback(err, []);
         }else{
+
             for (let key of Object.keys(infos)){
                 key = key.toLowerCase()
                 if (key == "type"){
@@ -147,18 +148,58 @@ function GetSpots(infos, callback){
                 }else{
                     spots = spots.filter(spot => spot[key] == infos[key]);
                 }
-            }
-            callback(err, spots);
+			}
+			UpdateUserTemp(spots, (err, upSpots) => {
+				if(err){
+					return callback(err, null);
+				}else{
+					callback(null, upSpots);
+				}
+			})
         }
     })
+}
+
+/**
+ * UpdateUserTemp
+ * update id_spot_temp of temp user of the spots if necessary
+ * 
+ * @param {Array<Spot Object>} spots [{id, id_user_temp, ...}, {...}, ...]
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array<Spot Object>} newSpots 
+ */
+function UpdateUserTemp(spots, callback, newSpots = []){
+	//RECURSIVE
+	if (spots.length == 0){
+		callback(null, newSpots)
+	}else{
+		let spot = spots.pop();
+		ActualiseTempUser(spot, (err, newuser) => {
+			if (err) return callback(err, null);
+			newSpots.push(newuser);
+			UpdateUserTemp(users, callback, newSpots)
+		})
+	}
+}
+
+function ActualiseTempUser(spot, callback){
+	const { GetUsers } = require("./user");
+	if(spot.id_user || !spot.id_user_temp) return callback(null, spot);
+	GetUsers({id: spot.id_user_temp}, (err, userTemp) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			return callback(null, spot);
+		}
+	})
 }
 
 /**
  * GetSpotsMultipleFloors
  * Return a JSON with every spots corresponding to paramaters
  * 
- * @param {*} infos {id_park, floors, number, type, id}
- * @param {*} callback 
+ * @param {object} infos {id_park, floors, number, type, id}
+ * @param {function(*,*)} callback 
  */
 function GetSpotsMultipleFloors(infos, callback, recData=[]){
 	poppedFloor = infos.floors.pop();

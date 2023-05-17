@@ -76,7 +76,7 @@ function UpdateSpotTemp(users, callback, newusers = []){
 	}
 }
 
-function UpdateNewSpot(user, idspot, callback){
+function UpdateNewSpotTemp(user, idspot, callback){
 	UpdateUser({id_spot_temp: idspot, id: user.id}, (err, data) => {
 		if (err) return callback(err, null);
 		user.id_spot_temp = idspot;
@@ -92,6 +92,7 @@ function ActualiseTempSpot(user, callback){
 		if (userSpot.length == 0){return callback(null, user)}
 		userSpot = userSpot[0]
 		if (userSpot.in_cleaning){
+			if(user.id_spot_temp) return callback(null, user);
 			GetSpots({
 				id_park: userSpot.id_park,
 				type: ["Abonné"],
@@ -101,7 +102,7 @@ function ActualiseTempSpot(user, callback){
 			}, (err, optTempSpot) => {
 				if (err) return callback(err, null);
 				if(optTempSpot.length > 0){ 
-					UpdateNewSpot(user, optTempSpot[0].id, (err, newuser) => {
+					UpdateNewSpotTemp(user, optTempSpot[0].id, (err, newuser) => {
 						if (err) return callback(err, null);
 						callback(null, newuser);
 					})
@@ -115,7 +116,7 @@ function ActualiseTempSpot(user, callback){
 						if (err) return callback(err, null);
 						optPasAbo = optPasAbo.filter(e => !optTempSpot.includes(e))
 						if (optPasAbo.length > 0){
-							UpdateNewSpot(user, optPasAbo[0].id, (err, newuser) => {
+							UpdateNewSpotTemp(user, optPasAbo[0].id, (err, newuser) => {
 								if (err) return callback(err, null);
 								callback(null, newuser);
 							})
@@ -128,7 +129,7 @@ function ActualiseTempSpot(user, callback){
 		}else{
 			///
 			if(user.id_spot_temp){
-				UpdateNewSpot(user, null, (err, newuser) => {
+				UpdateNewSpotTemp(user, null, (err, newuser) => {
 					if (err) return callback(err, null);
 					callback(null, newuser);
 				});
@@ -519,4 +520,4 @@ function RemoveSpotUserTemp(infos, callback){
 }
 
 
-module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser, RemoveSpotUsers};
+module.exports = {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser, RemoveSpotUsers, UpdateNewSpotTemp};
