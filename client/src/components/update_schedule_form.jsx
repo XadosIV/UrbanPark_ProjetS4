@@ -16,21 +16,21 @@ import ReactModal from 'react-modal';
 export function UpdateScheduleForm(props) {
 
 	function CallbackSetOne(childData) {
-		console.log("CallbackSetOne");
-		console.log("childData", childData);
+		// console.log("CallbackSetOne");
+		// console.log("childData", childData);
         setOnlyOne(childData.update)
         setOnlyOneInfo(childData.schedule)
-		console.log("==========");
+		// console.log("==========");
     }
 
 	async function CallbackDelete(childData) {
-		console.log("CallbackDelete");
-		console.log("childData", childData);
+		// console.log("CallbackDelete");
+		// console.log("childData", childData);
         const res = await DeleteSchedule(props.event.id_schedule);
-		console.log("resDelete", res);
+		// console.log("resDelete", res);
 		setPopupOpened(false);
         props.handleCallback(false);
-		console.log("==========");
+		// console.log("==========");
     }
 
     /**
@@ -56,13 +56,13 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function AllParkings(list) {
-		console.log("AllParkings");
+		// console.log("AllParkings");
 		var opt = []
 		for (let i=0; i<list.length; i++) {
 			opt.push({value:list[i].id, label:"Parking " + list[i].name.toLowerCase()})
 		}
-		console.log("optParkings");
-		console.log("==========");
+		// console.log("optParkings");
+		// console.log("==========");
 		return opt
 	}
 
@@ -75,17 +75,17 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function BaseSpot(spot, list) {
-		console.log("BaseSpot");
-		console.log("spot", spot);
-		console.log("list", list);
+		// console.log("BaseSpot");
+		// console.log("spot", spot);
+		// console.log("list", list);
 		var opts=[]
 		for (let s of list) {
 			if (s.value === spot) {
 				opts.push(s);
 			}
 		}
-		console.log("resultat", opts);
-		console.log("==========");
+		// console.log("resultat", opts);
+		// console.log("==========");
 		if (opts.length !== 0) {
 			return opts[0].label
 		} else {
@@ -101,8 +101,8 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function AllServices(list) {
-		console.log("AllServices");
-		console.log("list", list);
+		// console.log("AllServices");
+		// console.log("list", list);
 		if (!Array.isArray(list)) {
 			list = [list]
 		}
@@ -110,8 +110,8 @@ export function UpdateScheduleForm(props) {
 		for (let i=0; i<list.length; i++) {
 			opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
 		}
-		console.log("resultat", opt);
-		console.log("==========");
+		// console.log("resultat", opt);
+		// console.log("==========");
 		return opt
 	}
 
@@ -123,9 +123,9 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function BaseListType(type) {
-		console.log("BaseListType");
-		console.log("type", type);
-		console.log("==========");
+		// console.log("BaseListType");
+		// console.log("type", type);
+		// console.log("==========");
 		if (type === "Gardiennage") {
 			return AllServices(guardiansList);
 		} else if (type === "Nettoyage") {
@@ -136,9 +136,9 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function AffichagePlaces() {
-		console.log("AffichagePlaces");
+		// console.log("AffichagePlaces");
 		let liste = props.event.spots;
-		console.log("liste", liste);
+		// console.log("liste", liste);
 	
 		let nListe = []
 
@@ -150,13 +150,13 @@ export function UpdateScheduleForm(props) {
 				nListe.push([spot]);
 			}
 		})
-		console.log("nListe", nListe);
+		// console.log("nListe", nListe);
 
 		for (let spots of nListe) {
 			spots.sort();
 		}
-		console.log("sorted nListe", nListe);
-		console.log("==========");
+		// console.log("sorted nListe", nListe);
+		// console.log("==========");
 
 		return (
 			<div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
@@ -178,23 +178,23 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function InformationEvent (infos, baseType) {
-		console.log("InformationEvent");
-		console.log("infos", infos);
-		console.log("baseType", baseType);
+		// console.log("InformationEvent");
+		// console.log("infos", infos);
+		// console.log("baseType", baseType);
 		let baseList = props.event.user;
-		console.log("baseList", baseList);
+		// console.log("baseList", baseList);
 		let listRes = [];
 		let i = 0;
 		for (let element of baseList) {
 			listRes.push(<li key={i} className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>);
 			i++;
 		}
-		console.log("listRes", listRes);
+		// console.log("listRes", listRes);
 		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3);
 		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3);
-		console.log("dates_start", dates_start);
-		console.log("dates_end", dates_end);
-		console.log("==========");
+		// console.log("dates_start", dates_start);
+		// console.log("dates_end", dates_end);
+		// console.log("==========");
 		return (
 			<div>
 				<ul className="ul-infos">
@@ -215,9 +215,9 @@ export function UpdateScheduleForm(props) {
 
 
 	function FixOnlyOne(tab) {
-		console.log("FixOnlyOne");
-		console.log("tab", tab);
-		console.log("==========");
+		// console.log("FixOnlyOne");
+		// console.log("tab", tab);
+		// console.log("==========");
         if(typeof tab[0] == "string") {
             return [tab]
         } else {
@@ -234,17 +234,17 @@ export function UpdateScheduleForm(props) {
 	 * @returns { Boolean }
 	 */
 	function CheckIfScheduleIn(datesCheck, available) {
-		console.log("CheckIfScheduleIn");
-		console.log("datesCheck", datesCheck);
-		console.log("available", available);
+		// console.log("CheckIfScheduleIn");
+		// console.log("datesCheck", datesCheck);
+		// console.log("available", available);
 		let res = false;
 		for (let find of available) {
 			if (datesCheck.date_start >= find[0] && datesCheck.date_end <= find[1]) {
 				res = true;
 			}
 		}
-		console.log("res", res);
-		console.log("==========");
+		// console.log("res", res);
+		// console.log("==========");
 		return res;
 	}
 
@@ -348,22 +348,23 @@ export function UpdateScheduleForm(props) {
 				})
 			}
 			value = selectedOptions.value
-			console.log("value", value);
+			console.log("value L351", value);
 		} else {
 			for (let option of selectedOptions) {
 				value.push(option.value)
 			}
-			console.log("value", value);
+			console.log("value L356", value);
 		}
 		if (name.name === "users" && baseType === "Réunion") {
 			setOptionsUsersChange(values => ({...values, change: true}))
 			UpdateIfNoHourChange({users:value, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
-		} else if (name.name === "guests") {
+		}
+			if (name.name === "guests" && baseType === "Réunion") {
 			setOptionsUsers(AllNotNecessary(staffList, value))
         }
 		if (baseType === "Réunion" && checkboxInclude) {
 			value.push(infosUser.id)
-			console.log("value", value);
+			console.log("value L366", value);
 		}
 		setInfos(values => ({...values, [name.name]: value}))
 		console.log("infos end", infos);
@@ -372,7 +373,7 @@ export function UpdateScheduleForm(props) {
 
 	const handlleSubmit = async (event) => {
 		console.log("handlleSubmit");
-		console.log("event", event);
+		console.log("props.event", props.event);
 		console.log("infos start", infos);
 		event.preventDefault();
 		setWrongInput(false);
@@ -451,6 +452,7 @@ export function UpdateScheduleForm(props) {
 		console.log("UpdateIfNoHourChange");
 		console.log("params", params);
 		TakeAllSchedulesAvailable(params).then(res => {
+			console.log("res TakeAllSchedulesAvailable", res);
 			setSchedulesAvailable(FixOnlyOne(res))
 			if (CheckIfScheduleIn(horairesSchedules, FixOnlyOne(res))) {
 				setChangeSchedule(false)
@@ -461,7 +463,7 @@ export function UpdateScheduleForm(props) {
 
 	const handlleSubmitNewReunion = async (event) => {
 		console.log("handlleSubmitNewReunion");
-		console.log("event", event);
+		console.log("props.event", props.event);
 		console.log("infos start", infos);
         event.preventDefault()
         setWrongInput(false);
@@ -495,7 +497,7 @@ export function UpdateScheduleForm(props) {
 
 	const handleNoChangeDate = async (event) => {
 		console.log("handleNoChangeDate");
-		console.log("event", event);
+		console.log("props.event", props.event);
 		console.log("infos start", infos);
 		event.preventDefault()
         setWrongInput(false);

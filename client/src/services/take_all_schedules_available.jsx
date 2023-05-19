@@ -9,8 +9,18 @@ import axios from "axios"
  */
 async function TakeAllSchedulesAvailable(infos){
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/reunion"
-    //console.log(JSON.stringify(infos));
-	return axios.get(url, {params: infos}).then((res) => res.data)
+    console.log("aaaaaaaaaaaaaaaaaaaaaaa", infos);
+    if(!infos.users){
+        infos.users = []
+    }
+    if(!infos.roles){
+        infos.roles = []
+    }
+    if(infos.users.length > 0 || infos.roles.length > 0){
+        return axios.get(url, {params: infos}).then((res) => res.data)
+    }else{
+        return [];
+    }
 }
 
 export { TakeAllSchedulesAvailable };
