@@ -390,7 +390,7 @@ function UpdateSchedule(infos, callback){
 			let prevstate = prevStates.filter(elt => elt.id_user == idUser);
 			let newState = !!!prevstate[0].is_guest;
 
-			console.log("updating ", idUser, " to ", newState, " was ", prevstate);
+			// console.log("updating ", idUser, " to ", newState, " was ", prevstate);
 
 			let sql = `UPDATE User_Schedule SET is_guest = :is_guest WHERE id_schedule = :id_schedule AND id_user = :id_user`;
 
@@ -448,9 +448,9 @@ function UpdateSchedule(infos, callback){
 			return callback(err, null);
 		}else{
 			let userAvant = dataPrevious.map(elt => elt.id_user);
-			console.log("userAvant", userAvant);
-			console.log("usersPrec", users);
-			console.log("guestsPrec", guests);
+			// console.log("userAvant", userAvant);
+			// console.log("usersPrec", users);
+			// console.log("guestsPrec", guests);
 
 			let switchUser = [];
 			let postUser = [];
@@ -480,16 +480,16 @@ function UpdateSchedule(infos, callback){
 				}
 			});
 
-			console.log("switchUser", switchUser);
+			// console.log("switchUser", switchUser);
 			users = users.filter(idU => !switchUser.includes(idU));
 			guests = guests.filter(idU => !switchUser.includes(idU));
-			console.log("nextUsers", users);
-			console.log("nextGuests", guests);
+			// console.log("nextUsers", users);
+			// console.log("nextGuests", guests);
 
-			console.log("putUser", putUser);
-			console.log("postUser", postUser);
-			console.log("deleteUser", deleteUser);
-			console.log("==========");
+			// console.log("putUser", putUser);
+			// console.log("postUser", postUser);
+			// console.log("deleteUser", deleteUser);
+			// console.log("==========");
 
 			PrepareListPostNotification(postUser, "POST", "", infos.id, (err, notifsPost) => {
 				if(err){
