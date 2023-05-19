@@ -385,7 +385,6 @@ export function UpdateScheduleForm(props) {
 
 	function UpdateIfNoHourChange(params) {
 		TakeAllSchedulesAvailable(params).then(res => {
-			console.log("res TakeAllSchedulesAvailable", res);
 			setSchedulesAvailable(FixOnlyOne(res))
 			if (CheckIfScheduleIn(horairesSchedules, FixOnlyOne(res))) {
 				setChangeSchedule(false)
@@ -421,6 +420,21 @@ export function UpdateScheduleForm(props) {
     }
 
 	const handleNoChangeDate = async (event) => {
+		if (checkboxInclude){ // if user want to be in reunion
+			if (!infos.users.includes(infosUser.id)){ // if it's not
+				infos.users.push(infosUser.id); // add it
+			}
+		}else{ // if dont want
+			if (infos.users.includes(infosUser.id)){ // if he is
+				infos.users.splice(infos.users.indexOf(infosUser.id, 1)); // remove it
+			}
+		}
+
+		// if, by any black magic, connected user is in guest, remove it.
+		if (infos.guests.includes(infosUser.id)){
+			infos.guests.splice(infos.guests.indexOf(infosUser.id, 1));
+		}
+
 		event.preventDefault()
         setWrongInput(false);
 		if ((JSON.stringify(infos.users) !== JSON.stringify(props.event.user.map(e => e.id))) || (JSON.stringify(infos.guests) !== JSON.stringify(props.event.guests.map(e => e.id)))) {

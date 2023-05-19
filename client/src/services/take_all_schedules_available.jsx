@@ -9,7 +9,6 @@ import axios from "axios"
  */
 async function TakeAllSchedulesAvailable(infos){
     var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/reunion"
-    console.log("aaaaaaaaaaaaaaaaaaaaaaa", infos);
     if(!infos.users){
         infos.users = []
     }
