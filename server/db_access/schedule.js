@@ -289,6 +289,9 @@ function GetScheduleById(id, callback){
 function UpdateSchedule(infos, callback){
 	const { PrepareListPostNotification, ListPostNotification } = require("./notification");  // Avoiding circular dependencies
 
+	if(!infos.users && !infos.guests) return Errors.SendError(Errors.E_MISSING_PARAMETER, "un des deux champs suivant dois être remplis : users, guests", callback);
+	if(!parseInt(infos.id)) return Errors.SendError(Errors.E_WRONG_ID_FORMAT, "l'id doit être un nombre", callback);
+
 	let UpdateScheduleTable = (id, date_start, date_end, suite) => {
 		if (date_start || date_end){
 
@@ -379,7 +382,30 @@ function UpdateSchedule(infos, callback){
 		}
 	}
 
-	let doUpdate = (users, guests, callback) => {
+	let SwitchUserSchedule = (id, users, prevStates, suite) => {
+		if(users.length == 0){
+			suite(null, true);
+		}else{
+			let idUser = users.pop();
+			let prevstate = prevStates.filter(elt => elt.id_user == idUser);
+			let newState = !!!prevstate[0].is_guest;
+
+			console.log("updating ", idUser, " to ", newState, " was ", prevstate);
+
+			let sql = `UPDATE User_Schedule SET is_guest = :is_guest WHERE id_schedule = :id_schedule AND id_user = :id_user`;
+
+			dbConnection.query(sql, {
+				is_guest: newState?1:0,
+				id_schedule: id,
+				id_user: idUser
+			}, (err, data) => {
+				if(err) return suite(err, null);
+				SwitchUserSchedule(id, users, prevStates, suite);
+			})
+		}
+	}
+
+	let doUpdate = (users, guests, switchUser, dataPrevious, callback) => {
 
 		//Start all functions
 		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
@@ -395,13 +421,16 @@ function UpdateSchedule(infos, callback){
 			ToggleSpotSchedule(infos.id, spots, (err, data) => {
 				if (err) return callback(err, null);
 			
-			
-				ToggleUserSchedule(infos.id, users, false, (err, data) => {
-					if (err) return callback(err, null);
-					
-					ToggleUserSchedule(infos.id, guests, true, (err, data) => {
+				SwitchUserSchedule(infos.id, switchUser, dataPrevious, (err, data) => {
+					if(err) return callback(err, null);
+	
+					ToggleUserSchedule(infos.id, users, false, (err, data) => {
 						if (err) return callback(err, null);
-						callback(null, null)
+						
+						ToggleUserSchedule(infos.id, guests, true, (err, data) => {
+							if (err) return callback(err, null);
+							callback(null, null)
+						})
 					})
 				})
 			});
@@ -409,55 +438,54 @@ function UpdateSchedule(infos, callback){
 	}
 	
 	// Get users_id from parameters
-	let users = [];
-	let guests = [];
-	if (infos.users) users = users.concat(infos.users);
-	if (infos.guests) guests = guests.concat(infos.guests);
+	let users = infos.users ? infos.users : [];
+	let guests = infos.guests ? infos.guests : [];
 
-	let sql = `SELECT id_user FROM User_Schedule WHERE id_schedule=:id`;
-	dbConnection.query(sql, {id: infos.id}, (err, data) => {
+
+	let sql = `SELECT id_user, is_guest FROM User_Schedule WHERE id_schedule=:id`;
+	dbConnection.query(sql, {id: infos.id}, (err, dataPrevious) => {
 		if(err){
 			return callback(err, null);
 		}else{
-			let userAvant = data.map(elt => elt.id_user);
+			let userAvant = dataPrevious.map(elt => elt.id_user);
 			console.log("userAvant", userAvant);
 			console.log("usersPrec", users);
 			console.log("guestsPrec", guests);
 
-			let res = FixUsersGuests(users, guests, userAvant);
-			users = res[0];
-			guests = res[1];
-			console.log("users", users);
-			console.log("guests", guests);
-
+			let switchUser = [];
 			let postUser = [];
 			let putUser = [];
 			let deleteUser = [];
-			guests.forEach(idU => {
-				if(userAvant.includes(idU)){
-					if(users.includes(idU)){
-						putUser.push(idU);
-					}else{
-						deleteUser.push(idU);
-					}
+			
+			userAvant.forEach(idU => {
+				inU = users.includes(idU);
+				inG = guests.includes(idU);
+				if(!inU && !inG){
+					putUser.push(idU);
+				}else if(inU && inG){
+					switchUser.push(idU);
+					putUser.push(idU);
 				}else{
+					deleteUser.push(idU);
+				}
+			});
+			users.forEach(idU => {
+				if(!userAvant.includes(idU)){
 					postUser.push(idU);
 				}
-			})
-			users.forEach(idU => {
-				if(!guests.includes(idU)){
-					if(userAvant.includes(idU)){
-						deleteUser.push(idU);
-					}else{
-						postUser.push(idU);
-					}
+			});
+			guests.forEach(idU => {
+				if(!userAvant.includes(idU) && !users.includes(idU)){
+					postUser.push(idU);
 				}
-			})
-			userAvant.forEach(idU => {
-				if(!users.includes(idU) && !guests.includes(idU)){
-					putUser.push(idU);
-				}
-			})
+			});
+
+			console.log("switchUser", switchUser);
+			users = users.filter(idU => !switchUser.includes(idU));
+			guests = guests.filter(idU => !switchUser.includes(idU));
+			console.log("nextUsers", users);
+			console.log("nextGuests", guests);
+
 			console.log("putUser", putUser);
 			console.log("postUser", postUser);
 			console.log("deleteUser", deleteUser);
@@ -477,7 +505,7 @@ function UpdateSchedule(infos, callback){
 								}else{
 									let allNotifs = notifsPost.concat(notifsPut).concat(notifsDelete);
 
-									doUpdate(users, guests, (err, data) => {
+									doUpdate(users, guests, switchUser, dataPrevious, (err, data) => {
 										if(err){
 											return callback(err, data);
 										}else{
