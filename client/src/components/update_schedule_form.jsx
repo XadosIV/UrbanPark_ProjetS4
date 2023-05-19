@@ -16,21 +16,22 @@ import ReactModal from 'react-modal';
 export function UpdateScheduleForm(props) {
 
 	function CallbackSetOne(childData) {
-		// console.log("CallbackSetOne");
-		// console.log("childData", childData);
         setOnlyOne(childData.update)
         setOnlyOneInfo(childData.schedule)
-		// console.log("==========");
     }
 
 	async function CallbackDelete(childData) {
-		// console.log("CallbackDelete");
-		// console.log("childData", childData);
         const res = await DeleteSchedule(props.event.id_schedule);
-		// console.log("resDelete", res);
 		setPopupOpened(false);
         props.handleCallback(false);
-		// console.log("==========");
+        setOnlyOne(childData.update)
+        setOnlyOneInfo(childData.schedule)
+    }
+
+	async function CallbackDelete(childData) {
+        const res = await DeleteSchedule(props.event.id_schedule);
+		setPopupOpened(false);
+        props.handleCallback(false);
     }
 
     /**
@@ -56,13 +57,10 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function AllParkings(list) {
-		// console.log("AllParkings");
 		var opt = []
 		for (let i=0; i<list.length; i++) {
 			opt.push({value:list[i].id, label:"Parking " + list[i].name.toLowerCase()})
 		}
-		// console.log("optParkings");
-		// console.log("==========");
 		return opt
 	}
 
@@ -75,17 +73,12 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function BaseSpot(spot, list) {
-		// console.log("BaseSpot");
-		// console.log("spot", spot);
-		// console.log("list", list);
 		var opts=[]
 		for (let s of list) {
 			if (s.value === spot) {
 				opts.push(s);
 			}
 		}
-		// console.log("resultat", opts);
-		// console.log("==========");
 		if (opts.length !== 0) {
 			return opts[0].label
 		} else {
@@ -101,8 +94,6 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function AllServices(list) {
-		// console.log("AllServices");
-		// console.log("list", list);
 		if (!Array.isArray(list)) {
 			list = [list]
 		}
@@ -110,8 +101,6 @@ export function UpdateScheduleForm(props) {
 		for (let i=0; i<list.length; i++) {
 			opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
 		}
-		// console.log("resultat", opt);
-		// console.log("==========");
 		return opt
 	}
 
@@ -123,9 +112,6 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function BaseListType(type) {
-		// console.log("BaseListType");
-		// console.log("type", type);
-		// console.log("==========");
 		if (type === "Gardiennage") {
 			return AllServices(guardiansList);
 		} else if (type === "Nettoyage") {
@@ -136,9 +122,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function AffichagePlaces() {
-		// console.log("AffichagePlaces");
 		let liste = props.event.spots;
-		// console.log("liste", liste);
 	
 		let nListe = []
 
@@ -150,13 +134,10 @@ export function UpdateScheduleForm(props) {
 				nListe.push([spot]);
 			}
 		})
-		// console.log("nListe", nListe);
 
 		for (let spots of nListe) {
 			spots.sort();
 		}
-		// console.log("sorted nListe", nListe);
-		// console.log("==========");
 
 		return (
 			<div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
@@ -178,23 +159,15 @@ export function UpdateScheduleForm(props) {
 	}
 
 	function InformationEvent (infos, baseType) {
-		// console.log("InformationEvent");
-		// console.log("infos", infos);
-		// console.log("baseType", baseType);
 		let baseList = props.event.user;
-		// console.log("baseList", baseList);
 		let listRes = [];
 		let i = 0;
 		for (let element of baseList) {
 			listRes.push(<li key={i} className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>);
 			i++;
 		}
-		// console.log("listRes", listRes);
 		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3);
 		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3);
-		// console.log("dates_start", dates_start);
-		// console.log("dates_end", dates_end);
-		// console.log("==========");
 		return (
 			<div>
 				<ul className="ul-infos">
@@ -215,9 +188,6 @@ export function UpdateScheduleForm(props) {
 
 
 	function FixOnlyOne(tab) {
-		// console.log("FixOnlyOne");
-		// console.log("tab", tab);
-		// console.log("==========");
         if(typeof tab[0] == "string") {
             return [tab]
         } else {
@@ -234,17 +204,12 @@ export function UpdateScheduleForm(props) {
 	 * @returns { Boolean }
 	 */
 	function CheckIfScheduleIn(datesCheck, available) {
-		// console.log("CheckIfScheduleIn");
-		// console.log("datesCheck", datesCheck);
-		// console.log("available", available);
 		let res = false;
 		for (let find of available) {
 			if (datesCheck.date_start >= find[0] && datesCheck.date_end <= find[1]) {
 				res = true;
 			}
 		}
-		// console.log("res", res);
-		// console.log("==========");
 		return res;
 	}
 
@@ -300,33 +265,22 @@ export function UpdateScheduleForm(props) {
 	const [popupOpened, setPopupOpened] = useState(true)
 
 	const toggleCheckbox = () => {
-		console.log("toggleCheckbox");
-		console.log("infos start", infos);
-		console.log("checkboxInclude (va être inversé)", checkboxInclude);
         setCheckboxInclude(!checkboxInclude);
-		console.log("baseType", baseType);
-		console.log("checkboxInclude (a été inversé)", checkboxInclude);
 		if (baseType === "Réunion" && checkboxInclude) {
 			for (let i=0; i<infos.users.length; i++) {
 				if (infos.users[i] === infosUser.id) {
 					let baseUsers = infos.users
-					console.log("baseUsers before splice", baseUsers);
 					let newInfos = baseUsers.splice(i,1)
-					console.log("baseUsers after splice", baseUsers);
 					setInfos(values => ({...values, ["users"]: baseUsers}))
 				}
 			}
 		} else if (baseType === "Réunion" && !checkboxInclude) {
 			if (!(infos.users.includes(infosUser.id))) {
 				let baseUsers = infos.users
-				console.log("baseUsers before push", baseUsers);
 				let newInfos = baseUsers.push(infosUser.id)
-				console.log("baseUsers after push", baseUsers);
 				setInfos(values => ({...values, ["users"]: baseUsers}))
 			}
 		}
-		console.log("infos end", infos);
-		console.log("==========");
     }
 
     const checkboxIcon = () => {
@@ -334,10 +288,6 @@ export function UpdateScheduleForm(props) {
     }
 
 	const handleChangeSelect = (selectedOptions, name) => {
-		console.log("handleChangeSelect");
-		console.log("infos start", infos);
-		console.log("selectedOptions", selectedOptions);
-		console.log("name", name);
 		var value = [];
 		if (selectedOptions.value) {
 			if (name.name === "first_spot" || name.name === "last_spot") {
@@ -348,12 +298,10 @@ export function UpdateScheduleForm(props) {
 				})
 			}
 			value = selectedOptions.value
-			console.log("value L351", value);
 		} else {
 			for (let option of selectedOptions) {
 				value.push(option.value)
 			}
-			console.log("value L356", value);
 		}
 		if (name.name === "users" && baseType === "Réunion") {
 			setOptionsUsersChange(values => ({...values, change: true}))
@@ -364,17 +312,11 @@ export function UpdateScheduleForm(props) {
         }
 		if (baseType === "Réunion" && checkboxInclude) {
 			value.push(infosUser.id)
-			console.log("value L366", value);
 		}
 		setInfos(values => ({...values, [name.name]: value}))
-		console.log("infos end", infos);
-		console.log("==========");
 	}
 
 	const handlleSubmit = async (event) => {
-		console.log("handlleSubmit");
-		console.log("props.event", props.event);
-		console.log("infos start", infos);
 		event.preventDefault();
 		setWrongInput(false);
 		if (infos.users.length === 0) {
@@ -389,17 +331,17 @@ export function UpdateScheduleForm(props) {
 		} else if (horairesSchedules.date_end < horairesSchedules.date_start) {
 			setWrongInput(true)
 			setErrMessage("L'heure de fin ne peut pas précéder l'heure de début.")
-		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
+		} else if (!(infos.parking === props.event.idparking &&
+			 JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) &&
+			  JSON.stringify(infos.guests) === JSON.stringify(props.event.guests.map(e => e.id)) &&
+			   infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) &&
+			    JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
 			let listSpotsCleaning = [];
             let first, last;
-			console.log("baseType", baseType);
 			//Set toggles for spots (only if "Nettoyage") on spots between first and last
             if (baseType === "Nettoyage") {
-				console.log("spotsCleaning", spotsCleaning);
 				first = await placeFromId(spotsCleaning.first_spot).then(first => first)
                 last = await placeFromId(spotsCleaning.last_spot).then(last => last)
-				console.log("first", first);
-				console.log("last", last);
                 listSpotsCleaning = spotsList.filter((el) => {
                     if ((el.floor > first.floor && el.floor < last.floor) ||
                     (el.floor === first.floor && el.floor === last.floor && el.number >= first.number && el.number <= last.number) ||
@@ -410,24 +352,19 @@ export function UpdateScheduleForm(props) {
 						return false
 					}
                 })
-				console.log("listSpotsCleaning", listSpotsCleaning);
 				infos.spots = FindToggles(props.event.spots.map(e => e.id), listSpotsCleaning.map(e => e.id))
-				console.log("infos   L 414", infos);
             }
 			
 			//If it's "Réunion" then parking = null
 			if (baseType === "Réunion") {
 				infos.parking = '\x00'
-				console.log("infos   L 420", infos);
 				TakeAllSchedulesAvailable({users:infos.users, date_start:horairesSchedules.date_start, date_end:horairesSchedules.date_end, id_exclure:props.event.id_schedule}).then(res => setSchedulesAvailable(FixOnlyOne(res)))
                 setIsOpen(true)
 			} else {
 				//Set toggles for users
 				infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
-				console.log("infos   L 426", infos);
 
 				const res = await UpdateSchedule(infos, props.event.id_schedule)
-				console.log("res UpdateSchedule", res);
 				if (res.status === 200) {
 					setWrongInput(true);
 					setErrMessage("Modification prise en compte.")
@@ -444,13 +381,9 @@ export function UpdateScheduleForm(props) {
 			setWrongInput(true);
 			setErrMessage("Vous n'avez rien modifié");
 		}
-		console.log("infos end", infos);
-		console.log("==========");
 	}
 
 	function UpdateIfNoHourChange(params) {
-		console.log("UpdateIfNoHourChange");
-		console.log("params", params);
 		TakeAllSchedulesAvailable(params).then(res => {
 			console.log("res TakeAllSchedulesAvailable", res);
 			setSchedulesAvailable(FixOnlyOne(res))
@@ -458,13 +391,9 @@ export function UpdateScheduleForm(props) {
 				setChangeSchedule(false)
 			}
 		})
-		console.log("==========");
 	}
 
 	const handlleSubmitNewReunion = async (event) => {
-		console.log("handlleSubmitNewReunion");
-		console.log("props.event", props.event);
-		console.log("infos start", infos);
         event.preventDefault()
         setWrongInput(false);
         if (infos.date_start === baseDate || infos.date_end === baseDate) {
@@ -476,9 +405,7 @@ export function UpdateScheduleForm(props) {
 			//Set toggles for guests
 			infos.guests = FindToggles(props.event.guests.map(e => e.id), infos.guests)
 
-			console.log("infos 477", infos);
             const res = await UpdateSchedule(infos, props.event.id_schedule); 
-            console.log("res UpdateSchedule", res);
             if (res.status === 200) {
                 setWrongInput(true);
                 setErrMessage("Modification prise en compte.");
@@ -491,17 +418,12 @@ export function UpdateScheduleForm(props) {
                 setErrMessage(res.data.message);
             }
         }
-		console.log("infos end", infos);
-		console.log("==========");
     }
 
 	const handleNoChangeDate = async (event) => {
-		console.log("handleNoChangeDate");
-		console.log("props.event", props.event);
-		console.log("infos start", infos);
 		event.preventDefault()
         setWrongInput(false);
-		if (!(JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)))) {
+		if ((JSON.stringify(infos.users) !== JSON.stringify(props.event.user.map(e => e.id))) || (JSON.stringify(infos.guests) !== JSON.stringify(props.event.guests.map(e => e.id)))) {
 			//Set toggles for users
 			infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
 			//Set toggles for guests
@@ -509,9 +431,7 @@ export function UpdateScheduleForm(props) {
 			infos.date_start = horairesSchedules.date_start
 			infos.date_end = horairesSchedules.date_end
 
-			console.log("infos 510", infos);
 			const res = await UpdateSchedule(infos, props.event.id_schedule); 
-			console.log("res UpdateSchedule", res);
 			if (res.status === 200) {
 				setWrongInput(true);
 				setErrMessage("Modification prise en compte.");
@@ -527,8 +447,6 @@ export function UpdateScheduleForm(props) {
 			setWrongInput(true);
 			setErrMessage("Vous n'avez rien modifié");
 		}
-		console.log("infos end", infos);
-		console.log("==========");
 	}
 
 	useEffect(() => {
@@ -664,7 +582,7 @@ export function UpdateScheduleForm(props) {
 						/>
 					</div>}
 					{baseType === "Réunion" && <div style={{zIndex:1007, display:"flex", flexDirection:"column", justifyContent:"center", marginTop:"-30px"}}>  
-                        <Separation value="Personnes nécéssaires"/>
+                        <Separation value="Personnes nécessaires"/>
 						<p style={{fontSize:"0.7em", color:"red", marginTop:"-10px"}}>Les personnes nécéssaires seront obligatoirement dans la réunion.</p>
                         <div style={{display:"flex", justifyContent:"center"}}>
                             <Checkbox 
