@@ -1,5 +1,4 @@
 import { AllServices } from "./";
-import { TakeByRole } from "../services";
 
 /**
 	 * BaseListType
@@ -9,11 +8,11 @@ import { TakeByRole } from "../services";
 	 * @return { Array }
 	 */
 	export function BaseListType(type, guardiansList, serviceList) {
-		if (type == "Gardiennage") {
+		if (type === "Gardiennage") {
 			return AllServices(guardiansList);
-		} else if (type == "Nettoyage") {
+		} else if (type === "Nettoyage") {
 			return AllServices(serviceList);
-		} else if (type == "Réunion") {
+		} else if (type === "Réunion") {
 			return AllServices(serviceList).concat(AllServices(guardiansList));
 		}
 	}

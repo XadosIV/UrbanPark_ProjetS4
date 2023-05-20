@@ -1,6 +1,5 @@
 const {dbConnection} = require('../database');
-const Errors = require('../errors');
-const {SendError} = require('../errors');
+const {GetSchedules} = require('./schedule');
 
 /**
  * GetNotifications
@@ -10,8 +9,6 @@ const {SendError} = require('../errors');
  * @param {function(*,*)} callback (err, data)
  */
 function GetNotifications(infos, callback){
-	const {GetSchedules} = require('./schedule'); // Avoiding circular dependencies
-
 	let sql = `SELECT
 		id,
 		id_user,
@@ -62,7 +59,7 @@ function PreparePostNotification(id_user, action, type_notif, id_schedule, callb
 				callback(err, {
 					"id_user":id_user,
 					"action":action,
-					"type_notif":type_notif,
+					"type_notif":type_notif || schedule.type,
 					"id_schedule":id_schedule,
 					"type":schedule.type,
 					"id_parking":schedule.id_parking,
@@ -71,6 +68,32 @@ function PreparePostNotification(id_user, action, type_notif, id_schedule, callb
 				})
 			}
 		})
+	}
+}
+
+/**
+ * PrepareListPostNotification
+ * Get all the mandatory informations and put them in data (array)
+ * 
+ * @param {Array<number>} ids_user Users that should get the notification
+ * @param {string} action Should be `POST`, `PUT` or `DELETE`
+ * @param {string} type_notif Should be a keyword specified in `notification.md`
+ * @param {number | null} id_schedule If a schedule is involved, it's id. Else null
+ * @param {function(*,*)} callback (err, arrayData) data contains all the mandatory infos for PostNotification
+ */
+function PrepareListPostNotification(ids_user, action, type_notif, id_schedule, callback, preparedNotifications = []){
+	if(ids_user.length === 0){
+		callback(null, preparedNotifications);
+	}else{
+		let user = ids_user.pop();
+		PreparePostNotification(user, action, type_notif, id_schedule, (err, notification) =>{
+			if (err){
+				callback(err, []);
+			}else{
+				preparedNotifications.push(notification);
+				PrepareListPostNotification(ids_user, action, type_notif, id_schedule, callback, preparedNotifications);
+			}
+		});
 	}
 }
 
@@ -104,4 +127,25 @@ function PostNotification(infos, callback){
 	dbConnection.query(sql, infos, callback);
 }
 
-module.exports = {GetNotifications, PreparePostNotification, PostNotification};
+/**
+ * ListPostNotification
+ * 
+ * @param {Array<Object>} arrayInfos {id_user, action, type_notif, id_schedule, type, id_parking, date_start, date_end}
+ * @param {function(*,*)} callback (err, data)
+ */
+function ListPostNotification(arrayInfos, callback){
+	if (arrayInfos.length === 0){
+		callback(null, null);
+	}else{
+		let infos = arrayInfos.pop();
+		PostNotification(infos, (err, data) => {
+			if(err){
+				callback(err, []);
+			}else{
+				ListPostNotification(arrayInfos, callback);
+			}
+		});
+	}
+}
+
+module.exports = {GetNotifications, PreparePostNotification, PostNotification, PrepareListPostNotification, ListPostNotification};

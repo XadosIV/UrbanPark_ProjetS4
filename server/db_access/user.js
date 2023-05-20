@@ -1,4 +1,5 @@
 const {dbConnection} = require('../database');
+const { PreparePostNotification, PostNotification } = require("./notification");
 const Errors = require('../errors');
 
 /**
@@ -89,7 +90,7 @@ function GetUsers(infos, callback){
  */
 function UpdateSpotTemp(users, callback, newusers = []){
 	//RECURSIVE
-	if (users.length == 0){
+	if (users.length === 0){
 		callback(null, newusers)
 	}else{
 		let user = users.pop();
@@ -102,11 +103,26 @@ function UpdateSpotTemp(users, callback, newusers = []){
 }
 
 function UpdateNewSpotTemp(user, idspot, callback){
-	UpdateUser({id_spot_temp: idspot, id: user.id}, (err, data) => {
+	let suiv = (notification) => UpdateUser({id_spot_temp: idspot, id: user.id}, (err, data) => {
 		if (err) return callback(err, null);
 		user.id_spot_temp = idspot;
-		callback(null, user);
-	})
+		PostNotification(notification, (err, data) =>{
+			if(err){
+				callback(err, null);
+			}else{
+				callback(null, user);
+			}
+		});
+	});
+
+	let action = (idspot === null) ? "DELETE" : "POST";
+	PreparePostNotification(user.id, action, "Place temporaire", null, (err, notification) => {
+		if(err){
+			callback(err, null);
+		}else{
+			suiv(notification);
+		}
+	});
 }
 
 function ActualiseTempSpot(user, callback){

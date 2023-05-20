@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spot } from "../components"
+import { Spot } from "./"
 import { GetSpotsFromFilter } from "../interface";
 
 export function SpotsList(props) {		

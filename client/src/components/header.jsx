@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Typography } from "@mui/material";
 import { NotifBell } from "."
+import { ContextUser } from "../contexts/context_user";
 
 export function Header () {
+	const { userToken, userId } = useContext(ContextUser)
+
 	return(
 		<div className="container" style={{
 				display:"flex",
@@ -16,7 +19,7 @@ export function Header () {
 			<Link to="/">
 				<Typography variant="h3">UrbanPark</Typography>
 			</Link>
-			{ /*userToken*/ false && <NotifBell /> }
+			{ !!userToken && !!userId && <NotifBell userId={userId}/> }
 			<Link to="/perso" style={{
 					display:"flex",
 					flexDirection:"row",
