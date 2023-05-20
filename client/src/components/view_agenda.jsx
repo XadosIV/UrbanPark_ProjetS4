@@ -130,14 +130,6 @@ export function ViewAgenda (props){
 	const [serviceList, setServiceList] = useState([]);
 	const [guardiansList, setGuardiansList] = useState([]);
 
-	function AllServices(list) {
-		var opt = []
-		for (let i=0; i<list.length; i++) {
-			opt.push({value:list[i].id, label:list[i].first_name + " " + list[i].last_name})
-		}
-		return opt
-	}
-
 	/**
 	 * BaseListType
 	 * Returns a array corresponding to the list of users corresponding to the type
@@ -146,11 +138,11 @@ export function ViewAgenda (props){
 	 * @return { Array }
 	 */
 	function BaseListType(type) {
-		if (type == "Gardiennage") {
+		if (type === "Gardiennage") {
 			return AllServices(guardiansList);
-		} else if (type == "Nettoyage") {
+		} else if (type === "Nettoyage") {
 			return AllServices(serviceList);
-		} else if (type == "Réunion") {
+		} else if (type === "Réunion") {
 			return AllServices(serviceList).concat(AllServices(guardiansList));
 		}
 	}
@@ -175,23 +167,6 @@ export function ViewAgenda (props){
 				}
 			}
 			return opts;
-		}
-	}
-
-	/**
-	 * BaseListType
-	 * Returns a array corresponding to the list of users corresponding to the type
-	 *
-	 * @param { string } spot - Type of the schedule
-	 * @return { Array }
-	 */
-	function BaseListType(type) {
-		if (type == "Gardiennage") {
-			return AllServices(guardiansList);
-		} else if (type == "Nettoyage") {
-			return AllServices(serviceList);
-		} else if (type == "Réunion") {
-			return AllServices(serviceList).concat(AllServices(guardiansList));
 		}
 	}
 

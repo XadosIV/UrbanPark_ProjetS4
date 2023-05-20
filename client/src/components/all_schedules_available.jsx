@@ -9,6 +9,6 @@ export function AllSchedulesAvailable(props) {
         props.handleCallback({update:true, schedule:props.schedule})
     }
 
-    return (<div className="all-schedules" onClick={PassToBig}>Du {ChangeDate(props.schedule[0].slice(0,10))} à {props.schedule[0].slice(11,19)}  au  {ChangeDate(props.schedule[1].slice(0,10))} à {props.schedule[1].slice(11,19)}</div>
+    return (<div key={props.key} className="all-schedules" onClick={PassToBig}>Du {ChangeDate(props.schedule[0].slice(0,10))} à {props.schedule[0].slice(11,19)}  au  {ChangeDate(props.schedule[1].slice(0,10))} à {props.schedule[1].slice(11,19)}</div>
     );
 }

@@ -1,10 +1,8 @@
 const { dbConnection } = require('../database');
-const { GetUsers } = require('./user');
 const { GetSpots } = require('./spot');
 const Errors = require('../errors');
 const { GetUsersFromRoleArray } = require("./reunion");
 const { GetAllSpots } = require('./spot');
-const { PreparePostNotification, PostNotification } = require("./notification");
 
 /**
  * IsValidDatetime
@@ -48,8 +46,8 @@ function GetSchedules(infos, callback){
 				// {id, type, id_parking, date_start, date_end}
 				let sql = "SELECT * FROM Parking";
 				dbConnection.query(sql, (err, parkings) => {
+					const { GetUsers } = require('./user');
 					if (err) return callback(err, null);
-					let {GetUsers} = require('./user');
 					GetUsers({}, (err, users) => {
 						if (err) return callback(err, null);
 						GetSpots({}, (err, spots) => {
@@ -81,6 +79,7 @@ function GetSchedules(infos, callback){
 	}
 
 	if (!infos.roles && !infos.users && !infos.id){
+		const { GetUsers } = require('./user');
 		GetUsers({}, (err, data) => {
 			if (err) return callback(err, null);
 			doSqlRequest(data.map(e => e.id))
@@ -111,7 +110,7 @@ function GetSchedules(infos, callback){
  * @param {object} infos {roles, users, guests, parking, date_start, date_end, spots, type}
  * @param {function(*,*)} callback (err, data)
  */
-function PostSchedule(infos, callback) {
+function PostSchedule(infos, callback) {	
 	if (!infos.roles && !infos.users) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Un des champs suivant doit être rempli : users, roles", callback);
 	if (!infos.type) return Errors.SendError(Errors.E_TYPE_DONT_EXIST, "Aucun type n'a été demandé.", callback);
 	if (!IsValidDatetime(infos.date_start) || !IsValidDatetime(infos.date_end)) return Errors.SendError(Errors.E_DATETIME_FORMAT_INVALID, "Le format de la date est invalide.", callback);
@@ -208,7 +207,7 @@ function PostSchedule(infos, callback) {
  * @param {Array<integer>} users 
  * @param {Array<integer>} guests 
  */
-function FixUsersGuests(users, guests){
+function FixUsersGuests(users, guests, previous=[]){
 	// Found the two next line in : https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
 	users = [...new Set(users)];
 	guests = [...new Set(guests)];
@@ -216,7 +215,7 @@ function FixUsersGuests(users, guests){
 	// Get index of all duplicata between guests and users
 	to_delete_index = [];
 	for (let index in guests){
-		if (users.includes(guests[index])){
+		if (users.includes(guests[index]) && !previous.includes(guests[index])){
 			to_delete_index.push(index);
 		}
 	}
@@ -239,6 +238,8 @@ function FixUsersGuests(users, guests){
  * @param {function(*,*)} callback 
  */
 function InsertUsersSchedules(users_id, id_schedule, isGuest, type, callback){
+	const { PreparePostNotification, PostNotification } = require("./notification");  // Avoiding circular dependencies
+
 	if (users_id.length == 0){
 		callback(null, true)
 	}else{
@@ -286,6 +287,11 @@ function GetScheduleById(id, callback){
  * @param {function(*,*)} callback 
  */
 function UpdateSchedule(infos, callback){
+	const { PrepareListPostNotification, ListPostNotification } = require("./notification");  // Avoiding circular dependencies
+
+	if(!infos.users && !infos.guests) return Errors.SendError(Errors.E_MISSING_PARAMETER, "un des deux champs suivant dois être remplis : users, guests", callback);
+	if(!parseInt(infos.id)) return Errors.SendError(Errors.E_WRONG_ID_FORMAT, "l'id doit être un nombre", callback);
+
 	let UpdateScheduleTable = (id, date_start, date_end, suite) => {
 		if (date_start || date_end){
 
@@ -376,11 +382,31 @@ function UpdateSchedule(infos, callback){
 		}
 	}
 
-	let doUpdate = (users, guests) => {
+	let SwitchUserSchedule = (id, users, prevStates, suite) => {
+		if(users.length == 0){
+			suite(null, true);
+		}else{
+			let idUser = users.pop();
+			let prevstate = prevStates.filter(elt => elt.id_user == idUser);
+			let newState = !!!prevstate[0].is_guest;
 
-		let res = FixUsersGuests(users, guests);
-		users = res[0];
-		guests = res[1];
+			// console.log("updating ", idUser, " to ", newState, " was ", prevstate);
+
+			let sql = `UPDATE User_Schedule SET is_guest = :is_guest WHERE id_schedule = :id_schedule AND id_user = :id_user`;
+
+			dbConnection.query(sql, {
+				is_guest: newState?1:0,
+				id_schedule: id,
+				id_user: idUser
+			}, (err, data) => {
+				if(err) return suite(err, null);
+				SwitchUserSchedule(id, users, prevStates, suite);
+			})
+		}
+	}
+
+	let doUpdate = (users, guests, switchUser, dataPrevious, callback) => {
+
 		//Start all functions
 		UpdateScheduleTable(infos.id, infos.date_start, infos.date_end, (err, data) => {
 			if (err) return callback(err, null);
@@ -395,13 +421,16 @@ function UpdateSchedule(infos, callback){
 			ToggleSpotSchedule(infos.id, spots, (err, data) => {
 				if (err) return callback(err, null);
 			
-			
-				ToggleUserSchedule(infos.id, users, false, (err, data) => {
-					if (err) return callback(err, null);
-					
-					ToggleUserSchedule(infos.id, guests, true, (err, data) => {
+				SwitchUserSchedule(infos.id, switchUser, dataPrevious, (err, data) => {
+					if(err) return callback(err, null);
+	
+					ToggleUserSchedule(infos.id, users, false, (err, data) => {
 						if (err) return callback(err, null);
-						callback(null, null)
+						
+						ToggleUserSchedule(infos.id, guests, true, (err, data) => {
+							if (err) return callback(err, null);
+							callback(null, null)
+						})
 					})
 				})
 			});
@@ -409,11 +438,94 @@ function UpdateSchedule(infos, callback){
 	}
 	
 	// Get users_id from parameters
-	let users = [];
-	let guests = [];
-	if (infos.users) users = users.concat(infos.users);
-	if (infos.guests) guests = guests.concat(infos.guests);
-	doUpdate(users, guests);
+	let users = infos.users ? infos.users : [];
+	let guests = infos.guests ? infos.guests : [];
+
+
+	let sql = `SELECT id_user, is_guest FROM User_Schedule WHERE id_schedule=:id`;
+	dbConnection.query(sql, {id: infos.id}, (err, dataPrevious) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			let userAvant = dataPrevious.map(elt => elt.id_user);
+			// console.log("userAvant", userAvant);
+			// console.log("usersPrec", users);
+			// console.log("guestsPrec", guests);
+
+			let switchUser = [];
+			let postUser = [];
+			let putUser = [];
+			let deleteUser = [];
+			
+			userAvant.forEach(idU => {
+				inU = users.includes(idU);
+				inG = guests.includes(idU);
+				if(!inU && !inG){
+					putUser.push(idU);
+				}else if(inU && inG){
+					switchUser.push(idU);
+					putUser.push(idU);
+				}else{
+					deleteUser.push(idU);
+				}
+			});
+			users.forEach(idU => {
+				if(!userAvant.includes(idU)){
+					postUser.push(idU);
+				}
+			});
+			guests.forEach(idU => {
+				if(!userAvant.includes(idU) && !users.includes(idU)){
+					postUser.push(idU);
+				}
+			});
+
+			// console.log("switchUser", switchUser);
+			users = users.filter(idU => !switchUser.includes(idU));
+			guests = guests.filter(idU => !switchUser.includes(idU));
+			// console.log("nextUsers", users);
+			// console.log("nextGuests", guests);
+
+			// console.log("putUser", putUser);
+			// console.log("postUser", postUser);
+			// console.log("deleteUser", deleteUser);
+			// console.log("==========");
+
+			PrepareListPostNotification(postUser, "POST", "", infos.id, (err, notifsPost) => {
+				if(err){
+					return callback(err, null);
+				}else{
+					PrepareListPostNotification(putUser, "PUT", "", infos.id, (err, notifsPut) => {
+						if(err){
+							return callback(err, null);
+						}else{
+							PrepareListPostNotification(deleteUser, "DELETE", "", infos.id, (err, notifsDelete) => {
+								if(err){
+									return callback(err, null);
+								}else{
+									let allNotifs = notifsPost.concat(notifsPut).concat(notifsDelete);
+
+									doUpdate(users, guests, switchUser, dataPrevious, (err, data) => {
+										if(err){
+											return callback(err, data);
+										}else{
+											ListPostNotification(allNotifs, (err, data) => {
+												if(err){
+													return callback(err, null);
+												}else{
+													return callback(null, null);
+												}
+											})
+										}
+									});
+								}
+							})
+						}
+					})
+				}
+			})
+		}
+	})
 }
 
 /**
@@ -472,20 +584,32 @@ function IsntScheduleOverlappingForList(infos, ids, callback) {
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteSchedule(id, callback){
+	const { PrepareListPostNotification, ListPostNotification } = require("./notification");  // Avoiding circular dependencies
 	
-	//Remove from MN Table User_Schedule
-	let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id`
-	dbConnection.query(sql, {id:id}, (err, data) => {
-		if (err) return callback(err, null);
-		//Remove from MN Table Schedule_Spot
-		let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id`
-		dbConnection.query(sql, {id:id}, (err, data) => {
-			if (err) return callback(err, null);
-			sql = `DELETE FROM Schedule WHERE id=:id;`;
-			dbConnection.query(sql, {id:id}, callback);
-		})
-	})
-	
+	let sql = `SELECT id_user FROM User_Schedule WHERE id_schedule=:id`;
+	dbConnection.query(sql, {id:id}, (err,data) => {
+		let ids_user = data.map(elem => elem.id_user);
+		PrepareListPostNotification(ids_user, "DELETE", "", id, (err, preparedNotifications) => {
+			//Remove from MN Table User_Schedule
+			let sql = `DELETE FROM User_Schedule WHERE id_schedule=:id`
+			dbConnection.query(sql, {id:id}, (err, data) => {
+				if (err) return callback(err, null);
+				//Remove from MN Table Schedule_Spot
+				let sql = `DELETE FROM Schedule_Spot WHERE id_schedule=:id`
+				dbConnection.query(sql, {id:id}, (err, data) => {
+					if (err) return callback(err, null);
+					sql = `DELETE FROM Schedule WHERE id=:id;`;
+					dbConnection.query(sql, {id:id}, (err, deletedData) => {
+						if(err){
+							callback(err,data);
+						}else{
+							ListPostNotification(preparedNotifications, (err,data)=>callback(err, deletedData));
+						}
+					});
+				});
+			});
+		});
+	});
 }
 
 module.exports = {GetSchedules, PostSchedule, UpdateSchedule, DeleteSchedule, GetScheduleById};

@@ -24,6 +24,8 @@ export function UpdateScheduleForm(props) {
         const res = await DeleteSchedule(props.event.id_schedule);
 		setPopupOpened(false);
         props.handleCallback(false);
+        setOnlyOne(childData.update)
+        setOnlyOneInfo(childData.schedule)
     }
 
     /**
@@ -57,28 +59,6 @@ export function UpdateScheduleForm(props) {
 	}
 
 	/**
-	 * BaseSpot
-	 * Returns a array corresponding to the base spot being passed in a react select defaultValue
-	 *
-	 * @param { integer } spot - id of the spot
-	 * @param { Array } list - List of options being passed in a react select
-	 * @return { Array }
-	 */
-	function BaseSpot(spot, list) {
-		var opts=[]
-		for (let s of list) {
-			if (s.value === spot) {
-				opts.push(s);
-			}
-		}
-		if (opts.length !== 0) {
-			return opts[0].label
-		} else {
-			return ""
-		}
-	}
-
-	/**
 	 * AllServices
 	 * Returns a lists of options for a Select React component composed of every type 
 	 *
@@ -104,11 +84,11 @@ export function UpdateScheduleForm(props) {
 	 * @return { Array }
 	 */
 	function BaseListType(type) {
-		if (type == "Gardiennage") {
+		if (type === "Gardiennage") {
 			return AllServices(guardiansList);
-		} else if (type == "Nettoyage") {
+		} else if (type === "Nettoyage") {
 			return AllServices(serviceList);
-		} else if (type == "Réunion") {
+		} else if (type === "Réunion") {
 			return AllServices(serviceList).concat(AllServices(guardiansList));
 		}
 	}
@@ -136,12 +116,12 @@ export function UpdateScheduleForm(props) {
 				<p>Sur les places : </p>
 				<ul style={{marginTop:"-10px"}}>
 					{nListe.map(
-						(spots) => {
+						(spots, index) => {
 							if (spots.length > 1) {
-								return <li>Etage {spots[0].floor} : De la place {spots[0].id_park}{spots[0].floor}-{spots[0].number} à la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number}</li>
+								return <li key={index} >Etage {spots[0].floor} : De la place {spots[0].id_park}{spots[0].floor}-{spots[0].number} à la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number}</li>
 							}
 							else {
-								return <li>Place {spots[0].id_park}{spots[0].floor}-{spots[0].number}</li>
+								return <li key={index} >Place {spots[0].id_park}{spots[0].floor}-{spots[0].number}</li>
 							}
 						})
 					}
@@ -152,12 +132,14 @@ export function UpdateScheduleForm(props) {
 
 	function InformationEvent (infos, baseType) {
 		let baseList = props.event.user;
-		let listRes = Array()
+		let listRes = [];
+		let i = 0;
 		for (let element of baseList) {
-			listRes.push(<li className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>)
+			listRes.push(<li key={i} className="li-infos"><strong>-</strong> {element.first_name} {element.last_name}</li>);
+			i++;
 		}
-		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3)
-		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3)
+		let dates_start = props.event.start.toLocaleDateString() + " à " + props.event.start.toLocaleTimeString().slice(0, props.event.start.toLocaleTimeString().length-3);
+		let dates_end = props.event.end.toLocaleDateString() + " à " + props.event.end.toLocaleTimeString().slice(0, props.event.end.toLocaleTimeString().length-3);
 		return (
 			<div>
 				<ul className="ul-infos">
@@ -296,7 +278,8 @@ export function UpdateScheduleForm(props) {
 		if (name.name === "users" && baseType === "Réunion") {
 			setOptionsUsersChange(values => ({...values, change: true}))
 			UpdateIfNoHourChange({users:value, date_start:ToFrenchISODate(props.event.start), date_end:ToFrenchISODate(props.event.end), id_exclure:props.event.id_schedule})
-		} else if (name.name === "guests") {
+		}
+			if (name.name === "guests" && baseType === "Réunion") {
 			setOptionsUsers(AllNotNecessary(staffList, value))
         }
 		if (baseType === "Réunion" && checkboxInclude) {
@@ -306,7 +289,7 @@ export function UpdateScheduleForm(props) {
 	}
 
 	const handlleSubmit = async (event) => {
-		event.preventDefault()
+		event.preventDefault();
 		setWrongInput(false);
 		if (infos.users.length === 0) {
 			setWrongInput(true)
@@ -320,12 +303,16 @@ export function UpdateScheduleForm(props) {
 		} else if (horairesSchedules.date_end < horairesSchedules.date_start) {
 			setWrongInput(true)
 			setErrMessage("L'heure de fin ne peut pas précéder l'heure de début.")
-		} else if (!(infos.parking === props.event.idparking && JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) && infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) && JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
+		} else if (!(infos.parking === props.event.idparking &&
+			 JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)) &&
+			  JSON.stringify(infos.guests) === JSON.stringify(props.event.guests.map(e => e.id)) &&
+			   infos.date_start === ToFrenchISODate(props.event.start) && infos.date_end === ToFrenchISODate(props.event.end) &&
+			    JSON.stringify(infos.spots) === JSON.stringify(props.event.spots))) {
 			let listSpotsCleaning = [];
             let first, last;
 			//Set toggles for spots (only if "Nettoyage") on spots between first and last
             if (baseType === "Nettoyage") {
-                first = await placeFromId(spotsCleaning.first_spot).then(first => first)
+				first = await placeFromId(spotsCleaning.first_spot).then(first => first)
                 last = await placeFromId(spotsCleaning.last_spot).then(last => last)
                 listSpotsCleaning = spotsList.filter((el) => {
                     if ((el.floor > first.floor && el.floor < last.floor) ||
@@ -333,7 +320,9 @@ export function UpdateScheduleForm(props) {
                     (el.floor === first.floor && el.floor !== last.floor && el.number >= first.number) ||
                     (el.floor === last.floor && el.floor !== first.floor && el.number <= last.number)) {
                         return true
-                    }
+                    }else{
+						return false
+					}
                 })
 				infos.spots = FindToggles(props.event.spots.map(e => e.id), listSpotsCleaning.map(e => e.id))
             }
@@ -378,7 +367,7 @@ export function UpdateScheduleForm(props) {
 	const handlleSubmitNewReunion = async (event) => {
         event.preventDefault()
         setWrongInput(false);
-        if (infos.date_start == baseDate || infos.date_end == baseDate) {
+        if (infos.date_start === baseDate || infos.date_end === baseDate) {
             setWrongInput(true)
             setErrMessage("Veuillez ne pas laisser la date actuelle.")
         } else {
@@ -388,7 +377,6 @@ export function UpdateScheduleForm(props) {
 			infos.guests = FindToggles(props.event.guests.map(e => e.id), infos.guests)
 
             const res = await UpdateSchedule(infos, props.event.id_schedule); 
-            //console.log(res);
             if (res.status === 200) {
                 setWrongInput(true);
                 setErrMessage("Modification prise en compte.");
@@ -404,9 +392,24 @@ export function UpdateScheduleForm(props) {
     }
 
 	const handleNoChangeDate = async (event) => {
+		if (checkboxInclude){ // if user want to be in reunion
+			if (!infos.users.includes(infosUser.id)){ // if it's not
+				infos.users.push(infosUser.id); // add it
+			}
+		}else{ // if dont want
+			if (infos.users.includes(infosUser.id)){ // if he is
+				infos.users.splice(infos.users.indexOf(infosUser.id, 1)); // remove it
+			}
+		}
+
+		// if, by any black magic, connected user is in guest, remove it.
+		if (infos.guests.includes(infosUser.id)){
+			infos.guests.splice(infos.guests.indexOf(infosUser.id, 1));
+		}
+
 		event.preventDefault()
         setWrongInput(false);
-		if (!(JSON.stringify(infos.users) === JSON.stringify(props.event.user.map(e => e.id)))) {
+		if ((JSON.stringify(infos.users) !== JSON.stringify(props.event.user.map(e => e.id))) || (JSON.stringify(infos.guests) !== JSON.stringify(props.event.guests.map(e => e.id)))) {
 			//Set toggles for users
 			infos.users = FindToggles(props.event.user.map(e => e.id), infos.users)
 			//Set toggles for guests
@@ -415,7 +418,6 @@ export function UpdateScheduleForm(props) {
 			infos.date_end = horairesSchedules.date_end
 
 			const res = await UpdateSchedule(infos, props.event.id_schedule); 
-			//console.log(res);
 			if (res.status === 200) {
 				setWrongInput(true);
 				setErrMessage("Modification prise en compte.");
@@ -436,7 +438,7 @@ export function UpdateScheduleForm(props) {
 	useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            //console.log("user", resInfosUser)
+            // console.log("resInfosUser", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
 			if (props.event.user.map(e => e.id).includes(resInfosUser.data[0].id)) {
 				setCheckboxInclude(true)
@@ -566,7 +568,7 @@ export function UpdateScheduleForm(props) {
 						/>
 					</div>}
 					{baseType === "Réunion" && <div style={{zIndex:1007, display:"flex", flexDirection:"column", justifyContent:"center", marginTop:"-30px"}}>  
-                        <Separation value="Personnes nécéssaires"/>
+                        <Separation value="Personnes nécessaires"/>
 						<p style={{fontSize:"0.7em", color:"red", marginTop:"-10px"}}>Les personnes nécéssaires seront obligatoirement dans la réunion.</p>
                         <div style={{display:"flex", justifyContent:"center"}}>
                             <Checkbox 
@@ -657,7 +659,7 @@ export function UpdateScheduleForm(props) {
 						color="primary" 
 						onClick={() => setChangeSchedule(true)}
 					>Changer d'horaire</Button></div>}
-					{(baseType == "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
+					{(baseType === "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
@@ -682,7 +684,7 @@ export function UpdateScheduleForm(props) {
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         /></div>
                     </div>}
-					{(infos.type == "Nettoyage" || infos.type == "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+					{(infos.type === "Nettoyage" || infos.type === "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
 						<DatePicker
 							name="date_start"
 							selected={new Date(infos.date_start)}
@@ -825,7 +827,7 @@ export function UpdateScheduleForm(props) {
 				</div>}
 				<div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px", marginTop:"10px"}}>
 					{schedulesAvailable.map((schedule, index) => (
-						<AllSchedulesAvailable schedule={schedule} optionals={infos.guests} handleCallback={CallbackSetOne}/>
+						<AllSchedulesAvailable key={index} schedule={schedule} optionals={infos.guests} handleCallback={CallbackSetOne}/>
 					))}
 				</div>
 				{ wrongInput && <p className="err_message"> { errMessage } </p>}
