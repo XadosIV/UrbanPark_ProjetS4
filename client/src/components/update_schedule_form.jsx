@@ -825,7 +825,7 @@ export function UpdateScheduleForm(props) {
 					</div>
 					</form>
 				</div>}
-				<div style={{maxHeight:"300px", overflowY: "scroll", paddingRight:"20px", marginTop:"10px"}}>
+				<div style={{maxHeight:"300px", overflowY: "auto", paddingRight:"20px", marginTop:"10px"}}>
 					{schedulesAvailable.map((schedule, index) => (
 						<AllSchedulesAvailable key={index} schedule={schedule} optionals={infos.guests} handleCallback={CallbackSetOne}/>
 					))}
