@@ -51,6 +51,7 @@ export function App() {
 	}, [userRole]);
 	
 	useEffect(() => {
+		console.log("userPermissions", userPermissions)
 		if(userPermissions !== initialState.userPermissions){
 			window.sessionStorage.setItem("userPermissions", JSON.stringify(userPermissions));
 		}else{

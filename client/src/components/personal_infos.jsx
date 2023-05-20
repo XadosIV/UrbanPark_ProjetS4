@@ -3,6 +3,7 @@ import { Button, TextField } from "@mui/material";
 import { ContextUser } from "../contexts/context_user";
 import { userFromToken, updateInfoPerso, authenticate } from "../services";
 import { isValideNom } from "../interface"
+import { DeconnexionButton } from "./deconnexion_button";
 
 export function PersonalInfos(){
     const { userToken, setUserToken, userId } = useContext(ContextUser);
@@ -179,6 +180,7 @@ export function PersonalInfos(){
                 }}
             > modifier mes informations </Button>
             </div>
+            <DeconnexionButton />
         </div>
         <div className="div-info-user" style={ affFormModifInfo ? {  } : { display: "none" }} >
             <div className="form-modif-infos">
