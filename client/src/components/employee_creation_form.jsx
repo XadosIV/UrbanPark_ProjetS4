@@ -5,8 +5,8 @@ import { creationCompte, TakeAllRoles } from "../services";
 import { isValideNom } from "../interface";
 import Select from 'react-select';
 
-export function EmployeeRegistrationForm() {
-	const [infos, setInfos] = useState({email: "", first_name: "", last_name: "", password: "", password_conf: "", id_role: ""});
+export function EmployeeRegistrationForm(props) {
+	const [infos, setInfos] = useState({email: "", first_name: "", last_name: "", password: "", password_conf: "", role: ""});
 	const [wrongInput, setWrongInput] = useState(false);
 	const [errMessage, setErrMessage] = useState("");
 	const [ role, setRole ] = useState([]);
@@ -17,6 +17,7 @@ export function EmployeeRegistrationForm() {
 		async function fetchRole(){
 			let resRole = await TakeAllRoles();
 			console.log("role", resRole);
+			resRole = resRole.filter(role => role.name !== "Abonné")
 			setRole(resRole);
 		}
 		fetchRole();
@@ -151,7 +152,7 @@ export function EmployeeRegistrationForm() {
 					/></div>
 					<div><Select 
 						required
-						name="id_role"
+						name="role"
 						className="select-role-user"
 						placeholder="role demandé"
 						options={ optRole }
