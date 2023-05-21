@@ -64,7 +64,8 @@ export function ParkingsStaff({admin}) {
 				borderRadius: 20,
 				width: 250,
 				float:"right",
-				height:"120%"
+				height:"120%",
+				marginRight:"40px"
 			}}>Ajouter un parking</Button>} position="left center" onClose={() => setWrongInput(false)}>
 				<div className="form_div">
 					<h3 style={{textAlign:"center"}}>Ajout d'un nouveau parking</h3>

@@ -1,1 +1,0 @@
-// ensemble des fonctions qui permettent de savoir si une notification est à afficher

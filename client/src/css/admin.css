@@ -220,3 +220,19 @@
 .all-schedules:hover {
 	background-color:#F2F3F5;
 }
+
+.size-select-popup {
+	width:500px;
+	margin-bottom:10px;
+}
+
+.size-type {
+	width:300px;
+	margin-bottom:10px;
+}
+
+.form_employee_div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}

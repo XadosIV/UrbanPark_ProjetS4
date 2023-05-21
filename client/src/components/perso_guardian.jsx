@@ -61,8 +61,8 @@ export function PersoGuardian(props){
                 onClick={ toggleAffDemande }
             > demandes d'abonnement </Button>
         </div>
-        { affEdtGardien && <ScheduleGuardian id={id} /> }
-        { affEdtEntretient && <ScheduleService /> }
+        { affEdtGardien && <ScheduleGuardian id={id} admin={false}/> }
+        { affEdtEntretient && <ScheduleService admin={false}/> }
         { affAdminGardien  && <AdminGuardian /> }
         { affDemandeAbo && <ListeDemandeAbo /> }
     </div>)

@@ -7,20 +7,15 @@ import axios from "axios"
  * @return { Promise list of Schedule }
  */
 async function TakeAllEvents(user =0, role = null){
-	var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/schedules"
+	var url = "http://" + process.env.REACT_APP_HOST + ":" + process.env.REACT_APP_PORTSERVER + "/api/schedules";
+	let hasParams = {}
 	if (user !== 0) {
-		const obj = {user: user}
-        url = url + "?" + new URLSearchParams(obj).toString();
-		if (role !== null) {
-			const obj = {role: role}
-			url = url + "&" + new URLSearchParams(obj).toString();
-		}
-    }
-	else if (role !== null) {
-		const obj = {role: role}
-		url = url + "?" + new URLSearchParams(obj).toString();
+		hasParams.users = user;
 	}
-	return axios.get(url).then((res) => res.data)
+	if (role !== null) {
+		hasParams.roles = [role];
+	}
+	return axios.get(url, {params:hasParams}).then((res) => res.data)
 }
 
 export {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spot } from "../components"
+import { Spot } from "./"
 import { GetSpotsFromFilter } from "../interface";
 
 export function SpotsList(props) {		
@@ -23,6 +23,7 @@ export function SpotsList(props) {
 	}
 
 	let rendu = () => {
+		// console.log("spotData", filteredData);
 		return (
 			filteredData.map((spot, index) => (
 			<Spot spot={spot} key={generateKey(index, spot)} handleCallback={Callback} checkBoxCallback={toggleSpotArr} toCheck={isChecked} up={props.up}/>

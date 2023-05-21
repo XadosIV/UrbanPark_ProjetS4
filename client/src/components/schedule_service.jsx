@@ -6,6 +6,6 @@ export function ScheduleService(props){
     const input = id ? {user: id} : {role: "Agent d'entretien"};
 
     return(<div className="div-edt">
-        <ViewAgenda props={input} />
+        <ViewAgenda props={input} admin={props.admin}/>
     </div>)
 }

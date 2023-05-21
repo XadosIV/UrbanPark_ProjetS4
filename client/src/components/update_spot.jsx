@@ -33,7 +33,7 @@ export function UpdateSpot (props) {
 					trouve = true;
 				}
 			}
-			if (!trouve && base.length != 0){
+			if (!trouve && base.length !== 0){
 				changes.push(typeL.name);
 			}
 		}
@@ -44,12 +44,11 @@ export function UpdateSpot (props) {
 					trouve = true;
 				}
 			}
-			if (!trouve && typeList.length != 0){
+			if (!trouve && typeList.length !== 0){
 				changes.push(typeB.name);
 			}
 		}
-		console.log(changes)
-		if (changes.length != 0) {
+		if (changes.length !== 0) {
 			ServiceUpdateSpot(changes, props.spot.id);
 		}
 		props.handleCallback(true);
@@ -63,7 +62,7 @@ export function UpdateSpot (props) {
 				name="types"
 				placeholder="Choisir des types"
 				options={AllTypes(allTypes)}
-				className="search-add-two "
+				className="select-size-change"
 				defaultValue={AllTypes(base)}
 				onChange={event => handleChangeSelect(event)}
 			/>

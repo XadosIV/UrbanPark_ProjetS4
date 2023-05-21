@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { TakeAllSpots, TakeParking, getAllSpotsFilter, SetSpotFromUser } from "../services"
+import { TakeParking, SetSpotFromUser } from "../services"
 import { SpotName, AllSpots } from "../interface"
 import Select from 'react-select';
 import ReactModal from 'react-modal';
@@ -43,7 +43,13 @@ export function User(props){
 				}
 			}
 		} else {
-			return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+			if (spotTemp) {
+				if (spotTemp.length !== 0) {
+					return <p style={{display: "inline"}}><br/>- Place temporaire {spotTemp}</p>
+				}
+			} else {
+				return <p style={{display: "inline"}}><br/>- Pas de place attitrée</p>
+			}
 		}
 	}
 
@@ -62,8 +68,6 @@ export function User(props){
 	const [ optSpot, setOptSpot ] = useState([]);
 	const [ update, setUpdate ] = useState(true);
 	const [ allSpots, setAllSpots ] = useState([]);
-	const [ fetchingSpot, setFetchingSpot ] = useState([]);
-	const [ fetchingSpotTemp, setFetchingSpotTemp ] = useState([]);
 
 	useEffect(() => {
 		setAllSpots(props.allSpots);
@@ -92,7 +96,7 @@ export function User(props){
 			// console.log("res spot", props.user.id_park_demande, allSpots);
 			let mainSpot = allSpots.find(spot => spot.id === props.user.id_spot);
 			let tempSpot = allSpots.find(spot => spot.id === props.user.id_spot_temp);
-			console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
+			//console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
 			setSpotWithUser(SpotName(mainSpot));
 			setSpotTempWithUser(SpotName(tempSpot));
 		}
@@ -146,7 +150,7 @@ export function User(props){
 		async function SSFU(id_user, change) {
             await SetSpotFromUser(id_user, userToken, change)
         }
-		if (spot != props.user.id_spot && spot != null) {
+		if (spot !== props.user.id_spot && spot != null) {
 			SSFU(props.user.id, {id_spot:spot})
 			setErrMessage("Modification prise en compte.")
 			setAffErrMessage(true)

@@ -1,10 +1,9 @@
 import axios from "axios"
 
 /**
- * getAllSpotsTyped
- * Returns a list of spots with the 'abonné' type corresponding to the id of the parking given in parameter (If no id, get all spots)
+ * getAllSpotsFilter
+ * Renvoie une liste de spot selon les paramètres donnés
  *
- * @param { Char } id_park
  * @param { Array } params
  * @return { Promise list of User }
  */
