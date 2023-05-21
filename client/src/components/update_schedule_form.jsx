@@ -95,21 +95,21 @@ export function UpdateScheduleForm(props) {
 
 	function AffichagePlaces() {
 		let liste = props.event.spots;
+		console.log("liste non reverse", liste)
+		liste.sort((a, b) =>{ if (a.floor === b.floor) {return a.number < b.number} else {return a.floor < b.floor}})
+		console.log("liste reverse", liste)
 	
 		let nListe = []
 
-		liste.map((spot) => {
+		liste.forEach(spot => {
 			let floor = spot.floor
-			if (Array.isArray(nListe[spot.floor])) {
+			if (Array.isArray(nListe[floor])) {
 				nListe[floor].push(spot);
 			} else {
 				nListe.push([spot]);
 			}
 		})
 
-		for (let spots of nListe) {
-			spots.sort();
-		}
 
 		return (
 			<div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
@@ -117,8 +117,9 @@ export function UpdateScheduleForm(props) {
 				<ul style={{marginTop:"-10px"}}>
 					{nListe.map(
 						(spots, index) => {
+							console.log(spots)
 							if (spots.length > 1) {
-								return <li key={index} >Etage {spots[0].floor} : De la place {spots[0].id_park}{spots[0].floor}-{spots[0].number} à la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number}</li>
+								return <li key={index} >Etage {spots[0].floor} : De la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number} à la place {spots[0].id_park}{spots[0].floor}-{spots[0].number}</li>
 							}
 							else {
 								return <li key={index} >Place {spots[0].id_park}{spots[0].floor}-{spots[0].number}</li>
