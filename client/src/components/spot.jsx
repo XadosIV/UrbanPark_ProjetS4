@@ -89,7 +89,7 @@ export function Spot(props) {
             <form onSubmit={(e) => handlleSubmit(e, type)} className="form">
                 <Select 
                     id="user"
-                    className="searchs-add"
+                    className="select-size-change"
                     options={AllSubs(subs)} 
                     defaultValue={defaultValue}
                     name="user" 
@@ -163,10 +163,10 @@ export function Spot(props) {
 
     const [ modifiable, setModifiable ] = useState(false);
     
-    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot));
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot.id));
 
     useEffect(() => {
-        setCheckbox(props.toCheck(props.spot));
+        setCheckbox(props.toCheck(props.spot.id));
     }, [props.up])
 
 	useEffect(() => {
@@ -240,29 +240,40 @@ export function Spot(props) {
                 DSFU(res[0].id, {id_spot_temp:null});
             })
         }
-        if (infos.user != 0 && !(type === "changeSpot" && gender === "temporary")) {
-            SSFU(infos.user, toModif);
+        if (infos.user !== 0 && !(type === "changeSpot" && gender === "temporary")) {
+            if (infos.user !== 0 && !(type === "changeSpot" && gender === "temporary")) {
+                SSFU(infos.user, toModif);
+            }
+            if (type === "changeSpot" && gender === "temporary") {
+                setErrMessage("Vous ne pouvez pas enlever la place d'un abonné pour la mettre temporairement à un autre.")
+                setWrongInput(true)
+            } else {
+                setErrMessage("Modification prise en compte.")
+                setWrongInput(true)
+                props.handleCallback(true)
+                await delay(2000);
+                setNoSubmit(true)
+            }
         }
-        if (type === "changeSpot" && gender === "temporary") {
-            setErrMessage("Vous ne pouvez pas enlever la place d'un abonné pour la mettre temporairement à un autre.")
-            setWrongInput(true)
-        }
-        setErrMessage("Modification prise en compte.")
-        setWrongInput(true)
-        props.handleCallback(true)
-        await delay(2000);
-        setNoSubmit(true)
     }
 
+    var cleaning;
+    if(props.spot.in_cleaning){
+        cleaning = <p style={{textDecoration:"none", marginBottom:"10px", fontSize:"0.7em", color:"red", marginTop:"-10px"}}>
+            Cette place est en cours de nettoyage
+        </p>
+    }
     var infosSpot;
     if (props.spot.id_user != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                         Place attribuée à : <br/> {props.spot.first_name} {props.spot.last_name}</p>
+                        { cleaning }
                         {ChangeUserSpot("Changer", "changeSpot")}
                     </div>
     } else if (props.spot.id_user_temp != null) {
         infosSpot = <div style={{textAlign:"center"}}><p style={{textDecoration:"none", marginBottom:"10px", marginTop:"0px"}}>
                     Place attribuée temporairement à : <br/> {props.spot.first_name_temp} {props.spot.last_name_temp}</p>
+                    { cleaning }
                     {ChangeUserSpot("Changer", "changeSpotTemp")}
                 </div>
     } else {
@@ -270,6 +281,7 @@ export function Spot(props) {
             if (type === "Abonné") {     
                 infosSpot = <div style={{textAlign:"center"}}>
                         Cette place n'a pas d'abonné attitré <br/>
+                        { cleaning }
                         {ChangeUserSpot("Assigner")}
                     </div>
             }
@@ -277,7 +289,7 @@ export function Spot(props) {
         }  
     }
     if (!infosSpot) {
-        infosSpot = <div style={{textAlign:"center"}}>Cette place est destinée à tous les utilisateurs</div>
+        infosSpot = <div style={{textAlign:"center", marginTop:"-15px"}}><p>Cette place est destinée à tous les utilisateurs</p>{ cleaning }</div>
     }
 
     var typesSpot = [];
@@ -291,21 +303,43 @@ export function Spot(props) {
 
 	return (<div className="spot">
 
-        <Popup className="popup-spot" trigger={<Button variant="contained" color="primary" className="dropbtn" style={{width:"200px"}}>
-                            <Checkbox 
-								style={{color:"white"}}
-                                icon={checkboxIcon()}
-                                checked={checkbox}
-                                onChange={toggleCheckbox}
-                            />
-                            Place {SpotName(props.spot)}
-                        </Button>} position="bottom center" onOpen={() => {setNoSubmit(true);}} onClose={() => {setNoSubmit(true); setWrongInput(false); setModifiable(false)}}>
+        <Popup 
+            className="popup-spot"
+            trigger={
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className="dropbtn"
+                    style={{width:"200px"}}
+                >
+                    <Checkbox 
+                        style={{color:"white"}}
+                        icon={checkboxIcon()}
+                        checked={checkbox}
+                        onChange={toggleCheckbox}
+                    />
+                    Place {SpotName(props.spot)}
+                </Button>}
+            position="bottom center"
+            onOpen={() => {
+                setNoSubmit(true);
+            }}
+            onClose={() => {
+                setNoSubmit(true);
+                setWrongInput(false);
+                setModifiable(false)
+            }}
+        >
             {infosSpot}
+            { wrongInput && <p className="err-message"> { errMessage } </p>}
             <hr/>
             {typesSpot}
             { admin && HandleTypesModification()}
-            {admin && 
-            <AdminVerif title="Supprimer cette place" text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}/>}
+            { admin && 
+            <AdminVerif 
+                title="Supprimer cette place"
+                text={"Vous êtes sur le point de supprimer la place " + SpotName(props.spot) + " ! " + HasSubDontDelete(props.spot)} handleCallback={CallbackDelete}
+            />}
         </Popup>
     </div>)
 }

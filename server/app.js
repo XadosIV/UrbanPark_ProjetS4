@@ -1,17 +1,18 @@
 const express = require('express');
-const app = express();
 const {GetToken} = require('./db_access/auth')
 const {GetUsers, PostUser, GetUserFromToken, DeleteUser, UpdateUser} = require('./db_access/user');
 
 const {GetParkings, PostParking, PutParkings, DeleteParking} = require('./db_access/parking');
 const {GetSpotTypes, PostSpotType} = require('./db_access/spot_type');
-
 const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedule} = require('./db_access/schedule');
 const {GetSchedulesAvailable} = require('./db_access/reunion');
 const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
-
 const {GetPermRole} = require('./db_access/role');
+const {GetNotifications} = require('./db_access/notification')
+
 const Errors = require('./errors');
+
+const app = express();
 
 // Default headers
 app.use((req, res, next) => {
@@ -76,7 +77,7 @@ app.get('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -94,7 +95,7 @@ app.delete('/api/users/:id', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -230,7 +231,7 @@ app.get('/api/spot/:spot', (req, res) => {
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -265,14 +266,14 @@ app.delete('/api/spot/:id', (req, res) => {
 	if (parseInt(req.params.id)){
 		DeleteSpot(parseInt(req.params.id), (err, data)=>{
 			if (err){
-				console.log(err);
+				//console.log(err);
 				res.status(500).json({"code":Errors.E_INTERNAL_ERROR, "message":"Une erreur est survenue"});
 			} else {
 				res.status(200).json();
 			}
 		})
 	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","id":"Champs obligatoires : id"});
+		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : id"});
 	}
 })
 
@@ -290,7 +291,7 @@ app.get('/api/role', (req, res) => {
 });
 
 app.get('/api/schedules', (req, res) => {
-	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query));
+	//console.log("Request at GET /api/schedules : " + JSON.stringify(req.query) + "\n body: " + JSON.stringify(req.body));
 	GetSchedules(req.query, (err, data) => {
 		if (err){
 			Errors.HandleError(err, res);
@@ -302,17 +303,13 @@ app.get('/api/schedules', (req, res) => {
 
 app.post('/api/schedule', (req, res) => {
 	//console.log("Request at POST /api/schedule : " + JSON.stringify(req.body));
-	if (req.body && (!!req.body.role ^ req.body.user) && (typeof req.body.parking != "undefined") && req.body.date_start && req.body.date_end && (isNaN(req.body.first_spot) == isNaN(req.body.last_spot))){
-		PostSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json(data);
-			}
-		});
-	}else{
-		res.status(400).json({"code":Errors.E_MISSING_PARAMETER,"message":"Champs obligatoires : user*, parking, date_start, date_end. * : Un seul de ces paramètres est requis, les autres ne doivent pas être définis. Champs optionels : first_spot**, last_spot**. ** : Si l'un des paramètres est définit, les autres doivent être définits aussi"});
-	}
+	PostSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json();
+		}
+	})
 });
 
 app.get('/api/schedules/:id', (req, res) => {
@@ -324,31 +321,27 @@ app.get('/api/schedules/:id', (req, res) => {
 				if (data.length == 1){
 					res.status(200).json(data[0]);
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 })
 
 app.put('/api/schedules/:id', (req, res) => {
 	req.body.id = req.params.id;
-	if (req.body && (req.body.user || req.body.parking || req.body.date_start || req.body.date_end)){
-		UpdateSchedule(req.body, (err, data) => {
-			if (err){
-				Errors.HandleError(err, res);
-			}else{
-				res.status(200).json()
-			}
-		})
-	}else{
-		res.status(400).json({"code":"E_MISSING_PARAMETER","message":"Un parmi user, parking, date_start, date_end doit être défini."})
-	}
+	UpdateSchedule(req.body, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json()
+		}
+	})
 })
 
-app.delete('/api/schedule/:id', (req, res) => {
+app.delete('/api/schedules/:id', (req, res) => {
 	//console.log(req.params.id)
 	if (parseInt(req.params.id)){
 		DeleteSchedule(parseInt(req.params.id), (err, data) => {
@@ -358,12 +351,12 @@ app.delete('/api/schedule/:id', (req, res) => {
 				if (data.affectedRows == 1){
 					res.status(200).json();
 				}else{
-					res.status(400).json({"code":Errors.E_USER_NOT_FOUND,"message":"Aucun utilisateur n'a l'identifiant demandé."});
+					res.status(400).json({"code":Errors.E_SCHEDULE_NOT_FOUND,"message":"Aucun créneau n'a l'identifiant demandé."});
 				}
 			}
 		});
 	}else{
-		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id must be an integer"});
+		res.status(400).json({"code":Errors.E_WRONG_PARAMETER,"message":"id doit être un nombre"});
 	}
 });
 
@@ -373,11 +366,21 @@ app.get('/api/reunion', (req, res) => {
 		if (err){
 			Errors.HandleError(err, res);
 		}else{
-			console.log(data)
+			//console.log(data)
 			res.status(200).json(data);
 		}
 	})
+});
 
+app.get('/api/notifications', (req, res) => {
+	GetNotifications(req.query, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			//console.log(data)
+			res.status(200).json(data);
+		}
+	})
 })
 
 module.exports = app;

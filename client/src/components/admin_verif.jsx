@@ -104,6 +104,7 @@ export function AdminVerif(props) {
                 contentLabel="Suppression"
                 onRequestClose={() => setIsOpen(false)}
                 style={customStyles}
+                ariaHideApp={false}
             >
                 <p style={{color:"red", alignText:"center"}}>
                     ATTENTION !

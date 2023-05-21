@@ -4,7 +4,7 @@ const Errors = require('../errors');
 
 /**
  * 
- * @param {object} infos roles[], users[], date_start, date_end
+ * @param {object} infos roles[], users[], date_start, date_end, id_exclure
  * @param {function(*,*)} callback 
  */
 function GetSchedulesAvailable(infos, callback){
@@ -31,7 +31,7 @@ function GetSchedulesAvailable(infos, callback){
 				users.push(d.id);
 			}
 			// On devrait ajouter un algo pour retirer les doublons dans "users[]" ici afin d'optimiser les perfs
-			GetAllSchedulesFromUserArray(users, infos.date_start, infos.date_end, (err, data) => {
+			GetAllSchedulesFromUserArray(users, infos.date_start, infos.date_end, infos.id_exclure, (err, data) => {
 				if (err) {return callback(err, null)}
 				else {
 					let schedules = ReduceSchedules(data);
@@ -236,22 +236,30 @@ function FusingOverlappingSchedules(schedules){
  * @param {Array} user_array 
  * @param {string} min 
  * @param {string} max 
+ * @param {int} id_exclure
  * @param {function(*,*)} callback 
  * @param {array} schedules 
  */
-function GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules=[]){
+function GetAllSchedulesFromUserArray(user_array, min, max, id_exclure, callback, schedules=[]){
+	if (!id_exclure) id_exclure = -1
 	if (user_array.length == 0){
 		callback(null, schedules);
 	}else{
 		let user = user_array.pop();
-		let sql = `SELECT DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start, DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end FROM schedule WHERE id_user = :id AND (date_start <= :date_end AND date_end >= :date_start)`
-		dbConnection.query(sql, {id:user, date_start:min, date_end:max}, (err, data) => {
+
+		let sql = `SELECT DATE_FORMAT(date_start,"%Y-%m-%dT%T") AS date_start,
+						DATE_FORMAT(date_end,"%Y-%m-%dT%T") AS date_end 
+				   FROM Schedule s
+				   JOIN User_Schedule us ON us.id_schedule = s.id
+				   WHERE s.id != :exclure AND us.id_user = :id AND (date_start <= :date_end AND date_end >= :date_start)`
+
+		dbConnection.query(sql, {id:user, date_start:min, date_end:max, exclure:id_exclure}, (err, data) => {
 			if (err) {callback(err, null)}
 			else{
 				for (let s of data){
 					schedules.push([s.date_start, s.date_end]);
 				}
-				GetAllSchedulesFromUserArray(user_array, min, max, callback, schedules);
+				GetAllSchedulesFromUserArray(user_array, min, max, id_exclure, callback, schedules);
 			}
 		})
 	}
@@ -272,7 +280,9 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 		callback(null, user_array)
 	}else{
 		let role = role_array.pop();
-		let sql = `SELECT id FROM user WHERE role=:role`
+
+		let sql = `SELECT id FROM User WHERE role=:role`
+
 		dbConnection.query(sql, {role:role}, (err, data) => {
 			if (err) {callback(err, null)}
 			else{
@@ -285,4 +295,4 @@ function GetUsersFromRoleArray(role_array, callback, user_array=[]){
 	}
 }
 
-module.exports = {GetSchedulesAvailable};
+module.exports = {GetSchedulesAvailable, GetUsersFromRoleArray, GetAllSchedulesFromUserArray};

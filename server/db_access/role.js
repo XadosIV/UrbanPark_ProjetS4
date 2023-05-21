@@ -9,8 +9,10 @@ const {dbConnection} = require('../database');
  */
 
 function GetPermRole(infos, callback){
+
 	sql = `SELECT * FROM Role WHERE name LIKE :role;`;
-	console.log("SQL at GetPermRole : " + sql + " with " + JSON.stringify(infos));
+	
+	//console.log("SQL at GetPermRole : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		role: infos.role||'%'
 	}, callback);

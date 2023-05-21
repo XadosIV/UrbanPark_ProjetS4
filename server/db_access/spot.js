@@ -11,26 +11,67 @@ const Errors = require('../errors');
  */
 
 function GetAllSpots(infos, callback){
-	sql = `SELECT s.id, s.number, s.floor, s.id_park, u.id AS id_user, uu.id AS id_user_temp, u.first_name, u.last_name, uu.first_name AS first_name_temp, uu.last_name AS last_name_temp 
-	FROM Spot s 
-	LEFT JOIN User u ON s.id = u.id_spot 
-	LEFT JOIN User uu ON s.id = uu.id_spot_temp 
-	WHERE s.id_park LIKE :id_park AND s.floor LIKE :floor AND s.number LIKE :number AND s.id LIKE :id
-	ORDER BY floor, number`;
-    //console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
-    dbConnection.query(sql, 
-		{
-			id:infos.id ||'%',
-			number:infos.number||'%',
-			floor:infos.floor||'%',
-			id_park:infos.id_park||'%'
-		}, (err, data) => {
+	sql = `SELECT
+		s.id,
+		s.number,
+		s.floor,
+		s.id_park,
+		u.id AS id_user,
+		uu.id AS id_user_temp,
+		u.first_name,
+		u.last_name,
+		uu.first_name AS first_name_temp,
+		uu.last_name AS last_name_temp,
+		ns.date_end,
+		ns.id AS next_schedule
+	FROM Spot s
+		LEFT JOIN User u ON s.id = u.id_spot
+		LEFT JOIN User uu ON s.id = uu.id_spot_temp
+		LEFT JOIN Schedule_Spot ss ON s.id = ss.id_spot
+		LEFT JOIN Schedule ns ON ss.id_schedule = ns.id AND ns.date_end > NOW()
+	WHERE
+		s.id_park LIKE :id_park
+		AND s.floor LIKE :floor
+		AND s.number LIKE :number
+		AND s.id LIKE :id
+	ORDER BY s.id, ns.date_end`;
+
+	/**
+	 * Note on schedules :
+	 * Only futur or actual schedules are fetched this way.
+	 * Using a `GROUP BY s.id` clause along a `HAVING MIN(ns.date_end)` didn't work.
+	 * BTW : Using an `AND` clause in a `LEFT JOIN ON` isn't a hack, it's taking advantage of the features.
+	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really useful)
+	 */
+	
+	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
+    dbConnection.query(sql, {
+		id:infos.id ||'%',
+		number:infos.number||'%',
+		floor:infos.floor||'%',
+		id_park:infos.id_park||'%'
+	}, (err, data) => {
         if (err){
             callback(err, [])
         }else{
-            sql = `SELECT * FROM Typed`
-            //console.log("SQL at GetAllSpots : " + sql);
-            allSpots = data
+			let allSpots = [];
+
+			data.forEach((element) => {
+				let index = allSpots.map(spot => spot.id).indexOf(element.id)
+				if(index != -1){
+					if(allSpots[index].next_schedule === null || (element.next_schedule !== null && element.end_date < allSpots[index].end_date)){
+						allSpots[index] = element;
+					}
+				}else{
+					allSpots.push(element);
+				}
+			});
+
+			allSpots = allSpots.map(({date_end, ...others}) => others);
+    
+			sql = `SELECT * FROM Typed`
+    
+			//console.log("SQL at GetAllSpots : " + sql);
             dbConnection.query(sql, (err, data) => {
                 if (err){
                     callback(err, [])
@@ -44,11 +85,46 @@ function GetAllSpots(infos, callback){
                             }
                         }
                     }
-                    callback(err, allSpots)
+
+					CheckIsCleanning(allSpots, callback);
+                    // callback(err, allSpots)
                 }
             })
         }
     });
+}
+
+/**
+ * CheckIsCleanning
+ * add a boolean to each spots OBJECT in a array indicating if it's beeing cleaned
+ * 
+ * @param { array of spots } arrSpot [ { OBJECT Spot}, ... ]
+ * @param {function(*,*)} callback (err, data)
+ */
+function CheckIsCleanning(arrSpots, callback){
+
+	let sql = 
+	`SELECT DISTINCT sp.id_spot
+	 FROM Schedule_Spot sp
+	 JOIN Schedule s ON s.id = sp.id_schedule
+	 WHERE 
+	 	s.type = "Nettoyage" AND
+		s.date_start <= NOW() AND
+		s.date_end >= NOW()
+	`;
+
+	dbConnection.query(sql, {}, (err, data) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			arrSpotId = data.map(elt => elt.id_spot)
+			arrSpots.forEach(spot => {
+				spot.in_cleaning = arrSpotId.includes(spot.id);
+			})
+			return callback(err, arrSpots);
+		}
+	})
+
 }
 
 /**
@@ -63,25 +139,76 @@ function GetSpots(infos, callback){
         if (err) {
             callback(err, []);
         }else{
-            for (let key of Object.keys(infos)){
-                key = key.toLowerCase()
-                if (key == "type"){
-                    spots = spots.filter(spot => spot.types.includes(infos.type));
-                }else{
-                    spots = spots.filter(spot => spot[key] == infos[key]);
-                }
-            }
-            callback(err, spots);
+			UpdateUserTemp(spots, (err, upSpots) => {
+				if(err) return callback(err, null);
+
+				for (let key of Object.keys(infos)){
+					key = key.toLowerCase()
+					if (key == "type"){
+						upSpots = upSpots.filter(spot => spot.types.includes(infos.type));
+					}else{
+						upSpots = upSpots.filter(spot => spot[key] == infos[key]);
+					}
+				}
+				return callback(null, upSpots);
+			})
+
+            
+			//callback(null, spots)
+			
         }
     })
+}
+
+/**
+ * UpdateUserTemp
+ * update id_spot_temp of temp user of the spots if necessary
+ * 
+ * @param {Array<Spot Object>} spots [{id, id_user_temp, ...}, {...}, ...]
+ * @param {function(*,*)} callback (err, data)
+ * @param {Array<Spot Object>} newSpots 
+ */
+function UpdateUserTemp(spots, callback, newSpots = []){
+	//RECURSIVE
+	//console.log(newSpots)
+	if (spots.length == 0){
+		callback(null, newSpots)
+	}else{
+		let spot = spots.pop();
+		ActualiseTempUser(spot, (err, newspot) => {
+			if (err) return callback(err, null);
+			newSpots.push(newspot);
+			UpdateUserTemp(spots, callback, newSpots)
+		})
+	}
+}
+
+// Retirer la place temporaire si la place temporaire n'est plus en nettoyage
+function ActualiseTempUser(spot, callback){
+	if(spot.id_user || !spot.id_user_temp) return callback(null, spot);
+
+	let sql = `SELECT id_spot_temp FROM User WHERE id = :id`;
+
+	dbConnection.query(sql, {id: spot.id_user_temp}, (err, userTemp) => { // permet l'attribution ou la suppression de la place temporaire.
+		if(err){
+			return callback(err, null);
+		}else{
+			if(userTemp.id_spot_temp === null){
+				spot.id_user_temp = null;
+				spot.first_name_temp = null;
+				spot.last_name_temp = null;
+			}
+			return callback(null, spot);
+		}
+	})
 }
 
 /**
  * GetSpotsMultipleFloors
  * Return a JSON with every spots corresponding to paramaters
  * 
- * @param {*} infos {id_park, floors, number, type, id}
- * @param {*} callback 
+ * @param {object} infos {id_park, floors, number, type, id}
+ * @param {function(*,*)} callback 
  */
 function GetSpotsMultipleFloors(infos, callback, recData=[]){
 	poppedFloor = infos.floors.pop();
@@ -108,7 +235,9 @@ function GetSpotsMultipleFloors(infos, callback, recData=[]){
  * @param {function(*,*)} callback (err, data)
  */
 function InsertListTyped(id_spot, name_types, callback){
+	
 	sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
+	
 	//console.log("SQL at InsertListTyped : " + sql + " with " + {id_spot:id_spot,names_types:names_types});
 	dbConnection.query(sql, {
 			id_spot:id_spot,
@@ -147,7 +276,9 @@ function PostSpot(infos, callback){
 				}else if (infos.floor >= parkings[0].floors){
 					Errors.SendError(Errors.E_WRONG_FLOOR, "L'étage n'existe pas.",callback);
 				}else{
+	
 					sql = `INSERT INTO Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
+	
 					//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if(err){
@@ -191,10 +322,12 @@ function UpdateSpot(infos, callback){
 
 			//console.log(currentSpot)
 			//check if schedule with spot
+
 			let sql = `SELECT * FROM Schedule sc
 			JOIN Spot s ON sc.first_spot = s.id
 			JOIN Spot ss ON sc.last_spot = ss.id
 			WHERE id_parking = :id_park AND s.number <= :number AND ss.number >= :number`
+
 			dbConnection.query(sql, currentSpot, (err, data) => {
 				if (err) return callback(err, null)
 				if (data.length > 0) return Errors.SendError(Errors.E_BUSY_SPOT, "La place est assigné à des créneaux et ne peut donc pas être modifié.", callback)
@@ -216,6 +349,7 @@ function UpdateSpot(infos, callback){
 						if (data.length != 0) return Errors.SendError(Errors.E_SPOT_ALREADY_EXIST, "La place existe déjà.", callback);
 
 						let sql = `UPDATE Spot SET number=:number, floor=:floor, id_park=:id_park WHERE id=:id`;
+
 						spot.id = infos.id;
 						dbConnection.query(sql, spot, (err, data) => {
 							if (err) return callback(err, null)
@@ -247,7 +381,9 @@ function CheckToggleTypes(id, toggle, callback){
 	if (toggle == undefined) return callback(null, null);
 	if (toggle && toggle.length != undefined && typeof(toggle) == 'object'){ // check if it's an array (not a string, not a object, an array.)
 		if (toggle.length == 0){
+
 			let sql = `DELETE FROM Typed WHERE id_spot = :id`
+
 			dbConnection.query(sql, {id:id}, callback)
 		}else{
 			// checkTypeExist passes toggle as reference so erase the array after its process. So we give a copy of toggle instead.
@@ -280,7 +416,9 @@ function CheckTypeExist(toggle, callback){
 		callback(null, true)
 	}else{
 		let name = toggle.pop()
+
 		sql = `SELECT * FROM Type WHERE name=:name`
+
 		dbConnection.query(sql, {name:name}, (err, data) => {
 			if (err) return callback(err, null);
 			if (data.length == 0) return callback(null, false);
@@ -305,12 +443,16 @@ function ToggleTypes(id, toggle, callback){
 		let name = toggle.pop();
 
 		//check if spot has type
+
 		let sql = `SELECT * FROM Typed WHERE id_spot=:id AND name_type=:name`
+
 		dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 			if (err) return callback(err, null)
 			if (data.length == 0){
 				//type not exist, insert
+
 				let sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id, :name)`
+
 				dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 					if (err) return callback(err, null)
 
@@ -318,7 +460,9 @@ function ToggleTypes(id, toggle, callback){
 				})
 			}else{
 				//type exist, delete
+
 				let sql = `DELETE FROM Typed WHERE id_spot=:id AND name_type=:name`
+
 				dbConnection.query(sql, {id:id, name:name}, (err, data) => {
 					if (err) return callback(err, null)
 
@@ -337,37 +481,22 @@ function ToggleTypes(id, toggle, callback){
  * @param {function (*,*)} callback (err, data)
  */
 function DeleteSpot(id, callback){
-	const {AdaptSchedule} = require("./schedule")
 	const {DeleteSpotType} = require("./spot_type")
 	const {RemoveSpotUsers} = require("./user")
-	// AdaptSchedule((err, res) => {
-	// 	callback(err, res);
-	// }, id)
-	AdaptSchedule(id, (err, res) =>{
-		if (err){
-			callback(err, res);
-		}else{
-			DeleteSpotType(id, (err, res) => {
-				if (err){
-					callback(err, res);
-				}
-				else{
-					RemoveSpotUsers(id, (err, res) => {
-						if (err){
-							callback(err, res)
-						}
-						else {
-							sql = `DELETE FROM Spot WHERE id=:id`;
-							dbConnection.query(sql,{
-								id:id
-							}, (err, data) => {
-								callback(err, data)
-							});
-						}
-					})
-				}
-			});
-		};
+	
+	sql = `DELETE FROM Schedule_Spot WHERE id_spot=:id`
+	dbConnection.query(sql, {id:id}, (err, data) => {
+		if (err) return callback(err, null);
+		DeleteSpotType(id, (err, res) => {
+			if (err) return callback(err, null);
+			RemoveSpotUsers(id, (err, res) => {
+				if (err) return callback(err, null)
+				sql = `DELETE FROM Spot WHERE id=:id`;
+				dbConnection.query(sql,{id:id}, (err, data) => {
+					callback(err, data)
+				});
+			})
+		});
 	})
 }
 

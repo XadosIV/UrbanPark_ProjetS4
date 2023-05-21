@@ -24,7 +24,6 @@ export function SearchUser(props) {
     const [ allSpots, setAllSpots ] = useState([]);
     useEffect(() => {
 		TakeAllSpots().then(res => {
-			console.log("blip", res);
 			setAllSpots(res);
 		})
 	}, [])
@@ -32,8 +31,8 @@ export function SearchUser(props) {
 	return (
         <ul className="user-list">
             {filteredData.map((user, index) => (
-                <User user={user} index={index} handleCallback={Callback}  allSpots={allSpots}/>))}
-
+                <User user={user} key={index} handleCallback={Callback}  allSpots={allSpots}/>
+            ))}
 		</ul>
     )
 }

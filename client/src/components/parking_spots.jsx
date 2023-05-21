@@ -24,14 +24,16 @@ export function ParkingSpots(props) {
 	}
 
 	const toggleSpotArr = (spotData) => {
-		let index = arrSpotCheckbox.indexOf(spotData);
+		console.log("spotData", spotData);
+		let thisSpot = arrSpotCheckbox.filter(spot => spot.id === spotData.id);
+		let index = thisSpot.length?thisSpot[0].id:-1;
 		console.log("index", index);
 		let nouv = arrSpotCheckbox;
 		console.log("old", nouv);
 		if(index === -1){
 			nouv.push(spotData);
 		}else{
-			nouv.splice(index, 1);
+			nouv.filter(spot => spot.id !== spotData.id);
 		}
 		console.log("new", nouv);
 		setArrSpotCheckbox(nouv);
@@ -39,8 +41,17 @@ export function ParkingSpots(props) {
 	}
 
 	const isChecked = (idSpot) => {
-		return arrSpotCheckbox.includes(idSpot);
+		let trouv = false;
+		let i = 0;
+		while (!trouv && i < arrSpotCheckbox.length){
+			if(arrSpotCheckbox[i].id === idSpot){
+				trouv = true;
+			}
+			i++;
+		}
+		return trouv;
 	}
+
 	const [ checkAll, setCheckAll ] = useState(false);
 	const [ up, setUp ] = useState(false);
 
@@ -57,11 +68,10 @@ export function ParkingSpots(props) {
 	const clearBoxAll = () => {
 		setCheckAll(!checkAll);
 		let visibleSpot = GetSpotsFromFilter(list, infos);
-		for (let i = 0; i < visibleSpot.length; i++) {
-			if(arrSpotCheckbox.includes(visibleSpot[i])){
-				toggleSpotArr(visibleSpot[i])
-			}
-		}
+		let visibleId = visibleSpot.map(spot => spot.id);
+		let newChecked = arrSpotCheckbox.filter(spot => !visibleId.includes(spot.id));
+		setArrSpotCheckbox(newChecked);
+		setUpdate(!update);
 		setUp(!up);
 	}
 
@@ -70,13 +80,13 @@ export function ParkingSpots(props) {
 		const forLoop = async _ => {
 			for (let idSpot of arrSpotCheckbox) {
 				let res = await DeleteSpot(idSpot.id);
-				// console.log("resDelete", idSpot, res);
+				console.log("resDelete", idSpot, res);
 			}
+			setArrSpotCheckbox([]);
+			setUpdate(!update);
+			setUp(!up);
 		}
 		forLoop();
-		setArrSpotCheckbox([]);
-		setUpdate(!update);
-		setUp(!up);
 	}
 
 	function callbackModif(childData){
@@ -241,7 +251,7 @@ export function ParkingSpots(props) {
 
 	useEffect(() => {
 		TakeParking(props.id.parking).then(res => setParkingsList(res));
-		TakeAllSpots(props.id.parking).then(res => setList(res));
+		TakeAllSpots(props.id.parking).then(res => setList(res.reverse()));
 		TakeAllSpotTypes().then(res => setSpotTypes(res));
 		setUpdate(false)
 	}, [update, up]);
@@ -329,12 +339,12 @@ export function ParkingSpots(props) {
 			}
 		</div>
 		
-		<div style={{maxWidth:"500px", marginBottom:"10px"}}>
+		<div style={{maxWidth:"500px", marginBottom:"10px", marginLeft:"10px"}}>
 			<input type="checkbox" name="checkedsecondNumber" onChange={handleChangeChecks}/>Activer la sélection par section de places<br/>
 			<input type="checkbox" name="checkedsecondFloor" onChange={handleChangeChecks}/>Activer la sélection par section d'étages
 		</div>
 		
-		<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+		<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", marginLeft:"10px"}}>
 			<form className="all-searchs">
 				<Select 
 					className="front-search"
@@ -367,7 +377,7 @@ export function ParkingSpots(props) {
 					{ErrorOnSecondNumber(infos.firstNumber, infos.secondNumber)}
 				</div>
 			</form>
-			<div style={{display:"flex", flexDirection:"column", justifyContent:"center", width: "30%"}}>
+			<div style={{display:"flex", flexDirection:"column", justifyContent:"center", width: "30%", marginRight:"10px"}}>
 				{
 					addSpotSiAdmin()
 				}

@@ -1,4 +1,5 @@
 const {dbConnection} = require('../database');
+const { PreparePostNotification, PostNotification } = require("./notification");
 const Errors = require('../errors');
 
 /**
@@ -9,7 +10,33 @@ const Errors = require('../errors');
  * @param {function(*,*)} callback (err, data)
  */
 function GetUsers(infos, callback){
-	sql = `SELECT id, first_name, last_name, email, id_spot, id_spot_temp, role, id_park_demande FROM User WHERE id LIKE :id AND email LIKE :email AND role LIKE :role AND last_name LIKE :last_name AND first_name LIKE :first_name AND (id_spot LIKE :id_spot OR '%' = :id_spot OR :id_spot = 'NULL' AND id_spot IS NULL) AND (id_spot_temp LIKE :id_spot_temp OR '%' = :id_spot_temp OR :id_spot_temp = 'NULL' AND id_spot_temp IS NULL);`;
+	let sql = `SELECT 
+		id,
+		first_name,
+		last_name,
+		email,
+		id_spot,
+		id_spot_temp,
+		role,
+		id_park_demande
+	FROM User 
+	WHERE
+		id LIKE :id AND
+		email LIKE :email AND
+		role LIKE :role AND
+		last_name LIKE :last_name AND
+		first_name LIKE :first_name AND
+		(
+			id_spot LIKE :id_spot OR
+			'%' = :id_spot OR
+			(:id_spot = 'NULL' AND id_spot IS NULL)
+		) AND
+		(
+			id_spot_temp LIKE :id_spot_temp OR
+			'%' = :id_spot_temp OR
+			(:id_spot_temp = 'NULL' AND id_spot_temp IS NULL)
+		);`;
+
 	// console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		id:infos.id||'%',
@@ -20,7 +47,138 @@ function GetUsers(infos, callback){
 		id_spot:infos.id_spot||'%',
 		id_spot_temp:infos.id_spot_temp||'%',
 		id_park_demande:infos.id_park_demande||'%'
-	}, callback);
+	}, (err, data) => {
+		if(err){
+			return callback(err, null);
+		}else{
+			UpdateSpotTemp(data, callback);
+		}
+	});
+  /*(err, dataMain) => {
+		if (err) {
+			callback(err, [])
+		} else {
+			sql = `SELECT * FROM Type_User`
+    
+			//console.log("SQL at GetUsers : " + sql);
+            dbConnection.query(sql, (err, data) => {
+                if (err){
+                    callback(err, [])
+                }else{
+                    for (let user of dataMain){
+                        user.types = []
+                        for (let type of data){
+                        type : {id_user:6, name_type:"Handicapé"}
+                            if (type.id_user == user.id){
+                                user.types.push(type.name_type)
+                            }
+                        }
+                    }
+					callback(err, dataMain)
+                }
+            })
+		}
+	});*/
+}	
+
+/**
+ * UpdateSpotTemp
+ * update id_spot_temp either setting it to NULL or giving at free temporary spot
+ * 
+ * @param {Array<object user>} [{ id, id_spot, ... }, {...}, ...]
+ * @param {function(*,*)} callback (err, data)
+ */
+function UpdateSpotTemp(users, callback, newusers = []){
+	//RECURSIVE
+	if (users.length === 0){
+		callback(null, newusers)
+	}else{
+		let user = users.pop();
+		ActualiseTempSpot(user, (err, newuser) => {
+			if (err) return callback(err, null);
+			newusers.push(newuser);
+			UpdateSpotTemp(users, callback, newusers)
+		})
+	}
+}
+
+function UpdateNewSpotTemp(user, idspot, callback){
+	let suiv = (notification) => UpdateUser({id_spot_temp: idspot, id: user.id}, (err, data) => {
+		if (err) return callback(err, null);
+		user.id_spot_temp = idspot;
+		PostNotification(notification, (err, data) =>{
+			if(err){
+				callback(err, null);
+			}else{
+				callback(null, user);
+			}
+		});
+	});
+
+	let action = (idspot === null) ? "DELETE" : "POST";
+	PreparePostNotification(user.id, action, "Place temporaire", null, (err, notification) => {
+		if(err){
+			callback(err, null);
+		}else{
+			suiv(notification);
+		}
+	});
+}
+
+function ActualiseTempSpot(user, callback){
+	const { GetSpots } = require("./spot");
+	if (!user.id_spot) return callback(null, user);
+	GetSpots({id: user.id_spot}, (err, userSpot) => { // Spot du user
+		if(err)	return callback(err, null);
+		if (userSpot.length == 0){return callback(null, user)}
+		userSpot = userSpot[0]
+		if (userSpot.in_cleaning){
+			if(user.id_spot_temp) return callback(null, user);
+			GetSpots({
+				id_park: userSpot.id_park,
+				type: ["Abonné"],
+				id_user: null,
+				id_user_temp: null,
+				in_cleaning: false
+			}, (err, optTempSpot) => {
+				if (err) return callback(err, null);
+				if(optTempSpot.length > 0){ 
+					UpdateNewSpotTemp(user, optTempSpot[0].id, (err, newuser) => {
+						if (err) return callback(err, null);
+						callback(null, newuser);
+					})
+				}else{
+					GetSpots({
+						id_park: userSpot.id_park,
+						id_user: null,
+						id_user_temp: null,
+						in_cleaning: false
+					}, (err, optPasAbo) => {
+						if (err) return callback(err, null);
+						optPasAbo = optPasAbo.filter(e => !optTempSpot.includes(e))
+						if (optPasAbo.length > 0){
+							UpdateNewSpotTemp(user, optPasAbo[0].id, (err, newuser) => {
+								if (err) return callback(err, null);
+								callback(null, newuser);
+							})
+						}else{
+							callback(null, user);
+						}
+					})
+				}
+			})
+		}else{
+			///
+			if(user.id_spot_temp){
+				UpdateNewSpotTemp(user, null, (err, newuser) => {
+					if (err) return callback(err, null);
+					callback(null, newuser);
+				});
+			}else{
+				callback(null, user);
+			}
+		}
+	})
 }
 
 /**
@@ -31,7 +189,9 @@ function GetUsers(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function DeleteUser(id, callback){
+
 	sql = `DELETE FROM User WHERE id=:id;`;
+
 	// console.log("SQL at DeleteUser : " + sql + " with id=" + id);
 	dbConnection.query(sql, {
 		id:id
@@ -46,6 +206,7 @@ function DeleteUser(id, callback){
 * <>* -> required
 * @param {function(*,*)} callback (err, data)
 * 
+* [DEPRECATED]
 */
 function isMySelf(infos, callback){
 	// console.log("info Myself", infos);
@@ -94,6 +255,10 @@ function UpdateUser(infos, callback){
 			return Errors.SendError(Errors.E_PASSWORD_FORMAT_INVALID, 
 				"Le mot de passe doit contenir au moins 8 caractères dont une minuscule, une majuscule, un chiffre et un charactère spécial",
 				callback);
+		}else{
+			//crypt password
+			const {GetHash} = require('./auth');
+			infos.password = GetHash(infos.password);
 		}
 	}
 		
@@ -128,7 +293,7 @@ function UpdateUser(infos, callback){
       		// placeholders variables gave as the request
 			placeholders = {id:infos.id, parameters:parameters}
 			
-			console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
+			//console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
 			dbConnection.query(sql, placeholders, callback);
 		}
 
@@ -164,7 +329,18 @@ function UpdateUser(infos, callback){
 * @param {function(*,*)} callback (err, data)
 */
 function GetUserFromToken(infos, callback){
-	sql = `SELECT id, first_name, last_name, email, role, id_spot, id_spot_temp FROM User WHERE  token=:token;`;
+
+	sql = `SELECT 
+			id,
+			first_name,
+			last_name,
+			email,
+			role,
+			id_spot,
+			id_spot_temp
+		   FROM User 
+		   WHERE token=:token;`;
+
 	// console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		token: infos.token
@@ -234,33 +410,67 @@ function PostUser(infos, callback){
 			"le format du Nom ou Prénom est invalide",
 			callback);
 	}else{
-		GetParkings({id: infos.id_park_demande}, (err, data) => {
-			if(err){
-				callback(err, data);
-			}else if((data.length !== 1) && infos.id_park_demande){
-				return Errors.SendError(Errors.E_UNDEFINED_PARKING, "le parking demandé n'existe pas", callback);
-			}else{
-				GetUsers( {email:infos.email}, (err, data) => {
-					if (err) { // Not generated by us
-						callback(err,data);
-					}else if (data.length != 0){ // Email already used
-						return Errors.SendError(Errors.E_EMAIL_ALREADY_USED, "Email déjà utilisé", callback);
-					}else{
-						GenerateNewToken((err, token) => {
-							if (err){ // Not generated by us
-								callback(err,data);
-							}else{
-								let sql=`INSERT INTO User (first_name, last_name, email, password, role, token, id_park_demande) VALUES (:first_name,:last_name,:email,:password,:role,:token,:id_park_demande);`;
-								infos.role="Abonné";
-								infos.token = token;
-								console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
-								dbConnection.query(sql, infos, callback);
-							}
-						});
-					}
-				});
-			}
-		})
+		let create_user = (infos) => {
+			GetUsers( {email:infos.email}, (err, data) => {
+				if (err) { // Not generated by us
+					callback(err,data);
+				}else if (data.length != 0){ // Email already used
+					return Errors.SendError(Errors.E_EMAIL_ALREADY_USED, "Email déjà utilisé", callback);
+				}else{
+					GenerateNewToken((err, token) => {
+						if (err){ // Not generated by us
+							callback(err,data);
+						}else{
+
+							//crypt password
+							const {GetHash} = require('./auth');
+							infos.password = GetHash(infos.password);
+
+							let sql=`
+								INSERT INTO User (
+									first_name,
+									last_name,
+									email,
+									password,
+									role,
+									token,
+									id_park_demande
+									)
+								VALUES (
+									:first_name,
+									:last_name,
+									:email,
+									:password,
+									:role,
+									:token,
+									:id_park_demande
+								);`;
+							
+							infos.token = token;
+							//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
+							dbConnection.query(sql, infos, callback);
+						}
+					});
+				}
+			})
+		}
+
+		if (!infos.role) infos.role = "Abonné";
+
+		if (infos.role == "Abonné"){
+			if (!infos.id_park_demande) return Errors.SendError(Errors.E_MISSING_PARAMETER, "Pour la création d'un abonné, le champ id_park_demande doit être fourni.", callback);
+			GetParkings({id: infos.id_park_demande}, (err, data) => {
+				if(err){
+					callback(err, data);
+				}else if((data.length !== 1) && infos.id_park_demande){
+					return Errors.SendError(Errors.E_UNDEFINED_PARKING, "le parking demandé n'existe pas", callback);
+				}else{
+					create_user(infos);
+				}
+			})
+		}else{
+			create_user(infos);
+		}
 	}
 }
 
@@ -272,7 +482,9 @@ function PostUser(infos, callback){
  * @param {function(*,*)} callback (err, data)
  */
 function RemoveSpotUsers(id, callback){
+
 	sql = `SELECT id FROM User WHERE id_spot=:id`;
+	
 	dbConnection.query(sql, {
 		id:id
 	}, (err, data) => {
@@ -282,7 +494,9 @@ function RemoveSpotUsers(id, callback){
 		else{
 			RemoveSpotUserPrinc(data, (err, data) => {
 				if (err) return callback(err, {});
+	
 				sql = `SELECT id FROM User WHERE id_spot_temp=:id`;
+	
 				dbConnection.query(sql, {
 					id:id
 				}, (err, data) => {
@@ -308,7 +522,9 @@ function RemoveSpotUsers(id, callback){
  */
 function RemoveSpotUserPrinc(infos, callback){
 	if (infos.length > 0){
+	
 		sql = `UPDATE User SET id_spot=NULL WHERE id=:id`;
+	
 		dbConnection.query(sql, {
 			id:infos.shift().id
 		}, (err, data) => {
@@ -339,7 +555,9 @@ function RemoveSpotUserPrinc(infos, callback){
  */
 function RemoveSpotUserTemp(infos, callback){
 	if (infos.length > 0){
+	
 		sql = `UPDATE User SET id_spot_temp=NULL WHERE id=:id`;
+	
 		dbConnection.query(sql, {
 			id:infos.shift().id
 		}, (err, data) => {

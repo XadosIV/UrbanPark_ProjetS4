@@ -13,6 +13,10 @@ body {
 	padding-bottom: 4rem;
 }
 
+.logo {
+	max-height: 8rem;
+}
+
 header a {
 	color: #0A2647;
 }
@@ -57,6 +61,8 @@ code {
 }
 
 .slides-item {
+	display: flex;
+	flex-direction: column;
 	background-color: #19A7CE;
 	border-radius: 20px;
 	flex-shrink: 0;
@@ -64,11 +70,18 @@ code {
 	scroll-snap-align: center;
 	width: 90%;
 	padding: 5%;
+	align-items: start;
+	flex-flow: flex-start;
 }
 
-.slides-item p {
-	right: 0px;
-	bottom: 0px;
+.slides-item>*{
+	margin: 0;
+}
+
+.spot-counter {
+	position: sticky;
+	top: 100%;
+	align-self: flex-end;
 }
 
 .react-datepicker-popper {
