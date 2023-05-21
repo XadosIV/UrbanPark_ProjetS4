@@ -1,24 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { PersoSub, PersoGuardian, PersoAdmin, PersoService, PersonalInfos } from "../components";
 import "../css/page-perso.css";
 import { ContextUser } from "../contexts/context_user";
-import { userFromToken } from "../services";
 
 export function PersonalPage(){
-	const { userToken, userId } = useContext(ContextUser);
-	const [ roleUser, setRoleUser ] = useState("");
-
-	useEffect(() => {
-        async function fetchUserInfos() {
-            const resUserToken = await userFromToken(userToken);
-            setRoleUser(resUserToken.data[0].role);
-            // console.log("token", resUserToken.data[0])
-        }
-        fetchUserInfos();
-    }, [userToken]);
+	const { userRole, userId } = useContext(ContextUser);
 
 	const persoParRole = () => {
-		switch (roleUser) {
+		switch (userRole) {
 			case "Abonné":
 				return <PersoSub />;
 			case "Gérant":
