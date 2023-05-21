@@ -147,7 +147,7 @@ INSERT IGNORE INTO User (id, first_name, last_name, email, password, role, token
 	(4, "Sébastien", "Cousteau", "sebastien.cousteau@gmail.com", "MGI5Yjc2MjkzY2MwMjlkYzRiNjM1YmJlYTM4NWRjZDkyNmMzMmFlYmNmNmUzMWVlZTI5NTA3ZTZlMGJiMWRmNg==", "Agent d'entretien", "3333333333333333", NULL, NULL, NULL),
 	(5, "Honoré", "Macron", "honore.macron@gmail.com", "MGI5Yjc2MjkzY2MwMjlkYzRiNjM1YmJlYTM4NWRjZDkyNmMzMmFlYmNmNmUzMWVlZTI5NTA3ZTZlMGJiMWRmNg==", "Abonné", "4444444444444444", 3, 4, "H"),
 	(6, "Olivier", "Genay", "olivier.genay@gmail.com", "MGI5Yjc2MjkzY2MwMjlkYzRiNjM1YmJlYTM4NWRjZDkyNmMzMmFlYmNmNmUzMWVlZTI5NTA3ZTZlMGJiMWRmNg==", "Abonné", "5555555555555555", 5, NULL, "H"),
-	(7, "José", "Bouraly", "jose.bouraly@gmail.com", "MGI5Yjc2MjkzY2MwMjlkYzRiNjM1YmJlYTM4NWRjZDkyNmMzMmFlYmNmNmUzMWVlZTI5NTA3ZTZlMGJiMWRmNg==", "Abonné", "6666666666666666", NULL, NULL, "J");
+	(7, "José", "Bouraly", "jose.bouraly@gmail.com", "MGI5Yjc2MjkzY2MwMjlkYzRiNjM1YmJlYTM4NWRjZDkyNmMzMmFlYmNmNmUzMWVlZTI5NTA3ZTZlMGJiMWRmNg==", "Abonné", "6666666666666666", NULL, NULL, "D");
 
 INSERT IGNORE INTO Schedule (id, type, id_parking, date_start, date_end) VALUES
 	(1, "Gardiennage", 'D', '2023-05-14T08:00:00', '2023-05-14T16:00:00'),
