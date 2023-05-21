@@ -17,7 +17,7 @@ export function Header () {
 				margin:"1%"
 			}}>
 			<Link to="/">
-				<a href="/"><img className="logo" src="logo.png"></img></a>
+				<img className="logo" src="logo.png" alt="logo"/>
 			</Link>
 			{ !!userToken && !!userId && <NotifBell userId={userId}/> }
 			<Link to="/perso" style={{
