@@ -9,10 +9,8 @@ export function AuthenticationForm() {
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
-		console.log(mail);
 		const data = {identifier: mail, password: "a"};
 		const res = await authenticate(data);
-		console.log("authenticate", res);
 		if(res.data.code === "E_UNDEFINED_USER"){
 			navigate("/registration", {state: {mail: mail}});
 		}else if(res.data.code === "E_WRONG_PASSWORD"){

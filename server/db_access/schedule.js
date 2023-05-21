@@ -182,7 +182,6 @@ function PostSchedule(infos, callback) {
 				spots = spots.filter(e => infos.spots.includes(e.id))
 				for (let spot of spots){
 					if (spot.id_park != infos.parking){
-						//console.log("err")
 						return Errors.SendError(Errors.E_SPOTS_IN_DIFFERENT_FLOORS, "Au moins une des places n'est pas dans le parking demandé.", callback);
 					}
 				}
@@ -390,8 +389,6 @@ function UpdateSchedule(infos, callback){
 			let prevstate = prevStates.filter(elt => elt.id_user == idUser);
 			let newState = !!!prevstate[0].is_guest;
 
-			// console.log("updating ", idUser, " to ", newState, " was ", prevstate);
-
 			let sql = `UPDATE User_Schedule SET is_guest = :is_guest WHERE id_schedule = :id_schedule AND id_user = :id_user`;
 
 			dbConnection.query(sql, {
@@ -448,9 +445,6 @@ function UpdateSchedule(infos, callback){
 			return callback(err, null);
 		}else{
 			let userAvant = dataPrevious.map(elt => elt.id_user);
-			// console.log("userAvant", userAvant);
-			// console.log("usersPrec", users);
-			// console.log("guestsPrec", guests);
 
 			let switchUser = [];
 			let postUser = [];
@@ -480,16 +474,8 @@ function UpdateSchedule(infos, callback){
 				}
 			});
 
-			// console.log("switchUser", switchUser);
 			users = users.filter(idU => !switchUser.includes(idU));
 			guests = guests.filter(idU => !switchUser.includes(idU));
-			// console.log("nextUsers", users);
-			// console.log("nextGuests", guests);
-
-			// console.log("putUser", putUser);
-			// console.log("postUser", postUser);
-			// console.log("deleteUser", deleteUser);
-			// console.log("==========");
 
 			PrepareListPostNotification(postUser, "POST", "", infos.id, (err, notifsPost) => {
 				if(err){
@@ -542,7 +528,6 @@ function IsntScheduleOverlapping(infos, callback) {
 			id_user=:user AND is_guest=0 AND 
 			(date_start <= :date_end AND date_end >= :date_start);`;
 	
-			//console.log("SQL at IsntScheduleOverlapping : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, infos, (err, data) => {
 		if (err) {
 			callback(err, data)

@@ -23,14 +23,15 @@ export function SpotsList(props) {
 	}
 
 	let rendu = () => {
-		// console.log("spotData", filteredData);
 		return (
 			filteredData.map((spot, index) => (
 			<Spot spot={spot} key={generateKey(index, spot)} handleCallback={Callback} checkBoxCallback={toggleSpotArr} toCheck={isChecked} up={props.up}/>
 		)))
 	}
 
-	useEffect(() => {setTest(rendu())}, [props])
+	useEffect(() => {
+		setTest(rendu())
+	}, [props])
 
 	const [test, setTest] = useState(rendu())
 

@@ -52,9 +52,7 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchParking() {
             if(maPlace){
-                // console.log("idP", maPlace);
                 const resParking = await TakeParking(maPlace.id_park);
-                // console.log("parking", resParking)
                 setParkPlace(resParking[0]);
             }
         }
@@ -65,7 +63,6 @@ export function PersoMySpot(){
         async function fetchMaPlace() {
             if(infosUser.id_spot != null){
                 const resMaPlace = await placeFromId(infosUser.id_spot);
-                console.log("place", resMaPlace);
                 setMaPlace(resMaPlace);
             }
         }
@@ -77,7 +74,6 @@ export function PersoMySpot(){
             if(infosUser.id_spot_temp != null){
                 setIsPlaceTemp(true);
                 const resMaPlaceTemp = await placeFromId(infosUser.id_spot_temp);
-                console.log("placeTemp", resMaPlaceTemp);
                 setMaPlaceTemp(resMaPlaceTemp);
             } else {
                 setIsPlaceTemp(false);
@@ -89,7 +85,6 @@ export function PersoMySpot(){
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            console.log("user", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
         }
         fetchUserInfos();
@@ -99,7 +94,6 @@ export function PersoMySpot(){
         async function fetchNextSchedule(){
             if(maPlace.next_schedule){
                 const resNextSchedule = await getScheduleId(maPlace.next_schedule);
-                console.log("nextSchedule", resNextSchedule);
                 setNextSchedule(resNextSchedule.data);
             }
         }

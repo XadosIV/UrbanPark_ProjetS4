@@ -18,13 +18,10 @@ export function ConnectionForm(props) {
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
-		//console.log(infos);
 		const data = {identifier: infos.mail, password: infos.password};
 		const res = await authenticate(data);
 		if(res.status === 200){
-			//console.log(res);
 			const userData = await userFromToken(res.data.token);
-			//console.log(userData.data);
 			if(userData.data.length === 1){
 				const contextData = {
 					id: userData.data[0].id,

@@ -140,7 +140,6 @@ export function NewSpotForm(props) {
         if (infos.number >= 0) {
             if (parseInt(secondNumber) === 0) {
                 const res = await CreationSpot(infos); 
-                console.log(res);
                 if (res.status === 200) {
                     setWrongInput(true);
                     setErrMessage("Place " + infos.id_park + infos.floor + "-" + infos.number + " créée");
@@ -154,7 +153,6 @@ export function NewSpotForm(props) {
                 if (infos.number<parseInt(secondNumber)) {
                     while (infos.number<=parseInt(secondNumber) && !wrongInput) {
                         const res = await CreationSpot(infos); 
-                        console.log(res);
                         if (res.status === 200) {
                             infos.number++;
                         } else {

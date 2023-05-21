@@ -44,7 +44,6 @@ function GetAllSpots(infos, callback){
 	 * (Without joke, it auto-generate a `NULL` join if there's no matching and it's really useful)
 	 */
 	
-	//console.log("SQL at GetAllSpots : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
 		id:infos.id ||'%',
 		number:infos.number||'%',
@@ -71,7 +70,6 @@ function GetAllSpots(infos, callback){
     
 			sql = `SELECT * FROM Typed`
     
-			//console.log("SQL at GetAllSpots : " + sql);
             dbConnection.query(sql, (err, data) => {
                 if (err){
                     callback(err, [])
@@ -170,7 +168,6 @@ function GetSpots(infos, callback){
  */
 function UpdateUserTemp(spots, callback, newSpots = []){
 	//RECURSIVE
-	//console.log(newSpots)
 	if (spots.length == 0){
 		callback(null, newSpots)
 	}else{
@@ -213,7 +210,6 @@ function ActualiseTempUser(spot, callback){
 function GetSpotsMultipleFloors(infos, callback, recData=[]){
 	poppedFloor = infos.floors.pop();
 	GetSpots({"id_park":infos.id_park, "floor":poppedFloor}, (err,data)=>{
-		//console.log(data);
 		if(err){
 			callback(err,data);
 		}else if(infos.floors.length>0){
@@ -238,7 +234,6 @@ function InsertListTyped(id_spot, name_types, callback){
 	
 	sql = `INSERT INTO Typed (id_spot, name_type) VALUES (:id_spot, :name_type)`;
 	
-	//console.log("SQL at InsertListTyped : " + sql + " with " + {id_spot:id_spot,names_types:names_types});
 	dbConnection.query(sql, {
 			id_spot:id_spot,
 			name_type:name_types.pop()
@@ -279,7 +274,6 @@ function PostSpot(infos, callback){
 	
 					sql = `INSERT INTO Spot (number, floor, id_park) VALUES (:number, :floor, :id_park)`;
 	
-					//console.log("SQL at PostSpot : " + sql + " with " + JSON.stringify(infos));
 					dbConnection.query(sql, infos, (err, data) => {
 						if(err){
 							callback(err,data);
@@ -320,7 +314,6 @@ function UpdateSpot(infos, callback){
 			if (currentSpot.length == 0) return Errors.SendError(Errors.E_SPOT_NOT_FOUND, "La place est introuvable.", callback);
 			currentSpot = currentSpot[0]
 
-			//console.log(currentSpot)
 			//check if schedule with spot
 
 			let sql = `SELECT * FROM Schedule sc

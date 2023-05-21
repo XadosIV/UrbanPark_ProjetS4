@@ -29,7 +29,6 @@ export function DemandeAbo({ infos, up }){
     useEffect(() => {
         async function fetchPark(parking_demende){
             let resPark = await TakeParking(parking_demende);
-            // console.log("resPark", resPark);
             setPark(resPark[0]);
             const name = "id_park";
             const value = resPark[0].id;
@@ -40,7 +39,6 @@ export function DemandeAbo({ infos, up }){
 
     useEffect(() => {
         let newOptFloors = NbFloors(park.floors);
-        // console.log("newOptFloor", newOptFloors);
         setOptFloors(newOptFloors);
     }, [park.floors])
 
@@ -48,15 +46,12 @@ export function DemandeAbo({ infos, up }){
         async function fetchNewSpots(parking_id, etage){
             let params = [{type: "Abonné"}, {floor: etage}, {id_park: parking_id}];
             let resGetSpot = await getAllSpotsFilter(params);
-            // console.log("spots", resGetSpot);
             let newSpots = resGetSpot.data.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
-            // console.log("filter spot", newSpots);
             setDataAllSpots(newSpots);
             let newNumOpt = [];
             newSpots.forEach(spot => {
                 newNumOpt.push({value:spot.number.toString(), label:"Numéro " + spot.number.toString()});
             });
-            // console.log("newNumOpt", newNumOpt);
             setOptNum(newNumOpt);
         }
         if(place.floor){
@@ -69,19 +64,15 @@ export function DemandeAbo({ infos, up }){
     useEffect(() => {
 		const body = document.querySelector('body');
 		body.style.overflow = popupP || popupR || popupV ? 'hidden' : 'auto';
-	}, [popupP || popupR || popupV])
+	}, [popupP, popupR, popupV])
 
     const validerDemande = (e) => {
         e.preventDefault();
-        // console.log("valider", e);
-        // console.log("place", place);
         async function promoteUser(){
             let params = [{floor: place.floor}, {number: place.number}, {id_park: place.id_park}];
             let myNewSpot = await getAllSpotsFilter(params);
-            // console.log("myNewSpot", myNewSpot);
             if(myNewSpot.data.length === 1){
                 let resPromoteUser = await updateInfoPerso({id_spot: myNewSpot.data[0].id, id: infos.id});
-                // console.log("promoteUser", resPromoteUser);
                 up();
             }else{
                 setAffErrMessage(true);
@@ -94,19 +85,14 @@ export function DemandeAbo({ infos, up }){
 
     const refuserDemande = (e) => {
         e.preventDefault();
-        // console.log("refuser", e);
-        // console.log("infos", infos);
         async function deleteDemnade(){
             let resDeleteDemande = await DeleteUser(infos.id);
-            // console.log("resDelete", resDeleteDemande);
         }
         deleteDemnade();
         up();
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
-        // console.log("selectedOptions", selectedOptions);
-        // console.log("name", name);
         if(name.name === "floor"){
             const name = "floor";
             const value = selectedOptions.value;
@@ -117,10 +103,8 @@ export function DemandeAbo({ infos, up }){
             const name = "number";
             const value = selectedOptions.value;
             setPlace(values => ({...values, [name]: value}));
-            // console.log("dataAllSpot", dataAllSpots);
             let setNewSpot = dataAllSpots.filter(spot => {
                 return (spot.number === parseInt(selectedOptions.value)) && (spot.id_park === infos.id_park_demande) && (spot.floor === parseInt(place.floor))});
-            // console.log("setNewSpot", setNewSpot);
             if(setNewSpot.length !== 1){
                 setErrMessage("Une erreur est survenue");
                 setAffErrMessage(true);
@@ -149,11 +133,6 @@ export function DemandeAbo({ infos, up }){
 
     const reset = () => {
         togglePopupP();
-        // console.log("place", place);
-        // console.log("optFloor", optFloors);
-        // console.log("optNum", optNum);
-        // console.log("prking", park);
-        // console.log("dataSpot", dataSpot);
         setOptNum([]);
         setAffErrMessage(false);
         setErrMessage("");

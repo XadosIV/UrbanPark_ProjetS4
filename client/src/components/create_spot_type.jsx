@@ -34,10 +34,8 @@ export function CreateSpotType(props) {
 
     const handlleSubmit = async (event) => {
         event.preventDefault()
-		console.log(infos);
         setWrongInput(false);
         const res = await CreationSpotType(infos); 
-        console.log(res);
         if (res.status === 200) {
             setWrongInput(true);
             setErrMessage('Type de place "' + infos.name + '" créé');
