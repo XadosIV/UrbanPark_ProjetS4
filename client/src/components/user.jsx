@@ -84,7 +84,6 @@ export function User(props){
 	useEffect(() => {
 		async function fetchNewSpots() {
 			let resGetSpot = allSpots.filter(spot => ((spot.id_park === props.user.id_park_demande) && (spot.types.includes("Abonné"))));
-			// console.log("resGetSpot", props.user.id, resGetSpot);
 			let newSpots = resGetSpot.filter(spot => (spot.id_user === null) && (spot.id_user_temp === null));
 			setOptSpot(newSpots) 
 		}
@@ -93,10 +92,8 @@ export function User(props){
 
 	useEffect(() => {
 		async function fetchBothSpot(){
-			// console.log("res spot", props.user.id_park_demande, allSpots);
 			let mainSpot = allSpots.find(spot => spot.id === props.user.id_spot);
 			let tempSpot = allSpots.find(spot => spot.id === props.user.id_spot_temp);
-			//console.log("id user : ", props.user.id, "\nmain : ", mainSpot, "\ntemp : ", tempSpot, "\n");
 			setSpotWithUser(SpotName(mainSpot));
 			setSpotTempWithUser(SpotName(tempSpot));
 		}

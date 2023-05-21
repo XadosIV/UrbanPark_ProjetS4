@@ -14,7 +14,6 @@ export function Parking({parking}) {
 	useEffect(() => {
 		async function fetchAllSpots(id_park){
 			let resAllSpots = await TakeAllSpots(id_park);
-			console.log("resAllSpots", resAllSpots);
 			setAllspots(resAllSpots);
 		}
 		fetchAllSpots(parking.id);

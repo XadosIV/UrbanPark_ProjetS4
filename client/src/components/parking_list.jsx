@@ -97,7 +97,6 @@ export function ParkingList(props) {
 
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            // console.log("user", resInfosUser.data[0])
             if(resInfosUser.data[0]){
                 setInfosUser(resInfosUser.data[0]);
             }
@@ -109,7 +108,6 @@ export function ParkingList(props) {
                 password: password
             }
             const resToken = await authenticate(tokenData);
-            // console.log("resToken", resToken);
             if(resToken.status === 200){
                 return resToken.data.token;
             }else{
@@ -121,7 +119,6 @@ export function ParkingList(props) {
         const handlleSubmit = async (event) => {
             event.preventDefault()
             setWrongInput(false);
-            console.log(infosUser.email, password)
             let fetchT = await fetchToken(infosUser.email, password);
             if(password){
                 if(userToken === fetchT){

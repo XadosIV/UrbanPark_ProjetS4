@@ -63,7 +63,6 @@ export function AdminVerif(props) {
 
     async function fetchUserInfos() {
         const resInfosUser = await userFromToken(userToken);
-        // console.log("user", resInfosUser.data[0])
         if(resInfosUser.data[0]){
             setInfosUser(resInfosUser.data[0]);
         }
@@ -75,7 +74,6 @@ export function AdminVerif(props) {
             password: password
         }
         const resToken = await authenticate(tokenData);
-        // console.log("resToken", resToken);
         if(resToken.status === 200){
             return resToken.data.token;
         }else{

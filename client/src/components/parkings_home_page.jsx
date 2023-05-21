@@ -28,7 +28,6 @@ export function ParkingsHomePage() {
 	useEffect(() => {
 		async function fetchInfosParkings(){
 			let resAllParkings = await TakeParking();
-			console.log("resAllParkings", resAllParkings);
 			setListParkings(resAllParkings);
 		}
 		fetchInfosParkings();

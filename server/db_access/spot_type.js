@@ -19,7 +19,6 @@ function GetSpotTypes(infos, callback){
 		GROUP BY t.Name
 		HAVING MAX(case when y.id_spot LIKE :id_spot OR "%" = :id_spot then 1 else 0 end);`;
 	
-		// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         id_spot:infos.id_spot||'%',
 		name:infos.name||'%'
@@ -37,7 +36,6 @@ function SpotTypeExists(name, callback) {
 	
 	let sql = `SELECT name FROM Type WHERE name LIKE :name;`;
 	
-	// console.log("SQL at GetSpotTypes : " + sql);
 	dbConnection.query(sql, {
         name:name
     },(err, data) => {
@@ -82,7 +80,6 @@ function PostSpotType(infos, callback){
 				
 				let sql=`INSERT INTO Type (name) VALUES (:name);`;
 				
-				//console.log("SQL at PostSpotType : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, infos, callback);
 			}
 		});

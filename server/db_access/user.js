@@ -37,7 +37,6 @@ function GetUsers(infos, callback){
 			(:id_spot_temp = 'NULL' AND id_spot_temp IS NULL)
 		);`;
 
-	// console.log("SQL at GetUsers : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		id:infos.id||'%',
 		email:infos.email||'%',
@@ -54,31 +53,6 @@ function GetUsers(infos, callback){
 			UpdateSpotTemp(data, callback);
 		}
 	});
-  /*(err, dataMain) => {
-		if (err) {
-			callback(err, [])
-		} else {
-			sql = `SELECT * FROM Type_User`
-    
-			//console.log("SQL at GetUsers : " + sql);
-            dbConnection.query(sql, (err, data) => {
-                if (err){
-                    callback(err, [])
-                }else{
-                    for (let user of dataMain){
-                        user.types = []
-                        for (let type of data){
-                        type : {id_user:6, name_type:"Handicapé"}
-                            if (type.id_user == user.id){
-                                user.types.push(type.name_type)
-                            }
-                        }
-                    }
-					callback(err, dataMain)
-                }
-            })
-		}
-	});*/
 }	
 
 /**
@@ -192,7 +166,6 @@ function DeleteUser(id, callback){
 
 	sql = `DELETE FROM User WHERE id=:id;`;
 
-	// console.log("SQL at DeleteUser : " + sql + " with id=" + id);
 	dbConnection.query(sql, {
 		id:id
 	}, callback);
@@ -209,7 +182,6 @@ function DeleteUser(id, callback){
 * [DEPRECATED]
 */
 function isMySelf(infos, callback){
-	// console.log("info Myself", infos);
 	//Verification param required
 	if(!(infos.id) || !(infos.token)){
 		return Errors.SendError(Errors.E_MISSING_PARAMETER, "Champs obligatoires : id, token", callback);
@@ -219,8 +191,6 @@ function isMySelf(infos, callback){
 		return Errors.SendError(Errors.E_WRONG_PARAMETER, "id doit être un entier", callback);
 	}
 	GetUserFromToken((err, data) => {
-		// console.log("data", data);
-		// console.log("infos", infos);
 		if (err){ 
 			callback(err, {});
 			return;
@@ -228,7 +198,6 @@ function isMySelf(infos, callback){
 			if(data.length != 1){
 				return Errors.SendError(Errors.E_UNDEFINED_USER, "cet utilisateur n'existe pas", callback);
 			}else{
-				// console.log("res", parseInt(infos.id) == data[0].id);
 				callback(null, parseInt(infos.id) == data[0].id);
 			}
 		}
@@ -293,7 +262,6 @@ function UpdateUser(infos, callback){
       		// placeholders variables gave as the request
 			placeholders = {id:infos.id, parameters:parameters}
 			
-			//console.log("SQL at UpdateUser : " + sql + " with " + JSON.stringify(placeholders));
 			dbConnection.query(sql, placeholders, callback);
 		}
 
@@ -341,7 +309,6 @@ function GetUserFromToken(infos, callback){
 		   FROM User 
 		   WHERE token=:token;`;
 
-	// console.log("SQL at GetUserFromToken : " + sql + " with " + JSON.stringify(infos));
 	dbConnection.query(sql, {
 		token: infos.token
 	}, callback);
@@ -447,7 +414,6 @@ function PostUser(infos, callback){
 								);`;
 							
 							infos.token = token;
-							//console.log("SQL at PostUser : " + sql + " with " + JSON.stringify(infos));
 							dbConnection.query(sql, infos, callback);
 						}
 					});

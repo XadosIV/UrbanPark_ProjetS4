@@ -15,7 +15,6 @@ function GetParkings(infos, callback){
 
 	sql = `SELECT * FROM Parking WHERE id LIKE :id;`;
 
-    //console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%'
     }, callback);
@@ -32,7 +31,6 @@ function GetParkingsByIdOrName(infos, callback){
 
 	sql = `SELECT * FROM Parking WHERE id LIKE :id OR name LIKE :name;`;
 
-    console.log("SQL at GetParkings : " + sql + " with " + JSON.stringify(infos));
     dbConnection.query(sql, {
         id:infos.id||'%',
         name:infos.name||'%'
@@ -57,7 +55,6 @@ function PostParking(infos, callback){
         if (err) {
             callback(err, null);
         }else{
-            //console.log(data, infos)
             if (data.length >= 1 && data[0].id == infos.id) return Errors.SendError(Errors.E_PARKING_ID_ALREADY_EXIST, "L'id de ce parking existe déjà.", callback)
             if (data.length >= 1 && data[0].name == infos.name) return Errors.SendError(Errors.E_PARKING_NAME_ALREADY_EXIST, "Le nom de ce parking existe déjà'.", callback)
 
@@ -90,7 +87,6 @@ function PutParkings(infos, callback){
                 SET name=:name, floors=:floors, address=:address 
                 WHERE id=:id;`;
 
-				//console.log("SQL at PutParkings : " + sql + " with " + JSON.stringify(infos));
 				dbConnection.query(sql, {
 					"name":infos.name||oldParking.name,
 					"floors":infos.floors||oldParking.floors,

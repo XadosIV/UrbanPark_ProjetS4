@@ -25,7 +25,6 @@ export function PersonalInfos(){
 
     async function fetchUserInfos() {
         const resInfosUser = await userFromToken(userToken);
-        // console.log("user", resInfosUser.data[0])
         if(resInfosUser.data[0]){
             setInfosUser(resInfosUser.data[0]);
         }
@@ -62,7 +61,6 @@ export function PersonalInfos(){
             password: password
         }
         const resToken = await authenticate(tokenData);
-        // console.log("resToken", resToken);
         if(resToken.status === 200){
             return resToken.data.token;
         }else{
@@ -84,10 +82,7 @@ export function PersonalInfos(){
     }
 
     const handlleSubmit = async (e) => {
-        // console.log("event", e.target);
         e.preventDefault();
-        // console.log("userInfos", newInfos);
-        // console.log("newMdp", newMdp);
         let dataSent = {id: userId, token: userToken};
         let resUp;
         let pass;
@@ -96,8 +91,6 @@ export function PersonalInfos(){
         if(e.target.name === "form-modif-infos"){
             let bonLst = isValideNom(newInfos.last_name);
             let bonFst = isValideNom(newInfos.first_name);
-            // console.log("fst", newInfos.first_name, bonFst);
-            // console.log("lst", newInfos.last_name, bonLst);
             if(bonFst && bonLst){
                 dataSent = {
                     ...dataSent,
@@ -136,16 +129,12 @@ export function PersonalInfos(){
                 resUp = await updateInfoPerso(dataSent);
                 if(resUp.status === 200){
                     setErrInput(false);
-                    // console.log("nouvpass", nouvpass);
-                    // console.log("nouvmail", nouvmail);
                     if(nouvmail){
                         fetchT = await fetchToken(nouvmail, pass);
                     }
                     if(nouvpass){
                         fetchT = await fetchToken(infosUser.email, nouvpass);
                     }
-                    // console.log("userToken", userToken);
-                    // console.log("fetchT", fetchT);
                     setUserToken(fetchT);
                 }else{
                     setErrInput(true);
@@ -156,8 +145,6 @@ export function PersonalInfos(){
                 setErrMessage("Mot de passe invalide");
             }
         }
-        // console.log("dataSent", dataSent);
-        // console.log("resUp", resUp);
         fetchUserInfos();
         clearForm(e.target);
     }
