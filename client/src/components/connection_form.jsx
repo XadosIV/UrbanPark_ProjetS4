@@ -29,7 +29,8 @@ export function ConnectionForm(props) {
 				const contextData = {
 					id: userData.data[0].id,
 					token: res.data.token,
-					role: userData.data[0].role
+					role: userData.data[0].role,
+					setPerms: true
 				};
 				updateContext(contextData);
 				navigate("/perso");
