@@ -96,7 +96,7 @@ export function UpdateScheduleForm(props) {
 	function AffichagePlaces() {
 		let liste = props.event.spots;
 		console.log("liste non reverse", liste)
-		liste.sort((a, b) =>{ if (a.floor === b.floor) {return a.number < b.number} else {return a.floor < b.floor}})
+		liste.sort((a, b) =>{ if (a.floor === b.floor) {return a.number > b.number} else {return a.floor > b.floor}})
 		console.log("liste reverse", liste)
 	
 		let nListe = []
