@@ -415,7 +415,7 @@ INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(75, 'Handicapée'),
 	(118, 'Handicapée'),
 	(119, 'Handicapée'),
-	(120, 'Handicapée'),
+	(120, 'Handicapée');
 
 INSERT IGNORE INTO Notification (id, id_user, action, type_notif, id_schedule) VALUES
 	(1,4,"POST","Réunion", 15),
