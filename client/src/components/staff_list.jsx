@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StaffPreview } from "./staff_preview";
-import { Separation } from "./separation";
+import { StaffPreview, Separation, EmployeeRegistrationForm } from "./";
 import { TextField } from "@mui/material";
 import { InputHandler } from "../interface"
 import { TakeByRole } from "../services"
@@ -19,6 +18,9 @@ export function StaffList(props) {
 	const [inputTextService, setInputTextService] = useState("");
 
 	return (<div className="StaffList">
+			{
+				props.admin && <EmployeeRegistrationForm/>
+			}
 			<Separation value="Les gardiens"/>
 			
 			<TextField

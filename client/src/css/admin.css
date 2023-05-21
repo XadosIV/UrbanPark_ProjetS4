@@ -230,3 +230,9 @@
 	width:300px;
 	margin-bottom:10px;
 }
+
+.form_employee_div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
