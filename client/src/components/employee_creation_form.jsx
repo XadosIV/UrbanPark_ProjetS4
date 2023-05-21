@@ -16,7 +16,6 @@ export function EmployeeRegistrationForm(props) {
 	useEffect(() => {
 		async function fetchRole(){
 			let resRole = await TakeAllRoles();
-			console.log("role", resRole);
 			resRole = resRole.filter(role => role.name !== "Abonné")
 			setRole(resRole);
 		}
@@ -24,7 +23,6 @@ export function EmployeeRegistrationForm(props) {
 	}, [])
 
 	useEffect(() => {
-		console.log("roleOpt", role);
 		if(role){
 			let newOptRole = [];
 			let newLabel = "";
@@ -32,14 +30,12 @@ export function EmployeeRegistrationForm(props) {
 				newLabel = <div><p>{role.name}</p></div>;
 				newOptRole.push({value: role.name, label: newLabel});
 			});
-			console.log("newOptRole", newOptRole);
 			setOptRole(newOptRole);
 		}
 	}, [role])
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
-		console.log(infos);
 		if(infos.password !== infos.password_conf){
 			setWrongInput(true);
 			setErrMessage("la confirmation du mot de passe est invalide");
@@ -49,7 +45,6 @@ export function EmployeeRegistrationForm(props) {
 		}else{
 			setWrongInput(false);
 			const res = await creationCompte(infos);
-			console.log(res);
 			if(res.status === 200){
 				setIsOpen(false);
 			}else{

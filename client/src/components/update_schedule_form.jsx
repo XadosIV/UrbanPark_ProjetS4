@@ -95,21 +95,30 @@ export function UpdateScheduleForm(props) {
 
 	function AffichagePlaces() {
 		let liste = props.event.spots;
-	
+		liste.sort((a, b) =>{ if (a.floor === b.floor) {return a.number > b.number?1:-1} else {return a.floor > b.floor?1:-1}})
+
 		let nListe = []
 
-		liste.map((spot) => {
+		liste.forEach(spot => {
 			let floor = spot.floor
-			if (Array.isArray(nListe[spot.floor])) {
-				nListe[floor].push(spot);
-			} else {
-				nListe.push([spot]);
+			let i = nListe.length;
+			if (i === 0) {
+				nListe.push([spot])
+			}
+			else {
+				let trouve = false;
+				for (let j = 0; j < i; j++) {
+					if (nListe[j][0].floor === floor) {
+						nListe[j].push(spot);
+						trouve = true;
+					}
+				}
+				if (!trouve) {
+					nListe.push([spot]);
+				}
 			}
 		})
 
-		for (let spots of nListe) {
-			spots.sort();
-		}
 
 		return (
 			<div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
@@ -438,7 +447,6 @@ export function UpdateScheduleForm(props) {
 	useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            // console.log("resInfosUser", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
 			if (props.event.user.map(e => e.id).includes(resInfosUser.data[0].id)) {
 				setCheckboxInclude(true)

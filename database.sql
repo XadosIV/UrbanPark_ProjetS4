@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS User (
 	first_name VARCHAR(50) NOT NULL,
 	last_name VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
-	password VARCHAR(50) NOT NULL,
+	password VARCHAR(200) NOT NULL,
 	role VARCHAR(45) NOT NULL,
 	token VARCHAR(20) NOT NULL,
 	id_spot INT DEFAULT NULL,
@@ -88,14 +88,6 @@ CREATE TABLE IF NOT EXISTS Typed (
 	CONSTRAINT fk_typed_spot FOREIGN KEY (id_spot) REFERENCES Spot (id),
 	CONSTRAINT fk_typed_type FOREIGN KEY (name_type) REFERENCES Type (name)
 );
-
-/*CREATE TABLE IF NOT EXISTS Type_User (
-	id_user INT NOT NULL,
-	name_type VARCHAR(45) NOT NULL,
-	CONSTRAINT pk_type_user PRIMARY KEY (id_user, name_type),
-	CONSTRAINT fk_type_user_user FOREIGN KEY (id_user) REFERENCES User (id),
-	CONSTRAINT fk_type_user_type FOREIGN KEY (name_type) REFERENCES Type (name)
-);*/
 
 CREATE TABLE IF NOT EXISTS Notification (
 	id INT NOT NULL AUTO_INCREMENT,

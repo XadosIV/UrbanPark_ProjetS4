@@ -13,6 +13,10 @@ body {
 	padding-bottom: 4rem;
 }
 
+.logo {
+	max-height: 8rem;
+}
+
 header a {
 	color: #0A2647;
 }

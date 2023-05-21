@@ -163,10 +163,10 @@ export function Spot(props) {
 
     const [ modifiable, setModifiable ] = useState(false);
     
-    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot));
+    const [ checkbox, setCheckbox ] = useState(props.toCheck(props.spot.id));
 
     useEffect(() => {
-        setCheckbox(props.toCheck(props.spot));
+        setCheckbox(props.toCheck(props.spot.id));
     }, [props.up])
 
 	useEffect(() => {
