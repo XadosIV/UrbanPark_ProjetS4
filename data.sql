@@ -271,13 +271,151 @@ INSERT IGNORE INTO Type (name) VALUES
 	("Municipale");
 
 INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
+	--
+		-- les 8 premieres places
+			-- de chaque etage
+				-- de chaque parking
+					-- sont abonnés
+						--
+	(1, 'Abonné'),
+	(2, 'Abonné'),
 	(3, 'Abonné'),
 	(4, 'Abonné'),
 	(5, 'Abonné'),
-	(5, 'Électrique'),
-	(7, 'Handicapée'),
-	(7, 'Municipale'),
-	(10, 'Abonné');
+	(6, 'Abonné'),
+	(7, 'Abonné'),
+	(8, 'Abonné'),
+	(16, 'Abonné'),
+	(17, 'Abonné'),
+	(18, 'Abonné'),
+	(19, 'Abonné'),
+	(20, 'Abonné'),
+	(21, 'Abonné'),
+	(22, 'Abonné'),
+	(23, 'Abonné'),
+	(24, 'Abonné'),
+	(31, 'Abonné'),
+	(32, 'Abonné'),
+	(33, 'Abonné'),
+	(34, 'Abonné'),
+	(35, 'Abonné'),
+	(36, 'Abonné'),
+	(37, 'Abonné'),
+	(38, 'Abonné'),
+	(39, 'Abonné'),
+	(46, 'Abonné'),
+	(47, 'Abonné'),
+	(48, 'Abonné'),
+	(49, 'Abonné'),
+	(50, 'Abonné'),
+	(51, 'Abonné'),
+	(52, 'Abonné'),
+	(53, 'Abonné'),
+	(54, 'Abonné'),
+	(61, 'Abonné'),
+	(62, 'Abonné'),
+	(63, 'Abonné'),
+	(64, 'Abonné'),
+	(65, 'Abonné'),
+	(66, 'Abonné'),
+	(67, 'Abonné'),
+	(68, 'Abonné'),
+	(69, 'Abonné'),
+	(76, 'Abonné'),
+	(76, 'Abonné'),
+	(76, 'Abonné'),
+	(76, 'Abonné'),
+	(80, 'Abonné'),
+	(81, 'Abonné'),
+	(82, 'Abonné'),
+	(83, 'Abonné'),
+	(84, 'Abonné'),
+	(91, 'Abonné'),
+	(92, 'Abonné'),
+	(93, 'Abonné'),
+	(94, 'Abonné'),
+	(95, 'Abonné'),
+	(96, 'Abonné'),
+	(97, 'Abonné'),
+	(98, 'Abonné'),
+	(99, 'Abonné'),
+	(106, 'Abonné'),
+	(107, 'Abonné'),
+	(108, 'Abonné'),
+	(109, 'Abonné'),
+	(110, 'Abonné'),
+	(111, 'Abonné'),
+	(112, 'Abonné'),
+	(113, 'Abonné'),
+	(114, 'Abonné'),
+
+	--
+		-- les deux dernieres places
+			-- de l'étage zéro
+				-- de chaque parking
+					-- sont 'urgence'
+						--
+	(14, 'Urgence'),
+	(15, 'Urgence'),
+	(59, 'Urgence'),
+	(60, 'Urgence'),
+	(89, 'Urgence'),
+	(90, 'Urgence'),
+
+	--
+		-- la deuxieme place abonné
+			-- de chaque étage
+				-- de chaque parking
+					-- est éléctrique
+						-- ATTENTION
+							-- si le parking a moins de trois étages
+								-- alors les deux premières places abonnés
+									-- de chaque étage
+										-- sont électriques
+											--
+	(2, 'Électrique'),
+	(17, 'Électrique'),
+	(32, 'Électrique'),
+	(46, 'Électrique'),
+	(47, 'Électrique'),
+	(61, 'Électrique'),
+	(62, 'Électrique'),
+	(77, 'Électrique'),
+	(92, 'Électrique'),
+	(107, 'Électrique'),
+
+	--
+		-- les trois première places
+			-- non abonné
+				-- de l'étage 0
+					-- de chaque parking
+						-- sont municipales
+							--
+	(9, 'Municipale'),
+	(10, 'Municipale'),
+	(11, 'Municipale'),
+	(55, 'Municipale'),
+	(56, 'Municipale'),
+	(57, 'Municipale'),
+	(85, 'Municipale'),
+	(86, 'Municipale'),
+	(87, 'Municipale'),
+
+	--
+		-- les trois dernières places
+			-- de chaque parking
+				-- sont handicapés
+					--
+
+	(43, 'Handicapée'),
+	(44, 'Handicapée'),
+	(45, 'Handicapée'),
+	(73, 'Handicapée'),
+	(74, 'Handicapée'),
+	(75, 'Handicapée'),
+	(118, 'Handicapée'),
+	(119, 'Handicapée'),
+	(120, 'Handicapée'),
 
 INSERT IGNORE INTO Notification (id, id_user, action, type_notif, id_schedule) VALUES
 	(1,4,"POST","Réunion", 15),

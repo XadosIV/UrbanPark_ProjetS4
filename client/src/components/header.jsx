@@ -17,7 +17,7 @@ export function Header () {
 				margin:"1%"
 			}}>
 			<Link to="/">
-				<Typography variant="h3">UrbanPark</Typography>
+				<a href="/"><img className="logo" src="logo.png"></img></a>
 			</Link>
 			{ !!userToken && !!userId && <NotifBell userId={userId}/> }
 			<Link to="/perso" style={{
