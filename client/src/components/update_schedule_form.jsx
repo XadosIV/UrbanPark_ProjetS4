@@ -95,9 +95,7 @@ export function UpdateScheduleForm(props) {
 
 	function AffichagePlaces() {
 		let liste = props.event.spots;
-		console.log("liste non reverse", liste)
 		liste.sort((a, b) =>{ if (a.floor === b.floor) {return a.number > b.number?1:-1} else {return a.floor > b.floor?1:-1}})
-		console.log("liste reverse", liste)
 
 		let nListe = []
 
@@ -119,11 +117,6 @@ export function UpdateScheduleForm(props) {
 					nListe.push([spot]);
 				}
 			}
-			// if (Array.isArray(nListe[floor])) {
-			// 	nListe[floor].push(spot);
-			// } else {
-			// 	nListe.push([spot]);
-			// }
 		})
 
 
@@ -133,7 +126,6 @@ export function UpdateScheduleForm(props) {
 				<ul style={{marginTop:"-10px"}}>
 					{nListe.map(
 						(spots, index) => {
-							console.log(spots)
 							if (spots.length > 1) {
 								return <li key={index} >Etage {spots[0].floor} : De la place {spots[0].id_park}{spots[0].floor}-{spots[0].number} à la place {spots[spots.length -1].id_park}{spots[spots.length -1].floor}-{spots[spots.length -1].number}</li>
 							}
@@ -455,7 +447,6 @@ export function UpdateScheduleForm(props) {
 	useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            // console.log("resInfosUser", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
 			if (props.event.user.map(e => e.id).includes(resInfosUser.data[0].id)) {
 				setCheckboxInclude(true)
