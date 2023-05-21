@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Notification } from "."
-import { getNotificationId } from '../services';
+import { GetDemandeAbo, getNotificationId } from '../services';
 
 export function NotificationList (props) {
 	const [listNotification, setListNotification] = useState([]);
+	const [demandeAbo, setDemandeAbo] = useState([]);
 
 	useEffect(() => {
 		async function fetchNotification (id) {
-			let res = await getNotificationId(id);
-			setListNotification(res);
+			let notification = await getNotificationId(id);
+			setListNotification(notification);
+			let listDemandeAbo = await GetDemandeAbo();
+			setDemandeAbo(listDemandeAbo);
 		}
 
 		fetchNotification(props.id);
@@ -16,6 +19,16 @@ export function NotificationList (props) {
 	
 	return (
 		<div className='notification-list'>
+			<h3>
+				Demande d'abonnements
+			</h3>
+			{ !!!demandeAbo.length &&
+				<h5>Il y a des demandes d'abonnement à remplir</h5>
+			}
+			{
+				!!demandeAbo.length &&
+				<h5>Aucune demandes d'abonnements</h5>
+			}
 			<h3>
 				Notifications
 			</h3>
@@ -34,7 +47,7 @@ export function NotificationList (props) {
 			}
 			{
 				!!!listNotification.length &&
-				<h3>Aucune Notifications</h3>
+				<h5>Aucune notification</h5>
 			}
 		</div>
 	)
