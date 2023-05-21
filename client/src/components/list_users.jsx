@@ -10,7 +10,6 @@ import { TakeByRole } from "../services"
  */
 export function ListUsers(nom) {
 	const data = TakeByRole(nom)
-		.catch(console.error);
 
 	const list = [
 		{

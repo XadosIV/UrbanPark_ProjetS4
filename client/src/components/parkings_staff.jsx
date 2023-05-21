@@ -34,7 +34,6 @@ export function ParkingsStaff({admin}) {
         event.preventDefault()
         setWrongInput(false);
 		const res = await CreationParking(infos); 
-		console.log(res);
 		if (res.status === 200) {
 			setWrongInput(true);
 			setErrMessage("Parking " + infos.name + " créé");

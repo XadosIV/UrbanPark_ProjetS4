@@ -15,14 +15,12 @@ export function RegistrationForm(props) {
 	useEffect(() => {
 		async function fetchParkings(){
 			let resParking = await TakeParking();
-			console.log("parkings", resParking);
 			setParkings(resParking);
 		}
 		fetchParkings();
 	}, [])
 
 	useEffect(() => {
-		console.log("parkOpt", parkings);
 		if(parkings){
 			let newOptPark = [];
 			let newLabel = "";
@@ -30,14 +28,12 @@ export function RegistrationForm(props) {
 				newLabel = <div><p>{park.name}</p><h6>{park.address}</h6></div>;
 				newOptPark.push({value: park.id, label: newLabel});
 			});
-			console.log("newOptPark", newOptPark);
 			setOptParking(newOptPark);
 		}
 	}, [parkings])
 
 	const handlleSubmit = async (event) => {
 		event.preventDefault();
-		console.log(infos);
 		if(infos.password !== infos.password_conf){
 			setWrongInput(true);
 			setErrMessage("la confirmation du mot de passe est invalide");
@@ -47,17 +43,14 @@ export function RegistrationForm(props) {
 		}else{
 			setWrongInput(false);
 			const res = await creationCompte(infos);
-			console.log(res);
 			if(res.status === 200){
 				const tokenData = {
 					identifier: infos.email,
 					password: infos.password
 				};
 				const resToken = await authenticate(tokenData);
-				console.log(resToken);
 				if(resToken.status === 200){
 					const resUser = await userFromToken(resToken.data.token);
-					console.log(resUser);
 					if(resUser.data.length === 1){
 						const contextData = {
 							id: resUser.data[0].id,

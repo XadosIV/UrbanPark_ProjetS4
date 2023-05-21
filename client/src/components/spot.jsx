@@ -129,7 +129,6 @@ export function Spot(props) {
     }
 
     function toggleSpotArr(spotData){
-		console.log(spotData)
         props.checkBoxCallback(spotData)
     }
 
@@ -167,13 +166,12 @@ export function Spot(props) {
 
     useEffect(() => {
         setCheckbox(props.toCheck(props.spot.id));
-    }, [props.up])
+    }, [props])
 
 	useEffect(() => {
 		async function fetchUserInfos() {
 			const resUserToken = await userFromToken(userToken);
 			setRoleUser(resUserToken.data[0].role);
-			//console.log("token", resUserToken.data[0])
 		}
 		fetchUserInfos();
 	}, [userToken, props.up]);
@@ -191,7 +189,6 @@ export function Spot(props) {
 		async function fetchUserInfos() {
 			const resUserToken = await userFromToken(userToken);
 			setRoleUser(resUserToken.data[0].role);
-			//console.log("token", resUserToken.data[0])
 		}
 		fetchUserInfos();
 	}, [userToken, props.up]);

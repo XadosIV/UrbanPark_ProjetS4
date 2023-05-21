@@ -20,24 +20,18 @@ export function ParkingSpots(props) {
 
 	const callbackTypeModif = (types) => {
 		setTypesModif(types);
-		// console.log("typeModif", typesModif);
 	}
 
 	const toggleSpotArr = (spotData) => {
-		console.log("spotData", spotData);
 		let thisSpot = arrSpotCheckbox.filter(spot => spot.id === spotData.id);
 		let index = thisSpot.length?thisSpot[0].id:-1;
-		console.log("index", index);
 		let nouv = arrSpotCheckbox;
-		console.log("old", nouv);
 		if(index === -1){
 			nouv.push(spotData);
 		}else{
 			nouv.filter(spot => spot.id !== spotData.id);
 		}
-		console.log("new", nouv);
 		setArrSpotCheckbox(nouv);
-		console.log(arrSpotCheckbox)
 	}
 
 	const isChecked = (idSpot) => {
@@ -76,11 +70,9 @@ export function ParkingSpots(props) {
 	}
 
 	function CallbackDelete(childData) { 
-		// console.log("childData", childData);
 		const forLoop = async _ => {
 			for (let idSpot of arrSpotCheckbox) {
 				let res = await DeleteSpot(idSpot.id);
-				console.log("resDelete", idSpot, res);
 			}
 			setArrSpotCheckbox([]);
 			setUpdate(!update);
@@ -90,15 +82,12 @@ export function ParkingSpots(props) {
 	}
 
 	function callbackModif(childData){
-		// console.log("childData", childData);
 		const forloop = async _ => {
 			for (let idSpot of arrSpotCheckbox){
-				console.log("arrSpotCheckbox", arrSpotCheckbox)
 				let res;
 				if(childData){
 					res = await ServiceUpdateSpot([], idSpot.id);
 				}else if(typesModif.length !== 0){
-					console.log("types modif", typesModif)
 					let typesAModifier = typesModif;
 					for (let type of typesModif) {
 						if (type === "Abonné") {
@@ -111,7 +100,6 @@ export function ParkingSpots(props) {
 						res = await ServiceUpdateSpot(typesAModifier, idSpot.id);
 					}
 				}
-				console.log("resModif", idSpot, res);
 			}
 		}
 		forloop();
@@ -280,7 +268,6 @@ export function ParkingSpots(props) {
 			newVal = baseValueFloorType
 		}
 		var sub = name.substring(7)
-		console.log(sub, stockDisable[sub])
 		setInfos(values => ({...values, [name]: value}))
 		if (infos[name]) {
 			setInfos(values => ({...values, [sub]: newVal}))

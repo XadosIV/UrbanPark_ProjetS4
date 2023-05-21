@@ -14,6 +14,5 @@ export async function getAllSpotsFilter(params=[]){
         url += (i===0) ? "?" : "&";
         url += new URLSearchParams(param).toString();
     }
-    //console.log("url getAllSpotsTyped", url);
 	return axios.get(url).then((res) => res).catch(err => err.response)
 }

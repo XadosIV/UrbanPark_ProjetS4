@@ -222,12 +222,10 @@ export function NewScheduleForm(props) {
                 setWrongInput(true)
                 setErrMessage("Veuillez ne pas laisser la date actuelle.")
             } else {
-                console.log(infos)
                 if (!Array.isArray(infos.users)) {
                     infos.users = [infos.users]
                 }
                 const res = await CreationSchedule(infos); 
-                //console.log(res);
                 if (res.status === 200) {
                     if (JSON.stringify(optionsUsers) === JSON.stringify(AllServices(serviceList))) {
                         if (spotsCleaning.last_spot === spotsCleaning.first_spot) {
@@ -265,7 +263,6 @@ export function NewScheduleForm(props) {
             setErrMessage("Veuillez ne pas laisser la date actuelle.")
         } else {
             const res = await CreationSchedule(infosReunions); 
-            //console.log(res);
             if (res.status === 200) {
                 setWrongInput(true);
                 setErrMessage("Réunion placée du " + ChangeDate(infosReunions.date_start.slice(0,10)) + " à " + infosReunions.date_start.slice(11,19) + " au " + ChangeDate(infosReunions.date_end.slice(0,10)) + " à " + infosReunions.date_end.slice(11,19));
@@ -304,7 +301,6 @@ export function NewScheduleForm(props) {
     useEffect(() => {
         async function fetchUserInfos() {
             const resInfosUser = await userFromToken(userToken);
-            //console.log("user", resInfosUser)
             setInfosUser(resInfosUser.data[0]);
         }
         fetchUserInfos();
