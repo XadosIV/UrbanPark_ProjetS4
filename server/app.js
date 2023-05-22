@@ -8,7 +8,7 @@ const {GetSchedules, PostSchedule, UpdateSchedule, GetScheduleById, DeleteSchedu
 const {GetSchedulesAvailable} = require('./db_access/reunion');
 const {GetSpots, PostSpot, UpdateSpot, DeleteSpot} = require('./db_access/spot')
 const {GetPermRole} = require('./db_access/role');
-const {GetNotifications} = require('./db_access/notification')
+const {GetNotifications, DeleteNotification} = require('./db_access/notification')
 
 const Errors = require('./errors');
 
@@ -361,5 +361,15 @@ app.get('/api/notifications', (req, res) => {
 		}
 	})
 })
+
+app.delete('/api/notification/:id', (req, res) => {
+	DeleteNotification(req.params.id, (err, data) => {
+		if (err){
+			Errors.HandleError(err, res);
+		}else{
+			res.status(200).json();
+		}
+	});
+});
 
 module.exports = app;
