@@ -4,8 +4,9 @@ import { Button } from "@mui/material"
 import "../css/notif_bell.css"
 
 export function Notification(props) {
-	function destruct() {
-		DeleteNotification(props.info.id);
+	async function destruct() {
+		await DeleteNotification(props.info.id);
+		props.handleCallback(true)
 	}
 
 	function AffichagePlaces (places) {
