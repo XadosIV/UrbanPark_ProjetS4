@@ -38,10 +38,10 @@ INSERT IGNORE INTO Spot (id, number, floor, id_park) VALUES
 	
 	(31, 1, 2, 'H'),
 	(32, 2, 2, 'H'),
-	(32, 3, 2, 'H'),
-	(33, 4, 2, 'H'),
-	(34, 5, 2, 'H'),
-	(35, 6, 2, 'H'),
+	(33, 3, 2, 'H'),
+	(34, 4, 2, 'H'),
+	(35, 5, 2, 'H'),
+	(36, 6, 2, 'H'),
 	(37, 7, 2, 'H'),
 	(38, 8, 2, 'H'),
 	(39, 9, 2, 'H'),
@@ -113,7 +113,7 @@ INSERT IGNORE INTO Spot (id, number, floor, id_park) VALUES
 	(101, 11, 1, 'D'),
 	(102, 12, 1, 'D'),
 	(103, 13, 1, 'D'),
-	(105, 14, 1, 'D'),
+	(104, 14, 1, 'D'),
 	(105, 15, 1, 'D'),
 	
 	(106, 1, 2, 'D'),
@@ -271,12 +271,6 @@ INSERT IGNORE INTO Type (name) VALUES
 	("Municipale");
 
 INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
-	--
-		-- les 8 premieres places
-			-- de chaque etage
-				-- de chaque parking
-					-- sont abonnés
-						--
 	(1, 'Abonné'),
 	(2, 'Abonné'),
 	(3, 'Abonné'),
@@ -349,12 +343,6 @@ INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(113, 'Abonné'),
 	(114, 'Abonné'),
 
-	--
-		-- les deux dernieres places
-			-- de l'étage zéro
-				-- de chaque parking
-					-- sont 'urgence'
-						--
 	(14, 'Urgence'),
 	(15, 'Urgence'),
 	(59, 'Urgence'),
@@ -362,17 +350,6 @@ INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(89, 'Urgence'),
 	(90, 'Urgence'),
 
-	--
-		-- la deuxieme place abonné
-			-- de chaque étage
-				-- de chaque parking
-					-- est éléctrique
-						-- ATTENTION
-							-- si le parking a moins de trois étages
-								-- alors les deux premières places abonnés
-									-- de chaque étage
-										-- sont électriques
-											--
 	(2, 'Électrique'),
 	(17, 'Électrique'),
 	(32, 'Électrique'),
@@ -384,13 +361,6 @@ INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(92, 'Électrique'),
 	(107, 'Électrique'),
 
-	--
-		-- les trois première places
-			-- non abonné
-				-- de l'étage 0
-					-- de chaque parking
-						-- sont municipales
-							--
 	(9, 'Municipale'),
 	(10, 'Municipale'),
 	(11, 'Municipale'),
@@ -400,12 +370,6 @@ INSERT IGNORE INTO Typed (id_spot, name_type) VALUES
 	(85, 'Municipale'),
 	(86, 'Municipale'),
 	(87, 'Municipale'),
-
-	--
-		-- les trois dernières places
-			-- de chaque parking
-				-- sont handicapés
-					--
 
 	(43, 'Handicapée'),
 	(44, 'Handicapée'),

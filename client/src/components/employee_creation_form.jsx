@@ -123,7 +123,7 @@ export function EmployeeRegistrationForm(props) {
 						required
 						id="email"
 						label="email"
-						type="text"
+						type="email"
 						name="email"
 						onChange={handleChange}
 					/></div>

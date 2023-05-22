@@ -49,7 +49,7 @@ export function ConnectionForm(props) {
 				required
 				id="mail"
 				label="mail"
-				type="text"
+				type="email"
 				name="mail"
 				defaultValue={props.mail}
 				onChange={handleChange}

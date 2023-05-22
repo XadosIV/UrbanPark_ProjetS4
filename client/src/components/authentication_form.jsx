@@ -25,7 +25,7 @@ export function AuthenticationForm() {
 					required
 					id="authentication"
 					label="mail"
-					type="text"
+					type="email"
 					name="authentication"
 					onChange={(e) => setMail(e.target.value)}
 				/>

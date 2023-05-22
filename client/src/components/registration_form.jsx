@@ -111,7 +111,7 @@ export function RegistrationForm(props) {
 					required
 					id="email"
 					label="email"
-					type="text"
+					type="email"
 					name="email"
 					defaultValue={props.mail}
 					onChange={handleChange}

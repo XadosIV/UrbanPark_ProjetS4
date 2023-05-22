@@ -255,8 +255,8 @@ export function PersonalInfos(){
                         <div><TextField
                             required
                             id="email"
-                            label="nouvel email"
-                            type="text"
+                            label="Nouvel email"
+                            type="email"
                             name="email"
                             onChange={ handleChangeEmail }
                         /></div>

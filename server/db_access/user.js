@@ -352,7 +352,7 @@ function IsValidEmail(email){
 * @returns {boolean}
 */
 function IsValidPassword(password){
-	return password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
+	return password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?\.\(\)\\\+\|\<\>/-\{\}\[\]])(?=.{8,})/);
 }
 
 /**
