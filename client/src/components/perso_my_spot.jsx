@@ -13,6 +13,7 @@ export function PersoMySpot(){
         id_spot_temp: null,
         last_name: "",
         role: "",
+        id_park_demande:""
     });
     const [ maPlace, setMaPlace ] = useState({
         id: undefined,
@@ -51,13 +52,13 @@ export function PersoMySpot(){
 
     useEffect(() => {
         async function fetchParking() {
-            if(maPlace){
-                const resParking = await TakeParking(maPlace.id_park);
+            if (infosUser.id_park_demande){
+                const resParking = await TakeParking(infosUser.id_park_demande);
                 setParkPlace(resParking[0]);
             }
         }
         fetchParking();
-    }, [maPlace]);
+    }, [infosUser]);
 
     useEffect(() => {
         async function fetchMaPlace() {
