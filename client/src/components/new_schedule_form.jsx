@@ -131,13 +131,13 @@ export function NewScheduleForm(props) {
         return checkboxInclude ? <CheckBox /> : <CheckBoxOutlineBlank />;
     }
 
-    const handleChangeSelect = (selectedOptions, name) => {
+    const handleChangeSelect = async (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "first_spot" || name.name === "last_spot") {
                 setSpotsCleaning(values => ({...values, [name.name]: selectedOptions.value}))
             } else if (name.name === "parking") {
-                TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
+                await TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name === "type") {
                 let liste = [];
