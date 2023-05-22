@@ -9,21 +9,6 @@ import { TakeParking } from "../services";
 export function ParkingsHomePage() {
 
 	const [ listParkings, setListParkings] = useState([]);
-	
-	/*
-	const listParkings = [
-		{
-			"nom": "parking1",
-			"nbPlaceLibre": 29,
-			"nbPlaceTot": 59,
-		},
-		{
-			"nom": "parking2",
-			"nbPlaceLibre": 18,
-			"nbPlaceTot": 89,
-		}
-	];
-	*/
 
 	useEffect(() => {
 		async function fetchInfosParkings(){
