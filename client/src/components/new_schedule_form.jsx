@@ -177,8 +177,6 @@ export function NewScheduleForm(props) {
         }
     }
 
-    console.log(horairesSchedules)
-
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);

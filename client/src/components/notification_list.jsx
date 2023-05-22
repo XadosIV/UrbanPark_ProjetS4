@@ -11,9 +11,13 @@ export function NotificationList (props) {
 	useEffect(() => {
 		async function fetchNotification (id) {
 			let notification = await getNotificationId(id);
-			setListNotification(notification);
+			if (notification) {
+				setListNotification(notification);
+			}
 			let listDemandeAbo = await GetDemandeAbo();
-			setDemandeAbo(listDemandeAbo);
+			if (listDemandeAbo) {
+				setDemandeAbo(listDemandeAbo);
+			}
 		}
 
 		fetchNotification(props.id);
