@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Notification } from "."
 import { GetDemandeAbo, getNotificationId } from '../services';
 import { Separation } from "../components"
-import { useIsGerantOuGardien } from '../interface';
+import { NeedS, useIsGerantOuGardien } from '../interface';
 
 export function NotificationList (props) {
 	const admin = useIsGerantOuGardien();
@@ -32,11 +32,11 @@ export function NotificationList (props) {
 						<Separation value="Demandes d'abonnement" color="red"/>
 					</div>
 			}
-			{ admin() && !!!demandeAbo.length &&
-				<h5>Il y a des demandes d'abonnement à remplir</h5>
+			{ admin() && demandeAbo.length !== 0 &&
+				<h5>Il y a {demandeAbo.length} demande{NeedS(demandeAbo.length)} d'abonnement à remplir</h5>
 			}
 			{
-				admin() && !!demandeAbo.length &&
+				admin() && demandeAbo.length === 0 &&
 				<h5>Aucune demande d'abonnement</h5>
 			}
 				<div>

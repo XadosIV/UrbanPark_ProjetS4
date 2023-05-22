@@ -13,7 +13,7 @@ export function ListeDemandeAbo(){
     useEffect(() => {
         async function fetchDemandeAbo(){
             let resDemandeAbo = await GetDemandeAbo();
-            setListeDemande(resDemandeAbo.data);
+            setListeDemande(resDemandeAbo);
         }
         fetchDemandeAbo();
     }, [upListeAbo])
