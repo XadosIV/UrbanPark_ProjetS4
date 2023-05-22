@@ -1,7 +1,13 @@
 import React from "react";
+import { DeleteNotification } from "../services";
+import { Button } from "@mui/material"
 import "../css/notif_bell.css"
 
 export function Notification(props) {
+	function destruct() {
+		DeleteNotification(props.info.id);
+	}
+
 	function AffichagePlaces (places) {
 		return (
 			<div>
@@ -71,6 +77,13 @@ export function Notification(props) {
 				<h2>
 					{action==="POST"? "Création": action==="PUT"? "Modification": "Supression"} {event==="Réunion"? "d'une": "d'un"} {event}
 				</h2>
+				<Button
+				onClick={() => {destruct()}}
+				variant="contained"
+				color="primary"
+			>
+				VU
+				</Button>
 				<div>
 					{(event==="Nettoyage" || event ==="Gardiennage") && ajout}
 				</div>
