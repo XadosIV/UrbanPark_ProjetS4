@@ -6,8 +6,12 @@ import React from "react";
  * @return { Promise React.Component }
  */
 export function Separation(props) {
+      var color;
+      if (props.color) {
+            color = props.color
+      }
 	return (
-            <div className="divider">{props.value}</div>
+            <div className="divider" style={{color:color}}>{props.value}</div>
       )
 }
 

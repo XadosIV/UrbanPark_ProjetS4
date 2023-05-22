@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Notification } from "."
 import { GetDemandeAbo, getNotificationId } from '../services';
+import { Separation } from "../components"
 import { useIsGerantOuGardien } from '../interface';
 
 export function NotificationList (props) {
@@ -27,20 +28,20 @@ export function NotificationList (props) {
 		<div className='notification-list'>
 			{
 				admin() &&
-					<h3>
-						Demande d'abonnements
-					</h3>
+					<div>
+						<Separation value="Demandes d'abonnement" color="red"/>
+					</div>
 			}
 			{ admin() && !!!demandeAbo.length &&
 				<h5>Il y a des demandes d'abonnement à remplir</h5>
 			}
 			{
 				admin() && !!demandeAbo.length &&
-				<h5>Aucune demandes d'abonnements</h5>
+				<h5>Aucune demande d'abonnement</h5>
 			}
-			<h3>
-				Notifications
-			</h3>
+				<div>
+					<Separation value="Notifications" color="red"/>
+				</div>
 			{ !!listNotification.length &&
 				<ul>
 					{
