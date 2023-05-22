@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Checkbox } from "@mui/material";
 import { CreationSchedule, placeFromId, TakeAllSpots, TakeParking, TakeByRole, TakeAllRoles, TakeAllSchedulesAvailable, userFromToken } from "../services"
 import { AllSchedulesAvailable, Separation } from "../components";
-import { SpotName, NeedS, ChangeDate, AllNotNecessary } from "../interface"
+import { SpotName, NeedS, ChangeDate, AllNotNecessary, ToFrenchISODate } from "../interface"
 import { ContextUser } from "../contexts/context_user";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Select from 'react-select';
@@ -523,7 +523,7 @@ export function NewScheduleForm(props) {
                         <DatePicker
                             name="date_start"
                             selected={new Date(infos.date_start)}
-                            onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setInfos(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
@@ -531,7 +531,7 @@ export function NewScheduleForm(props) {
                         <DatePicker
                             name="date_end"
                             selected={new Date(infos.date_end)}
-                            onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setInfos(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
@@ -542,7 +542,7 @@ export function NewScheduleForm(props) {
                         <DatePicker
                             name="date_start"
                             selected={new Date(horairesSchedules.date_start)}
-                            onChange={(date) => setHorairesSchedules(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
@@ -550,7 +550,7 @@ export function NewScheduleForm(props) {
                         <DatePicker
                             name="date_end"
                             selected={new Date(horairesSchedules.date_end)}
-                            onChange={(date) => setHorairesSchedules(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         /></div>
@@ -585,9 +585,9 @@ export function NewScheduleForm(props) {
                             selected={new Date(infosReunions.date_start)}
                             minDate={new Date(onlyOneInfo[0])}
                             maxDate={new Date(onlyOneInfo[1])}
-                            minTime={setHours(setMinutes(new Date(), 0), 8)}
+                            minTime={setHours(setMinutes(new Date(), 0), 7)}
                             maxTime={setHours(setMinutes(new Date(), 30), 20)}
-                            onChange={(date) => setInfosReunions(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setInfosReunions(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />
@@ -597,9 +597,9 @@ export function NewScheduleForm(props) {
                             selected={new Date(infosReunions.date_end)}
                             minDate={new Date(onlyOneInfo[0])}
                             maxDate={new Date(onlyOneInfo[1])}
-                            minTime={setHours(setMinutes(new Date(), 0), 8)}
+                            minTime={setHours(setMinutes(new Date(), 0), 7)}
                             maxTime={setHours(setMinutes(new Date(), 30), 20)}
-                            onChange={(date) => setInfosReunions(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+                            onChange={(date) => setInfosReunions(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
                             dateFormat="yyyy:MM:dd hh:mm:ss"
                         />

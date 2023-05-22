@@ -526,7 +526,7 @@ function IsntScheduleOverlapping(infos, callback) {
 		   	JOIN Schedule s on us.id_schedule = s.id
 			WHERE 
 			id_user=:user AND is_guest=0 AND 
-			(date_start <= :date_end AND date_end >= :date_start);`;
+			(date_start < :date_end AND date_end > :date_start);`;
 	
 	dbConnection.query(sql, infos, (err, data) => {
 		if (err) {
