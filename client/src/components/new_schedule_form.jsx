@@ -396,17 +396,12 @@ export function NewScheduleForm(props) {
                 setSpotsCleaning({first_spot:null, last_spot:null}) 
                 setHorairesSchedules({date_start:baseDate, date_end: baseDate}); 
                 setOptionsUsers([]);
+                setOptionsSpots({opts:[], change:true})
+                setOptionsRoles([])
+                setOptionsUsersChange({opts:[], change:false})
             }}
             onRequestClose={() => {
                 setPopupOpened(false);
-                setWrongInput(false); 
-                setEditable(true); 
-                setCheckboxInclude(false)
-                setInfos({parking: null, users: [], type:null, date_start:baseDate, date_end: baseDate}); 
-                setInfosReunions({parking: '\x00', users: [], roles:[], guests:[], type:"Réunion", date_start:baseDate, date_end: baseDate});
-                setSpotsCleaning({first_spot:null, last_spot:null}) 
-                setHorairesSchedules({date_start:baseDate, date_end: baseDate}); 
-                setOptionsUsers([]);
             }}
             style={customStyles}
         >
