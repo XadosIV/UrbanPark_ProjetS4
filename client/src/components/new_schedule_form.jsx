@@ -286,8 +286,17 @@ export function NewScheduleForm(props) {
             setParkingsList(res);
             TakeAllSpots(res[0].id).then(res => setSpotsList(res))
         });
+    }, [])
+
+    useEffect(() => {
         TakeByRole("Agent d'entretien").then(res => setServiceList(res))
+    }, [])
+
+    useEffect(() => {
         TakeByRole("Gardien").then(res => setGuardiansList(res))
+    }, [])
+
+    useEffect(() => {
         TakeByRole("Agent d'entretien").then(res => {
             TakeByRole("Gardien").then(res2 => {
                 for (let user of res2) {
@@ -297,6 +306,9 @@ export function NewScheduleForm(props) {
 				setOptionsUsersChange({opts:AllServices(res), change:false})
             })
         })
+    }, [])
+
+    useEffect(() => {
         TakeAllRoles().then(res => setOptionsRoles(res))
     }, [])
 
