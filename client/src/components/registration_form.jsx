@@ -36,10 +36,10 @@ export function RegistrationForm(props) {
 		event.preventDefault();
 		if(infos.password !== infos.password_conf){
 			setWrongInput(true);
-			setErrMessage("la confirmation du mot de passe est invalide");
+			setErrMessage("La confirmation du mot de passe est invalide");
 		}else if(!isValideNom(infos.first_name) || !isValideNom(infos.last_name)){
 			setWrongInput(true);
-			setErrMessage("nom ou prénom invalide");
+			setErrMessage("Nom ou prénom invalide");
 		}else{
 			setWrongInput(false);
 			const res = await creationCompte(infos);
@@ -60,10 +60,10 @@ export function RegistrationForm(props) {
 						updateContext(contextData);
 					}
 					setWrongInput(true);
-					setErrMessage("une erreur est survenue");
+					setErrMessage("Une erreur est survenue");
 				}
 				setWrongInput(true);
-				setErrMessage("une erreur est survenue");
+				setErrMessage("Une erreur est survenue");
 			}else{
 				setWrongInput(true);
 				setErrMessage(res.data.message);
