@@ -651,22 +651,6 @@ export function UpdateScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
-					{baseType === "Réunion" && CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
-					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
-						disabled={disabled}
-						className="submit_button" 
-						variant="contained" 
-						color="primary" 
-						onClick={handleNoChangeDate}
-					>Garder la même horaire</Button></div>}
-					{baseType === "Réunion" && !CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
-					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
-						disabled={disabled}
-						className="submit_button" 
-						variant="contained" 
-						color="primary" 
-						onClick={() => setChangeSchedule(true)}
-					>Changer d'horaire</Button></div>}
 					{(baseType === "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
@@ -717,6 +701,22 @@ export function UpdateScheduleForm(props) {
 						>Modifier</Button>
 					</div>}
 					{(!CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && changeSchedule || baseType !== "Réunion") && TitleButton(baseType)}
+					{baseType === "Réunion" && CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={handleNoChangeDate}
+					>Garder la même horaire</Button></div>}
+					{baseType === "Réunion" && !CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
+					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
+						disabled={disabled}
+						className="submit_button" 
+						variant="contained" 
+						color="primary" 
+						onClick={() => setChangeSchedule(true)}
+					>Changer d'horaire</Button></div>}
 				</form>
 				<div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
 			</div>
