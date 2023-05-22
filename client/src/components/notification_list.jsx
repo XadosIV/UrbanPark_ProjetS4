@@ -8,11 +8,6 @@ export function NotificationList (props) {
 	const admin = useIsGerantOuGardien();
 	const [listNotification, setListNotification] = useState([]);
 	const [demandeAbo, setDemandeAbo] = useState([]);
-	const [update, setUpdate] = useState(true)
-
-	function Callback(childData) {
-		setUpdate(childData)
-	}
 
 	useEffect(() => {
 		async function fetchNotification (id) {
@@ -27,7 +22,7 @@ export function NotificationList (props) {
 		}
 
 		fetchNotification(props.id);
-	}, [props, update])
+	}, [props])
 	
 	return (
 		<div className='notification-list'>
@@ -53,7 +48,7 @@ export function NotificationList (props) {
 						listNotification.map((notif, index) => {
 							return (
 								<li  key={index} >
-									<Notification info={notif} handleCallback={Callback}/>
+									<Notification info={notif}/>
 								</li>
 							)
 						})

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { DeleteNotification } from "../services";
 import { Button } from "@mui/material"
 import "../css/notif_bell.css"
 
 export function Notification(props) {
+	const [isNotDelete, setIsNotDelete] = useState(true)
+
 	async function destruct() {
 		await DeleteNotification(props.info.id);
-		props.handleCallback(true)
+		setIsNotDelete(false)
 	}
 
 	function AffichagePlaces (places) {
@@ -104,7 +106,7 @@ export function Notification(props) {
 	return (
 		<div>
 			{
-				props.info && toLi(props.info)
+				isNotDelete && props.info && toLi(props.info)
 			}
 		</div>
 	)
