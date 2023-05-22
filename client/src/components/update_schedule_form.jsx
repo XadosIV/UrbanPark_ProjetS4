@@ -6,12 +6,14 @@ import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate,
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { ContextUser } from "../contexts/context_user";
 import Select from 'react-select';
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import "../css/parking.css"
 import ReactModal from 'react-modal';
+import fr from "date-fns/locale/fr";
+registerLocale("fr", fr);
 
 export function UpdateScheduleForm(props) {
 
@@ -655,6 +657,7 @@ export function UpdateScheduleForm(props) {
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
+							locale="fr"
                             name="date_start"
                             selected={new Date(horairesSchedules.date_start)}
                             onChange={(date) => {
@@ -666,6 +669,7 @@ export function UpdateScheduleForm(props) {
                         />
                         <p style={{margin:"0 7px 7px 7px"}}>et</p>
                         <DatePicker
+							locale="fr"
                             name="date_end"
                             selected={new Date(horairesSchedules.date_end)}
                             onChange={(date) => {
@@ -678,6 +682,7 @@ export function UpdateScheduleForm(props) {
                     </div>}
 					{(infos.type === "Nettoyage" || infos.type === "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
 						<DatePicker
+							locale="fr"
 							name="date_start"
 							selected={new Date(infos.date_start)}
 							onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
@@ -687,6 +692,7 @@ export function UpdateScheduleForm(props) {
 						<p style={{margin:"0 7px 7px 7px"}}>à</p>
 						<DatePicker
 							name="date_end"
+							locale="fr"
 							selected={new Date(infos.date_end)}
 							onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
 							showTimeSelect
@@ -801,6 +807,7 @@ export function UpdateScheduleForm(props) {
 						<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
 							<DatePicker
 								name="date_start"
+								locale="fr"
 								selected={new Date(infos.date_start)}
 								minDate={new Date(onlyOneInfo[0])}
 								maxDate={new Date(onlyOneInfo[1])}
@@ -813,6 +820,7 @@ export function UpdateScheduleForm(props) {
 							<p style={{margin:"0 60px 7px 0"}}>et</p>
 							<DatePicker
 								name="date_end"
+								locale="fr"
 								selected={new Date(infos.date_end)}
 								minDate={new Date(onlyOneInfo[0])}
 								maxDate={new Date(onlyOneInfo[1])}
