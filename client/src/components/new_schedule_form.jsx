@@ -85,7 +85,7 @@ export function NewScheduleForm(props) {
 	const [staffList, setStaffList] = useState([])
 	const [optionsUsersChange, setOptionsUsersChange] = useState({opts:[], change:false})
 
-    const [baseDate, setBaseDate] = useState(new Date().toISOString().slice(0, 19))
+    const [baseDate, setBaseDate] = useState(ToFrenchISODate(new Date().toISOString().slice(0, 19)))
     const [infos, setInfos] = useState({parking: null, type:null, users:[], date_start: baseDate, date_end: baseDate});
     const [spotsCleaning, setSpotsCleaning] = useState({first_spot:null, last_spot:null})
 
@@ -131,13 +131,13 @@ export function NewScheduleForm(props) {
         return checkboxInclude ? <CheckBox /> : <CheckBoxOutlineBlank />;
     }
 
-    const handleChangeSelect = (selectedOptions, name) => {
+    const handleChangeSelect = async (selectedOptions, name) => {
         var value = [];
         if (selectedOptions.value) {
             if (name.name === "first_spot" || name.name === "last_spot") {
                 setSpotsCleaning(values => ({...values, [name.name]: selectedOptions.value}))
             } else if (name.name === "parking") {
-                TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
+                await TakeAllSpots(selectedOptions.value).then(res => setSpotsList(res))
                 setOptionsSpots(values => ({...values, change: true}))
             } else if (name.name === "type") {
                 let liste = [];
@@ -223,6 +223,9 @@ export function NewScheduleForm(props) {
             } else if (infos.date_start === baseDate || infos.date_end === baseDate) {
                 setWrongInput(true)
                 setErrMessage("Veuillez ne pas laisser la date actuelle.")
+            } else if (infos.spots.length === 0){
+                setWrongInput(true)
+                setErrMessage("La seconde place doit être après la première.")
             } else {
                 if (!Array.isArray(infos.users)) {
                     infos.users = [infos.users]
