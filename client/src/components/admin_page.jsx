@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { ParkingsStaff, StaffList, UserList, CreateSpotType, NewScheduleForm } from "../components";
+import { ParkingsStaff, StaffList, UserList, CreateSpotType, NewScheduleForm, EmployeeRegistrationForm } from "../components";
 import { ContextUser } from "../contexts/context_user";
 import "../css/admin.css"
 
@@ -22,6 +22,7 @@ export function AdminPage() {
 		</div>
 		<br/><br/><hr/><br/><br/>
 		<NewScheduleForm handleCallback={Callback}/>
+		<EmployeeRegistrationForm />
 		<br/><br/><hr/>
 		<div className="searchs">
 			<StaffList update={update} admin={admin}/>
@@ -31,19 +32,3 @@ export function AdminPage() {
 		</div>
 	</div>)
 }
-
-/* 
-<Separation value="Ajouter un rôle"/>
-	<Button classvariant="contained" color="primary"
-	style={{
-		backgroundColor: "#FE434C",
-		borderColor: "transparent",
-		borderRadius: 20,
-		fontSize:100,
-		color:"#3F51B5",
-		width: "50%",
-		height:"20%",
-		margin:"50px 25%",
-		alignSelf:"center",
-	}}>+</Button>
-*/

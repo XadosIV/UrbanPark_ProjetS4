@@ -13,10 +13,14 @@ export function ListeDemandeAbo(){
     useEffect(() => {
         async function fetchDemandeAbo(){
             let resDemandeAbo = await GetDemandeAbo();
-            setListeDemande(resDemandeAbo.data);
+            setListeDemande(resDemandeAbo);
         }
         fetchDemandeAbo();
     }, [upListeAbo])
+
+    const makeKey = (id1, id2) => {
+        return parseInt("" + id1 + id2);
+    }
 
     const affListeDemande = () => {
         if(listeDemande.length === 0){
@@ -25,7 +29,7 @@ export function ListeDemandeAbo(){
                 </div></li>
         }else{
             return listeDemande.map((demande, index) => {
-                return <DemandeAbo infos={demande} key={index} up={updateDemande} />
+                return <DemandeAbo infos={demande} key={makeKey(index, demande.id)} up={updateDemande} />
             })
         }
     }

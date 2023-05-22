@@ -28,7 +28,7 @@ export function Parking({parking}) {
 		<div className="slides-item">
 			<h1>{ parking.name }</h1>
 			<h3>{ parking.address }</h3>
-			<p className="spot-counter" > { nbFreeSpots } / { allSpots.length }</p>
+			<p className="spot-counter" > { nbFreeSpots } places libres sur { allSpots.length }</p>
 		</div>)
 }
 

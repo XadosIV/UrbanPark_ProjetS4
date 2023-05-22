@@ -98,8 +98,14 @@ export function EmployeeRegistrationForm(props) {
 				variant="contained" 
 				color="primary"
 				onClick={() => {setIsOpen(true)}}
-				style={{}}
-			>Création de nouveaux employé</Button>
+				style={{
+					borderColor: "transparent",
+					borderRadius: 20,
+					width: "16%",
+					marginLeft: "42%",
+					height:"100px",
+				}}
+			>Création de nouveaux employés</Button>
 		<ReactModal ariaHideApp={false} isOpen={isOpen} contentLabel="EmployeeCreationForm" onRequestClose={() => {setIsOpen(false)}} style={customStyles('solid rgb(20, 94, 168)')}>
 			<form onSubmit={handlleSubmit} className="form">
 				<div className="inputs-divs">
@@ -149,7 +155,7 @@ export function EmployeeRegistrationForm(props) {
 						required
 						name="role"
 						className="select-role-user"
-						placeholder="role demandé"
+						placeholder="Rôle demandé"
 						options={ optRole }
 						onChange={handleChangeSelect}
 						maxMenuHeight={200}

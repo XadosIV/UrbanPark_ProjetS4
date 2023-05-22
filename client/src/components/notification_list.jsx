@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Notification } from "."
 import { GetDemandeAbo, getNotificationId } from '../services';
-import { useIsGerantOuGardien } from '../interface';
+import { Separation } from "../components"
+import { NeedS, useIsGerantOuGardien } from '../interface';
 
 export function NotificationList (props) {
 	const admin = useIsGerantOuGardien();
@@ -11,9 +12,13 @@ export function NotificationList (props) {
 	useEffect(() => {
 		async function fetchNotification (id) {
 			let notification = await getNotificationId(id);
-			setListNotification(notification);
+			if (notification) {
+				setListNotification(notification);
+			}
 			let listDemandeAbo = await GetDemandeAbo();
-			setDemandeAbo(listDemandeAbo);
+			if (listDemandeAbo) {
+				setDemandeAbo(listDemandeAbo);
+			}
 		}
 
 		fetchNotification(props.id);
@@ -23,20 +28,20 @@ export function NotificationList (props) {
 		<div className='notification-list'>
 			{
 				admin() &&
-					<h3>
-						Demande d'abonnements
-					</h3>
+					<div>
+						<Separation value="Demandes d'abonnement" color="red"/>
+					</div>
 			}
-			{ admin() && !!!demandeAbo.length &&
-				<h5>Il y a des demandes d'abonnement à remplir</h5>
+			{ admin() && demandeAbo.length !== 0 &&
+				<h5>Il y a {demandeAbo.length} demande{NeedS(demandeAbo.length)} d'abonnement à remplir</h5>
 			}
 			{
-				admin() && !!demandeAbo.length &&
-				<h5>Aucune demandes d'abonnements</h5>
+				admin() && demandeAbo.length === 0 &&
+				<h5>Aucune demande d'abonnement</h5>
 			}
-			<h3>
-				Notifications
-			</h3>
+				<div>
+					<Separation value="Notifications" color="red"/>
+				</div>
 			{ !!listNotification.length &&
 				<ul>
 					{

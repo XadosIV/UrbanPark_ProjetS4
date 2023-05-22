@@ -6,12 +6,14 @@ import { AllSpots, BaseParking, FindToggles, NeedS, AllNotNecessary, ChangeDate,
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { ContextUser } from "../contexts/context_user";
 import Select from 'react-select';
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import "../css/parking.css"
 import ReactModal from 'react-modal';
+import fr from "date-fns/locale/fr";
+registerLocale("fr", fr);
 
 export function UpdateScheduleForm(props) {
 
@@ -651,6 +653,60 @@ export function UpdateScheduleForm(props) {
 							maxMenuHeight={200}
                         />
                     </div>}
+					{(baseType === "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
+                        <DatePicker
+							locale="fr"
+                            name="date_start"
+                            selected={new Date(horairesSchedules.date_start)}
+                            onChange={(date) => {
+								setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(date), date_end:ToFrenchISODate(horairesSchedules.date_end), id_exclure:props.event.id_schedule})
+							}}
+                            showTimeSelect
+                            dateFormat="Pp"
+                        />
+                        <p style={{margin:"0 7px 7px 7px"}}>et</p>
+                        <DatePicker
+							locale="fr"
+                            name="date_end"
+                            selected={new Date(horairesSchedules.date_end)}
+                            onChange={(date) => {
+								setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))
+								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(horairesSchedules.date_start), date_end:ToFrenchISODate(date), id_exclure:props.event.id_schedule})
+							}}
+                            showTimeSelect
+                            dateFormat="Pp"
+                        /></div>
+                    </div>}
+					{(infos.type === "Nettoyage" || infos.type === "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+						<DatePicker
+							locale="fr"
+							name="date_start"
+							selected={new Date(infos.date_start)}
+							onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
+							showTimeSelect
+							dateFormat="Pp"
+						/>
+						<p style={{margin:"0 7px 7px 7px"}}>à</p>
+						<DatePicker
+							name="date_end"
+							locale="fr"
+							selected={new Date(infos.date_end)}
+							onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
+							showTimeSelect
+							dateFormat="Pp"
+						/>
+						<Button
+							disabled={disabled}
+							className="submit_button" 
+							variant="contained" 
+							color="primary" 
+							type="submit"
+						>Modifier</Button>
+					</div>}
+					{(!CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && changeSchedule || baseType !== "Réunion") && TitleButton(baseType)}
 					{baseType === "Réunion" && CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && 
 					<div style={{marginBottom:"15px", marginTop:"-25px"}}><Button
 						disabled={disabled}
@@ -667,56 +723,6 @@ export function UpdateScheduleForm(props) {
 						color="primary" 
 						onClick={() => setChangeSchedule(true)}
 					>Changer d'horaire</Button></div>}
-					{(baseType === "Réunion") && changeSchedule && <div style={{marginTop:"-10px"}}>
-                    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>Créneaux disponible entre 2 dates : </div><br/>
-                    <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
-                        <DatePicker
-                            name="date_start"
-                            selected={new Date(horairesSchedules.date_start)}
-                            onChange={(date) => {
-								setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))
-								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(date), date_end:ToFrenchISODate(horairesSchedules.date_end), id_exclure:props.event.id_schedule})
-							}}
-                            showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
-                        />
-                        <p style={{margin:"0 7px 7px 7px"}}>et</p>
-                        <DatePicker
-                            name="date_end"
-                            selected={new Date(horairesSchedules.date_end)}
-                            onChange={(date) => {
-								setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))
-								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(horairesSchedules.date_start), date_end:ToFrenchISODate(date), id_exclure:props.event.id_schedule})
-							}}
-                            showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
-                        /></div>
-                    </div>}
-					{(infos.type === "Nettoyage" || infos.type === "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
-						<DatePicker
-							name="date_start"
-							selected={new Date(infos.date_start)}
-							onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
-							showTimeSelect
-							dateFormat="yyyy:MM:dd hh:mm:ss"
-						/>
-						<p style={{margin:"0 7px 7px 7px"}}>à</p>
-						<DatePicker
-							name="date_end"
-							selected={new Date(infos.date_end)}
-							onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
-							showTimeSelect
-							dateFormat="yyyy:MM:dd hh:mm:ss"
-						/>
-						<Button
-							disabled={disabled}
-							className="submit_button" 
-							variant="contained" 
-							color="primary" 
-							type="submit"
-						>Modifier</Button>
-					</div>}
-					{(!CheckIfScheduleIn(horairesSchedules, schedulesAvailable) && changeSchedule || baseType !== "Réunion") && TitleButton(baseType)}
 				</form>
 				<div style={{display:"flex", justifyContent:"center"}}>{ wrongInput && <p className="err-message" style={{maxWidth:"450px"}}> { errMessage } </p>}</div>
 			</div>
@@ -801,6 +807,7 @@ export function UpdateScheduleForm(props) {
 						<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
 							<DatePicker
 								name="date_start"
+								locale="fr"
 								selected={new Date(infos.date_start)}
 								minDate={new Date(onlyOneInfo[0])}
 								maxDate={new Date(onlyOneInfo[1])}
@@ -808,11 +815,12 @@ export function UpdateScheduleForm(props) {
 								maxTime={setHours(setMinutes(new Date(), 30), 20)}
 								onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
 								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
+								dateFormat="Pp"
 							/>
 							<p style={{margin:"0 60px 7px 0"}}>et</p>
 							<DatePicker
 								name="date_end"
+								locale="fr"
 								selected={new Date(infos.date_end)}
 								minDate={new Date(onlyOneInfo[0])}
 								maxDate={new Date(onlyOneInfo[1])}
@@ -820,7 +828,7 @@ export function UpdateScheduleForm(props) {
 								maxTime={setHours(setMinutes(new Date(), 30), 20)}
 								onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
 								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
+								dateFormat="Pp"
 							/>
 						</div>
 					<div className="input-div" style={{marginTop:'20px'}}>
