@@ -175,6 +175,8 @@ export function NewScheduleForm(props) {
         }
     }
 
+    console.log(horairesSchedules)
+
 	const handlleSubmit = async (event) => {
         event.preventDefault()
         setWrongInput(false);
@@ -385,6 +387,14 @@ export function NewScheduleForm(props) {
             }}
             onRequestClose={() => {
                 setPopupOpened(false);
+                setWrongInput(false); 
+                setEditable(true); 
+                setCheckboxInclude(false)
+                setInfos({parking: null, users: [], type:null, date_start:baseDate, date_end: baseDate}); 
+                setInfosReunions({parking: '\x00', users: [], roles:[], guests:[], type:"Réunion", date_start:baseDate, date_end: baseDate});
+                setSpotsCleaning({first_spot:null, last_spot:null}) 
+                setHorairesSchedules({date_start:baseDate, date_end: baseDate}); 
+                setOptionsUsers([]);
             }}
             style={customStyles}
         >
