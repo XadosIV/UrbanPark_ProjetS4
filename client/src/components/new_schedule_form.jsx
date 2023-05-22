@@ -6,12 +6,14 @@ import { SpotName, NeedS, ChangeDate, AllNotNecessary, ToFrenchISODate } from ".
 import { ContextUser } from "../contexts/context_user";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import Select from 'react-select';
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import ReactModal from 'react-modal';
-import "../css/parking.css"
+import "../css/parking.css";
+import fr from "date-fns/locale/fr";
+registerLocale("fr", fr);
 
 export function NewScheduleForm(props) {
 
@@ -522,6 +524,7 @@ export function NewScheduleForm(props) {
                     {(infos.type === "Nettoyage" || infos.type === "Gardiennage") && <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                         <DatePicker
                             name="date_start"
+                            locale="fr"
                             selected={new Date(infos.date_start)}
                             onChange={(date) => setInfos(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
@@ -530,6 +533,7 @@ export function NewScheduleForm(props) {
                         <p style={{margin:"0 7px 7px 7px"}}>à</p>
                         <DatePicker
                             name="date_end"
+                            locale="fr"
                             selected={new Date(infos.date_end)}
                             onChange={(date) => setInfos(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
@@ -541,6 +545,7 @@ export function NewScheduleForm(props) {
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
                             name="date_start"
+                            locale="fr"
                             selected={new Date(horairesSchedules.date_start)}
                             onChange={(date) => setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
@@ -548,6 +553,7 @@ export function NewScheduleForm(props) {
                         />
                         <p style={{margin:"0 7px 7px 7px"}}>et</p>
                         <DatePicker
+                            locale="fr"
                             name="date_end"
                             selected={new Date(horairesSchedules.date_end)}
                             onChange={(date) => setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
@@ -582,6 +588,7 @@ export function NewScheduleForm(props) {
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}><p style={{margin:"0 7px 7px 7px"}}>Entre</p>
                         <DatePicker
                             name="date_start"
+                            locale="fr"
                             selected={new Date(infosReunions.date_start)}
                             minDate={new Date(onlyOneInfo[0])}
                             maxDate={new Date(onlyOneInfo[1])}
@@ -594,6 +601,7 @@ export function NewScheduleForm(props) {
                         <p style={{margin:"0 60px 7px 0"}}>et</p>
                         <DatePicker
                             name="date_end"
+                            locale="fr"
                             selected={new Date(infosReunions.date_end)}
                             minDate={new Date(onlyOneInfo[0])}
                             maxDate={new Date(onlyOneInfo[1])}
