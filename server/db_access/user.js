@@ -299,13 +299,14 @@ function UpdateUser(infos, callback){
 function GetUserFromToken(infos, callback){
 
 	sql = `SELECT 
-			id,
-			first_name,
-			last_name,
-			email,
-			role,
-			id_spot,
-			id_spot_temp
+	id,
+	first_name,
+	last_name,
+	email,
+	id_spot,
+	id_spot_temp,
+	role,
+	id_park_demande
 		   FROM User 
 		   WHERE token=:token;`;
 

@@ -52,6 +52,7 @@ export function PersoMySpot(){
 
     useEffect(() => {
         async function fetchParking() {
+
             if (infosUser.id_park_demande){
                 const resParking = await TakeParking(infosUser.id_park_demande);
                 setParkPlace(resParking[0]);
