@@ -79,6 +79,8 @@ export function DemandeAbo({ infos, up }){
                 setErrMessage("Veuillez assigner une place")
                 togglePopupP()
             }
+            reset();
+            up();
         }
         promoteUser();
     }
@@ -87,9 +89,10 @@ export function DemandeAbo({ infos, up }){
         e.preventDefault();
         async function deleteDemnade(){
             let resDeleteDemande = await DeleteUser(infos.id);
+            reset();
+            up();
         }
         deleteDemnade();
-        up();
     }
 
     const handleChangeSelect = (selectedOptions, name) => {
