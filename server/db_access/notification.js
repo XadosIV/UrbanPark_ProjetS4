@@ -1,4 +1,5 @@
 const {dbConnection} = require('../database');
+const { SendError, E_WRONG_ID_FORMAT } = require('../errors');
 const {GetSchedules} = require('./schedule');
 
 /**
@@ -128,6 +129,25 @@ function PostNotification(infos, callback){
 }
 
 /**
+ * DeleteNotif
+ * Delete notification by id
+ * 
+ * @param {int} id
+ * @param {function(*,*)} callback (err, data)
+ */
+function DeleteNotification(id, callback){
+
+	if (isNaN(parseInt(id))) return SendError(E_WRONG_ID_FORMAT, "L'id doit être un nombre.", callback);
+
+	sql = `DELETE FROM Notification WHERE id=:id;`;
+
+	dbConnection.query(sql, {
+		id:id
+	}, callback);
+}
+
+
+/**
  * ListPostNotification
  * 
  * @param {Array<Object>} arrayInfos {id_user, action, type_notif, id_schedule, type, id_parking, date_start, date_end}
@@ -148,4 +168,4 @@ function ListPostNotification(arrayInfos, callback){
 	}
 }
 
-module.exports = {GetNotifications, PreparePostNotification, PostNotification, PrepareListPostNotification, ListPostNotification};
+module.exports = {GetNotifications, PreparePostNotification, PostNotification, PrepareListPostNotification, ListPostNotification, DeleteNotification};
