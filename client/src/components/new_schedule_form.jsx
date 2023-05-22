@@ -322,7 +322,7 @@ export function NewScheduleForm(props) {
 
 
     useEffect(() => {
-        setOptionsSpots({opts:AllSpots(spotsList), change:false})
+        setOptionsSpots({opts:AllSpots(spotsList).reverse(), change:false})
     }, [optionsSpots.change])
 
 	useEffect(() => {
@@ -396,9 +396,9 @@ export function NewScheduleForm(props) {
                 setSpotsCleaning({first_spot:null, last_spot:null}) 
                 setHorairesSchedules({date_start:baseDate, date_end: baseDate}); 
                 setOptionsUsers([]);
-                setOptionsSpots({opts:[], change:true})
+                setOptionsSpots(values => ({...values, opts: []}));
                 setOptionsRoles([])
-                setOptionsUsersChange({opts:[], change:false})
+                setOptionsUsersChange(values => ({...values, opts: []}))
             }}
             onRequestClose={() => {
                 setPopupOpened(false);
@@ -494,7 +494,7 @@ export function NewScheduleForm(props) {
                     </div>}
                     {infos.type === "Nettoyage" && <div className="numeros" style={{zIndex:1005}}>
                         <Select
-                            options={optionsSpots.opts}
+                            options={optionsSpots.opts.reverse()}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                             size="small"
                             id="first_spot"
@@ -507,7 +507,7 @@ export function NewScheduleForm(props) {
                         />
                         <p style={{margin:"7px 7px 0 7px"}}>à</p>
                         <Select
-                            options={optionsSpots.opts}
+                            options={optionsSpots.opts.reverse()}
                             style = {{marginLeft:"10px", marginBottom:"12px", width:"200px", alignSelf:"center"}}
                             size="small"
                             id="last_spot"
@@ -526,7 +526,7 @@ export function NewScheduleForm(props) {
                             selected={new Date(infos.date_start)}
                             onChange={(date) => setInfos(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                         <p style={{margin:"0 7px 7px 7px"}}>à</p>
                         <DatePicker
@@ -535,7 +535,7 @@ export function NewScheduleForm(props) {
                             selected={new Date(infos.date_end)}
                             onChange={(date) => setInfos(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                     </div>}
                     {(infos.type === "Réunion") && <div style={{marginTop:"-10px"}}>
@@ -547,7 +547,7 @@ export function NewScheduleForm(props) {
                             selected={new Date(horairesSchedules.date_start)}
                             onChange={(date) => setHorairesSchedules(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                         <p style={{margin:"0 7px 7px 7px"}}>et</p>
                         <DatePicker
@@ -556,7 +556,7 @@ export function NewScheduleForm(props) {
                             selected={new Date(horairesSchedules.date_end)}
                             onChange={(date) => setHorairesSchedules(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         /></div>
                     </div>}
                     {TitleButton(infos.type)}
@@ -594,7 +594,7 @@ export function NewScheduleForm(props) {
                             maxTime={setHours(setMinutes(new Date(), 30), 20)}
                             onChange={(date) => setInfosReunions(values => ({...values, ["date_start"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                         <p style={{margin:"0 60px 7px 0"}}>et</p>
                         <DatePicker
@@ -607,7 +607,7 @@ export function NewScheduleForm(props) {
                             maxTime={setHours(setMinutes(new Date(), 30), 20)}
                             onChange={(date) => setInfosReunions(values => ({...values, ["date_end"]: ToFrenchISODate(date)}))}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                     </div>
                 <div className="input-div" style={{marginTop:'20px'}}>

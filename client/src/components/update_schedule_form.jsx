@@ -665,7 +665,7 @@ export function UpdateScheduleForm(props) {
 								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(date), date_end:ToFrenchISODate(horairesSchedules.date_end), id_exclure:props.event.id_schedule})
 							}}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         />
                         <p style={{margin:"0 7px 7px 7px"}}>et</p>
                         <DatePicker
@@ -677,7 +677,7 @@ export function UpdateScheduleForm(props) {
 								UpdateIfNoHourChange({users:infos.users, date_start:ToFrenchISODate(horairesSchedules.date_start), date_end:ToFrenchISODate(date), id_exclure:props.event.id_schedule})
 							}}
                             showTimeSelect
-                            dateFormat="yyyy:MM:dd hh:mm:ss"
+                            dateFormat="Pp"
                         /></div>
                     </div>}
 					{(infos.type === "Nettoyage" || infos.type === "Gardiennage") &&<div style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
@@ -687,7 +687,7 @@ export function UpdateScheduleForm(props) {
 							selected={new Date(infos.date_start)}
 							onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
 							showTimeSelect
-							dateFormat="yyyy:MM:dd hh:mm:ss"
+							dateFormat="Pp"
 						/>
 						<p style={{margin:"0 7px 7px 7px"}}>à</p>
 						<DatePicker
@@ -696,7 +696,7 @@ export function UpdateScheduleForm(props) {
 							selected={new Date(infos.date_end)}
 							onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
 							showTimeSelect
-							dateFormat="yyyy:MM:dd hh:mm:ss"
+							dateFormat="Pp"
 						/>
 						<Button
 							disabled={disabled}
@@ -815,7 +815,7 @@ export function UpdateScheduleForm(props) {
 								maxTime={setHours(setMinutes(new Date(), 30), 20)}
 								onChange={(date) => setInfos(values => ({...values, ["date_start"]: date.toISOString().slice(0, 19)}))}
 								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
+								dateFormat="Pp"
 							/>
 							<p style={{margin:"0 60px 7px 0"}}>et</p>
 							<DatePicker
@@ -828,7 +828,7 @@ export function UpdateScheduleForm(props) {
 								maxTime={setHours(setMinutes(new Date(), 30), 20)}
 								onChange={(date) => setInfos(values => ({...values, ["date_end"]: date.toISOString().slice(0, 19)}))}
 								showTimeSelect
-								dateFormat="yyyy:MM:dd hh:mm:ss"
+								dateFormat="Pp"
 							/>
 						</div>
 					<div className="input-div" style={{marginTop:'20px'}}>
