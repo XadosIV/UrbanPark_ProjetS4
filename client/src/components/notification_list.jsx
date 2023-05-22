@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Notification } from "."
 import { GetDemandeAbo, getNotificationId } from '../services';
+import { useIsGerantOuGardien } from '../interface';
 
 export function NotificationList (props) {
+	const admin = useIsGerantOuGardien();
 	const [listNotification, setListNotification] = useState([]);
 	const [demandeAbo, setDemandeAbo] = useState([]);
 
@@ -19,14 +21,17 @@ export function NotificationList (props) {
 	
 	return (
 		<div className='notification-list'>
-			<h3>
-				Demande d'abonnements
-			</h3>
-			{ !!!demandeAbo.length &&
+			{
+				admin() &&
+					<h3>
+						Demande d'abonnements
+					</h3>
+			}
+			{ admin() && !!!demandeAbo.length &&
 				<h5>Il y a des demandes d'abonnement à remplir</h5>
 			}
 			{
-				!!demandeAbo.length &&
+				admin() && !!demandeAbo.length &&
 				<h5>Aucune demandes d'abonnements</h5>
 			}
 			<h3>
