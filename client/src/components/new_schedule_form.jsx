@@ -223,6 +223,9 @@ export function NewScheduleForm(props) {
             } else if (infos.date_start === baseDate || infos.date_end === baseDate) {
                 setWrongInput(true)
                 setErrMessage("Veuillez ne pas laisser la date actuelle.")
+            } else if (infos.spots.length === 0){
+                setWrongInput(true)
+                setErrMessage("La seconde place doit être après la première.")
             } else {
                 if (!Array.isArray(infos.users)) {
                     infos.users = [infos.users]
