@@ -85,7 +85,7 @@ export function NewScheduleForm(props) {
 	const [staffList, setStaffList] = useState([])
 	const [optionsUsersChange, setOptionsUsersChange] = useState({opts:[], change:false})
 
-    const [baseDate, setBaseDate] = useState(ToFrenchISODate(new Date().toISOString().slice(0, 19)))
+    const [baseDate, setBaseDate] = useState(new Date().toISOString().slice(0, 19))
     const [infos, setInfos] = useState({parking: null, type:null, users:[], date_start: baseDate, date_end: baseDate});
     const [spotsCleaning, setSpotsCleaning] = useState({first_spot:null, last_spot:null})
 
